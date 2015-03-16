@@ -1,0 +1,444 @@
+==============================[ Chapter 1 ]===================================
+==============================[ The Vim Way]==================================
+
+C       change till end of line
+s       change cursor char and insert == cl == xi
+S       change the whole line
+I       insert at beginning of line
+A       append at end of line
+o       new line below and insert
+O       new line above and insert == ko (almost, ko will obey indentation rules of prev. line)
+*       search for word under cursor
+%       match parenthesis, brackets, tags
+u       undo
+<C-r>   redo
+<C-o>   back to previous position (before jump)
+
+make motion + change repeatable == tie breaker for equal char combos
+
+act, repeat, reverse
+
+Intent                              Act                      Repeat Reverse
+---------------------------------------------------------------------------
+Make a change                       {edit}                   .      u
+Scan line for next character        f{char} / t{char}        ;      ,
+Scan line for previous character    F{char} / T{char}        ;      ,
+Scan document for next match        /pattern <CR>            n      N
+Scan document for previous match    ?pattern <CR>            n      N
+Perform substitution                :s/target/replacement    &      u
+Execute a sequence of changes       qx{changes}q             @x     u
+
+
+==============================[ Chapter 2 ]===================================
+==============================[ NORMAL MODE ]=================================
+
+chunk undos, make changes repeatable
+
+10<C-a>     add 10 to number at or after cursor (same line)
+10<C-x>     substracts as above
+
+Motions:
+	Trigger     Effect
+	------------------
+	c           Change
+	d           Delete
+	y           Yank into register
+	g~          Swap Case (for swapping single letter just ~ )
+	gu          Make lowercase
+	gU          Make uppercase
+	>           Shift right
+	<           Shift left
+	=           Autoindent
+	!           Filter {motion} lines through an external program
+
+operator pending mode == mode when vim accepts only motion commands
+
+
+==============================[ Chapter 3 ]===================================
+==============================[ INSERT MODE ]=================================
+
+Keystrokes     Effect
+---------------------
+<C-h>          Delete back one character (backspace)
+<C-w>          Delete back one word
+<C-u>          Delete back to start of line
+<C-o>          Insert-Normal mode (mnemonic: once)
+<C-r>(reg)     Paste here from register while in insert
+                 ( the = register is expression register, <C-r>=5*6<CR> will insert 30 )
+R              (from normal) Enters REPLACE mode
+
+
+==============================[ Chapter 4 ]===================================
+==============================[ VISUAL MODE ]=================================
+
+When Visual mode command is repeated <.>, it affects the same range (? width, height, position) of text.
+Prefer normal operators when possible, because of <.>.
+Prefer Visual mode for one-off changes, or when range of selection is intricate and not easily covered by motions. V-block for I, A probably most useful.
+
+	Command        Effect
+	---------------------
+	v              Enable character-wise Visual mode (dimx remapped to V-block)
+	V              Enable line-wise Visual mode
+	<C-v>          Enable block-wise Visual mode (dimx remapped to Visual)
+	gv             Reselect the last visual selection
+	o              Go to other end of highlighted text
+	i, a           Inside, around - not insert, append !!!
+
+VISUAL BLOCK:
+	Use Visual block when need smth done on each line
+	I, A, r    to insert, append or replace (every character) relatively to selected block
+	$          expands selection till rightmost char of a line, beyond rectangular shape
+	~          swap case of selection
+	U          uppercase selection
+	u          lowercase selection
+
+VISUAL LINE:
+    r          useful(!) to create -------------. yypVr-
+
+
+==============================[ Chapter 5 ]===================================
+==============================[ COMMAND-LINE MODE ]===========================
+
+Ex commands strike Far and Wide!!!
+
+Range:
+	Each Ex command (:) usually starts with either range or line.
+	Range is separated by <,> like: {beginning},{end}.
+	Operations on range always start on the beginning of the line.
+	Current line is represented by <.>
+	Last line $
+	Execute on each line %  ==  1,$
+	Offsets can be used like:     :.-3,.+3p     prints from 3 above to 3 below current line
+	Line 0 is valid and useful for pasting.
+
+Commands:
+    :copy or :t     (mnemonic copy TO)
+    :move or :m
+    :normal or :norm    executes normal command over the range
+        ex: 1,$-3norm A;    appends ; on every line except last 3
+        ex: '<,'>norm.      repeats last change on every line of V-selection,
+								starting at absolute beginning of line
+
+Register :  contains the last command
+    @:      repeats the last Ex command - useful for operating on V-selection
+    @@      repeats the last repeated macro (previous repetition)
+
+Ex command completion with Tab:
+    Scroll forward through the items: <C-n> , or <Right>
+    Scroll backward through them with <S-Tab> , <C-p> , or <Left> .
+    / and then Tab cycles through prev searches
+
+Insert the word under the cursor into command line:
+    <C-r><C-w>      useful for :substitute      /{pattern}<CR>cw{new_pat}:%s//<C-r><C-w>/g
+    also possible instead of /pattern<CR>  ==   {*} -->    *cw{new_pat}:%s//<C-r><C-w>/g
+	search pattern omitted (hence s//), because it uses previous search pattern.
+	(only works for non-overlapping patterns, if an overlapping pattern is given,
+	like "test" and "test111", the starting word will be overwritten 2 times and
+	will result in test111111)
+
+External commands   :!{cmd}
+    % when used as argument is the absolute filename of current buffer
+    :r !{cmd}       reads output and puts it at current position
+
+
+==============================[ Chapter 6 ]===================================
+==============================[ Manage multiple files ]=======================
+
+Buffers: representations of files in memory
+
+    :ls         list open buffers
+    :bnext, :bprev, :bfirst, :blast         switch between buffers
+    :{range}bd or :bd 3 4 5                 delete buffers from memory, close all windows,
+                                                jump to most recent edit
+	:enew  == open new empty buffer in current window (without splitting)
+
+Windows: buffers side-by-side
+
+    Command           |  Effect
+    ---------------------------
+    <C-w>s            |  Split the current window horizontally, reusing the current buffer
+                      |  in the new window
+    <C-w>v            |  Split the current window vertically, reusing the current buffer
+                      |  in the new window
+    :sp[lit] {file}   |  Split the current window horizontally, loading {file} into the new
+                      |  window
+    :vsp[lit] {file}  |  Split the current window vertically, loading {file} into the new
+                      |  window
+    <C-w><C-w> cycle through windows
+
+    Ex Command    | Normal Command    | Effect
+    --------------|-------------------|-------
+    :cl[ose]      | <C-w>c            | Close the active window
+    :on[ly]       | <C-w>o            | Keep only the active window, closing all others
+
+
+Tabs: viewports (collections) of windows
+
+    Command               |   Effect
+    --------------------------------
+    :tabe[dit] {filename} |   Open {filename} in a new tab
+    <C-w>T                |   Move the current window into its own tab
+    :tabc[lose]           |   Close the current tab page and all of its windows
+    :tabo[nly]            |   Keep the active tab page, closing all others
+    :tabn[ext] {N} {N}gt  |   Switch to tab page number {N}
+    :tabn[ext]     gt     |   Switch to the next tab page
+    :tabp[revious] gT     |   Switch to the previous tab page
+
+
+==============================[ Chapter 7 ]===================================
+==============================[ Files ]=======================================
+
+:pwd                print working directory
+%                   absolute filename of active buffer (when not at the beginning,
+						cause :%  == range == every line of this buffer)
+:e %:h<Tab>         choose to edit sibling files of current buffer
+
+
+==============================[ Chapter 8 ]===================================
+==============================[ Movement ]====================================
+
+
+Command      Move Cursor
+------------------------
+w            Forward to start of next word
+b            Backward to start of current/previous word
+e            Forward to end of current/next word
+ge           Backward to end of previous word
+W            Forward to start of next WORD, correspondingly: B, E, gE
+
+
+Command            Effect
+-------------------------
+f{char}            Forward to the next occurrence of {char}
+F{char}            Backward to the previous occurrence of {char}
+t{char}            Forward to the character before the next occurrence of {char}
+T{char}            Backward to the character after the previous occurrence of {char}
+;                  Repeat the last character-search command
+,                  Reverse the last character-search command
+
+/                  search AS MOTION can be used also with visual and during "operation pending"
+d/{pattern}<CR>    delete till first occurrence of pattern
+
+Motions:
+		i            inside
+		a            an / around
+Combined with:
+		w            word
+		p            paragraph (ip == inside paragraph, ap == same as before plus 1 line)
+		s            sentence
+		t            tag (like xml)
+		[{(<]})>     delimiters, whatever is inside or around them
+Protip: when deleting/changing a word, use dw and cw when at beginning of word, else daw and ciw
+
+Markers:
+		m{a-zA-Z}        place a marker and give it a name {letter}
+		`{a-zA-Z}        jump to the marker, capitals are global, lowercase are local to buffer
+		'{a-zA-Z}        jump to beginning of marker's line
+
+		Keystrokes       Buffer Contents position
+		-----------------------------------------
+		``               Position before the last jump within current buffer
+		`.               Location of last change
+		`^               Location of last insertion
+		`[               Start of last change or yank
+		`]               End of last change or yank
+		`<               Start of last visual selection
+		`>               End of last visual selection
+				ALL OF THE ABOVE CAN BE USED ONLY ONCE == NON-REPEATABLE
+				++++ ARE CONSIDERED MOTIONS!
+
+==============================[ Chapter 9 ]===================================
+==============================[ Navigation between files with jumps ]=========
+
+:jumps                   shows all the jumps
+
+		<C-o>            Go one jump back (not considered a motion)
+		<C-i>            Go one jump forward (not considered a motion)
+			When using multiple windows or tabs, <C-o> and <C-i> are scoped to the jump
+			list of active window
+
+:changes                 shows all changes
+Command                                   Effect
+------------------------------------------------
+[count]G                                  Jump to line number
+/pattern <CR> ?pattern <CR> / n / N       Jump to next/previous occurrence of pattern
+%                                         Jump to matching parenthesis
+( / )                                     Jump to start of previous/next sentence (dimx changed to :bnext)
+{ / }                                     Jump to start of previous/next paragraph
+H/M/L                                     Jump to top/middle/bottom of screen
+gf                                        Jump to file name under the cursor
+<C-]>                                     Jump to definition of keyword under the cursor
+’{mark} / `{mark}                         Jump to a mark
+
+g; / g,                                   Jump to previous/next change point (can be repeated)
+											(uses changes list)
+gi                                        Jump to last change point and enter insert mode
+											It's different from "`^i" when the mark is past the end of the line.
+
+==============================[ Chapter 10 ]==================================
+==============================[ Copy and Paste ]==============================
+
+p        paste after cursor (if pasting line - below cursor)
+P        paste before cursor (if pasting line - above cursor)
+xp       Transpose 2 characters (change places -- dimx changed x to "_x delete to black hole)
+ddp      Transpose 2 lines
+yyp      Duplicate line
+
+Commands x, s, d, c, y (and X, S, D, C, Y) begin with register (using default "" if no register specified).
+:reg or :di(splay)   == show contents of all numbered and named registers
+:reg a               == show contents of register a
+
+Register Contents
+"a       == to register a (named register)
+"b       == to register b (named register) -- named registers: "a -"z
+"A       == append to register contents -- "A -"Z appends to "a - "z
+""       == unnamed register (default if register is not specified)
+"+       == clipboard register (my setting - contains same text as "" when reg.operation is within vim)
+"*       == primary register (use with middle mouse button - my setting: dont use)
+"0       == yank register
+"-       == small delete register, used when deleted less than a line except see below
+"1       == delete/change register, for more than 1 line plus with these movement commands: %, (, ), `, /, ?, n, N, { and }
+"2 - "9  == previous delete/change registers, shifted upon next change/deletion "1 -> "2, "2 - "3 etc
+"_       == black hole register (nothing returns from there)
+"%       == name of the current file
+"#       == name of the alternate file
+".       == last inserted text
+":       == last Ex command
+"/       == last search pattern
+
+gp       == same as p, only leaves cursor at the end of pasted text instead of beginning
+gP       == same as P, only leaves cursor at the end of pasted text instead of beginning
+
+
+==============================[ Chapter 11 ]==================================
+==============================[ Macros ]======================================
+
+qa           start recording to register a
+q            stop recording
+qA           append what follows to recording in reg "a
+@a           play macro
+2@a          play macro 2 times
+@@           play (once) the last played macro
+5@@          play 5 times the last played macro
+
+Tricks:
+	NORMALIZE cursor position to predictable location (beginning, end, etc)
+	STRIKE target with repetitive motion (w, b, e, ge) and not h, l single place movements
+	ABORT: macro stops when command fails (like j on end of file, n when no other matches etc)
+			Be aware of this stop condition
+
+2 ways to execute macros:
+		IN SERIES: record macro for the line and add jump to next line.
+					Execute {num} times: {num}@{reg}
+		IN PARALLEL: record macro for one line without jump to next.
+					Execute using Visual selection '<,'>norm@{reg}
+						The macro begins executing from very beginning of line, positioning may be skipped.
+		The difference is: IN SERIES will stop at first error line, IN PARALLEL will execute on each line
+
+Editing macros:
+		Paste macro:
+			On this line:     "{reg}p    , like "ap == paste contents of reg a after cursor
+			On next line:     :put {reg} , like :put a == put contents of reg a on next line
+		Yank macro to register:
+			Careful not to yy, because it will catch extra ^M == linebreak character
+			Better 0"{reg}Y and then dd (dimx: Y mapped y$)
+
+
+==============================[ Chapter 12 ]===================================
+==============================[ Matching patterns and literals ]===============
+
+\C          make search case sensitive (use it anywhere in the search pattern)
+\c          make search case insensitive (use it anywhere in the search pattern)
+dimx:       omitted the rest of chapter, regex matching etc.
+
+
+
+==============================[ Chapter 13 ]===================================
+==============================[ Search ]=======================================
+
+:%s///gn          will show how many matches for previous search pattern are in current buffer
+
+
+==============================[ Chapter 14 ]===================================
+==============================[ Substitution ]=================================
+
+:h sub-replace-special
+Symbol           |  Represents
+------------------------------
+\r               |  Insert a carriage return (\n escapes a new line)
+\t               |  Insert a tab character
+\\               |  Insert a single backslash
+\1               |  Insert the first submatch
+\2               |  Insert the second submatch (and so on, up to \9)
+\0               |  Insert the entire matched pattern
+&                |  Insert the entire matched pattern
+~                |  Use {string} from the previous invocation of :substitute
+\={Vim script}   |  Evaluate {Vim script} expression; use result as replacement
+                 |  {string}
+
+:s/{old}/{new}         replace first occurence on current line
+:s/{old}/{new}/g       replace all occurences on current line
+:%s/{old}/{new}/g      replace all occurences on every line
+:%s/{old}/{new}/gc     replace all occurences on every line,
+							confirming replacement (y, n, q=quit, a=all remaining)
+:%s//{new}/g           replace all occurences of prev.search pattern on every line
+
+
+==============================[ Chapter 15 ]===================================
+==============================[ Global commands ]==============================
+
+
+
+
+==============================[ Chapter 16 ]===================================
+==============================[ Indexing and ctags ]===========================
+
+Tags: important to find ways to autogenerate tags:
+	Shortcut key to ctags -R (must be in project root?) nnoremap <f4> :!ctags -R<CR>
+	On file save (may get slow, doesnt take into account modification of files from outside vim)
+	Good tradeoff: Tim Pope's article “Effortless Ctags with Git,” to automate ctags generation with git
+
+<C-]>                           jump to definintion
+g<C-]>                          show all definitions, when multiple matches (with number choices)
+:tj[ump]/{search pattern}       like g<C-]>, just with search pattern
+:tselect                        show all definitions (with number choices) after invoking <C-]> (by mistake)
+:tnext                          go to next matching tag in tag list
+
+
+==============================[ Chapter 17 ]===================================
+==============================[ Quickfix and compiling ]=======================
+
+:h quickfix
+:make      runs make from vim and updates quickfix list
+:lmake     runs make from vim and updates quickfix list for current location (window)
+
+Command   |    Action
+----------|----------
+:cnext    |    Jump to next item
+:cprev    |    Jump to previous item
+:cfirst   |    Jump to first item
+:clast    |    Jump to last item
+:cnfile   |    Jump to first item in next file
+:cpfile   |    Jump to last item in previous file
+:cc N     |    Jump to nth item
+:copen    |    Open the quickfix window (to use with shortcuts)
+:cclose   |    Close the quickfix window (to use with shortcuts)
+
+==============================[ Chapter 18 ]===================================
+==============================[ grep, vimgrep etc - projectwise search ]=======
+
+
+
+
+==============================[ Chapter 19 ]===================================
+==============================[ Chapter 20 ]===================================
+==============================[ Chapter 21 ]===================================
+==============================[ Chapter 22 ]===================================
+==============================[ Chapter 23 ]===================================
+
+==============================[ Other stuff ]==================================
+
+'H', 'M' and 'L' take the cursor directly to the 'H'ighest, 'M'iddle, or 'L'ower line on the screen.
+'zt', 'zz' and 'zb' keep the cursor at the current position, but scroll the view so that it falls at the 't'op, 'z' center, or 'b'ottom of the screen.
+
+'>aB' ("indent a Block")

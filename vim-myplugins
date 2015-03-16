@@ -1,0 +1,79 @@
+Plugins to add (decided)
+- YouCompleteMe
+- Syntastic (later on for langs other than c/c++)
+
+---------------------------------------------------------
+---------------------------------------------------------
+---------------------------------------------------------
+---------------------------------------------------------
+1. Ctrl P (fuzzy search) --vs?-- unite -- vs?-- Command-T
+2. NERDTree (file tree browser)
+3. (wait till needed) ag.vim (search through the project) (author: rking) vs ack.vim
+4. airline or powerline or lightline
+5. ervandew/supertab : use <Tab> for insert completion
+
+6. OmniCppComplete (vs builtin Omnicomplete), omnicompletion for c++, check for alternatives : neocomplete.
+		Uses exuberant ctags >5.7
+		(neocomplcache?)
+		guide ctags + omnicpp + gtk : http://blogs.gnome.org/lharris/2008/07/20/code-completion-with-vim-7/
+		inoremap <C-space> <C-x><C-o> " for ctrl space instead of c-o c-x
+		vs Valloric/YouCompleteMe == clang based autocompletion (semantic for c/c++)
+		... ctags vs cscope vs gnu global
+        ... YouCompleteMe integrates(?) different types of completion
+		clang-complete vim plugin -- to check (ycm better)
+7. (???) neocomplcache vs  AutoComplPop for popping out as you type
+
+8. syntastic :error checking
+9. easymotion: jump easily to any word in text
+10. find a good plugin for commenting out, see 19
+11. vim-indent-guides vs indentline
+12. fugitive (git integration) --vs?-- git gutter
+13. taglist vs tagbar (use with ctags, view tags outline: names of classes, methods)
+14. gorkunov/smartpairs.vim (easy select within matching [{'" --read documentation, this is also doable in default vim)
+15. tpope/vim-surround (manipulate surrounding "{['<)
+16. jiangmiao/auto-pairs, delimitMate (open/close {['" automatically while typing). Todo: search for good pair handling plugin     http://vim.wikia.com/wiki/Automatically_append_closing_characters
+17. something for snippets (boilerplate code pasting): neosnippet vs ultisnips vs snipmate ...
+18. something for managing sessions, saving them in working directory
+19. tpope/commentary: commenting operator, check alts maybe - NERDCommenter
+20. kana/vim-textobj-entire: act on entire text
+21. Unimpaired- switch buffers, go to error markers
+22. tpope/vim-repeat - repeat tpope plugin action with "."
+23. undotree vs gundo
+24. clang format - cxx formatting tool to keep the code style consistent
+25. tabular - formatting tool, helps align = signs etc --vs-- tabularize
+26. something for doxygen == tool for generating of documentation (c++ and more langs)
+27. pyclewn - integrate gdb with vim
+
+* find a tool to convert tabbed code to spaced and vice versa
+* consider mapping jk and kj to ESC (either inoremap + low timeoutlen = ok, =OR= via arpeggio plugin, allows to keep original timeoutlen)
+		=OR= xcape and make caps both ctrl and esc depending if pressed once or continually
+* help fold-methods for collapsing/expanding aka folding pieces of code
+* matchit.zip --> included by default in vim, maybe find newer
+* tmux (not a plugin) - terminal multiplexor
+* sensible.vim + vim-opinion --> a good reference, universal set of defaults.
+* vis.vim       apply : commands on V-selection only
+* a.vim     alternate between .c and .h (check Alternate plugin)
+* something to highlight user-defined functions (easytags? )
+
+
+To check out:
+" Add or remove your Bundles here: //from neobundle install
+clang static analyzer - possible integration with vim (if worth it)
+NeoBundle 'Shougo/neosnippet.vim'
+NeoBundle 'Shougo/neosnippet-snippets'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'flazz/vim-colorschemes' <-- tons of themes ddd
+-marching.vim
+-snowdrop.vim
+-quickrun.vim
+-mtth/scratch.vim  <-- handy scratch window for temp copy/paste
+
+Use case analysis
+Windows:
+    Split Windows: only 2 and vertical MAX
+
+Buffers:
+    Need a way to keep clean list of buffers to be edited.
+    Easily delete unneeded buffers and switch between needed.
+    Jumping to definition and back. <C-o> currently leaves hidden.
+    Need shortcut:      close current buffer and go to previous editing spot.

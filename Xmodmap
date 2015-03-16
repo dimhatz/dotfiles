@@ -1,0 +1,18 @@
+! swap alts and ctrls
+! check the keycodes with:   xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'
+clear control
+clear mod1
+keycode 37 = Alt_L Meta_L
+keycode 64 = Control_L
+keycode 105 = Alt_R Meta_R
+keycode 108 = Control_R
+add control = Control_L Control_R
+add mod1 = Alt_L Meta_L Alt_R Meta_R
+
+! regular Escape is keycode 9
+! regular Caps_Lock is keycode 66
+! lets swap them (not using clear Lock, in case some other key also mapped to caps_lock)
+remove Lock = Caps_Lock
+keycode 9 = Caps_Lock
+keycode 66 = Escape
+add Lock = Caps_Lock
