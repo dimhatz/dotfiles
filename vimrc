@@ -58,7 +58,7 @@ set nrformats-=octal                                "always assume decimal/hex n
 
 "" Visual general settings
 set number              " show line numbers
-"syntax enable           " enable syntax processing, *syntax on* overrides with defaults!
+syntax on           " syntax enable syntax processing, *syntax on* overrides with defaults!
 set showmatch           " highlight matching [{()}]
 set scrolloff=200		" no. of lines shown above/below cursor, large no. will always have cursor in middle
 
