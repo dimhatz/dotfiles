@@ -24,6 +24,7 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundle 'matchit.zip'
 NeoBundle 'nanotech/jellybeans.vim'     " jellybeans theme
 NeoBundle 'morhetz/gruvbox'             " gruvbox theme
+NeoBundle 'dimxdim/jellybat'             " jellybat theme
 NeoBundle 'chriskempson/base16-vim'
 NeoBundle 'vim-scripts/Wombat'
 NeoBundle 'vim-scripts/wombat256.vim'
@@ -252,7 +253,6 @@ endif
 " Find mappings for the following actions
 " - delete buffer aka :bd
 " - save buffer aka :w
-" - find better mapping for H and L, so that yL and dL etc work
 
 " Plugin settings
 "{{{
