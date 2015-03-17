@@ -32,8 +32,8 @@ NeoBundle 'bling/vim-airline'
 NeoBundle 'Valloric/YouCompleteMe'
 
 " For theme related stuff, also check end of this file for mappings
-NeoBundle 'vim-scripts/SyntaxAttr.vim' "check syntax group under cursor <F11>
-NeoBundle 'gerw/vim-HiLinkTrace' "check all possible syntax groups under cursor <F9>
+"NeoBundle 'vim-scripts/SyntaxAttr.vim' "check syntax group under cursor <F11>
+"NeoBundle 'gerw/vim-HiLinkTrace' "check all possible syntax groups under cursor <F9>
 "NeoBundle 'guns/xterm-color-table.vim' "print color table with corresp color codes <F10>
 "NeoBundle 'lilydjwg/colorizer' "print color table with corresp color codes <F8>
 
@@ -68,7 +68,7 @@ set scrolloff=200		" no. of lines shown above/below cursor, large no. will alway
 "set shiftwidth=4    " for indentation command in normal mode
 "set expandtab       " tabs are spaces
 "set shiftround    " use multiple of shiftwidth when indenting with '<' and '>'
-"set backspace=indent,eol,start      "allow backspacing everything in insert mode
+set backspace=indent,eol,start      "allow backspacing everything in insert mode
 set list                 "highlight whitespace
 set listchars=tab:│\ ,trail:•,extends:❯,precedes:❮,nbsp:■	" whitespaces to show (tab:│\ old, ▸\ new)
 "set shiftround			" Round indent to multiple of 'shiftwidth'. +Applies to > and <
@@ -269,7 +269,7 @@ set pastetoggle=<F4>
 " for saving (writing out) as root - small delay on w in command line
 cmap <F12> w !sudo tee % >/dev/null
 " F's for plugins
-nnoremap <F11> :call SyntaxAttr()<CR>
+"nnoremap <F11> :call SyntaxAttr()<CR>
 "nnoremap <F10> :XtermColorTable<CR>
-nnoremap <F9> :HLT<CR>
+"nnoremap <F9> :HLT<CR>
 "nnoremap <F8> :ColorToggle<CR>
