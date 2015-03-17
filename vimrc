@@ -21,16 +21,19 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 " Refer to |:NeoBundle-examples|.
 " Note: You don't set neobundle setting in .gvimrc!
 
-NeoBundle 'matchit.zip'
+" Themes
 NeoBundle 'nanotech/jellybeans.vim'     " jellybeans theme
 NeoBundle 'morhetz/gruvbox'             " gruvbox theme
 NeoBundle 'dimxdim/jellybat'             " jellybat theme
 NeoBundle 'chriskempson/base16-vim'
 NeoBundle 'vim-scripts/Wombat'
 NeoBundle 'vim-scripts/wombat256.vim'
+
+" Serious plugins
+NeoBundle 'matchit.zip'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'Valloric/YouCompleteMe'
-
+NeoBundle 'jiangmiao/auto-pairs'
 " For theme related stuff, also check end of this file for mappings
 "NeoBundle 'vim-scripts/SyntaxAttr.vim' "check syntax group under cursor <F11>
 "NeoBundle 'gerw/vim-HiLinkTrace' "check all possible syntax groups under cursor <F9>
@@ -261,11 +264,15 @@ endif
     set laststatus=2    " Always show status bar
 "}}}
 "
-" WORKAROUND FOR https://github.com/Valloric/YouCompleteMe/issues/526
+" WORKAROUND1 FOR https://github.com/Valloric/YouCompleteMe/issues/526
 " When using <BS> completion results change and become less
 " <C-w> to begin typing again will give correct results, but maybe not worth
-" retyping. This will most likely break any pair auto close plugins.
+" retyping. This will most likely break deletion in any pair auto close plugins.
 inoremap <expr><BS> pumvisible()? "\<C-y>\<BS>" : "\<BS>"
+
+" WORKAROUND2 for the workaround above
+" We can either have correct results after <BS> *OR* removed brackets after <BS>
+let g:AutoPairsMapBS=0
 
 " mappings of <F>'s
 
