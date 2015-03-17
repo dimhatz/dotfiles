@@ -260,6 +260,12 @@ endif
     let g:airline_powerline_fonts = 1
     set laststatus=2    " Always show status bar
 "}}}
+"
+" WORKAROUND FOR https://github.com/Valloric/YouCompleteMe/issues/526
+" When using <BS> completion results change and become less
+" <C-w> to begin typing again will give correct results, but maybe not worth
+" retyping. This will most likely break any pair auto close plugins.
+inoremap <expr><BS> pumvisible()? "\<C-y>\<BS>" : "\<BS>"
 
 " mappings of <F>'s
 
