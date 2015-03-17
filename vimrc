@@ -154,7 +154,7 @@ vnoremap  :  ;
 " map leader key to , find char again \, find char again backwards |
 let mapleader = ","
 " the below 2 lines dont work somehow - spit message on startup TODO
-"nnoremap \ ;
+"nnoremap \ ;   <--- problematic
 "nnoremap | ,
 
 " " avoid unrecoverable deletion (of all entered chars in line) in insert mode

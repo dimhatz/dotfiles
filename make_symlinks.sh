@@ -8,7 +8,7 @@
 
 dir=~/dotfiles                    # dotfiles directory
 olddir=~/dotfiles_old             # old dotfiles backup directory
-files="bash_profile bashrc dark-term-theme.sh gtkrc-2.0 vim-myplugins vim-notes vimrc Xmodmap Xresources ycm-mybuildcommands"    # list of files/folders to symlink in homedir
+files="bash_profile bashrc dark-term-theme.sh gtkrc-2.0 vim-myplugins vim-notes vimrc Xmodmap Xresources ycm-mybuildcommands no-screensaver.sh"    # list of files/folders to symlink in homedir
 
 ##########
 
