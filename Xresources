@@ -11,77 +11,11 @@ Xcursor.theme: Adwaita
 !============ [XTerm stuff] ==========
 ! For adjusting relative height between glyphs
 !XTerm*scaleHeight: 0.9
+XTerm*metaSendsEscape: true
 xterm*termName: xterm-256color
 xterm*locale: true
 xterm*utf8: 2
-!has to do with selecting filenames or www links
-!XTerm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
-!xterm*faceName: Ubuntu mono:size=11
-!xterm*faceName: Monaco\\-dim:size=10
-!xterm*faceName: MonacoDimPowerline:style=Regular:size=10
-!xterm*faceName: Monaco for Powerline:style=Regular:size=10
 xterm*faceName: MonaVu:style=Regular:size=10
 
-!xterm*faceName: DejaVu Sans Mono for Powerline:style=Book:size=10
-!xterm*faceName: Droid Sans Mono for Powerline:style=Regular:size=10
-!xterm*faceSize: 10
-!xterm*VT100*faceName:  DejaVu Sans Mono:style=Book:size=8:antialias=false
-!xterm*faceName: Monospace
-!xterm*faceSize: 12
+! urxvt stuff
 URxvt.font: xft:MonaVu:Regular:size=10
-
-!*background     :  rgb:1f/1f/1f
-!*color0         :  rgb:00/0d/18
-!*color1         :  rgb:e8/93/93
-!*color10        :  rgb:9e/ce/9e
-!*color11        :  rgb:f0/df/af
-!*color12        :  rgb:8c/d0/d3
-!*color13        :  rgb:c0/be/d1
-!*color14        :  rgb:df/af/8f
-!*color15        :  rgb:ef/ef/ef
-!*color2         :  rgb:9e/ce/9e
-!*color3         :  rgb:f0/df/af
-!*color4         :  rgb:8c/d0/d3
-!*color5         :  rgb:c0/be/d1
-!*color6         :  rgb:df/af/8f
-!*color7         :  rgb:ef/ef/ef
-!*color8         :  rgb:00/0d/18
-!*color9         :  rgb:e8/93/93
-!*colorBD        :  rgb:ff/cf/af
-!*colorIT        :  rgb:80/d4/aa
-!*colorUL        :  rgb:cc/dc/90
-!*cursorColor    :  rgb:8f/af/9fr
-!*foreground     :  rgb:dc/dc/cc
-!
-!*color16         :  rgb:e8/93/93
-!*color17         :  rgb:e8/93/93
-!*color18         :  rgb:e8/93/93
-!*color19         :  rgb:e8/93/93
-!*color20         :  rgb:e8/93/93
-
-!#define _background    rgb:1f/1f/1f
-!#define _color0        rgb:00/0d/18
-!#define _color1        rgb:e8/93/93
-!#define _color10       rgb:9e/ce/9e
-!#define _color11       rgb:f0/df/af
-!#define _color12       rgb:8c/d0/d3
-!#define _color13       rgb:c0/be/d1
-!#define _color14       rgb:df/af/8f
-!#define _color15       rgb:ef/ef/ef
-!#define _color2        rgb:9e/ce/9e
-!#define _color3        rgb:f0/df/af
-!#define _color4        rgb:8c/d0/d3
-!#define _color5        rgb:c0/be/d1
-!#define _color6        rgb:df/af/8f
-!#define _color7        rgb:ef/ef/ef
-!#define _color8        rgb:00/0d/18
-!#define _color9        rgb:e8/93/93
-!#define _colorBD       rgb:ff/cf/af
-!#define _colorIT       rgb:80/d4/aa
-!#define _colorUL       rgb:cc/dc/90
-!#define _cursorColor   rgb:8f/af/9f
-!#define _foreground    rgb:dc/dc/cc
-
-!XTerm*color0         : _color0
-!XTerm*color1         : _color1
-!XTerm*color2         : _color2
