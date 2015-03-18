@@ -61,6 +61,7 @@ set fileformats+=mac                                "add mac to auto-detection o
 set nrformats-=octal                                "always assume decimal/hex numbers
 
 "" Visual general settings
+set showcmd             " show (partial) command in bottom-right
 set number              " show line numbers
 syntax on           " syntax enable syntax processing, *syntax on* overrides with defaults!
 set showmatch           " highlight matching [{()}]
@@ -156,7 +157,16 @@ vnoremap  ;  :
 vnoremap  :  ;
 
 " map leader key to , find char again \, find char again backwards |
-let mapleader = ","
+" another option is "map <Space> <Leader>" but will not trigger double leader
+" aka <Leader><Leader> mappings
+" let mapleader = "\<Space>" if let mapleader = " " doesnt work
+" also if remapped leader is continuously pressed, next leader presses will
+" not be triggered until modes are changed (easymotion probably is culprit)
+"nnoremap <Space> <Nop>
+"vnoremap <Space> <Nop>
+"let mapleader = " "
+let mapleader = "\<Space>"
+
 " the below 2 lines dont work somehow - spit message on startup TODO
 "nnoremap \ ;   <--- problematic
 "nnoremap | ,
