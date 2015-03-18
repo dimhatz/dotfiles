@@ -1,11 +1,16 @@
 # Use Vi, not Emacs, style editing
 # This will affect all programs using readline lib (bash, mysql etc)
+
 # If only bash has to be set up, delete this file and add
 # 	set -o vi
 # in .bashrc
+
+# Bash specific:
+# !!! To return from / (aka history search) press c-g. Havent found a way to return with ESC.
+
 set editing-mode vi
 
-# needs LS_COLORS env variable to provide color definitions
+# Completion suggestions in color. Possibly needs LS_COLORS env variable to provide color definitions
 set colored-stats on
 
 # Show all completions as soon as I press tab, even if there's more than one
