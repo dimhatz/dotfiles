@@ -238,10 +238,10 @@ vnoremap <tab> %
 noremap H ^
 noremap L $
 
-" c-d exits, c-f writes, c-c deletes buffer
-nnoremap <c-d> :q<CR>
-nnoremap <c-s> :w<CR>
-nnoremap <c-c> :bd<CR>
+" c-d exits, c-f writes(if buffer was modified), c-c deletes buffer
+nnoremap <C-D> :q<CR>
+nnoremap <C-S> :update<CR>
+nnoremap <C-C> :bd<CR>
 
 "====[ '*' in visual will do search on selection - the correct way ]======
 vnoremap * :<C-u>call <SID>VSetSearch()<CR>/<C-R>=@/<CR><CR>
