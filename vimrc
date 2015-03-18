@@ -31,6 +31,7 @@ NeoBundle 'vim-scripts/wombat256.vim'
 
 " Serious plugins
 NeoBundle 'matchit.zip'
+NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'Valloric/YouCompleteMe'
 NeoBundle 'jiangmiao/auto-pairs'
@@ -273,6 +274,8 @@ inoremap <expr><BS> pumvisible()? "\<C-y>\<BS>" : "\<BS>"
 " WORKAROUND2 for the workaround above
 " We can either have correct results after <BS> *OR* removed brackets after <BS>
 let g:AutoPairsMapBS=0
+
+let g:EasyMotion_off_screen_search=0
 
 " mappings of <F>'s
 

@@ -10,16 +10,16 @@ Plugins to add (decided)
 2. NERDTree (file tree browser)
 3. (wait till needed) ag.vim (search through the project) (author: rking) vs ack.vim
 4. airline or powerline or lightline
-5. ervandew/supertab : use <Tab> for insert completion
+5. ervandew/supertab : use <Tab> for insert completion - obsolete if using ycm
 
-6. OmniCppComplete (vs builtin Omnicomplete), omnicompletion for c++, check for alternatives : neocomplete.
+6. YouCompleteMe integrates(?) different types of completion
+OmniCppComplete (vs builtin Omnicomplete), omnicompletion for c++, check for alternatives : neocomplete.
 		Uses exuberant ctags >5.7
 		(neocomplcache?)
 		guide ctags + omnicpp + gtk : http://blogs.gnome.org/lharris/2008/07/20/code-completion-with-vim-7/
 		inoremap <C-space> <C-x><C-o> " for ctrl space instead of c-o c-x
 		vs Valloric/YouCompleteMe == clang based autocompletion (semantic for c/c++)
 		... ctags vs cscope vs gnu global
-        ... YouCompleteMe integrates(?) different types of completion
 		clang-complete vim plugin -- to check (ycm better)
 7. (???) neocomplcache vs  AutoComplPop for popping out as you type
 
@@ -63,6 +63,8 @@ NeoBundle 'Shougo/neosnippet.vim'
 NeoBundle 'Shougo/neosnippet-snippets'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'flazz/vim-colorschemes' <-- tons of themes ddd
+-haya14busa/vim-easyoperator-line (like easymotion but for line numbers)
+-vim-easyoperator-phrase
 -marching.vim
 -snowdrop.vim
 -quickrun.vim
