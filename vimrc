@@ -105,7 +105,7 @@ set wildignorecase		" ignore case in wildmenu search
 
 "" Keyboard and cursor
 set timeout ttimeout         " enable separate mapping and keycode timeouts
-set timeoutlen=250                                  "mapping timeout ms (default 1000)
+set timeoutlen=300                                  "mapping timeout ms (default 1000)
 set ttimeoutlen=50                                  "keycode timeout ms (default -1, unset when having ssh with latency)
 
 " Add tags from tag folder (libraries)
@@ -152,9 +152,9 @@ call matchadd('MyColorColumn', '\%81v', 100)
 " Swap : and ; to make colon commands easier to type
 " The vice versa remapping *may* break plugins - to be confirmed
 nnoremap  ;  :
-nnoremap  :  ;
+"nnoremap  :  ;
 vnoremap  ;  :
-vnoremap  :  ;
+"vnoremap  :  ;
 
 " map leader key to , find char again \, find char again backwards |
 " another option is "map <Space> <Leader>" but will not trigger double leader
@@ -230,13 +230,17 @@ vnoremap <C-V>     V
 nnoremap    V   v
 vnoremap    V   v
 
-"====[ Use tab instead of % for jumping to matching parens - breaks <C-i> - bug ]
-"nnoremap <tab> %
-"vnoremap <tab> %
+"====[ Use tab instead of % for jumping to matching parens
+nnoremap <tab> %
+vnoremap <tab> %
 
 " move to beginning/end of line (also consider B and E as alternative)
 noremap H ^
 noremap L $
+
+" c-d exits, c-f writes
+nnoremap <c-d> :q<CR>
+nnoremap <c-f> :w<CR>
 
 "====[ '*' in visual will do search on selection - the correct way ]======
 vnoremap * :<C-u>call <SID>VSetSearch()<CR>/<C-R>=@/<CR><CR>
