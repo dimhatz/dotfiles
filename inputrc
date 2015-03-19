@@ -7,6 +7,8 @@
 
 # Bash specific:
 # !!! To return from / (aka history search) press c-g. Havent found a way to return with ESC.
+# TODO impement dH and dL using "set keymap vi-move"
+# TODO maybe find a way to change cursor to bar and back upon entering/exiting insert mode
 
 set editing-mode vi
 
