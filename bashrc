@@ -14,3 +14,6 @@ BASE16_SHELL="$HOME/.dark-term-theme.sh"
 
 # Disable freezing screen with c-s (and unfreezing with c-q)
 stty -ixon
+
+# Set eof char to ^Q instead of ^D - works, not sure if needed
+#stty eof ^Q

@@ -11,6 +11,7 @@ Xcursor.theme: Adwaita
 !============ [XTerm stuff] ==========
 ! For adjusting relative height between glyphs
 !XTerm*scaleHeight: 0.9
+!xterm*selectToClipboard: true
 xterm*metaSendsEscape: true
 xterm*termName: xterm-256color
 xterm*locale: true

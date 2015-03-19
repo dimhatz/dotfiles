@@ -35,6 +35,7 @@ NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'Valloric/YouCompleteMe'
 NeoBundle 'jiangmiao/auto-pairs'
+NeoBundle 'tommcdo/vim-exchange'
 " For theme related stuff, also check end of this file for mappings
 "NeoBundle 'vim-scripts/SyntaxAttr.vim' "check syntax group under cursor <F11>
 "NeoBundle 'gerw/vim-HiLinkTrace' "check all possible syntax groups under cursor <F9>
@@ -105,7 +106,7 @@ set wildignorecase		" ignore case in wildmenu search
 
 "" Keyboard and cursor
 set timeout ttimeout         " enable separate mapping and keycode timeouts
-set timeoutlen=300                                  "mapping timeout ms (default 1000)
+set timeoutlen=400                                  "mapping timeout ms (default 1000)
 set ttimeoutlen=50                                  "keycode timeout ms (default -1, unset when having ssh with latency)
 
 " Add tags from tag folder (libraries)
@@ -270,8 +271,7 @@ endif
 
 " TODO:
 " Find mappings for the following actions
-" - delete buffer aka :bd
-" - save buffer aka :w
+" - command mode paste "+ register
 
 " Plugin settings
 "{{{

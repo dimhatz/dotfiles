@@ -29,7 +29,7 @@ set completion-map-case on
 set menu-complete-display-prefix on
 
 # Timeout for key sequences (default is 500, my vim's is 300, so lets match it)
-set keyseq-timeout 300
+set keyseq-timeout 400
 
 # At beginning of line display the mode: @ for emacs, : for vi command, + for vi insert
 set show-mode-in-prompt on

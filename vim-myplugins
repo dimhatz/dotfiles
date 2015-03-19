@@ -1,7 +1,8 @@
 Plugins to add (decided)
 - YouCompleteMe
-- Syntastic (later on for langs other than c/c++)
-
+- Syntastic* (later on for langs other than c/c++)
+- Easymotion
+- tommcdo/vim-exchange (exchange 2 regions of text)
 ---------------------------------------------------------
 ---------------------------------------------------------
 ---------------------------------------------------------
