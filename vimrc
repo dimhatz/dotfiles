@@ -34,6 +34,7 @@ NeoBundle 'matchit.zip'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'jiangmiao/auto-pairs'
 "NeoBundle 'tpope/vim-surround' more useful for html etc
+NeoBundle 'tpope/vim-commentary'
 NeoBundle 'tommcdo/vim-exchange'
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'Valloric/YouCompleteMe'
