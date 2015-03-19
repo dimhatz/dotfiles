@@ -33,7 +33,7 @@ NeoBundle 'vim-scripts/wombat256.vim'
 NeoBundle 'matchit.zip'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'jiangmiao/auto-pairs'
-NeoBundle 'tpope/vim-surround'
+"NeoBundle 'tpope/vim-surround' more useful for html etc
 NeoBundle 'tommcdo/vim-exchange'
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'Valloric/YouCompleteMe'
