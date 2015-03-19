@@ -154,8 +154,8 @@ call matchadd('MyColorColumn', '\%81v', 100)
 " The vice versa remapping *may* break plugins - to be confirmed
 nnoremap  ;  :
 "nnoremap  :  ;
-vnoremap  ;  :
-"vnoremap  :  ;
+xnoremap  ;  :
+"xnoremap  :  ;
 
 " map leader key to , find char again \, find char again backwards |
 " another option is "map <Space> <Leader>" but will not trigger double leader
@@ -164,7 +164,7 @@ vnoremap  ;  :
 " also if remapped leader is continuously pressed, next leader presses will
 " not be triggered until modes are changed (easymotion probably is culprit)
 nnoremap <Space> <Nop>
-vnoremap <Space> <Nop>
+xnoremap <Space> <Nop>
 "let mapleader = " "
 let mapleader = "\<Space>"
 
@@ -195,11 +195,11 @@ nnoremap <silent> ( :bprev<CR>
 " and repeatedly pasting it. This changes the paste
 " command in visual mode so that it doesn't overwrite
 " whatever is in your paste buffer.
-vnoremap p "_dP
+xnoremap p "_dP
 
 " x in normal or visual will not overwrite the paste buffer
 nnoremap x "_x
-vnoremap x "_x
+xnoremap x "_x
 
 " X deletes to black hole till end of line
 nnoremap X "_D
@@ -225,15 +225,11 @@ endif
 "====[ Swap V and CTRL-v. Regular visual is now Shift-v. ]======
 "====[ Block mode is more useful that Visual mode ]======
 nnoremap    v   <C-V>
-vnoremap    v   <C-V>
+xnoremap    v   <C-V>
 nnoremap <C-V>     V
-vnoremap <C-V>     V
+xnoremap <C-V>     V
 nnoremap    V   v
-vnoremap    V   v
-
-"====[ Use tab instead of % for jumping to matching parens
-nnoremap <tab> %
-vnoremap <tab> %
+xnoremap    V   v
 
 " move to beginning/end of line (also consider B and E as alternative)
 noremap H ^
@@ -245,8 +241,8 @@ nnoremap <C-S> :update<CR>
 nnoremap <C-C> :bd<CR>
 
 "====[ '*' in visual will do search on selection - the correct way ]======
-vnoremap * :<C-u>call <SID>VSetSearch()<CR>/<C-R>=@/<CR><CR>
-vnoremap # :<C-u>call <SID>VSetSearch()<CR>?<C-R>=@/<CR><CR>
+xnoremap * :<C-u>call <SID>VSetSearch()<CR>/<C-R>=@/<CR><CR>
+xnoremap # :<C-u>call <SID>VSetSearch()<CR>?<C-R>=@/<CR><CR>
 function! s:VSetSearch()
   let temp = @s
   norm! gv"sy
@@ -293,9 +289,12 @@ inoremap <expr><BS> pumvisible()? "\<C-y>\<BS>" : "\<BS>"
 " We can either have correct results after <BS> *OR* removed brackets after <BS>
 let g:AutoPairsMapBS=0
 
+" for better performance (also doesnt make sense to search offscreen)
 let g:EasyMotion_off_screen_search=0
 
-" mappings of <F>'s
+" c-x marks for exchange in visual-only, default (X) also remains
+xmap <C-X> <Plug>(Exchange)
+"============== mappings of <F>'s
 
 " enter paste mode on pressing F4, to stop autoindenting etc, not needed when
 " using "+ register -- to be confirm
