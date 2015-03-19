@@ -31,11 +31,11 @@ NeoBundle 'vim-scripts/wombat256.vim'
 
 " Serious plugins
 NeoBundle 'matchit.zip'
-NeoBundle 'Lokaltog/vim-easymotion'
-NeoBundle 'bling/vim-airline'
-NeoBundle 'Valloric/YouCompleteMe'
 NeoBundle 'jiangmiao/auto-pairs'
+NeoBundle 'bling/vim-airline'
 NeoBundle 'tommcdo/vim-exchange'
+NeoBundle 'Lokaltog/vim-easymotion'
+NeoBundle 'Valloric/YouCompleteMe'
 " For theme related stuff, also check end of this file for mappings
 "NeoBundle 'vim-scripts/SyntaxAttr.vim' "check syntax group under cursor <F11>
 "NeoBundle 'gerw/vim-HiLinkTrace' "check all possible syntax groups under cursor <F9>
@@ -101,7 +101,7 @@ set ignorecase          "ignore case for searching
 
 " Wildmenu
 set wildmenu            " visual autocomplete for command menu
-set wildmode=list:longest		" if more than one match show list
+set wildmode=list:longest,full		" complete longest common, then cycle with tab
 set wildignorecase		" ignore case in wildmenu search
 
 "" Keyboard and cursor
@@ -163,8 +163,8 @@ vnoremap  ;  :
 " let mapleader = "\<Space>" if let mapleader = " " doesnt work
 " also if remapped leader is continuously pressed, next leader presses will
 " not be triggered until modes are changed (easymotion probably is culprit)
-"nnoremap <Space> <Nop>
-"vnoremap <Space> <Nop>
+nnoremap <Space> <Nop>
+vnoremap <Space> <Nop>
 "let mapleader = " "
 let mapleader = "\<Space>"
 
@@ -279,9 +279,12 @@ endif
     let g:airline_powerline_fonts = 1
     set laststatus=2    " Always show status bar
 "}}}
-"
+
+" Use original mappings - may break plugins
+map <Leader> <Plug>(easymotion-prefix)
+
 " WORKAROUND1 FOR https://github.com/Valloric/YouCompleteMe/issues/526
-" When using <BS> completion results change and become less
+" When using <BS> completion results change and become fewer.
 " <C-w> to begin typing again will give correct results, but maybe not worth
 " retyping. This will most likely break deletion in any pair auto close plugins.
 inoremap <expr><BS> pumvisible()? "\<C-y>\<BS>" : "\<BS>"
