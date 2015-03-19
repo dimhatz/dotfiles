@@ -31,8 +31,9 @@ NeoBundle 'vim-scripts/wombat256.vim'
 
 " Serious plugins
 NeoBundle 'matchit.zip'
-NeoBundle 'jiangmiao/auto-pairs'
 NeoBundle 'bling/vim-airline'
+NeoBundle 'jiangmiao/auto-pairs'
+NeoBundle 'tpope/vim-surround'
 NeoBundle 'tommcdo/vim-exchange'
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'Valloric/YouCompleteMe'
@@ -101,7 +102,7 @@ set ignorecase          "ignore case for searching
 
 " Wildmenu
 set wildmenu            " visual autocomplete for command menu
-set wildmode=list:longest,full		" complete longest common, then cycle with tab
+set wildmode=list:longest,full		" complete longest common, then cycle with tab, back cycle shift-tab
 set wildignorecase		" ignore case in wildmenu search
 
 "" Keyboard and cursor
@@ -293,6 +294,7 @@ let g:AutoPairsMapBS=0
 let g:EasyMotion_off_screen_search=0
 
 " c-x marks for exchange in visual-only, default (X) also remains
+" (manual suggests xmap, doesnt say anything about xnoremap)
 xmap <C-X> <Plug>(Exchange)
 "============== mappings of <F>'s
 
