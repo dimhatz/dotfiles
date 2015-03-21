@@ -11,7 +11,10 @@ Xcursor.theme: Adwaita
 !============ [XTerm stuff] ==========
 ! For adjusting relative height between glyphs
 !XTerm*scaleHeight: 0.9
-!xterm*selectToClipboard: true
+! DONT FORGET TO USE CLIPBOARD MANAGER LIKE PARCELLITE TO KEEP CLIPBOARD FROM
+! DISAPPEARING WHEN APPLICATION EXITS
+xterm*selectToClipboard: true
+XTerm*selectToClipboard: true
 xterm*metaSendsEscape: true
 xterm*termName: xterm-256color
 xterm*locale: true

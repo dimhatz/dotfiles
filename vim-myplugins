@@ -70,6 +70,7 @@ NeoBundle 'flazz/vim-colorschemes' <-- tons of themes ddd
 -snowdrop.vim
 -quickrun.vim
 -mtth/scratch.vim  <-- handy scratch window for temp copy/paste
+- vim rooter : keeps cwd at project root (for building from work dir when editing file from subdir)
 
 Use case analysis
 Windows:
