@@ -39,9 +39,9 @@ NeoBundle 'tommcdo/vim-exchange'
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'Valloric/YouCompleteMe'
 " For theme related stuff, also check end of this file for mappings
-"NeoBundle 'vim-scripts/SyntaxAttr.vim' "check syntax group under cursor <F11>
-"NeoBundle 'gerw/vim-HiLinkTrace' "check all possible syntax groups under cursor <F9>
-"NeoBundle 'guns/xterm-color-table.vim' "print color table with corresp color codes <F10>
+NeoBundle 'vim-scripts/SyntaxAttr.vim' "check syntax group under cursor <F11>
+NeoBundle 'gerw/vim-HiLinkTrace' "check all possible syntax groups under cursor <F10>
+"NeoBundle 'guns/xterm-color-table.vim' "print color table with corresp color codes <F9>
 "NeoBundle 'lilydjwg/colorizer' "print color table with corresp color codes <F8>
 
 call neobundle#end()
@@ -214,7 +214,11 @@ nnoremap Y y$
 " BEGIN_WORKAROUND
 	" needs <esc>smth mapped in order to trigger timeout.
 	" only then it will work. else numbers on startup in terminal.
+	" also, rapid pressing <esc><F*> will result in weird behavior, such
+	" as entering insert mode and writing S for <esc><F4>.
+	" Triple esc mapping prevents it
 		nnoremap <silent> <ESC><ESC> :nohlsearch<CR><ESC>
+		nnoremap <silent> <ESC><ESC><ESC> :nohlsearch<CR><ESC>
 		nnoremap <silent> <ESC> :nohlsearch<CR><ESC>
 " END_WORKAROUND
 
@@ -305,7 +309,7 @@ set pastetoggle=<F4>
 " for saving (writing out) as root - small delay on w in command line
 cmap <F12> w !sudo tee % >/dev/null
 " F's for plugins
-"nnoremap <F11> :call SyntaxAttr()<CR>
-"nnoremap <F10> :XtermColorTable<CR>
-"nnoremap <F9> :HLT<CR>
+nnoremap <F11> :call SyntaxAttr()<CR>
+nnoremap <F10> :HLT<CR>
+"nnoremap <F9> :XtermColorTable<CR>
 "nnoremap <F8> :ColorToggle<CR>
