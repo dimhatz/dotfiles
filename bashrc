@@ -17,3 +17,6 @@ stty -ixon
 
 # Set eof char to ^Q instead of ^D - works, not sure if needed
 #stty eof ^Q
+
+# now we can use arrows/vi-style in sml interactive mode
+alias sml='rlwrap sml'
