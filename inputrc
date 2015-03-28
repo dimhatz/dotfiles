@@ -45,6 +45,10 @@ L: end-of-line
 Control-e: end-of-line
 
 ###########################################################
+# just reminding useful defaults:
+# c-r  reverse-search-history ( incremental search )
+# c-s  forward-search-history ( incremental search ) TODO remap to c-f right below c-r
+###########################################################
 # Keymaps for when we're in insert (i.e., typing stuff in) mode
 set keymap vi-insert
 
@@ -58,7 +62,5 @@ TAB: menu-complete
 ## Option-up/option-down should also apply to insert mode
 #"\e\e[A": history-search-backward
 #"\e\e[B": history-search-forward
-#
-## Needed because binding 'p' in command mode above wipes its insert mode
-## function, too. This fixes that, and will insert 'p' when you type 'p'.
-#"p": self-insert
+Control-p: history-search-backward
+Control-n: history-search-forward
