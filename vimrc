@@ -302,9 +302,15 @@ let g:AutoPairsMapBS=0
 " for better performance (also doesnt make sense to search offscreen)
 let g:EasyMotion_off_screen_search=0
 
-" c-x marks for exchange in visual-only, default (X) also remains
+" c-x marks for exchange in visual-only, default (X aka black hole delete) also remains
 " (manual suggests xmap, doesnt say anything about xnoremap)
 xmap <C-X> <Plug>(Exchange)
+
+" make any scratch/preview windows during insertion (completion) show below (bottom)
+augroup PreviewOnBottom
+    autocmd InsertEnter * set splitbelow
+    autocmd InsertLeave * set splitbelow!
+augroup END
 "============== mappings of <F>'s
 
 " enter paste mode on pressing F4, to stop autoindenting etc, not needed when
