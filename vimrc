@@ -243,8 +243,9 @@ noremap L $
 
 " c-d exits, c-f writes(if buffer was modified), c-c deletes buffer
 nnoremap <C-D> :q<CR>
-nnoremap <C-S> :update<CR>
-nnoremap <C-C> :bd<CR>
+nnoremap <silent><C-S> :update<CR>
+inoremap <silent><C-S> <esc>:update<CR>
+nnoremap <silent><C-C> :bdelete<CR>
 
 "====[ '*' in visual will do search on selection - the correct way ]======
 xnoremap * :<C-u>call <SID>VSetSearch()<CR>/<C-R>=@/<CR><CR>
@@ -281,6 +282,9 @@ endif
     let g:airline_powerline_fonts = 1
     set laststatus=2    " Always show status bar
 "}}}
+
+" auto close preview after leaving insert mode
+let g:ycm_autoclose_preview_window_after_insertion = 1
 
 " Use original mappings - may break plugins
 map <Leader> <Plug>(easymotion-prefix)
