@@ -33,7 +33,7 @@ NeoBundle 'vim-scripts/wombat256.vim'
 NeoBundle 'matchit.zip'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'jiangmiao/auto-pairs'
-"NeoBundle 'tpope/vim-surround' more useful for html etc
+" NeoBundle 'tpope/vim-surround' consider later, better for xml etc
 NeoBundle 'tpope/vim-commentary'
 NeoBundle 'tommcdo/vim-exchange'
 NeoBundle 'Lokaltog/vim-easymotion'
@@ -308,9 +308,11 @@ xmap <C-X> <Plug>(Exchange)
 
 " make any scratch/preview windows during insertion (completion) show below (bottom)
 augroup PreviewOnBottom
-    autocmd InsertEnter * set splitbelow
-    autocmd InsertLeave * set splitbelow!
+	autocmd!
+	autocmd InsertEnter * set splitbelow
+	autocmd InsertLeave * set splitbelow!
 augroup END
+
 "============== mappings of <F>'s
 
 " enter paste mode on pressing F4, to stop autoindenting etc, not needed when
