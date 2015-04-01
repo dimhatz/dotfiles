@@ -285,6 +285,9 @@ endif
 
 " auto close preview after leaving insert mode
 let g:ycm_autoclose_preview_window_after_insertion = 1
+" stop highlighting warning/error parts of line, causes highlighing at the
+" same point in all the other open buffers
+let g:ycm_enable_diagnostic_highlighting = 0
 
 " Use original mappings - may break plugins
 map <Leader> <Plug>(easymotion-prefix)
