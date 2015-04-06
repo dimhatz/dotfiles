@@ -7,7 +7,7 @@ Plugins to add (decided)
 ---------------------------------------------------------
 ---------------------------------------------------------
 ---------------------------------------------------------
-1. Ctrl P (fuzzy search) --vs?-- unite -- vs?-- Command-T
+1. Ctrl P (fuzzy search also c version ctrlp-cmatcher) --vs?-- unite -- vs?-- Command-T
 2. NERDTree (file tree browser)
 3. (wait till needed) ag.vim (search through the project) (author: rking) vs ack.vim
 4. airline or powerline or lightline
