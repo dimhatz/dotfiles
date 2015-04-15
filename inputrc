@@ -10,7 +10,12 @@
 # TODO impement dH and dL using "set keymap vi-move"
 # TODO maybe find a way to change cursor to bar and back upon entering/exiting insert mode
 
-set editing-mode vi
+# # Be 8 bit clean.
+# set meta-flag on
+# set input-meta on
+# set output-meta on
+# set convert-meta off
+# set editing-mode vi
 
 # Completion suggestions in color. Possibly needs LS_COLORS env variable to provide color definitions
 set colored-stats on
