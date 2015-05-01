@@ -21,13 +21,17 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 " Refer to |:NeoBundle-examples|.
 " Note: You don't set neobundle setting in .gvimrc!
 
-" Themes
+" Themes, also check end of this file for mappings
 NeoBundle 'nanotech/jellybeans.vim'     " jellybeans theme
 NeoBundle 'morhetz/gruvbox'             " gruvbox theme
 NeoBundle 'dimxdim/jellybat'             " jellybat theme
 NeoBundle 'chriskempson/base16-vim'
 NeoBundle 'vim-scripts/Wombat'
 NeoBundle 'vim-scripts/wombat256.vim'
+NeoBundle 'vim-scripts/SyntaxAttr.vim' "check syntax group under cursor <F11>
+NeoBundle 'gerw/vim-HiLinkTrace' "check all possible syntax groups under cursor <F10>
+"NeoBundle 'guns/xterm-color-table.vim' "print color table with corresp color codes <F9>
+"NeoBundle 'lilydjwg/colorizer' "print color table with corresp color codes <F8>
 
 " Serious plugins
 NeoBundle 'matchit.zip'
@@ -38,11 +42,6 @@ NeoBundle 'tpope/vim-commentary'
 NeoBundle 'tommcdo/vim-exchange'
 NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'Valloric/YouCompleteMe'
-" For theme related stuff, also check end of this file for mappings
-NeoBundle 'vim-scripts/SyntaxAttr.vim' "check syntax group under cursor <F11>
-NeoBundle 'gerw/vim-HiLinkTrace' "check all possible syntax groups under cursor <F10>
-"NeoBundle 'guns/xterm-color-table.vim' "print color table with corresp color codes <F9>
-"NeoBundle 'lilydjwg/colorizer' "print color table with corresp color codes <F8>
 
 call neobundle#end()
 
@@ -209,8 +208,7 @@ nnoremap X "_D
 " Y yanks till end of line, instead of whole line
 nnoremap Y y$
 
-" stop highlighting search pressing <ESC>
-
+" Stop highlighting matching search pattern pressing <ESC>
 " BEGIN_WORKAROUND
 	" needs <esc>smth mapped in order to trigger timeout.
 	" only then it will work. else numbers on startup in terminal.
@@ -238,8 +236,15 @@ nnoremap    V   v
 xnoremap    V   v
 
 " move to beginning/end of line (also consider B and E as alternative)
-noremap H ^
-noremap L $
+" <C-H> by default in terminal is produced by backspace
+" TODO: find suitable shortcut for moving to beginning in insert mode
+noremap <C-H> ^
+noremap <C-L> $
+" <C-L> appends to end of line, useful to escape auto-closing parens
+inoremap <C-L> <ESC>A
+" break the habbit of Shift-H, Shift-L
+nnoremap H <nop>
+nnoremap L <nop>
 
 " c-d exits, c-f writes(if buffer was modified), c-c deletes buffer
 nnoremap <C-D> :q<CR>
@@ -298,7 +303,7 @@ map <Leader> <Plug>(easymotion-prefix)
 " retyping. This will most likely break deletion in any pair auto close plugins.
 inoremap <expr><BS> pumvisible()? "\<C-y>\<BS>" : "\<BS>"
 
-" WORKAROUND2 for the workaround above
+" WORKAROUND2 for the workaround above, this time in auto-pairs
 " We can either have correct results after <BS> *OR* removed brackets after <BS>
 let g:AutoPairsMapBS=0
 
