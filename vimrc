@@ -28,10 +28,10 @@ NeoBundle 'dimxdim/jellybat'             " jellybat theme
 NeoBundle 'chriskempson/base16-vim'
 NeoBundle 'vim-scripts/Wombat'
 NeoBundle 'vim-scripts/wombat256.vim'
-NeoBundle 'vim-scripts/SyntaxAttr.vim' "check syntax group under cursor <F11>
-NeoBundle 'gerw/vim-HiLinkTrace' "check all possible syntax groups under cursor <F10>
-"NeoBundle 'guns/xterm-color-table.vim' "print color table with corresp color codes <F9>
-"NeoBundle 'lilydjwg/colorizer' "print color table with corresp color codes <F8>
+" NeoBundle 'vim-scripts/SyntaxAttr.vim' "check syntax group under cursor <F11>
+" NeoBundle 'gerw/vim-HiLinkTrace' "check all possible syntax groups under cursor <F10>
+" NeoBundle 'guns/xterm-color-table.vim' "print color table with corresp color codes <F9>
+" NeoBundle 'lilydjwg/colorizer' "print color table with corresp color codes <F8>
 
 " Serious plugins
 NeoBundle 'matchit.zip'
