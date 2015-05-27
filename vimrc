@@ -186,9 +186,13 @@ let mapleader = "\<Space>"
 nnoremap j gj
 nnoremap k gk
 
-" map ) and ( to :bnext and :bprev
-nnoremap <silent> ) :bnext<CR>
-nnoremap <silent> ( :bprev<CR>
+" map } and { to :bnext and :bprev
+nnoremap <silent> } :bnext<CR>
+nnoremap <silent> { :bprev<CR>
+
+" jump paragraph with ( , )
+nnoremap ( {
+nnoremap ) }
 
 " If you visually select something and hit paste
 " that thing gets yanked into your buffer. This
