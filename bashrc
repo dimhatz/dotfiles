@@ -29,4 +29,5 @@ shopt -s histappend                     # append to history, don't overwrite it
 # Not sure, but might interfere with !1 type commands (last command from history)
 # Save and reload the history after each command finishes
 # Should enable command completion sharing between terminals
+# - requires any command first (even empty aka Enter)to reread command history
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
