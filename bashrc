@@ -20,3 +20,13 @@ stty -ixon
 
 # now we can use arrows/vi-style in sml interactive mode
 alias sml='rlwrap sml'
+
+export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
+export HISTSIZE=50000                   # big big history
+export HISTFILESIZE=$HISTSIZE           # big big history
+shopt -s histappend                     # append to history, don't overwrite it
+
+# Not sure, but might interfere with !1 type commands (last command from history)
+# Save and reload the history after each command finishes
+# Should enable command completion sharing between terminals
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
