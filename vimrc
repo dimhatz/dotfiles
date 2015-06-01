@@ -289,6 +289,7 @@ endif
 "{{{
     let g:airline#extensions#tabline#enabled = 1
     let g:airline_powerline_fonts = 1
+    let g:airline#extensions#eclim#enabled = 1
     set laststatus=2    " Always show status bar
 "}}}
 
