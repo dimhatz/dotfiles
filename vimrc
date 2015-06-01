@@ -298,6 +298,9 @@ let g:ycm_autoclose_preview_window_after_insertion = 1
 " same point in all the other open buffers
 let g:ycm_enable_diagnostic_highlighting = 0
 
+" make eclim and ycm play nice
+let g:EclimCompletionMethod = 'omnifunc'
+
 " Use original mappings - may break plugins
 map <Leader> <Plug>(easymotion-prefix)
 
