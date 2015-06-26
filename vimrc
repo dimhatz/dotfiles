@@ -247,10 +247,10 @@ noremap <C-L> $
 " <C-L> appends to end of line, useful to escape auto-closing parens
 inoremap <C-L> <ESC>A
 
-" insert and append to each line when in visual
-xnoremap i I
+"TODO insert and append to each line when in visual
+"xnoremap i I <-- inside
 " unmap a% <-- matchit plugin maps a%, causing delay when 'a'
-xnoremap a A
+"xnoremap a A <-- around
 
 " surround mappings
 " s surrounds {move}, S surrounds line
