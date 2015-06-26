@@ -34,10 +34,10 @@ NeoBundle 'vim-scripts/wombat256.vim'
 " NeoBundle 'lilydjwg/colorizer' "print color table with corresp color codes <F8>
 
 " Serious plugins
-NeoBundle 'matchit.zip'
+"NeoBundle 'matchit.zip'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'jiangmiao/auto-pairs'
-" NeoBundle 'tpope/vim-surround' consider later, better for xml etc
+NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-commentary'
 NeoBundle 'tommcdo/vim-exchange'
 NeoBundle 'Lokaltog/vim-easymotion'
@@ -246,11 +246,22 @@ noremap <C-H> ^
 noremap <C-L> $
 " <C-L> appends to end of line, useful to escape auto-closing parens
 inoremap <C-L> <ESC>A
-" break the habbit of Shift-H, Shift-L
-nnoremap H <nop>
-nnoremap L <nop>
 
-" c-d exits, c-f writes(if buffer was modified), c-c deletes buffer
+" insert and append to each line when in visual
+xnoremap i I
+" unmap a% <-- matchit plugin maps a%, causing delay when 'a'
+xnoremap a A
+
+" surround mappings
+" s surrounds {move}, S surrounds line
+let g:surround_no_mappings = 1
+nmap s   <Plug>Ysurround
+nmap S   <Plug>Yssurround
+nmap ds  <Plug>Dsurround
+nmap cs  <Plug>Csurround
+xmap s   <Plug>VSurround
+
+" c-d exits, c-s writes(if buffer was modified), c-c deletes buffer
 nnoremap <C-D> :q<CR>
 nnoremap <silent><C-S> :update<CR>
 inoremap <silent><C-S> <esc>:update<CR>
