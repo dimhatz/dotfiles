@@ -277,6 +277,10 @@ nnoremap <Leader>v `[V`]
 " Reselect pasted text linewise, ( `[ is jump to beginning of changed/yanked )
 nnoremap <Leader>v `[V`]
 
+" Uppercase current word (norm/insert)
+nnoremap <C-u> gUiw
+inoremap <C-u> <ESC>gUiwea
+
 "====[ '*' in visual will do search on selection - the correct way ]======
 xnoremap * :<C-u>call <SID>VSetSearch()<CR>/<C-R>=@/<CR><CR>
 xnoremap # :<C-u>call <SID>VSetSearch()<CR>?<C-R>=@/<CR><CR>
