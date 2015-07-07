@@ -200,7 +200,13 @@ nnoremap ) }
 " and repeatedly pasting it. This changes the paste
 " command in visual mode so that it doesn't overwrite
 " whatever is in your paste buffer.
-xnoremap p "_dP
+"xnoremap p "_dP
+" now also indents the pasted text - a bit twitchy/flashing due to reselection
+"xnoremap p "_dPV`]=
+" that's why we use =`]
+" (`] marker-motion == jump to end to previously changed/yanked text)
+xnoremap p "_dP=`]
+nnoremap p p=`]
 
 " x in normal or visual will not overwrite the paste buffer
 nnoremap x "_x
