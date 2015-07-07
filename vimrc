@@ -261,15 +261,6 @@ cnoremap <C-L> <End>
 " unmap a% <-- matchit plugin maps a%, causing delay when 'a'
 "xnoremap a A <-- around
 
-" surround mappings
-" s surrounds {move}, S surrounds line
-let g:surround_no_mappings = 1
-nmap s   <Plug>Ysurround
-nmap S   <Plug>Yssurround
-nmap ds  <Plug>Dsurround
-nmap cs  <Plug>Csurround
-xmap s   <Plug>VSurround
-
 " c-d exits, c-s writes(if buffer was modified), c-c deletes buffer
 nnoremap <C-D> :q<CR>
 nnoremap <silent><C-S> :update<CR>
@@ -279,6 +270,12 @@ nnoremap <silent><C-C> :bdelete<CR>
 " <leader>s performs substitution
 nnoremap <Leader>s :%s//<left>
 xnoremap <Leader>s :%s//
+
+" Reselect pasted text linewise
+nnoremap <Leader>v `[V`]
+
+" Reselect pasted text linewise, ( `[ is jump to beginning of changed/yanked )
+nnoremap <Leader>v `[V`]
 
 "====[ '*' in visual will do search on selection - the correct way ]======
 xnoremap * :<C-u>call <SID>VSetSearch()<CR>/<C-R>=@/<CR><CR>
@@ -345,6 +342,15 @@ let g:AutoPairsMapBS=0
 " c-x marks for exchange in visual-only, default (X aka black hole delete) also remains
 " (manual suggests xmap, doesnt say anything about xnoremap)
 xmap <C-X> <Plug>(Exchange)
+
+" surround.vim mappings
+" s surrounds {move}, S surrounds line
+let g:surround_no_mappings = 1
+nmap s   <Plug>Ysurround
+nmap S   <Plug>Yssurround
+nmap ds  <Plug>Dsurround
+nmap cs  <Plug>Csurround
+xmap s   <Plug>VSurround
 
 " make any scratch/preview windows during insertion (completion) show below (bottom)
 augroup PreviewOnBottom
