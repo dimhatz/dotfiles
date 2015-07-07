@@ -273,6 +273,10 @@ nnoremap <silent><C-S> :update<CR>
 inoremap <silent><C-S> <esc>:update<CR>
 nnoremap <silent><C-C> :bdelete<CR>
 
+" <leader>s performs substitution
+nnoremap <Leader>s :%s//<left>
+xnoremap <Leader>s :%s//
+
 "====[ '*' in visual will do search on selection - the correct way ]======
 xnoremap * :<C-u>call <SID>VSetSearch()<CR>/<C-R>=@/<CR><CR>
 xnoremap # :<C-u>call <SID>VSetSearch()<CR>?<C-R>=@/<CR><CR>
@@ -302,7 +306,7 @@ endif
 " Find mappings for the following actions
 " - command mode paste "+ register
 
-" Plugin settings
+"========================================= PLUGIN SETTINGS =====================
 "{{{
     let g:airline#extensions#tabline#enabled = 1
     let g:airline_powerline_fonts = 1
@@ -319,8 +323,11 @@ let g:ycm_enable_diagnostic_highlighting = 0
 " make eclim and ycm play nice
 let g:EclimCompletionMethod = 'omnifunc'
 
-" Use original mappings - may break plugins
+" Easymotion : Use original mappings - may break plugins
+" TODO manually bind only those shortcuts that i use
 map <Leader> <Plug>(easymotion-prefix)
+" for better performance (also doesnt make sense to search offscreen)
+let g:EasyMotion_off_screen_search=0
 
 " WORKAROUND1 FOR https://github.com/Valloric/YouCompleteMe/issues/526
 " When using <BS> completion results change and become fewer.
@@ -331,9 +338,6 @@ inoremap <expr><BS> pumvisible()? "\<C-y>\<BS>" : "\<BS>"
 " WORKAROUND2 for the workaround above, this time in auto-pairs
 " We can either have correct results after <BS> *OR* removed brackets after <BS>
 let g:AutoPairsMapBS=0
-
-" for better performance (also doesnt make sense to search offscreen)
-let g:EasyMotion_off_screen_search=0
 
 " c-x marks for exchange in visual-only, default (X aka black hole delete) also remains
 " (manual suggests xmap, doesnt say anything about xnoremap)
