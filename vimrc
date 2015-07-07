@@ -252,6 +252,9 @@ noremap <C-H> ^
 noremap <C-L> $
 " <C-L> appends to end of line, useful to escape auto-closing parens
 inoremap <C-L> <ESC>A
+" command mode move to beginning/end
+cnoremap <C-A> <Home>
+cnoremap <C-L> <End>
 
 "TODO insert and append to each line when in visual
 "xnoremap i I <-- inside
