@@ -36,6 +36,7 @@ NeoBundle 'vim-scripts/wombat256.vim'
 " Serious plugins
 "NeoBundle 'matchit.zip'
 NeoBundle 'bling/vim-airline'
+NeoBundle 'dimxdim/vim-airline-loclist'
 NeoBundle 'jiangmiao/auto-pairs'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-commentary'
@@ -263,8 +264,8 @@ cnoremap <C-L> <End>
 
 " c-d exits, c-s writes(if buffer was modified), c-c deletes buffer
 nnoremap <C-D> :q<CR>
-nnoremap <silent><C-S> :update<CR>
-inoremap <silent><C-S> <esc>:update<CR>
+nnoremap <silent><C-S> <ESC><ESC>:update<CR><ESC>
+inoremap <silent><C-S> <ESC><ESC>:update<CR><ESC>
 nnoremap <silent><C-C> :bdelete<CR>
 
 " <leader>s performs substitution
@@ -313,12 +314,15 @@ endif
 
 "========================================= PLUGIN SETTINGS =====================
 "{{{
+    " let g:airline#extensions#loclist#enabled = 1
     let g:airline#extensions#tabline#enabled = 1
     let g:airline_powerline_fonts = 1
     let g:airline#extensions#eclim#enabled = 1
+    " let g:airline#extensions#syntastic#enabled = 1
     set laststatus=2    " Always show status bar
 "}}}
 
+let g:ycm_always_populate_location_list = 1
 " auto close preview after leaving insert mode
 let g:ycm_autoclose_preview_window_after_insertion = 1
 " stop highlighting warning/error parts of line, causes highlighing at the
@@ -364,11 +368,11 @@ augroup PreviewOnBottom
 	autocmd InsertLeave * set splitbelow!
 augroup END
 
-" do not change gutter state while in insert mode
-augroup NoYcmGutterInsert
+" always show gutter(sign column)
+augroup AlwaysShowGutter
 	autocmd!
-	autocmd InsertEnter * let g:ycm_enable_diagnostic_signs = 0
-	autocmd InsertLeave * let g:ycm_enable_diagnostic_signs = 1
+	autocmd BufEnter * sign define dummy
+	autocmd BufEnter * execute 'sign place 999999 line=1 name=dummy buffer=' . bufnr('')
 augroup END
 
 "============== mappings of <F>'s
