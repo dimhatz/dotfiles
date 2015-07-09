@@ -269,7 +269,8 @@ nnoremap <silent><C-C> :bdelete<CR>
 
 " <leader>s performs substitution
 nnoremap <Leader>s :%s//<left>
-xnoremap <Leader>s :%s//
+" <c-w> needed to remove '<'> of visual
+xnoremap <Leader>s :<C-W>%s//
 
 " Reselect pasted text linewise
 nnoremap <Leader>v `[V`]
@@ -361,6 +362,13 @@ augroup PreviewOnBottom
 	autocmd!
 	autocmd InsertEnter * set splitbelow
 	autocmd InsertLeave * set splitbelow!
+augroup END
+
+" do not change gutter state while in insert mode
+augroup NoYcmGutterInsert
+	autocmd!
+	autocmd InsertEnter * let g:ycm_enable_diagnostic_signs = 0
+	autocmd InsertLeave * let g:ycm_enable_diagnostic_signs = 1
 augroup END
 
 "============== mappings of <F>'s
