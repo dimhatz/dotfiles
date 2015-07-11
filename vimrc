@@ -174,15 +174,6 @@ let mapleader = "\<Space>"
 "nnoremap \ ;   <--- problematic
 "nnoremap | ,
 
-" " avoid unrecoverable deletion (of all entered chars in line) in insert mode
-"inoremap <c-u> <c-g>u<c-u>
-"" avoid unrecoverable deletion (of word before cursor) in insert mode
-"inoremap <c-w> <c-g>u<c-w>
-
-" for new xcape mappings of alts == - and +
-"noremap - {
-"noremap + }
-
 " for navigation of wrapped lines --> investigate side effects
 nnoremap j gj
 nnoremap k gk
@@ -270,8 +261,11 @@ nnoremap <silent><C-C> :bdelete<CR>
 
 " <leader>s performs substitution
 nnoremap <Leader>s :%s//<left>
-" <c-w> needed to remove '<'> of visual
-xnoremap <Leader>s :<C-W>%s//
+
+" In visual search for current selection to make it substitution target,
+" <c-u> needed to remove '<'> of visual
+" xmap to use * custom binding (and not the default of xnoremap)
+xmap <Leader>s *:<C-u>%s//
 
 " Reselect pasted text linewise
 nnoremap <Leader>v `[V`]
@@ -279,9 +273,16 @@ nnoremap <Leader>v `[V`]
 " Reselect pasted text linewise, ( `[ is jump to beginning of changed/yanked )
 nnoremap <Leader>v `[V`]
 
-" Uppercase current word (norm/insert)
-nnoremap <C-u> gUiw
-inoremap <C-u> <ESC>gUiwea
+" Uppercase current word in norm/insert (k for kefalaia)
+nnoremap <C-k> gUiw
+" Should not use c-u, conflicts with ycm
+inoremap <C-k> <ESC>gUiwea
+noremap <C-u> <nop>
+
+" Jump a word forward in insert mode
+inoremap <C-e> <ESC>ea
+" Jump a word back in insert mode
+inoremap <C-b> <ESC>bi
 
 "====[ '*' in visual will do search on selection - the correct way ]======
 xnoremap * :<C-u>call <SID>VSetSearch()<CR>/<C-R>=@/<CR><CR>
