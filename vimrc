@@ -217,14 +217,15 @@ nnoremap Y y$
 	" also, rapid pressing <esc><F*> will result in weird behavior, such
 	" as entering insert mode and writing S for <esc><F4>.
 	" Triple esc mapping prevents it
+		nnoremap <silent> <ESC> :nohlsearch<CR><ESC>
 		nnoremap <silent> <ESC><ESC> :nohlsearch<CR><ESC>
 		nnoremap <silent> <ESC><ESC><ESC> :nohlsearch<CR><ESC>
-		nnoremap <silent> <ESC> :nohlsearch<CR><ESC>
 " END_WORKAROUND
 
 " GUI doesnt need workaround, so lets not add delay of <esc><esc>.
 if has('gui_running')
 	unmap <silent> <ESC><ESC>
+	unmap <silent> <ESC><ESC><ESC>
 	nnoremap <silent> <ESC> :nohlsearch<CR><ESC>
 endif
 
