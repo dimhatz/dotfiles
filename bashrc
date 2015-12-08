@@ -20,6 +20,8 @@ stty -ixon
 
 # now we can use arrows/vi-style in sml interactive mode
 alias sml='rlwrap sml'
+# now we can use arrows/vi-style in prolog top level
+alias swipl='rlwrap swipl'
 
 export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
 export HISTSIZE=50000                   # big big history

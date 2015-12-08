@@ -192,13 +192,14 @@ nnoremap ) }
 " and repeatedly pasting it. This changes the paste
 " command in visual mode so that it doesn't overwrite
 " whatever is in your paste buffer.
-"xnoremap p "_dP
+xnoremap p "_dP
 " now also indents the pasted text - a bit twitchy/flashing due to reselection
 "xnoremap p "_dPV`]=
 " that's why we use =`]
 " (`] marker-motion == jump to end to previously changed/yanked text)
-xnoremap p "_dP=`]
-nnoremap p p=`]
+"
+" xnoremap p "_dP=`]
+" nnoremap p p=`]
 
 " x in normal or visual will not overwrite the paste buffer
 nnoremap x "_x
@@ -244,7 +245,7 @@ xnoremap    V   v
 noremap <C-H> ^
 noremap <C-L> $
 " <C-L> appends to end of line, useful to escape auto-closing parens
-inoremap <C-L> <ESC>A
+inoremap <silent><C-L> <ESC><ESC>A
 " command mode move to beginning/end
 cnoremap <C-A> <Home>
 cnoremap <C-L> <End>
@@ -387,5 +388,8 @@ cmap <F12> w !sudo tee % >/dev/null
 " F's for plugins
 nnoremap <F11> :call SyntaxAttr()<CR>
 nnoremap <F10> :HLT<CR>
+" for compiling and running and returning, F8 provides templates, F9 runs
+nnoremap <F8> :nnoremap <F9> :!clear && make && ./CHANGE_ME && read -n 1\<lt>cr>
+nnoremap <F9> :!clear && make && ./EXEC_NAME && read -n 1<cr>
 "nnoremap <F9> :XtermColorTable<CR>
 "nnoremap <F8> :ColorToggle<CR>
