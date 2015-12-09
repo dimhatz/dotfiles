@@ -21,6 +21,8 @@ xterm*locale: true
 xterm*utf8: 2
 Xterm*utf8: 2
 xterm*faceName: MonaVu:style=Regular:size=10
+xterm*cursorBlink: false
 
 ! urxvt stuff
 URxvt.font: xft:MonaVu:Regular:size=10
+URxvt*cursorBlink: false
