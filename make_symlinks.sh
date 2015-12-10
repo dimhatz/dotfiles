@@ -10,17 +10,18 @@ dir=~/dotfiles                    # dotfiles directory
 olddir=~/dotfiles_old             # old dotfiles backup directory
 # list of files/folders to symlink in homedir
 files="
+Xmodmap
+Xresources
 bash_profile
 bashrc
 dark-term-theme.sh
+emacs
 gtkrc-2.0
 inputrc
 no-screensaver.sh
 vim-myplugins
 vim-notes
 vimrc
-Xmodmap
-Xresources
 ycm-mybuildcommands
 "
 ##########
@@ -35,7 +36,7 @@ echo "Changing to the $dir directory"
 cd $dir
 echo "...done"
 
-# move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks 
+# move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks
 for file in $files; do
     echo "Moving any existing dotfiles from ~ to $olddir"
     mv --verbose ~/.$file ~/dotfiles_old/
