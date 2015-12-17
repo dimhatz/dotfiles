@@ -243,7 +243,7 @@ xnoremap    V   v
 " <C-H> by default in terminal is produced by backspace, using <C-J>
 noremap <C-J> ^
 noremap <C-K> $
-" <C-L> appends to end of line, useful to escape auto-closing parens
+" <C-K> appends to end of line, useful to escape auto-closing parens
 inoremap <silent><C-J> <ESC><ESC>I
 inoremap <silent><C-K> <ESC><ESC>A
 " command mode move to beginning/end
