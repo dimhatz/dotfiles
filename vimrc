@@ -276,9 +276,9 @@ nnoremap <Leader>v `[V`]
 nnoremap <Leader>v `[V`]
 
 " Uppercase current word in norm/insert (M for megala)
-nnoremap <C-M> gUiw
+nnoremap <C-\> gUiw
 " Should not use c-u, conflicts with ycm
-inoremap <C-M> <ESC>gUiwea
+inoremap <C-\> <ESC>gUiwea
 noremap <C-u> <nop>
 
 " Jump a word forward in insert mode
