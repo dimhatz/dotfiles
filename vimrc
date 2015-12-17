@@ -240,12 +240,12 @@ nnoremap    V   v
 xnoremap    V   v
 
 " move to beginning/end of line (also consider B and E as alternative)
-" <C-H> by default in terminal is produced by backspace
-" TODO: find suitable shortcut for moving to beginning in insert mode
-noremap <C-H> ^
-noremap <C-L> $
+" <C-H> by default in terminal is produced by backspace, using <C-J>
+noremap <C-J> ^
+noremap <C-K> $
 " <C-L> appends to end of line, useful to escape auto-closing parens
-inoremap <silent><C-L> <ESC><ESC>A
+inoremap <silent><C-J> <ESC><ESC>I
+inoremap <silent><C-K> <ESC><ESC>A
 " command mode move to beginning/end
 cnoremap <C-A> <Home>
 cnoremap <C-L> <End>
@@ -275,10 +275,10 @@ nnoremap <Leader>v `[V`]
 " Reselect pasted text linewise, ( `[ is jump to beginning of changed/yanked )
 nnoremap <Leader>v `[V`]
 
-" Uppercase current word in norm/insert (k for kefalaia)
-nnoremap <C-k> gUiw
+" Uppercase current word in norm/insert (M for megala)
+nnoremap <C-M> gUiw
 " Should not use c-u, conflicts with ycm
-inoremap <C-k> <ESC>gUiwea
+inoremap <C-M> <ESC>gUiwea
 noremap <C-u> <nop>
 
 " Jump a word forward in insert mode
