@@ -275,11 +275,13 @@ nnoremap <Leader>v `[V`]
 " Reselect pasted text linewise, ( `[ is jump to beginning of changed/yanked )
 nnoremap <Leader>v `[V`]
 
-" Uppercase current word in norm/insert (M for megala)
+" Uppercase current word in norm/insert
 nnoremap <C-\> gUiw
-" Should not use c-u, conflicts with ycm
 inoremap <C-\> <ESC>gUiwea
+" Should not use c-u, conflicts with ycm
 noremap <C-u> <nop>
+" stop the habbit of old <c-l> to move to beginning of line
+noremap <C-l> <nop>
 
 " Jump a word forward in insert mode
 inoremap <C-e> <ESC>ea
