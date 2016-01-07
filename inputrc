@@ -45,9 +45,9 @@ set show-mode-in-prompt on
 set keymap vi-command
 
 Control-x: re-read-init-file
-Control-h: beginning-of-line
+Control-j: beginning-of-line
 Control-b: beginning-of-line
-Control-l: end-of-line
+Control-k: end-of-line
 Control-e: end-of-line
 
 ###########################################################
