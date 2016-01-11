@@ -8,12 +8,15 @@
 alias ls='ls --color=auto'
 PS1='[\u@\h \W]\$ '
 
+# Disable freezing screen with c-s (and unfreezing with c-q)
+stty -ixon
+
 # Base16 Shell - setting colors
 BASE16_SHELL="$HOME/.dark-term-theme.sh"
 [[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
 
-# Disable freezing screen with c-s (and unfreezing with c-q)
-stty -ixon
+# reload .Xresources (fixes ubuntu's incorrect highlighting when searching in man)
+# xrdb ~/.Xresources
 
 # Set eof char to ^Q instead of ^D - works, not sure if needed
 #stty eof ^Q
