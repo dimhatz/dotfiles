@@ -180,6 +180,8 @@ delc PlugUpgrade
 
 " ================== My settings =============================================
 set backupcopy=yes " make windows change the linked file when editing symlinks
+" no more netrw
+let g:loaded_netrwPlugin = 1
 " ------------------ GUI fonts
 " as of Jul 2017 nvim always returns 0 for has("gui_running")
 if has("gui_running")
