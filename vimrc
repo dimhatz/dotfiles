@@ -502,7 +502,8 @@ cnoremap <C-T> <C-R>
 
 " ----------------------------------------------------------------
 " c-d exits, c-s writes(if buffer was modified), c-c deletes buffer
-nnoremap <C-D> :q<CR>
+nnoremap <C-D> <C-W>c
+nnoremap <C-D><C-D> :q<CR>
 nnoremap <silent><C-S> <ESC><ESC>:update<CR><ESC>
 inoremap <silent><C-S> <ESC><ESC>:update<CR><ESC>
 " <c-c> interrupts terminal vim when busy (useful to break from endless loop)

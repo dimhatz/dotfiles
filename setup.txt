@@ -2,8 +2,8 @@ git config --global core.editor "vim"
 git config --global user.name "dimxdim"
 git config --global user.email "dimxdim@users.noreply.github.com"
 git config --global credential.helper "cache --timeout=3600" # to cache for 1 hour
-git config --global credential.helper wincred # obsolete
-git config --global credential.helper manager # With Git for Windows 2.7.3+ 
+## git config --global credential.helper wincred # obsolete
+git config --global credential.helper manager # With Git for Windows 2.7.3+
 git config --list
 git add .
 git commit -v # or --verbose
