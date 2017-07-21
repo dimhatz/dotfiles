@@ -44,7 +44,7 @@ set show-mode-in-prompt on
 # Keymaps for when we're in command mode (e.g., after hitting ESC)
 set keymap vi-command
 
-Control-x: re-read-init-file
+# Control-x: re-read-init-file
 Control-j: beginning-of-line
 Control-b: beginning-of-line
 Control-k: end-of-line
@@ -58,8 +58,8 @@ Control-e: end-of-line
 # Keymaps for when we're in insert (i.e., typing stuff in) mode
 set keymap vi-insert
 
-Control-h: beginning-of-line
-Control-l: end-of-line
+Control-j: beginning-of-line
+Control-k: end-of-line
 ## Pressing tab will list all completions & select the first one. Pressing it
 ## again will cycle through available completions.
 # replace with `TAB: menu` for regular non-cycling menu
