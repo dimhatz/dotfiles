@@ -1108,8 +1108,11 @@ augroup END
 " a a a a a a a a a a a a       and see the lag. Be in this vimrc, so that
 " there are enough words otherwise there may be no visible lag.
 
-inoremap <expr><c-space> pumvisible() ? "\<C-n>" : neocomplete#start_manual_complete()
-inoremap <expr><s-space> pumvisible() ? "\<C-p>" : neocomplete#start_manual_complete()
+" TODO: on terminals <c-space> may not be valid. Use :<c-v><c-space> to see
+" what it resolves to. Possibly <c-@>
+" inoremap <expr><c-space> pumvisible() ? "\<C-n>" : neocomplete#start_manual_complete()
+" inoremap <expr><s-space> pumvisible() ? "\<C-p>" : neocomplete#start_manual_complete()
+inoremap <expr><c-space> neocomplete#start_manual_complete()
 set completeopt=menuone
 
 " Autodetected value, to check if recognizes vimproc, or to manually disable
@@ -1153,16 +1156,18 @@ let g:neocomplete#auto_complete_delay = 500
 
 " " ---- for eclim
 " " faq says it does not support eclim out of the box
-" if !exists('g:neocomplete#force_omni_input_patterns')
-" 	let g:neocomplete#force_omni_input_patterns = {}
-" endif
+if !exists('g:neocomplete#force_omni_input_patterns')
+	let g:neocomplete#force_omni_input_patterns = {}
+endif
 " " then add one of the 2 following:
 " " 1. from documentation:
 " " let g:neocomplete#sources#omni#input_patterns.java =
 " " \ \'\%(\h\w*\|)\)\.\w*
 
 " " 2. but others seem to be using this
-" " let g:neocomplete#force_omni_input_patterns.java = '\k\.\k*'
+" let g:neocomplete#force_omni_input_patterns.java = '\k\.\k*'
+
+" not sure if relevant:
 " " if !exists('g:neocomplete#sources#omni#input_patterns')
 " " 	let g:neocomplete#sources#omni#input_patterns = {}
 " " endif
