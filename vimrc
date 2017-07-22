@@ -885,7 +885,10 @@ xmap s   <Plug>VSurround
 " -------------------- Eclim
 " make eclim and ycm play nice, omnifunc mapping in insert mode is <c-x><c-o>
 let g:EclimCompletionMethod = 'omnifunc'
-" let g:EclimLogLevel = 'trace'
+
+" do not echo error when completion fails - useful if neocomplete calls
+" omnifunc eclim at inapropriate position.
+" let g:EclimLogLevel = 'off'
 
 " Disable eclim on mintty, causes errors on saving git commit message file.
 " We have to make it into autocmd because eclim may not be loaded yet.
@@ -1121,8 +1124,18 @@ augroup END
 " what it resolves to. Possibly <c-@>
 " inoremap <expr><c-space> pumvisible() ? "\<C-n>" : neocomplete#start_manual_complete()
 " inoremap <expr><s-space> pumvisible() ? "\<C-p>" : neocomplete#start_manual_complete()
-" inoremap <expr><c-space> neocomplete#start_manual_complete()
-set completeopt=menuone
+
+" INFO: there is no way to get fuzzy autocomplete from eclim omni after having
+" some letters after ".". Example: this will complete "s.<c-space>", while
+" this will not: "s.toStr<c-space>". The best way when having custom manual
+" timer (auto timer will still produce lags) to trigger <c-space> and wait for
+" the first popup after "s." (or manually press <c-space>), this will open
+" popup with [O] for "omni" and the results will be cached. Afterwards, press
+" "tst" and wait (or manually <c-space>) and the "toString()" result will be
+" in the popup.
+
+inoremap <expr><c-space> neocomplete#start_manual_complete()
+set completeopt=menuone,noselect
 
 " Autodetected value, to check if recognizes vimproc, or to manually disable
 " using it.
@@ -1132,7 +1145,7 @@ set completeopt=menuone
 let g:neocomplete#enable_at_startup = 1
 
 " disable automatic completion
-let g:neocomplete#disable_auto_complete = 0
+let g:neocomplete#disable_auto_complete = 1
 " TODO investigate whether it is the same as :NeoCompleteToggle
 
 " When 1 more flicker, gives more correct results, when in autopopup mode.
@@ -1165,28 +1178,26 @@ let g:neocomplete#auto_complete_delay = 500
 
 " " ---- for eclim
 " " faq says it does not support eclim out of the box
-if !exists('g:neocomplete#force_omni_input_patterns')
-	let g:neocomplete#force_omni_input_patterns = {}
-endif
 " " then add one of the 2 following:
-" " 1. from documentation:
-" " let g:neocomplete#sources#omni#input_patterns.java =
-" " \ \'\%(\h\w*\|)\)\.\w*
+" " 1. from documentation(fixed):
+if !exists('g:neocomplete#sources#omni#input_patterns')
+	let g:neocomplete#sources#omni#input_patterns = {}
+endif
+let g:neocomplete#sources#omni#input_patterns.java = '\%(\h\w*\|)\)\.\w*'
 
-" " 2. but others seem to be using this
+" 2. but others seem to be using this. This may disable fuzzy completion when
+" omni source is used.
+" if !exists('g:neocomplete#force_omni_input_patterns')
+" 	let g:neocomplete#force_omni_input_patterns = {}
+" endif
 " let g:neocomplete#force_omni_input_patterns.java = '\k\.\k*'
 
-" not sure if relevant:
+" same as 1, different regex
 " " if !exists('g:neocomplete#sources#omni#input_patterns')
 " " 	let g:neocomplete#sources#omni#input_patterns = {}
 " " endif
 " " let g:neocomplete#sources#omni#input_patterns.java = '\h\w*\.\w*'
 " " ---------
-
-" augroup NeocompleteDDD
-" 	autocmd!
-" 	autocmd VimEnter * call neocomplete#initialize()
-" augroup END
 
 " " <CR>: close popup and save indent.
 " inoremap <silent> <CR> <C-r>=<SID>my_cr_function_DDD()<CR>
