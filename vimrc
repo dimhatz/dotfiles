@@ -887,6 +887,15 @@ xmap s   <Plug>VSurround
 let g:EclimCompletionMethod = 'omnifunc'
 " let g:EclimLogLevel = 'trace'
 
+" Disable eclim on mintty, causes errors on saving git commit message file.
+" We have to make it into autocmd because eclim may not be loaded yet.
+if exists('$OS') && $OS ==# 'Windows_NT' && &term =~ '^xterm'
+	augroup disableEclimOnMinttyDDD
+		autocmd!
+		autocmd VimEnter * :EclimDisable
+	augroup END
+endif
+
 " -------------------- YouCompleteMe
 " WORKAROUND-YCM1 FOR https://github.com/Valloric/YouCompleteMe/issues/526
 " When using <BS> completion results change and become fewer.
@@ -1112,7 +1121,7 @@ augroup END
 " what it resolves to. Possibly <c-@>
 " inoremap <expr><c-space> pumvisible() ? "\<C-n>" : neocomplete#start_manual_complete()
 " inoremap <expr><s-space> pumvisible() ? "\<C-p>" : neocomplete#start_manual_complete()
-inoremap <expr><c-space> neocomplete#start_manual_complete()
+" inoremap <expr><c-space> neocomplete#start_manual_complete()
 set completeopt=menuone
 
 " Autodetected value, to check if recognizes vimproc, or to manually disable
