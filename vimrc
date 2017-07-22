@@ -328,6 +328,17 @@ augroup myFormatOptsDDD
 	autocmd FileType * setlocal formatoptions-=t formatoptions-=o
 augroup END
 
+" open file with cursor on last edit (from :h last-position-jump)
+augroup openFileWithCursorAtLastEditDDD
+	autocmd!
+	au BufReadPost *
+		\ if line("'\"") > 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+		\ |   exe "normal! g`\""
+		\ | endif
+augroup END
+
+
+
 " <cr> follows links in help files
 augroup enterFollowLinkDDD
 	autocmd!
