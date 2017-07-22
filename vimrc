@@ -337,8 +337,6 @@ augroup openFileWithCursorAtLastEditDDD
 		\ | endif
 augroup END
 
-
-
 " <cr> follows links in help files
 augroup enterFollowLinkDDD
 	autocmd!
