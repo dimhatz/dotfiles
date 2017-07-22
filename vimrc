@@ -436,8 +436,9 @@ nnoremap Y y$
 " GUI doesnt need workaround, so lets not add the delay of <esc><esc>.
 if has('gui_running')
 	nnoremap <silent> <ESC> :nohlsearch<CR><ESC>:execute "normal \<Plug>(ExchangeClear)"<CR>
-	" the <ESC> mapping unmaps cxc for some reason, so remap it
-	nmap cxc <Plug>(ExchangeClear)
+	" the <ESC> mapping unmaps cxc for some reason, so redo the mapping
+	" nmap cxc <Plug>(ExchangeClear)
+	nnoremap <silent> cxc :execute "normal \<Plug>(ExchangeClear)"<CR>
 	" feedkeys("cxc") works without breaking norm cxc, not sure about
 	" performance though, feels like the same, keeping for future ref:
 	" nnoremap <silent> <ESC> :nohlsearch<CR><ESC>:call feedkeys("cxc")<CR>
@@ -445,7 +446,8 @@ else
 	nnoremap <silent> <ESC> :nohlsearch<CR><ESC>:execute "normal \<Plug>(ExchangeClear)"<CR>
 	nnoremap <silent> <ESC><ESC> :nohlsearch<CR><ESC>:execute "normal \<Plug>(ExchangeClear)"<CR>
 	nnoremap <silent> <ESC><ESC><ESC> :nohlsearch<CR><ESC>:execute "normal \<Plug>(ExchangeClear)"<CR>
-	nmap cxc <Plug>(ExchangeClear)
+	" nmap cxc <Plug>(ExchangeClear)
+	nnoremap <silent> cxc :execute "normal \<Plug>(ExchangeClear)"<CR>
 endif
 " END_ESCAPE_WORKAROUND
 
@@ -501,9 +503,18 @@ xnoremap <Leader>r :MyExecuteLineRangeDDD<CR>
 cnoremap <C-T> <C-R>
 
 " ----------------------------------------------------------------
-" c-d exits, c-s writes(if buffer was modified), c-c deletes buffer
-nnoremap <C-D> <C-W>c
-nnoremap <C-D><C-D> :q<CR>
+" c-d exits(if last window, else closes window), aka always close window.
+" TODO: shorten this to an expression mapping
+" nnoremap <expr> <C-D> winnr() ==# winnr('$') ? execute 'quit'  : execute 'wincmd c')
+nnoremap <C-D> :call MyCloseFuncDDD()<CR>
+function! MyCloseFuncDDD()
+	if winnr() ==# winnr('$')
+		quit
+	else
+		wincmd c
+	endif
+endfunction
+" c-s writes(if buffer was modified), c-c deletes buffer
 nnoremap <silent><C-S> <ESC><ESC>:update<CR><ESC>
 inoremap <silent><C-S> <ESC><ESC>:update<CR><ESC>
 " <c-c> interrupts terminal vim when busy (useful to break from endless loop)
