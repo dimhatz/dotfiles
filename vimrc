@@ -328,6 +328,12 @@ augroup myFormatOptsDDD
 	autocmd FileType * setlocal formatoptions-=t formatoptions-=o
 augroup END
 
+" <cr> follows links in help files
+augroup enterFollowLinkDDD
+	autocmd!
+	autocmd FileType help nnoremap <buffer> <cr> <c-]>
+augroup END
+
 " Key remaps
 " Swap : and ; to make colon commands easier to type
 " The vice versa remapping *may* break plugins - to be confirmed
