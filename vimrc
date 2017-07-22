@@ -143,7 +143,7 @@ Plug 'derekmcloughlin/gvimfullscreen_win32', {'commit': '6abfbd13319f5b48e963045
 " (also according to shougo/denite python can also be added this way from
 " official site -> choose python embeddable and copy all zip contents to vim's
 " install dir)
-" Plug 'Shougo/neocomplete', {'commit': '186881fc40d9b774766a81189af17826d27406c2'}
+Plug 'Shougo/neocomplete', {'commit': '186881fc40d9b774766a81189af17826d27406c2'}
 
 " TODO check out Ultisnips later, supposedly works well with ycm
 " TODO check out nerdtree,
@@ -504,6 +504,7 @@ cnoremap <C-T> <C-R>
 
 " ----------------------------------------------------------------
 " c-d exits(if last window, else closes window), aka always close window.
+" Now it will not quit when having open an single buffer and a help window!
 " TODO: shorten this to an expression mapping
 " nnoremap <expr> <C-D> winnr() ==# winnr('$') ? execute 'quit'  : execute 'wincmd c')
 nnoremap <C-D> :call MyCloseFuncDDD()<CR>
@@ -520,10 +521,6 @@ inoremap <silent><C-S> <ESC><ESC>:update<CR><ESC>
 " <c-c> interrupts terminal vim when busy (useful to break from endless loop)
 " even if remapped. In GUI when remapped -> use CTRL-Break
 nnoremap <silent><C-C> :bdelete<CR>
-" TODO detect whether we are in split window, in which case close the window
-" and not delete buffer. nnoremap <expr><c-c> might be the solution.
-" Sometimes I hit <c-c> instead of <c-w>c
-" OR make the detection in c-d
 " ----------------------------------------------------------------
 
 " <leader>s performs substitution
