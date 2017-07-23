@@ -9,6 +9,7 @@ set nocompatible               " Be iMproved
 " Setting power options to "Power saver mode" in Windows helps expose the bug.
 " Also check:http://eduncan911.com/software/fix-slow-scrolling-in-vim-and-neovim.html
 " set lazyredraw
+
 set synmaxcol=128
 " syntax sync minlines=256
 
@@ -33,11 +34,12 @@ set synmaxcol=128
 if !has('nvim') && (has('win32') || has('win64'))
 	set runtimepath=$HOME/.vim,$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after,$HOME/.vim/after
 	let g:plughomeddd='~/.vim/plugged'
-	" always start in home dir on windows
-	cd ~
 else
 	let g:plughomeddd='~/.vim/plugged'
 endif
+
+" always start in home dir on windows
+cd ~
 
 " ================== Plugin manager ===========================================
 " TODO migrate to pathogen and version control using git ("git submodule add" etc)
@@ -143,7 +145,7 @@ Plug 'derekmcloughlin/gvimfullscreen_win32', {'commit': '6abfbd13319f5b48e963045
 " (also according to shougo/denite python can also be added this way from
 " official site -> choose python embeddable and copy all zip contents to vim's
 " install dir)
-Plug 'Shougo/neocomplete', {'commit': '186881fc40d9b774766a81189af17826d27406c2'}
+Plug 'Shougo/neocomplete', {'commit': 'd8caad4fc14fc1be5272bf6ebc12048212d67d2c'}
 
 " TODO check out Ultisnips later, supposedly works well with ycm
 " TODO check out nerdtree,
@@ -189,8 +191,6 @@ if has("gui_running")
 		set guifont=Source\ Code\ Pro\ Medium\ 10
 		" no extra spacing - not checked on gtk vim linux
 		set linespace=0
-	elseif has("x11")
-	" Also for GTK 1
 		set guifont=*-lucidatypewriter-medium-r-normal-*-*-180-*-*-m-*-*
 	elseif has("gui_win32")
 		set guifont=Source_Code_Pro_Medium:h10:cANSI:qDRAFT
@@ -198,6 +198,8 @@ if has("gui_running")
 		" underlines cover other lines
 		set linespace=0
 		" set renderoptions=type:directx " see below, do not set for now
+	elseif has("x11")
+	" Also for GTK 1
 	endif
 endif
 
@@ -245,7 +247,7 @@ let &showbreak='▶ '	" Char to signify line break
 set autoindent		" The simplest automatic indent
 
 " force redraw on focus gain, fixes some visual bugs under gvim + windows
-" will cause commands that spawn windows command prompt (like :PingEclim
+" May cause commands that spawn windows command prompt (like :PingEclim
 " to be shown without the returned text, but with "press any key"), to see
 " them use :messages (":mes")
 if has('gui_running')
@@ -287,14 +289,11 @@ set ttimeoutlen=50                                  "keycode timeout ms (default
 " (not from current file's dir if its different from working dir)
 set tags-=./tags
 set tags-=./TAGS
-set tags+=~/tags/cpp_std_gcc.tags
-set tags+=~/tags/qt5.tags
 
 "" Tags
 "" if has('path_extra') " from sensible.vim
 ""  setglobal tags-=./tags tags^=./tags;
 "" endif
-"" set tags=tags;/			" from bling's vimrc
 "set showfulltag 		" shows tag and search pattern as matches
 
 " always split below, when opening help/quickfix/etc
@@ -321,8 +320,7 @@ endif
 " continue comments etc
 " "set formatoptions" can be overriden by plugins
 " https://superuser.com/questions/401090/how-to-prevent-certain-vim-formatoptions-from-being-enabled-by-ftplugins
-" Using augroup to be able to :source % multiple times without adding new
-" autocommands each time. -=c will remove comment auto-line-break (:h formatoptions)
+" -=c will remove comment auto-line-break (:h formatoptions)
 augroup myFormatOptsDDD
 	autocmd!
 	autocmd FileType * setlocal formatoptions-=t formatoptions-=o
@@ -338,7 +336,7 @@ augroup openFileWithCursorAtLastEditDDD
 augroup END
 
 " <cr> follows links in help files
-augroup enterFollowLinkDDD
+augroup enterFollowHelpLinkDDD
 	autocmd!
 	autocmd FileType help nnoremap <buffer> <cr> <c-]>
 augroup END
@@ -366,12 +364,8 @@ xnoremap <Space> <Nop>
 let mapleader = "\<Space>"
 
 " disable <c-c> in insert, normally it exits to normal without triggering
-" InsertLeave.
+" InsertLeave - never a good idea.
 inoremap <c-c> <nop>
-
-" the below 2 lines dont work somehow - spit message on startup TODO
-"nnoremap \ ;   <--- problematic
-"nnoremap | ,
 
 " for navigation of wrapped lines --> investigate side effects
 nnoremap j gj
@@ -487,11 +481,11 @@ cnoremap <C-A> <Home>
 cnoremap <C-L> <End>
 
 " ----------------------------------------------------------------
-" paste from main buffer in command mode, filterling out tabs and newlines
-" does not modify the main register, as it uses r register
+" Paste from main buffer in command mode, filterling out tabs and newlines
+" does not modify the main register, as it uses z register
 " this is useful for copy-pasting lines into command mode lines from vimrc.
-" This will not work on multi-line selections to be pasted into command, but
-" you should not do such things anyway.
+" This will not work on multi-line selections to be pasted into command, use
+" MyExecuteLineRangeDDD for this.
 " double c-r at end to insert literally (whe yanked text contains "^h" it will
 " not result in <BS> performed)
 " cnoremap <C-R> call <SID>FilterNLTabYankToRegrR()<CR>:<C-R><C-R>r
@@ -505,12 +499,8 @@ function! s:FilterNLTabYankToRegZ()
 endfunction
 
 " source selected lines into vim command (useful when testing scripts) using
-" register z. Does not support line continuations "\"
-" TODO: investigate and make into function to not pollute register z.
-" xnoremap <Leader>r "zy:@z<CR>
-
 ":[range]MyExecuteLineRangeDDD    Execute text lines as ex commands.
-"           Handles |line-continuation|.
+" Also handles :h line-continuation.
 command! -bar -range MyExecuteLineRangeDDD silent <line1>,<line2>yank z | let @z = substitute(@z, '\n\s*\\', '', 'g') | @z
 xnoremap <Leader>r :MyExecuteLineRangeDDD<CR>
 
@@ -689,7 +679,7 @@ augroup ColorschemeChangeDDD
 		\ | highlight EasyMotionTargetDefault gui=NONE cterm=NONE
 		\ | highlight EasyMotionTarget2FirstDefault gui=NONE cterm=NONE
 		\ | highlight EasyMotionTarget2SecondDefault gui=NONE cterm=NONE
-		\ | AirlineRefresh
+		" \ | AirlineRefresh
 	autocmd ColorScheme flattened_light,solarized8_light,solarized8_light_flat
 		\ highlight Pmenu term=bold cterm=underline,bold
 		\ ctermfg=14 ctermbg=15 gui=underline,bold guifg=#93a1a1
@@ -697,18 +687,8 @@ augroup ColorschemeChangeDDD
 		\ | highlight EasyMotionTargetDefault gui=NONE cterm=NONE
 		\ | highlight EasyMotionTarget2FirstDefault gui=NONE cterm=NONE
 		\ | highlight EasyMotionTarget2SecondDefault gui=NONE cterm=NONE
-		\ | AirlineRefresh
+		" \ | AirlineRefresh
 augroup END
-
-" " when colorscheme is changed to solarized family light
-" augroup ColorsChangeToSolLightDDD
-" 	autocmd!
-" 	autocmd ColorScheme flattened_light,solarized8_light,solarized8_light_flat
-" 		\ highlight Pmenu term=bold cterm=underline,bold
-" 		\ ctermfg=14 ctermbg=15 gui=underline,bold guifg=#93a1a1
-" 		\ guibg=#fdf6e3
-" 		\ | AirlineRefresh
-" augroup END
 
 " ------------------------------------------------------------------------------
 " TODO: check this, executes macro over lines
@@ -728,7 +708,7 @@ set showtabline=2
 
 " ================== Plugin settings ==========================================
 " ------------------ Lightline
-" See below - to be used together with other plugins for tabline /w buffers
+" Only one of {taohex, mgee} sections below should be used.
 
 " ------- taohex/lightline-buffer
 " let g:lightline = {
@@ -762,9 +742,9 @@ let g:lightline#bufferline#unnamed = "[No name]"
 " makes cursor lag + text flash on new appending/inserting first char - only
 " when buffer was unmodified (that is, without [+]).
 " do not detect modified, should not produce the above lag on first insert
-" TODO: build custom statusline and tabline so that performance is good.
+" TODO: build custom statusline and tabline so that performance is good:
 " The performance is currently so bad, that even entering insert causes cursor
-" flicker. It's likely not a good idea to use expressions, as they will be
+" flicker. It's likely not a good idea to use expressions in statusline, as they will be
 " evaluated every statusline auto-redraw-update. Better idea is to
 " use autocmds to change variables displayed, also to change colors using
 " "hi link" to switch using autocmds. Links confirming redraws/calls:
@@ -783,8 +763,6 @@ let g:lightline#bufferline#unnamed = "[No name]"
 " https://nkantar.com/blog/my-vim-statusline/
 " https://gabri.me/blog/diy-vim-statusline/
 " http://got-ravings.blogspot.gr/search/label/statuslines
-
-" TODO: until full customization, switch to powerline/powerline
 
 let g:airline_detect_modified=0
 let g:airline_detect_spell=0
@@ -852,11 +830,11 @@ xmap <Leader>k <Plug>(easymotion-prefix)k
 " xnore <silent><leader>w :<c-u>:call feedkeys("\<Plug>(easymotion-prefix)w")<CR>
 
 " -------------------- Auto-pairs
-" WORKAROUND-AUTOPAIRS1 for the WORKAROUND-YCM1 below.
+" Workaround to be used with completion plugins.
 " We can either have correct results after <BS> *OR* removed brackets after <BS>
 let g:AutoPairsMapBS=0
 
-" Do not map space -> "(<space>T" will not result in "( T )" but in "( T)".
+" Do not map space: now entering "( T" will not result in "( T )" but in "( T)".
 " Still a small price to pay for less bugs with completion plugins.
 let g:AutoPairsMapSpace=0
 
@@ -912,7 +890,8 @@ endif
 " inoremap <C-u> <nop>
 
 " THIS IS THE BEST WAY FOR PREVENTING COMPLETION:
-" It will not re-trigger anything, but will not hide the usual vim menu.
+" (still a hack though)
+" It will not re-trigger anything, but will not hide the usual menu.
 " Still, much better. Maybe should be called on vimenter (as would not be
 " recognized otherwise?)
 " call youcompleteme#DisableCursorMovedAutocommands()
@@ -936,8 +915,7 @@ endif
 " correctly. Need to adjust the pattern to cut whatever follows "." yet use it
 " to fuzzy filter the results from eclim omni. When using auto-trigger this is
 " not an issue, since as soon as "." was typed, ycm's cache was filled and
-" fuzzying is correct. This is possibly fixable with "g:ycm_semantic_triggers"
-" but need to write python-style regex.
+" fuzzying is correct.
 
 " TODO figure out how to manually trigger the real completion function:
 " youcompleteme#CompleteFunc(...)
