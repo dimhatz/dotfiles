@@ -1162,6 +1162,11 @@ if !exists('g:neocomplete#sources#omni#input_patterns')
 	let g:neocomplete#sources#omni#input_patterns = {}
 endif
 let g:neocomplete#sources#omni#input_patterns.java = '\%(\h\w*\|)\)\.\w*'
+" TODO: the above will omni complete after "()." but will falsely try to omni
+" after "someVar.tst" (note that eclim will not make it into "toString")
+" TODO: make manual trigger that will detect pattern "someVar.tst" and will
+" delete "tst", press <c-space> to cache omnicompletion, then restore tst and
+" present fuzzy results. :h i_ctrl-o
 
 " 2. but others seem to be using this. This may disable fuzzy completion when
 " omni source is used.
