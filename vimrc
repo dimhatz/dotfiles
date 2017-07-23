@@ -1123,10 +1123,10 @@ set completeopt=menuone,noselect
 let g:neocomplete#enable_at_startup = 1
 
 " disable automatic completion
-let g:neocomplete#disable_auto_complete = 1
+let g:neocomplete#disable_auto_complete = 0
 " TODO investigate whether it is the same as :NeoCompleteToggle
 
-" When 1 more flicker, gives more correct results, when in autopopup mode.
+" When ==1 -> more flicker, gives more correct results, when in autopopup mode.
 " It seems like fuzzying is triggered when no candidates whose chars are matched
 " consequently are not available. 1 always trigger fuzzying (it seems).
 let g:neocomplete#enable_refresh_always = 0
