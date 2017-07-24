@@ -138,7 +138,10 @@ set ttyfast                                         "assume fast terminal connec
 set hidden                                          "allow buffer switching without saving
 set fileformats+=mac                                "add mac to auto-detection of file format line endings
 set nrformats-=octal                                "always assume decimal/hex numbers
-set noshortname                                     "no dos-style short names for files
+
+if exists('&shortname')                      "neovim does not have this
+	set noshortname                      "no dos-style short names for files
+endif
 
 "" Visual general settings
 set showcmd             " show (partial) command in bottom-right
@@ -166,16 +169,22 @@ set wrap            " wrap text on eol (default)
 let &showbreak='▶ '      " Char to signify line break
 set autoindent           " The simplest automatic indent
 
-" force redraw on focus gain, fixes some visual bugs under gvim + windows
+" ------------------------------------------------------------------------------
+" Force redraw on focus gain, fixes some visual bugs under gvim + windows
 " May cause commands that spawn windows command prompt (like :PingEclim
 " to be shown without the returned text, but with "press any key"), to see
-" them use :messages (":mes")
-if has('gui_running')
-	augroup RedrawOnFocusDDD
-		autocmd!
-		autocmd FocusGained * :redraw!
-	augroup END
-endif
+" them use :messages (":mes"). To manual redraw: <c-l>
+" TODO on win10 there is no cmd popup! Investigate! Try on win10 (with
+" different builds: github, tux, kaoriya):
+" :echo system('dir')
+
+" if has('gui_running')
+" 	augroup RedrawOnFocusDDD
+" 		autocmd!
+" 		autocmd FocusGained * :redraw!
+" 	augroup END
+" endif
+" ------------------------------------------------------------------------------
 
 " Clipboard
 if has('unnamedplus')
@@ -614,7 +623,7 @@ let g:EclimCompletionMethod = 'omnifunc'
 if exists('$OS') && $OS ==# 'Windows_NT' && &term =~ '^xterm'
 	augroup disableEclimOnMinttyDDD
 		autocmd!
-		autocmd VimEnter * if exists(':EclimDisable') | :EclimDisable | endif
+		autocmd VimEnter * if exists(':EclimDisable') | execute 'EclimDisable' | endif
 	augroup END
 endif
 
@@ -642,6 +651,11 @@ set completeopt=menuone,noselect
 
 " Use neocomplete.
 let g:neocomplete#enable_at_startup = 1
+
+" disable neocomplete in cygwin/mintty
+if exists('$OS') && $OS ==# 'Windows_NT' && &term =~ '^xterm'
+	let g:neocomplete#enable_at_startup = 0
+endif
 
 " disable automatic completion
 let g:neocomplete#disable_auto_complete = 0
@@ -683,11 +697,6 @@ if !exists('g:neocomplete#sources#omni#input_patterns')
 	let g:neocomplete#sources#omni#input_patterns = {}
 endif
 let g:neocomplete#sources#omni#input_patterns.java = '\%(\h\w*\|)\)\.\w*'
-" TODO: the above will omni complete after "()." but will falsely try to omni
-" after "someVar.tst" (note that eclim will not make it into "toString")
-" TODO: make manual trigger that will detect pattern "someVar.tst" and will
-" delete "tst", press <c-space> to cache omnicompletion, then restore tst and
-" present fuzzy results. :h i_ctrl-o
 
 " 2. but others seem to be using this. This may disable fuzzy completion when
 " omni source is used.
@@ -701,6 +710,14 @@ let g:neocomplete#sources#omni#input_patterns.java = '\%(\h\w*\|)\)\.\w*'
 " " 	let g:neocomplete#sources#omni#input_patterns = {}
 " " endif
 " " let g:neocomplete#sources#omni#input_patterns.java = '\h\w*\.\w*'
+
+" " ---------
+" TODO: the above will omni complete after "()." but will falsely try to omni
+" after "someVar.tst" (note that eclim will not make it into "toString")
+" TODO: make manual trigger that will detect pattern "someVar.tst" and will
+" delete "tst", press <c-space> to cache omnicompletion, then restore tst and
+" present fuzzy results. :h i_ctrl-o, :h getline(), :h append().
+
 " " ---------
 
 " " <CR>: close popup and save indent.
@@ -748,6 +765,7 @@ endif
 " TODO beautify gutter sign error / warning
 " -------------------------------------------------------------------
 " TODO find a way to convert input to greek from vim, while still typing ENG
+" FIXME
 " -------------------------------------------------------------------
 " for future fuzzy finder (like ctrlp)
 " set wildignore+=*/build/**
