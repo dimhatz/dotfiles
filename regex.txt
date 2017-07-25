@@ -1,0 +1,54 @@
+ 	String myStr = someArray[someInt1].toUpper().anOther(someVar1, someVar2).more(new Integer[])
+	s.toString();
+	// no comment.
+	("test test".toLower()).toUpper();
+:h usr_27.txt
+:h pattern
+
+1. Line begins
+2. 0+ tabs and spaces.    *
+3. no /
+atom_begin:
+4. 1+ letter    \+
+5. 0+ letters, numbers, spaces    *
+6. either:
+	letter . --> s.toStr()
+	letter numbers . --> myvar23.toStr()
+	) . --> getIt().toStr()
+	]. --> arr[5].toStr()
+	". --> "tst".toLower();
+	(also 0+ spaces/tabs before and after .)
+atom_end
+7. 1+ of previous atom
+
+----------------------------------
+Easier but not as accurate:
+
+1. Line begins
+2. 0+ tabs and spaces.    *
+3. no /
+atom1_begin
+4.
+5. 1+ non-whitespace char
+6. 0+ tabs and spaces.    *
+atom1_end
+8. 1+ of prev.atom
+7. .
+
+---------------------------------
+* zero or more (no preceding \), as more as possible
+\+ one or more, as more as possible
+\= zero or one, as more as possible
+{-} zero or more, but as few as possible
+\( abc \) groups
+
+fold
+fold
+folde
+folder
+folders
+foldersz
+a) a. a* a"
+ab
+axbxb
+axxb

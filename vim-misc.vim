@@ -1,3 +1,27 @@
+" -------- unused plugins -------------------------------------------
+"Plug 'dimxdim/jellybat'
+
+" prev vim-airline/vim-airline commit a914cfb75438c36eefd2d7ee73da5196b0b0c2da
+Plug 'vim-airline/vim-airline', {'commit': '72ca1c344fc48f8a5dec7e8c4b75da0436176338'}
+
+" prev vim-airline/vim-airline-themes commit
+Plug 'vim-airline/vim-airline-themes', {'commit': '7865fd8ba435edd01ff7b59de06a9be73e01950d'}
+
+" " Alternative to bufferline mgee/lightline-bufferline, for use with
+" lightline
+" " Plug 'taohex/lightline-buffer'
+
+" Plug 'flazz/vim-colorschemes'
+" Plug 'NLKNguyen/papercolor-theme'
+
+" Needs lua53.dll from http://lua-users.org/wiki/LuaBinaries (64bit like my vim) in the same dir as gvim.exe
+" alternative source for lua binaries, mentioned on github vim distribution:
+" http://luabinaries.sourceforge.net/download.html
+" (also according to shougo/denite python can also be added this way from
+" official site -> choose python embeddable and copy all zip contents to vim's
+" install dir)
+Plug 'Shougo/neocomplete', {'commit': 'd8caad4fc14fc1be5272bf6ebc12048212d67d2c'}
+" ------------------------------------------------------------
 " set lazyredraw
 " May help with scrolling, may worsen flicker of completion popup menu
 " Also may cause glitch with ycm when typing very fast, where ycm will display
@@ -138,6 +162,28 @@ xnoremap <silent> p p:let @+=@0<CR>
 " xnoremap p "_dP=`]
 " nnoremap p p=`]
 " ------------------------------------------------------------------------------
+" Stop highlighting matching search pattern and any vim-exchange selections pressing <ESC>
+" BEGIN_ESCAPE_WORKAROUND
+	" In terminal <esc>smth must be mapped in order to trigger timeout.
+	" Only then it will work. Else numbers shown on startup in terminal.
+	" also, rapid pressing <esc><F*> will result in weird behavior, such
+	" as entering insert mode and writing S for <esc><F4>.
+	" Triple esc mapping prevents it.
+	" At the end adding :execute "normal \<Plug>(ExchangeClear)"<CR>
+	" to cancel any vim-exchange markings-highlights.
+	" If there will be no further remaps of vim-exchange's cxc then ending
+	" :call feedkeys("cxc")<CR>
+	" should work too.
+	" Also :call feedkeys("\<Plug>(ExchangeClear)")<CR> should work too.
+	" Lastly, <Plug>(ExchangeClear) wont work without parens () around
+	" ExchangeClear, they might be part of the name (?)
+	" How to call <Plugs>: https://stackoverflow.com/questions/8862290/vims-plug-based-mappings-dont-work-with-normal-command
+	" Also works:
+		" nnoremap <silent> <ESC> :nohlsearch<CR><ESC>:call feedkeys("\<Plug>(ExchangeClear)")<CR>
+	" My original mappings (before adding ExchangeClear):
+		" nnoremap <silent> <ESC> :nohlsearch<CR><ESC>
+		" nnoremap <silent> <ESC><ESC> :nohlsearch<CR><ESC>
+		" nnoremap <silent> <ESC><ESC><ESC> :nohlsearch<CR><ESC>
 
 " Stop highlighting matching search pattern and any vim-exchange selections pressing <ESC>
 " BEGIN_ESCAPE_WORKAROUND
@@ -216,11 +262,25 @@ endif
 
 " nvim with GUI
 " if has('nvim')
-" " 	autocmd VimEnter * GuiFont! Source Code Pro Medium:h10
+" " 	autocmd VimEnter * execute 'GuiFont! Source Code Pro Medium:h10'
 " " could not make it work yet. :messages says GuiFont not an editor command
 " " TODO: find a way to check whether neovim is running in gui.
 " GuiFont! Source Code Pro Medium:h10
 " endif
+
+" The below still dont work, try to test on non-linked main dir and clean
+" init.vim
+" echom "here"
+" if has('nvim') && exists(':GuiFont')
+" 	autocmd VimEnter * execute 'GuiFont! Source Code Pro Medium:h10' | echom 'here'
+" 	" execute 'GuiFont! Source Code Pro Medium:h10'
+" endif
+
+augroup SetFontNeovimDDD
+	autocmd!
+	autocmd VimEnter * if has('nvim') && exists(':GuiFont') | echom 'here' | execute 'GuiFont! Source Code Pro Medium:h10' | endif
+augroup END
+" :GuiFont! Source Code Pro Medium:h10
 " ------------------------------------------------------------------------------
 
 " "" Special highlight of 81st char in long line, needs to be after colorscheme
@@ -626,4 +686,13 @@ let g:shell_mappings_enabled = 0
 " " prevent airline's tab line from being hidden
 let g:shell_fullscreen_items=''
 " nnoremap <F11> :Fullscreen<CR>
+
+" -------------- regex ------------------------------------------------
+" :h usr_27.txt
+" :h pattern
+
+" ------------- neocomplete
+" Autodetected value,to manually disable using it. To check if neovim has
+" recognized vimproc: echo neocomplete#has_vimproc()
+" let g:neocomplete#use_vimproc
 
