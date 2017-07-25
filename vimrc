@@ -20,7 +20,6 @@ cd ~
 call plug#begin(g:plughomeddd)
 
 " --------------- Themes + visual
-"Plug 'dimxdim/jellybat'
 
 " solarized, supposedly more consistent than orig
 " prev romainl/flattened commit
@@ -34,20 +33,12 @@ Plug 'altercation/vim-colors-solarized', {'commit': '528a59f26d12278698bb946f8fb
 " prev lifepillar/vim-solarized8 commit
 Plug 'lifepillar/vim-solarized8', {'commit': 'b64bca5f6ce418589986a03e37df53b3d0625575'}
 
-" Plug 'flazz/vim-colorschemes'
-" Plug 'NLKNguyen/papercolor-theme'
-
 " --------------- Plugins
-" prev vim-airline/vim-airline commit a914cfb75438c36eefd2d7ee73da5196b0b0c2da
-" Plug 'vim-airline/vim-airline', {'commit': '72ca1c344fc48f8a5dec7e8c4b75da0436176338'}
-
-" prev vim-airline/vim-airline-themes commit
-Plug 'vim-airline/vim-airline-themes', {'commit': '7865fd8ba435edd01ff7b59de06a9be73e01950d'}
+" To delete buffer without closing its window: :BD
+" qpkorr/vim-bufkill
 
 Plug 'itchyny/lightline.vim'
 Plug 'mgee/lightline-bufferline'
-" " Alternative to bufferline
-" " Plug 'taohex/lightline-buffer'
 
 " prev easymotion/vim-easymotion commit d55e7bf515eab93e0b49f6f762bf5b0bf808264d
 Plug 'easymotion/vim-easymotion', {'commit': 'e4d71c7ba45baf860fdaaf8c06cd9faebdccbd50'}
@@ -74,12 +65,6 @@ Plug 'Shougo/vimproc.vim', {'commit': '57cad7d28552a9098bf46c83111d9751b3834ef5'
 " Fullscreen gvim on windows (uses dll)
 Plug 'derekmcloughlin/gvimfullscreen_win32', {'commit': '6abfbd13319f5b48e9630452cc7a7556bdef79bb'}
 
-" Needs lua53.dll from http://lua-users.org/wiki/LuaBinaries (64bit like my vim) in the same dir as gvim.exe
-" alternative source for lua binaries, mentioned on github vim distribution:
-" http://luabinaries.sourceforge.net/download.html
-" (also according to shougo/denite python can also be added this way from
-" official site -> choose python embeddable and copy all zip contents to vim's
-" install dir)
 Plug 'Shougo/neocomplete', {'commit': 'd8caad4fc14fc1be5272bf6ebc12048212d67d2c'}
 
 " TODO check out Ultisnips later, supposedly works well with ycm
@@ -315,29 +300,6 @@ nnoremap X "_D
 " Y yanks till end of line, instead of whole line
 nnoremap Y y$
 
-" Stop highlighting matching search pattern and any vim-exchange selections pressing <ESC>
-" BEGIN_ESCAPE_WORKAROUND
-	" In terminal <esc>smth must be mapped in order to trigger timeout.
-	" Only then it will work. Else numbers shown on startup in terminal.
-	" also, rapid pressing <esc><F*> will result in weird behavior, such
-	" as entering insert mode and writing S for <esc><F4>.
-	" Triple esc mapping prevents it.
-	" At the end adding :execute "normal \<Plug>(ExchangeClear)"<CR>
-	" to cancel any vim-exchange markings-highlights.
-	" If there will be no further remaps of vim-exchange's cxc then ending
-	" :call feedkeys("cxc")<CR>
-	" should work too.
-	" Also :call feedkeys("\<Plug>(ExchangeClear)")<CR> should work too.
-	" Lastly, <Plug>(ExchangeClear) wont work without parens () around
-	" ExchangeClear, they might be part of the name (?)
-	" How to call <Plugs>: https://stackoverflow.com/questions/8862290/vims-plug-based-mappings-dont-work-with-normal-command
-	" Also works:
-		" nnoremap <silent> <ESC> :nohlsearch<CR><ESC>:call feedkeys("\<Plug>(ExchangeClear)")<CR>
-	" My original mappings (before adding ExchangeClear):
-		" nnoremap <silent> <ESC> :nohlsearch<CR><ESC>
-		" nnoremap <silent> <ESC><ESC> :nohlsearch<CR><ESC>
-		" nnoremap <silent> <ESC><ESC><ESC> :nohlsearch<CR><ESC>
-
 " BEGIN_ESCAPE_WORKAROUND
 " <ESC> clears search highlights and exhange marking highlights.
 " GUI doesnt need <ESC><ESC> workaround, so lets not add the its delay.
@@ -435,9 +397,9 @@ nnoremap <Leader>v `[V`]
 nnoremap <C-\> gUiw
 inoremap <C-\> <ESC>gUiwea
 
-" Jump a word forward in insert mode
+" Jump a word forward in insert mode, weirdly, does not break insert undo sequence.
 inoremap <C-e> <ESC>ea
-" Jump a word back in insert mode
+" Jump a word back in insert mode, weirdly, does not break insert undo sequence.
 inoremap <C-b> <ESC>bi
 
 "====[ '*' in visual to search on selection - the correct way ]=============
@@ -587,9 +549,10 @@ xmap <Leader>j <Plug>(easymotion-prefix)j
 xmap <Leader>k <Plug>(easymotion-prefix)k
 
 " -------------------- Auto-pairs
-" Workaround to be used with completion plugins.
+" Workaround to be used with completion plugins (<bs> == <c-h>)
 " We can either have correct results after <BS> *OR* removed brackets after <BS>
 let g:AutoPairsMapBS=0
+let g:AutoPairsMapCh=0
 
 " Do not map space: now entering "( T" will not result in "( T )" but in "( T)".
 " Still a small price to pay for less bugs with completion plugins.
@@ -628,6 +591,8 @@ if exists('$OS') && $OS ==# 'Windows_NT' && &term =~ '^xterm'
 endif
 
 " ------------------ Neocomplete
+set completeopt=menuone,noselect
+
 " TODO: on terminals <c-space> may not be valid. Use :<c-v><c-space> to see
 " what it resolves to. Possibly <c-@>
 " inoremap <expr><c-space> pumvisible() ? "\<C-n>" : neocomplete#start_manual_complete()
@@ -642,14 +607,43 @@ endif
 " "tst" and wait (or manually <c-space>) and the "toString()" result will be
 " in the popup.
 
+" helpful: i_c-o execute a command, return to insert
+" i_c-r= insert a result of expression, function returning "" should work.
+" check whether side effects are allowed in the above.
+" Also inoremap <expr> func(), also not sure about side effects.
+
+" '\%(\h\w*\|)\)\.\w*'
+" TODO: the above will omni complete after "()." but will falsely try to omni
+" after "someVar.tst" (note that eclim will not make it into "toString")
+" TODO: make manual trigger that will detect pattern "someVar.tst" and will
+" delete "tst", press <c-space> to cache omnicompletion, then restore tst and
+" present fuzzy results. :h i_ctrl-o, :h getline(), :h append().
+
+" The regular manual complete.
 inoremap <expr><c-space> neocomplete#start_manual_complete()
-set completeopt=menuone,noselect
+" inoremap <c-space> <c-left><C-r>=neocomplete#mappings#manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#manual_complete()<CR>
 
-" Autodetected value,to manually disable using it. To check if neovim has
-" recognized vimproc: echo neocomplete#has_vimproc()
-" let g:neocomplete#use_vimproc
+" After dot and text completion: "b.tst|" -> "b.toString()|". Has delay/flashes.
+inoremap <c-l> <c-left><C-r>=neocomplete#mappings#start_manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#start_manual_complete()<CR>
 
-" Use neocomplete.
+" -------------------------------------
+function! MyComplPresserFunc(timer)
+	if exists('g:myLastComplTimerIdDDD')
+		echom a:timer . " pressed"
+		" call neocomplete#start_manual_complete()
+		call feedkeys("\<C-r>=neocomplete#mappings#start_manual_complete()\<CR>", 'n')
+		echom a:timer . " pressed after"
+		" call feedkeys("\<c-n>\<c-p>")
+	endif
+endfunction
+augroup MyCompletionTriggerDDD
+	autocmd!
+	autocmd TextChangedI * if exists('g:myLastComplTimerIdDDD') | call timer_stop(g:myLastComplTimerIdDDD) | endif | let g:myLastComplTimerIdDDD = timer_start(1500, 'MyComplPresserFunc') | echom "textChangedI event created timer " . g:myLastComplTimerIdDDD
+	autocmd InsertLeave * if exists('g:myLastComplTimerIdDDD') | call timer_stop(g:myLastComplTimerIdDDD) | endif | unlet! g:myLastComplTimerIdDDD
+	autocmd InsertCharPre * if pumvisible() | call feedkeys("\<c-y>", 'n') | endif
+augroup END
+" -------------------------------------
+
 let g:neocomplete#enable_at_startup = 1
 
 " disable neocomplete in cygwin/mintty
@@ -658,7 +652,7 @@ if exists('$OS') && $OS ==# 'Windows_NT' && &term =~ '^xterm'
 endif
 
 " disable automatic completion
-let g:neocomplete#disable_auto_complete = 0
+let g:neocomplete#disable_auto_complete = 1
 " TODO investigate whether it is the same as :NeoCompleteToggle
 
 " When ==1 -> more flicker, gives more correct results, when in autopopup mode.
@@ -674,20 +668,6 @@ let g:neocomplete#sources#syntax#min_keyword_length = 2
 
 " create delay before popup in ms (50 is default)
 let g:neocomplete#auto_complete_delay = 500
-
-" let g:neocomplete#skip_auto_completion_time = ''
-
-" " Define keyword.
-" if !exists('g:neocomplete#keyword_patterns')
-" 	let g:neocomplete#keyword_patterns = {}
-" endif
-" let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-" " TODO check what exactly this does. Must be equivalent to:
-" " let g:neocomplete#keyword_patterns._ = '\h\w*'
-
-" if !exists('g:neocomplete#sources')
-" 	let g:neocomplete#sources = {}
-" endif
 
 " neocomplete + eclim:
 " " faq says it does not support eclim out of the box
@@ -712,11 +692,19 @@ let g:neocomplete#sources#omni#input_patterns.java = '\%(\h\w*\|)\)\.\w*'
 " " let g:neocomplete#sources#omni#input_patterns.java = '\h\w*\.\w*'
 
 " " ---------
-" TODO: the above will omni complete after "()." but will falsely try to omni
-" after "someVar.tst" (note that eclim will not make it into "toString")
-" TODO: make manual trigger that will detect pattern "someVar.tst" and will
-" delete "tst", press <c-space> to cache omnicompletion, then restore tst and
-" present fuzzy results. :h i_ctrl-o, :h getline(), :h append().
+" let g:neocomplete#skip_auto_completion_time = ''
+
+" " Define keyword.
+" if !exists('g:neocomplete#keyword_patterns')
+" 	let g:neocomplete#keyword_patterns = {}
+" endif
+" let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+" " TODO check what exactly this does. Must be equivalent to:
+" " let g:neocomplete#keyword_patterns._ = '\h\w*'
+
+" if !exists('g:neocomplete#sources')
+" 	let g:neocomplete#sources = {}
+" endif
 
 " " ---------
 
