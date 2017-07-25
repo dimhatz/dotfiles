@@ -624,8 +624,11 @@ inoremap <expr><c-space> neocomplete#start_manual_complete()
 " inoremap <c-space> <c-left><C-r>=neocomplete#mappings#manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#manual_complete()<CR>
 
 " After dot and text completion: "b.tst|" -> "b.toString()|". Has delay/flashes.
-inoremap <c-l> <c-left><C-r>=neocomplete#mappings#start_manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#start_manual_complete()<CR>
-
+" inoremap <c-l> <c-left><C-r>=neocomplete#mappings#start_manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#start_manual_complete()<CR>
+imap <c-l> <c-left><c-space><esc>ea<c-space>
+" test System.out.pl<> manual sequence before automating
+" in the middle of text body: System.out.pln<c-space>  error  <c-l> Test
+" latest eclim with oxygen -> maybe the error popping is fixed!
 " -------------------------------------
 function! MyComplPresserFunc(timer)
 	if exists('g:myLastComplTimerIdDDD')
@@ -653,7 +656,7 @@ if exists('$OS') && $OS ==# 'Windows_NT' && &term =~ '^xterm'
 endif
 
 " disable automatic completion
-let g:neocomplete#disable_auto_complete = 1
+let g:neocomplete#disable_auto_complete = 0
 " TODO investigate whether it is the same as :NeoCompleteToggle
 
 " When ==1 -> more flicker, gives more correct results, when in autopopup mode.
@@ -668,7 +671,7 @@ let g:neocomplete#enable_smart_case = 0
 let g:neocomplete#sources#syntax#min_keyword_length = 2
 
 " create delay before popup in ms (50 is default)
-let g:neocomplete#auto_complete_delay = 500
+let g:neocomplete#auto_complete_delay = 3600000
 
 " neocomplete + eclim:
 " " faq says it does not support eclim out of the box
@@ -677,7 +680,11 @@ let g:neocomplete#auto_complete_delay = 500
 if !exists('g:neocomplete#sources#omni#input_patterns')
 	let g:neocomplete#sources#omni#input_patterns = {}
 endif
-let g:neocomplete#sources#omni#input_patterns.java = '\%(\h\w*\|)\)\.\w*'
+" let g:neocomplete#sources#omni#input_patterns.java = '\%(\h\w*\|)\)\.\w*'
+" let g:neocomplete#sources#omni#input_patterns.java = '\k\.\k*'
+" let g:neocomplete#sources#omni#input_patterns.java = '\h\w*\.\w*'
+" let g:neocomplete#sources#omni#input_patterns.java = '\(\S.*\.\)\+[^;]*'
+let g:neocomplete#sources#omni#input_patterns.java = '\(\S.*\.\)\+$'
 
 " 2. but others seem to be using this. This may disable fuzzy completion when
 " omni source is used.

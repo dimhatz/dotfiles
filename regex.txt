@@ -42,6 +42,9 @@ atom1_end
 {-} zero or more, but as few as possible
 \( abc \) groups
 
+\(\S.*\.\)\+.*
+\(\S.*\.\)\+[^;]*
+
 fold
 fold
 folde
