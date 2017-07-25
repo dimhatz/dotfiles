@@ -634,14 +634,15 @@ function! MyComplPresserFunc(timer)
 		call feedkeys("\<C-r>=neocomplete#mappings#start_manual_complete()\<CR>", 'n')
 		echom a:timer . " pressed after"
 		" call feedkeys("\<c-n>\<c-p>")
+		" try call feedkeys("\<c-space>", 'm')
 	endif
 endfunction
-augroup MyCompletionTriggerDDD
-	autocmd!
-	autocmd TextChangedI * if exists('g:myLastComplTimerIdDDD') | call timer_stop(g:myLastComplTimerIdDDD) | endif | let g:myLastComplTimerIdDDD = timer_start(1500, 'MyComplPresserFunc') | echom "textChangedI event created timer " . g:myLastComplTimerIdDDD
-	autocmd InsertLeave * if exists('g:myLastComplTimerIdDDD') | call timer_stop(g:myLastComplTimerIdDDD) | endif | unlet! g:myLastComplTimerIdDDD
-	autocmd InsertCharPre * if pumvisible() | call feedkeys("\<c-y>", 'n') | endif
-augroup END
+" augroup MyCompletionTriggerDDD
+" 	autocmd!
+" 	autocmd TextChangedI * if exists('g:myLastComplTimerIdDDD') | call timer_stop(g:myLastComplTimerIdDDD) | endif | let g:myLastComplTimerIdDDD = timer_start(1500, 'MyComplPresserFunc') | echom "textChangedI event created timer " . g:myLastComplTimerIdDDD
+" 	autocmd InsertLeave * if exists('g:myLastComplTimerIdDDD') | call timer_stop(g:myLastComplTimerIdDDD) | endif | unlet! g:myLastComplTimerIdDDD
+" 	autocmd InsertCharPre * if pumvisible() | call feedkeys("\<c-y>", 'n') | endif
+" augroup END
 " -------------------------------------
 
 let g:neocomplete#enable_at_startup = 1
