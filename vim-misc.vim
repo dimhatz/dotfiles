@@ -696,3 +696,13 @@ let g:shell_fullscreen_items=''
 " recognized vimproc: echo neocomplete#has_vimproc()
 " let g:neocomplete#use_vimproc
 
+" After dot and text completion: "b.tst|" -> "b.toString()|". Has delay/flashes.
+" inoremap <c-l> <c-left><C-r>=neocomplete#mappings#start_manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#start_manual_complete()<CR>
+" imap <silent> <c-l> <c-left><c-r>=execute('let g:neocomplete#disable_auto_complete = 0')<cr><c-space><esc>ea<c-space><c-r>=execute('let g:neocomplete#disable_auto_complete = 1')<cr>
+imap <silent> <c-m> <c-left><c-r>=execute('let g:neocomplete#disable_auto_complete = 0')<cr><C-r>=neocomplete#mappings#start_manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#start_manual_complete()<CR><c-r>=execute('let g:neocomplete#disable_auto_complete = 1')<cr>
+
+
+" let g:neocomplete#sources#omni#input_patterns.java = '\%(\h\w*\|)\)\.\w*'
+" let g:neocomplete#sources#omni#input_patterns.java = '\k\.\k*'
+" let g:neocomplete#sources#omni#input_patterns.java = '\h\w*\.\w*'
+" let g:neocomplete#sources#omni#input_patterns.java = '\(\S.*\.\)\+[^;]*'
