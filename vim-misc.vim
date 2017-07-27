@@ -434,6 +434,19 @@ let airline#extensions#syntastic#warning_symbol = 'W:'
 xmap <C-X> <Plug>(Exchange)
 
 " -------------------- YouCompleteMe
+" Works: Manually trigger ycm without losing identifier completion:
+inoremap <silent><C-l> <C-r>=execute('let g:ycm_auto_trigger=1 \| doautocmd <nomodeline> ycmcompletemecursormove TextChangedI \| let g:ycm_auto_trigger=0')<CR>
+inoremap <silent><C-l> <C-r>=execute("let g:ycm_auto_trigger=1 \| doautocmd <nomodeline> ycmcompletemecursormove TextChangedI \| let g:ycm_auto_trigger=0")<CR>
+" The "\" before "|" is needed, else this will not run correctly. Single vs
+" double quotes seem the same, keeping both just in case.
+" The above but with a list:
+inoremap <silent><C-l> <C-r>=execute(['let g:ycm_auto_trigger=1' , 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI' , 'let g:ycm_auto_trigger=0'])<CR>
+se	se
+" "silent" is the default either way
+inoremap <silent><C-l> <C-r>=execute(['let g:ycm_auto_trigger=1' , 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI' , 'let g:ycm_auto_trigger=0'], "silent")<CR>
+" "silent!" will suppress error msgs as well
+inoremap <silent><C-l> <C-r>=execute(['let g:ycm_auto_trigger=1' , 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI' , 'let g:ycm_auto_trigger=0'], "silent!")<CR>
+
 " WORKAROUND-YCM1 FOR https://github.com/Valloric/YouCompleteMe/issues/526
 " When using <BS> completion results change and become fewer.
 " <C-w> to begin typing again will give correct results, but maybe not worth
