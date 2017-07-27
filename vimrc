@@ -65,7 +65,8 @@ Plug 'Shougo/vimproc.vim', {'commit': '57cad7d28552a9098bf46c83111d9751b3834ef5'
 " Fullscreen gvim on windows (uses dll)
 Plug 'derekmcloughlin/gvimfullscreen_win32', {'commit': '6abfbd13319f5b48e9630452cc7a7556bdef79bb'}
 
-Plug 'Shougo/neocomplete', {'commit': 'd8caad4fc14fc1be5272bf6ebc12048212d67d2c'}
+" Plug 'Shougo/neocomplete', {'commit': 'd8caad4fc14fc1be5272bf6ebc12048212d67d2c'}
+Plug 'Valloric/YouCompleteMe', {'commit': 'b564b5d8e3858225723f91f41e1b0a4b6603a1b8'}
 
 " TODO check out Ultisnips later, supposedly works well with ycm
 " TODO check out nerdtree,
@@ -590,141 +591,189 @@ if exists('$OS') && $OS ==# 'Windows_NT' && &term =~ '^xterm'
 	augroup END
 endif
 
-" ------------------ Neocomplete
-set completeopt=menuone,noselect
+" " ------------------ Neocomplete
+" set completeopt=menuone,noselect
 
-" TODO: on terminals <c-space> may not be valid. Use :<c-v><c-space> to see
-" what it resolves to. Possibly <c-@>
-" inoremap <expr><c-space> pumvisible() ? "\<C-n>" : neocomplete#start_manual_complete()
-" inoremap <expr><s-space> pumvisible() ? "\<C-p>" : neocomplete#start_manual_complete()
+" " TODO: on terminals <c-space> may not be valid. Use :<c-v><c-space> to see
+" " what it resolves to. Possibly <c-@>
+" " inoremap <expr><c-space> pumvisible() ? "\<C-n>" : neocomplete#start_manual_complete()
+" " inoremap <expr><s-space> pumvisible() ? "\<C-p>" : neocomplete#start_manual_complete()
 
-" INFO: there is no way to get fuzzy autocomplete from eclim omni after having
-" some letters after ".". Example: this will complete "s.<c-space>", while
-" this will not: "s.toStr<c-space>". The best way when having custom manual
-" timer (auto timer will still produce lags) to trigger <c-space> and wait for
-" the first popup after "s." (or manually press <c-space>), this will open
-" popup with [O] for "omni" and the results will be cached. Afterwards, press
-" "tst" and wait (or manually <c-space>) and the "toString()" result will be
-" in the popup.
+" " INFO: there is no way to get fuzzy autocomplete from eclim omni after having
+" " some letters after ".". Example: this will complete "s.<c-space>", while
+" " this will not: "s.toStr<c-space>". The best way when having custom manual
+" " timer (auto timer will still produce lags) to trigger <c-space> and wait for
+" " the first popup after "s." (or manually press <c-space>), this will open
+" " popup with [O] for "omni" and the results will be cached. Afterwards, press
+" " "tst" and wait (or manually <c-space>) and the "toString()" result will be
+" " in the popup.
 
-" helpful: i_c-o execute a command, return to insert
-" i_c-r= insert a result of expression, function returning "" should work.
-" check whether side effects are allowed in the above.
-" Also inoremap <expr> func(), also not sure about side effects.
+" " helpful: i_c-o execute a command, return to insert
+" " i_c-r= insert a result of expression, function returning "" should work.
+" " check whether side effects are allowed in the above.
+" " Also inoremap <expr> func(), also not sure about side effects.
 
-" '\%(\h\w*\|)\)\.\w*'
-" TODO: the above will omni complete after "()." but will falsely try to omni
-" after "someVar.tst" (note that eclim will not make it into "toString")
-" TODO: make manual trigger that will detect pattern "someVar.tst" and will
-" delete "tst", press <c-space> to cache omnicompletion, then restore tst and
-" present fuzzy results. :h i_ctrl-o, :h getline(), :h append().
+" " '\%(\h\w*\|)\)\.\w*'
+" " TODO: the above will omni complete after "()." but will falsely try to omni
+" " after "someVar.tst" (note that eclim will not make it into "toString")
+" " TODO: make manual trigger that will detect pattern "someVar.tst" and will
+" " delete "tst", press <c-space> to cache omnicompletion, then restore tst and
+" " present fuzzy results. :h i_ctrl-o, :h getline(), :h append().
 
-" The regular manual complete.
-inoremap <expr><c-space> neocomplete#start_manual_complete()
-" inoremap <c-space> <c-left><C-r>=neocomplete#mappings#manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#manual_complete()<CR>
+" " The regular manual complete.
+" inoremap <expr><c-space> neocomplete#start_manual_complete()
+" " inoremap <c-space> <c-left><C-r>=neocomplete#mappings#manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#manual_complete()<CR>
 
-" After dot and text completion: "b.tst|" -> "b.toString()|". Has delay/flashes.
-imap <silent> <c-l> <c-left><c-r>=execute('let g:neocomplete#disable_auto_complete = 0')<cr><C-r>=neocomplete#mappings#start_manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#start_manual_complete()<CR><c-r>=execute('let g:neocomplete#disable_auto_complete = 1')<cr>
+" " After dot and text completion: "b.tst|" -> "b.toString()|". Has delay/flashes.
+" imap <silent> <c-l> <c-left><c-r>=execute('let g:neocomplete#disable_auto_complete = 0')<cr><C-r>=neocomplete#mappings#start_manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#start_manual_complete()<CR><c-r>=execute('let g:neocomplete#disable_auto_complete = 1')<cr>
 
-" -------------------------------------
-function! MyComplPresserFunc(timer)
-	if exists('g:myLastComplTimerIdDDD')
-		echom a:timer . " pressed"
-		" call neocomplete#start_manual_complete()
-		call feedkeys("\<C-r>=neocomplete#mappings#start_manual_complete()\<CR>", 'n')
-		echom a:timer . " pressed after"
-		" call feedkeys("\<c-n>\<c-p>")
-		" try call feedkeys("\<c-space>", 'm')
-	endif
-endfunction
-" augroup MyCompletionTriggerDDD
-" 	autocmd!
-" 	autocmd TextChangedI * if exists('g:myLastComplTimerIdDDD') | call timer_stop(g:myLastComplTimerIdDDD) | endif | let g:myLastComplTimerIdDDD = timer_start(1500, 'MyComplPresserFunc') | echom "textChangedI event created timer " . g:myLastComplTimerIdDDD
-" 	autocmd InsertLeave * if exists('g:myLastComplTimerIdDDD') | call timer_stop(g:myLastComplTimerIdDDD) | endif | unlet! g:myLastComplTimerIdDDD
-" 	autocmd InsertCharPre * if pumvisible() | call feedkeys("\<c-y>", 'n') | endif
-" augroup END
-" -------------------------------------
-
-let g:neocomplete#enable_at_startup = 1
-
-" disable neocomplete in cygwin/mintty
-if exists('$OS') && $OS ==# 'Windows_NT' && &term =~ '^xterm'
-	let g:neocomplete#enable_at_startup = 0
-endif
-
-" disable automatic completion
-let g:neocomplete#disable_auto_complete = 1
-" TODO investigate whether it is the same as :NeoCompleteToggle
-
-" When ==1 -> more flicker, gives more correct results, when in autopopup mode.
-" It seems like fuzzying is triggered when no candidates whose chars are matched
-" consequently are not available. 1 always trigger fuzzying (it seems).
-let g:neocomplete#enable_refresh_always = 0
-
-" Use smartcase.
-let g:neocomplete#enable_smart_case = 0
-
-" Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 2
-
-" create delay before popup in ms (50 is default)
-let g:neocomplete#auto_complete_delay = 0
-
-" neocomplete + eclim:
-" " faq says it does not support eclim out of the box
-" " then add one of the 2 following:
-" " 1. from documentation(fixed):
-if !exists('g:neocomplete#sources#omni#input_patterns')
-	let g:neocomplete#sources#omni#input_patterns = {}
-endif
-
-let g:neocomplete#sources#omni#input_patterns.java = '\(\S.*\.\)\+'
-
-" 2. but others seem to be using this. This may disable fuzzy completion when
-" omni source is used.
-" if !exists('g:neocomplete#force_omni_input_patterns')
-" 	let g:neocomplete#force_omni_input_patterns = {}
-" endif
-" let g:neocomplete#force_omni_input_patterns.java = '\k\.\k*'
-
-" same as 1, different regex
-" " if !exists('g:neocomplete#sources#omni#input_patterns')
-" " 	let g:neocomplete#sources#omni#input_patterns = {}
-" " endif
-" " let g:neocomplete#sources#omni#input_patterns.java = '\h\w*\.\w*'
-
-" " ---------
-" let g:neocomplete#skip_auto_completion_time = ''
-
-" " Define keyword.
-" if !exists('g:neocomplete#keyword_patterns')
-" 	let g:neocomplete#keyword_patterns = {}
-" endif
-" let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-" " TODO check what exactly this does. Must be equivalent to:
-" " let g:neocomplete#keyword_patterns._ = '\h\w*'
-
-" if !exists('g:neocomplete#sources')
-" 	let g:neocomplete#sources = {}
-" endif
-
-" " ---------
-
-" " <CR>: close popup and save indent.
-" inoremap <silent> <CR> <C-r>=<SID>my_cr_function_DDD()<CR>
-" function! s:my_cr_function_DDD()
-"   return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+" " -------------------------------------
+" function! MyComplPresserFunc(timer)
+" 	if exists('g:myLastComplTimerIdDDD')
+" 		echom a:timer . " pressed"
+" 		" call neocomplete#start_manual_complete()
+" 		call feedkeys("\<C-r>=neocomplete#mappings#start_manual_complete()\<CR>", 'n')
+" 		echom a:timer . " pressed after"
+" 		" call feedkeys("\<c-n>\<c-p>")
+" 		" try call feedkeys("\<c-space>", 'm')
+" 	endif
 " endfunction
+" " augroup MyCompletionTriggerDDD
+" " 	autocmd!
+" " 	autocmd TextChangedI * if exists('g:myLastComplTimerIdDDD') | call timer_stop(g:myLastComplTimerIdDDD) | endif | let g:myLastComplTimerIdDDD = timer_start(1500, 'MyComplPresserFunc') | echom "textChangedI event created timer " . g:myLastComplTimerIdDDD
+" " 	autocmd InsertLeave * if exists('g:myLastComplTimerIdDDD') | call timer_stop(g:myLastComplTimerIdDDD) | endif | unlet! g:myLastComplTimerIdDDD
+" " 	autocmd InsertCharPre * if pumvisible() | call feedkeys("\<c-y>", 'n') | endif
+" " augroup END
+" " -------------------------------------
 
-" " <TAB>: completion.
-" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" let g:neocomplete#enable_at_startup = 1
 
-" neocomplete#start_manual_complete([{sources}])
-" inoremap <expr><Tab>  neocomplete#start_manual_complete()
+" " disable neocomplete in cygwin/mintty
+" if exists('$OS') && $OS ==# 'Windows_NT' && &term =~ '^xterm'
+" 	let g:neocomplete#enable_at_startup = 0
+" endif
 
-" " <C-h>, <BS>: close popup and delete backword char
-" inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-" inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+" " disable automatic completion
+" let g:neocomplete#disable_auto_complete = 1
+" " TODO investigate whether it is the same as :NeoCompleteToggle
+
+" " When ==1 -> more flicker, gives more correct results, when in autopopup mode.
+" " It seems like fuzzying is triggered when no candidates whose chars are matched
+" " consequently are not available. 1 always trigger fuzzying (it seems).
+" let g:neocomplete#enable_refresh_always = 0
+
+" " Use smartcase.
+" let g:neocomplete#enable_smart_case = 0
+
+" " Set minimum syntax keyword length.
+" let g:neocomplete#sources#syntax#min_keyword_length = 2
+
+" " create delay before popup in ms (50 is default)
+" let g:neocomplete#auto_complete_delay = 0
+
+" " neocomplete + eclim:
+" " " faq says it does not support eclim out of the box
+" " " then add one of the 2 following:
+" " " 1. from documentation(fixed):
+" if !exists('g:neocomplete#sources#omni#input_patterns')
+" 	let g:neocomplete#sources#omni#input_patterns = {}
+" endif
+
+" let g:neocomplete#sources#omni#input_patterns.java = '\(\S.*\.\)\+'
+
+" " 2. but others seem to be using this. This may disable fuzzy completion when
+" " omni source is used.
+" " if !exists('g:neocomplete#force_omni_input_patterns')
+" " 	let g:neocomplete#force_omni_input_patterns = {}
+" " endif
+" " let g:neocomplete#force_omni_input_patterns.java = '\k\.\k*'
+
+" " same as 1, different regex
+" " " if !exists('g:neocomplete#sources#omni#input_patterns')
+" " " 	let g:neocomplete#sources#omni#input_patterns = {}
+" " " endif
+" " " let g:neocomplete#sources#omni#input_patterns.java = '\h\w*\.\w*'
+
+" " " ---------
+" " let g:neocomplete#skip_auto_completion_time = ''
+
+" " " Define keyword.
+" " if !exists('g:neocomplete#keyword_patterns')
+" " 	let g:neocomplete#keyword_patterns = {}
+" " endif
+" " let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+" " " TODO check what exactly this does. Must be equivalent to:
+" " " let g:neocomplete#keyword_patterns._ = '\h\w*'
+
+" " if !exists('g:neocomplete#sources')
+" " 	let g:neocomplete#sources = {}
+" " endif
+
+" " " ---------
+" " " <CR>: close popup and save indent.
+" " inoremap <silent> <CR> <C-r>=<SID>my_cr_function_DDD()<CR>
+" " function! s:my_cr_function_DDD()
+" "   return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+" " endfunction
+
+" " " <TAB>: completion.
+" " inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+
+" " neocomplete#start_manual_complete([{sources}])
+" " inoremap <expr><Tab>  neocomplete#start_manual_complete()
+
+" " " <C-h>, <BS>: close popup and delete backword char
+" " inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+" " inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+
+" -------------- youcompleteme
+let g:ycm_auto_trigger = 0
+
+" complete language keywords from vim syntax file
+let g:ycm_seed_identifiers_with_syntax = 1
+
+" complete using ctags
+let g:ycm_collect_identifiers_from_tags_files = 1
+
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+
+" only menu (even if only one valid suggestion result), ycm auto sets it to menuone too
+set completeopt=menuone
+" set completeopt=menuone,noselect
+" let g:ycm_always_populate_location_list = 1
+" auto close preview after leaving insert mode
+" Lets keep it == 0 since we dont allow it in menuopt anyway
+let g:ycm_autoclose_preview_window_after_insertion = 0
+
+" stop highlighting warning/error parts of line, causes highlighing at the
+" same point in all the other open buffers
+let g:ycm_enable_diagnostic_highlighting = 0
+
+" if =1 adds preview to completeopt, if not there already, 0 is default
+let g:ycm_add_preview_to_completeopt = 0
+
+let g:ycm_min_num_of_chars_for_completion = 2
+
+" complete in comments too
+let g:ycm_complete_in_comments = 1
+
+inoremap <silent><C-l> <C-r>=execute(['let g:ycm_auto_trigger=1' , 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI' , 'let g:ycm_auto_trigger=0'], "silent")<CR>
+
+" inoremap <silent><C-x> <C-r>=execute('let g:MyLastCursorPosDDD=getpos(".")')<CR><C-Left><C-r>=execute(['let g:ycm_auto_trigger=1' , 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI', 'call setpos(".", g:MyLastCursorPosDDD)', 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI', 'let g:ycm_auto_trigger=0'])<CR>
+imap <silent><C-z> <C-r>=execute(['let g:MyLastCursorPosDDD=getpos(".")'])<CR><C-Left><C-Space><C-r>=execute('call setpos(".", g:MyLastCursorPosDDD)')<CR><C-Space>
+
+" Finding: in order to trigger eclim omni engine, g:ycm_auto_trigger must be
+" set to 1 *from the start of vim *. It will not trigger if
+" first it is set to 0, then inside file its set to 1. (Unlike neocomplete)
+" ycm will cache the line by just triggering <c-space> after ".": when moving
+" to the initial position and pressing again <c-space> the cached results will
+" be sorted and fuzzied. No need to flip g:ycm_auto_trigger.
+
+" "HelloWorld.java 786L, 34609C written" bug!
+" occurs when g:ycm_auto_trigger=1 from *vim start*, on the end
+" of s.tst text:
+" a to enter insert, <c-left> to move next to ".", then:
+" <c-r>=execute 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI'
 
 " -------------- KAORIYA --------------------------------------------
 " REMINDER: always delete the included vimrc AND gvimrc files
