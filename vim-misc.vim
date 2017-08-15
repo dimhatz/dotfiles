@@ -434,6 +434,11 @@ let airline#extensions#syntastic#warning_symbol = 'W:'
 xmap <C-X> <Plug>(Exchange)
 
 " -------------------- YouCompleteMe
+" doesnt work to manually trigger identifier completion
+let g:ccc = 'call feedkeys("\<C-x>\<C-u>\<C-p>", "n")'
+inoremap <silent><c-v> <c-r>=execute(g:ccc)<CR>
+inoremap <silent><c-v> <c-r>=feedkeys("\<C-x>\<C-u>\<C-p>", "n")<CR>
+
 " Works: Manually trigger ycm without losing identifier completion:
 inoremap <silent><C-l> <C-r>=execute('let g:ycm_auto_trigger=1 \| doautocmd <nomodeline> ycmcompletemecursormove TextChangedI \| let g:ycm_auto_trigger=0')<CR>
 inoremap <silent><C-l> <C-r>=execute("let g:ycm_auto_trigger=1 \| doautocmd <nomodeline> ycmcompletemecursormove TextChangedI \| let g:ycm_auto_trigger=0")<CR>
@@ -713,6 +718,9 @@ let g:shell_fullscreen_items=''
 " inoremap <c-l> <c-left><C-r>=neocomplete#mappings#start_manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#start_manual_complete()<CR>
 " imap <silent> <c-l> <c-left><c-r>=execute('let g:neocomplete#disable_auto_complete = 0')<cr><c-space><esc>ea<c-space><c-r>=execute('let g:neocomplete#disable_auto_complete = 1')<cr>
 imap <silent> <c-m> <c-left><c-r>=execute('let g:neocomplete#disable_auto_complete = 0')<cr><C-r>=neocomplete#mappings#start_manual_complete()<CR><esc>ea<C-r>=neocomplete#mappings#start_manual_complete()<CR><c-r>=execute('let g:neocomplete#disable_auto_complete = 1')<cr>
+" TODO: try to achieve the same with saving cursor position with getpos, doing
+" <c-l>, then restoring cursor position with setpos, its possible that
+" flipping disable_auto_complete switch will not be needed (like in ycm)
 
 
 " let g:neocomplete#sources#omni#input_patterns.java = '\%(\h\w*\|)\)\.\w*'

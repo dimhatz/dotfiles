@@ -757,14 +757,64 @@ let g:ycm_min_num_of_chars_for_completion = 2
 " complete in comments too
 let g:ycm_complete_in_comments = 1
 
+" force semantic completion, default is <c-space>
+let g:ycm_key_invoke_completion = '<C-space>'
+
+" manual trigger non-semantic completion
 inoremap <silent><C-l> <C-r>=execute(['let g:ycm_auto_trigger=1' , 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI' , 'let g:ycm_auto_trigger=0'], "silent")<CR>
 
+" any char on the cursor, for mulibyte chars works with :echo, but not with
+" command like: let g:smth = {any of 2 lines below} (g:snth will not have
+" correct value)
+" strcharpart(getline('.')[col('.') - 1:], 0, 1)
+" nr2char(strgetchar(getline('.')[col('.') - 1:], 0))
+
+" any char before cursor incl.more that 1 byte in width, like Ä ä ö and 𠔻
+" Works with let "g:xxx = " for multibyte chars:
+" matchstr(getline('.'), '.\%' . col('.') . 'c')
+" any char on cursor
+" matchstr(getline('.'), '\%' . col('.') . 'c.')
+
+" works
+" inoremap <silent><C-x> <C-r>=execute(['let g:mmmm = matchstr(getline("."), ''.\%'' . col(".") . "c")', 'call feedkeys(g:mmmm, "nt")'])<CR>
+
+" inoremap <silent><C-x> <C-r>=execute('let g:mmmm = matchstr(getline("."), ''.\%'' . col(".") . "c")')<CR><BS><C-r>=execute(['let g:ycm_auto_trigger = 1', 'call feedkeys(g:mmmm, "nt")', 'let g:ycm_auto_trigger = 0'])<CR>
+
+function! MyDisableYCMAutoTrigger(timer)
+	let g:ycm_auto_trigger = 0
+endfunction
+let g:c1 = 'let g:myCharBeforeCursor = matchstr(getline("."), ''.\%'' . col(".") . "c")'
+let g:c2 = 'let g:ycm_auto_trigger = 1'
+let g:c3 = 'call feedkeys(g:myCharBeforeCursor, "tn")'
+let g:c4 = 'call timer_start(0, "MyDisableYCMAutoTrigger")'
+inoremap <silent><C-v> <C-r>=execute(g:c1)<CR><BS><C-r>=execute([g:c2, g:c3, g:c4])<CR>
+" let g:c4 = 'let g:ycm_auto_trigger = 0' will not work for some reason, it
+" will prevent the popup from being shown. That's why we set ycm_auto_trigger
+" =0 through zero duration timer. Possibly this has to do with async nature of
+" ycm, the results may be returned after ycm_auto_trigger is set back to 0.
+
+function! MyYcmManual()
+	let l:charBeforeCursor = matchstr(getline("."), '.\%' . col(".") . "c")
+	call feedkeys("\<BS>", "tn")
+	let g:ycm_auto_trigger = 1
+	call feedkeys(l:charBeforeCursor, "tn")
+	call timer_start(0, "MyDisableYCMAutoTrigger")
+	return ''
+endfunction
+inoremap <silent><C-v> <C-r>=MyYcmManual()<CR>
+
+
+" inoremap <silent><C-x> <C-r>=execute('let g:mmmm = matchstr(getline("."), ''.\%'' . col(".") . "c")')<CR><BS><C-r>=execute('let g:ycm_auto_trigger = 1')<CR><C-r>=execute('call feedkeys(g:mmmm)')<CR><C-r>=execute('let g:ycm_auto_trigger = 0')<CR>
+
+
 " inoremap <silent><C-x> <C-r>=execute('let g:MyLastCursorPosDDD=getpos(".")')<CR><C-Left><C-r>=execute(['let g:ycm_auto_trigger=1' , 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI', 'call setpos(".", g:MyLastCursorPosDDD)', 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI', 'let g:ycm_auto_trigger=0'])<CR>
+
+" works
 imap <silent><C-z> <C-r>=execute(['let g:MyLastCursorPosDDD=getpos(".")'])<CR><C-Left><C-Space><C-r>=execute('call setpos(".", g:MyLastCursorPosDDD)')<CR><C-Space>
+" TODO: inore instead of imap and use feedkeys('\' . g:ycm_key_invoke_completion)
 
 " Finding: in order to trigger eclim omni engine, g:ycm_auto_trigger must be
-" set to 1 *from the start of vim *. It will not trigger if
-" first it is set to 0, then inside file its set to 1. (Unlike neocomplete)
+" set to 1 *from the start of vim*, else nothing happens after pressing ".". (Unlike neocomplete?)
 " ycm will cache the line by just triggering <c-space> after ".": when moving
 " to the initial position and pressing again <c-space> the cached results will
 " be sorted and fuzzied. No need to flip g:ycm_auto_trigger.
