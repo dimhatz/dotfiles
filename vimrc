@@ -573,6 +573,7 @@ nmap ds  <Plug>Dsurround
 " cs mapping is already in place, but rebind as a reminder
 nmap cs  <Plug>Csurround
 xmap s   <Plug>VSurround
+" TODO: add html tags support to change/replace
 
 " -------------------- Eclim
 " make eclim and ycm/neocomplete play nice, omnifunc mapping in insert mode is <c-x><c-o>
