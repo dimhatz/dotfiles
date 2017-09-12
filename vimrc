@@ -840,7 +840,9 @@ imap <silent><C-z> <C-r>=execute(['let g:MyLastCursorPosDDD=getpos(".")'])<CR><C
 " a to enter insert, <c-left> to move next to ".", then:
 " <c-r>=execute 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI'
 
-" -------------- Autoclose-tag
+" -------------- vim-closetag
+" REMINDER: pressing another > after "<tag>" will result in
+" next-line-with-indentation and closing tag below. Useful behavior.
 " filenames like *.xml, *.html, *.xhtml, ...
 " Then after you press ">" in these files, this plugin will try to close the current tag.
 let g:closetag_filenames = '*.xml,*.html,*.xhtml,*.phtml'
@@ -857,7 +859,7 @@ let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
 " let g:closetag_shortcut = '>'
 
 " Add > at current position without closing the current tag, default is '<leader>>'
-let g:closetag_close_shortcut = '<C-.>'
+let g:closetag_close_shortcut = '<C-F7>'
 " -------------- KAORIYA --------------------------------------------
 " REMINDER: always delete the included vimrc AND gvimrc files
 if has('kaoriya')
