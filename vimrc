@@ -68,6 +68,9 @@ Plug 'derekmcloughlin/gvimfullscreen_win32', {'commit': '6abfbd13319f5b48e963045
 " Plug 'Shougo/neocomplete', {'commit': 'd8caad4fc14fc1be5272bf6ebc12048212d67d2c'}
 Plug 'Valloric/YouCompleteMe', {'commit': 'b564b5d8e3858225723f91f41e1b0a4b6603a1b8'}
 
+" autoclose tags for html, xhtml
+Plug 'alvan/vim-closetag', {'commit': 'fafdc7439f7ffbf6bb9a300652e2506cb07515d3'}
+
 " TODO check out Ultisnips later, supposedly works well with ycm
 " TODO check out nerdtree,
 " TODO vim-javascript and flow for javascript static checking, also ternjs.
@@ -77,10 +80,6 @@ Plug 'Valloric/YouCompleteMe', {'commit': 'b564b5d8e3858225723f91f41e1b0a4b6603a
 " faster.
 " TODO check out IndentLine plugin to show "|" indent in projects using spaces.
 " TODO check out EMMET plugin for efficient html production.
-call plug#end()
-
-" Eclim -> was installed by the installer with checked android support.
-" REMINDER: set encoding to utf-8 in eclipse too.
 " TODO check out CompleteTags for xml, html, md
 " TODO check out michaeljsmith/vim-indent-object for selecting based on indentation
 " TODO FYI alternative for airline mgee/lightline-bufferline.
@@ -88,6 +87,10 @@ call plug#end()
 " TODO check out dispatch as async runner
 " TODO check out tagbar for code's outline based off tags (classes, methods etc)
 " TODO tag generation and updating: Gutentags
+call plug#end()
+
+" Eclim -> was installed by the installer with checked android support.
+" REMINDER: set encoding to utf-8 in eclipse too.
 
 " Never upgrade vim-plug itself automatically:
 delc PlugUpgrade
@@ -592,6 +595,12 @@ if exists('$OS') && $OS ==# 'Windows_NT' && &term =~ '^xterm'
 	augroup END
 endif
 
+" eclim set itself as omnifunc for html, xml, css (possibly md too?) files.
+" We undo that and enable vim's internal omnifunc.
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+
 " " ------------------ Neocomplete
 " set completeopt=menuone,noselect
 
@@ -826,6 +835,24 @@ imap <silent><C-z> <C-r>=execute(['let g:MyLastCursorPosDDD=getpos(".")'])<CR><C
 " a to enter insert, <c-left> to move next to ".", then:
 " <c-r>=execute 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI'
 
+" -------------- Autoclose-tag
+" filenames like *.xml, *.html, *.xhtml, ...
+" Then after you press ">" in these files, this plugin will try to close the current tag.
+let g:closetag_filenames = '*.xml,*.html,*.xhtml,*.phtml'
+
+" filenames like *.xml, *.xhtml, ...
+" This will make the list of non closing tags self closing in the specified files.
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
+
+" integer value [0|1], default 0?
+" This will make the list of non closing tags case sensitive (e.g. `<Link>` will be closed while `<link>` won't.)
+" let g:closetag_emptyTags_caseSensitive = 1
+
+" Shortcut for closing tags, default is '>'
+" let g:closetag_shortcut = '>'
+
+" Add > at current position without closing the current tag, default is '<leader>>'
+let g:closetag_close_shortcut = '<C-.>'
 " -------------- KAORIYA --------------------------------------------
 " REMINDER: always delete the included vimrc AND gvimrc files
 if has('kaoriya')
