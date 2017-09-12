@@ -576,7 +576,8 @@ nmap ds  <Plug>Dsurround
 " cs mapping is already in place, but rebind as a reminder
 nmap cs  <Plug>Csurround
 xmap s   <Plug>VSurround
-" TODO: add html tags support to change/replace
+" REMINDER: to change surrounding html tags: "cst<newtag>"
+" also: "dsb" == "ds)", because b -> ), B -> }, r -> ] (rect.), a -> > (angular)
 
 " -------------------- Eclim
 " make eclim and ycm/neocomplete play nice, omnifunc mapping in insert mode is <c-x><c-o>
@@ -597,6 +598,7 @@ endif
 
 " eclim set itself as omnifunc for html, xml, css (possibly md too?) files.
 " We undo that and enable vim's internal omnifunc.
+" Remove these to get eclipse's autocompl/validation
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
