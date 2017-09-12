@@ -267,6 +267,10 @@ xnoremap  ;  :
 nnoremap , ;
 xnoremap , ;
 
+" now "C-p" and "C-n" autocomplete the beginning of the command and search.
+cnoremap <C-p> <Up>
+cnoremap <C-n> <Down>
+
 " Space is the new leader
 nnoremap <Space> <Nop>
 xnoremap <Space> <Nop>
@@ -883,7 +887,13 @@ endif
 " TODO beautify gutter sign error / warning
 " -------------------------------------------------------------------
 " TODO find a way to convert input to greek from vim, while still typing ENG
-" FIXME
+" some mapping to "set keymap=greek" or "set keymap=greek_utf-8" ασδφ
+" Source Code Pro Font seems to be unable to correctly display them when not
+" in a new buffer, for example in this vimrc, unless Greek script is
+" specifically selected.
+" Sauce Code Pro NF does not have this issue, but it displays Italics with
+" more inclination than SourceCodePro and some letters appear to be "cut" at the
+" letf edge. Mintty also seems to handle SourceCodePro correctly. Investigate further.
 " -------------------------------------------------------------------
 " for future fuzzy finder (like ctrlp)
 " set wildignore+=*/build/**
