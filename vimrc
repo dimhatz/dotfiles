@@ -107,7 +107,6 @@ if has("gui_running")
 		set guifont=Source\ Code\ Pro\ Medium\ 10
 		" no extra spacing - not checked on gtk vim linux
 		set linespace=0
-		set guifont=*-lucidatypewriter-medium-r-normal-*-*-180-*-*-m-*-*
 	elseif has("gui_win32")
 		set guifont=Source_Code_Pro_Medium:h10:cANSI:qDRAFT
 		" no extra spacing, linespace was 1 by default, increase if
