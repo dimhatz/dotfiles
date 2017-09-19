@@ -87,6 +87,7 @@ Plug 'alvan/vim-closetag', {'commit': 'fafdc7439f7ffbf6bb9a300652e2506cb07515d3'
 " TODO check out dispatch as async runner
 " TODO check out tagbar for code's outline based off tags (classes, methods etc)
 " TODO tag generation and updating: Gutentags
+" TODO check out chrisbra/NrrwRgn for focusing on excerpt of code (isolate and edit it)
 call plug#end()
 
 " Eclim -> was installed by the installer with checked android support.
