@@ -71,6 +71,9 @@ Plug 'Valloric/YouCompleteMe', {'commit': 'b564b5d8e3858225723f91f41e1b0a4b6603a
 " autoclose tags for html, xhtml
 Plug 'alvan/vim-closetag', {'commit': 'fafdc7439f7ffbf6bb9a300652e2506cb07515d3'}
 
+" html5 omnicomplete and syntax (and indentation?)
+Plug 'othree/html5.vim', {'commit': '916085df16ad6bd10ecbd37bc5d44b62f062572b'}
+
 " TODO check out Ultisnips later, supposedly works well with ycm
 " TODO check out nerdtree,
 " TODO vim-javascript and flow for javascript static checking, also ternjs.
