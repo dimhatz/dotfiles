@@ -605,7 +605,12 @@ endif
 
 " eclim set itself as omnifunc for html, xml, css (possibly md too?) files.
 " We undo that and enable vim's internal omnifunc.
-" Remove these to get eclipse's autocompl/validation
+" Remove these to get eclipse's autocompl/validation/indentation
+
+let g:EclimHtmlIndentDisabled = 1
+" alternative to set built-in (and modified by html5.vim?) indentexpr:
+" autocmd FileType html setlocal indentexpr=HtmlIndentGet(v:lnum)
+
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
