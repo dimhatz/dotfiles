@@ -727,3 +727,7 @@ imap <silent> <c-m> <c-left><c-r>=execute('let g:neocomplete#disable_auto_comple
 " let g:neocomplete#sources#omni#input_patterns.java = '\k\.\k*'
 " let g:neocomplete#sources#omni#input_patterns.java = '\h\w*\.\w*'
 " let g:neocomplete#sources#omni#input_patterns.java = '\(\S.*\.\)\+[^;]*'
+
+" ----------------------------------
+" In foxit to get j and k to go to next/prev page -> right click ribbon ->
+" "Customize ribbon" -> "Keyboard"
