@@ -145,9 +145,9 @@ set noerrorbells visualbell t_vb= " no error bells at all
 autocmd GUIEnter * set visualbell t_vb= " needed as gvim will reset t_vb
 
 "" Tabs and spaces
-"set tabstop=4       " number of visual spaces per TAB
-"set softtabstop=4   " number of spaces in tab when editing
-"set shiftwidth=4    " for indentation command in normal mode
+set tabstop=4       " number of visual spaces per TAB
+set softtabstop=4   " number of spaces in tab when editing
+set shiftwidth=4    " for indentation command (">>") in normal mode
 "set expandtab       " tabs are spaces
 "set shiftround    " use multiple of shiftwidth when indenting with '<' and '>'
 set backspace=indent,eol,start      "allow backspacing everything in insert mode
