@@ -903,13 +903,17 @@ endif
 " TODO beautify gutter sign error / warning
 " -------------------------------------------------------------------
 " TODO find a way to convert input to greek from vim, while still typing ENG
-" some mapping to "set keymap=greek" or "set keymap=greek_utf-8" ασδφ
-" Source Code Pro Font seems to be unable to correctly display them when not
-" in a new buffer, for example in this vimrc, unless Greek script is
-" specifically selected.
-" Sauce Code Pro NF does not have this issue, but it displays Italics with
-" more inclination than SourceCodePro and some letters appear to be "cut" at the
-" letf edge. Mintty also seems to handle SourceCodePro correctly. Investigate further.
+" some mapping to "set keymap=greek" or "set keymap=greek_utf-8" ασδφ.
+" Source Code Pro Font cannot correctly display greek in comments because
+" italics lack greek letters.
+" Sauce Code Pro NF does not have this issue, because it uses automatically derived
+" oblique. The resulting "Italics" have more inclination than SourceCodePro and
+" some letters appear to be "cut" at the left edge.
+" One fix would be forcing non-italics in comments:
+" hi Comment gui=NONE
+" but this will override the default colorscheme's behavior that may be using
+" italics + color to distinguish comments, and reusing the color for smth else.
+" Also, with auto-derived obliques it's not easy to distinguish "/", "|" and "\".
 " -------------------------------------------------------------------
 " for future fuzzy finder (like ctrlp)
 " set wildignore+=*/build/**
