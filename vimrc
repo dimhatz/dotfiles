@@ -74,6 +74,9 @@ Plug 'alvan/vim-closetag', {'commit': 'fafdc7439f7ffbf6bb9a300652e2506cb07515d3'
 " html5 omnicomplete and syntax (and indentation?)
 Plug 'othree/html5.vim', {'commit': '916085df16ad6bd10ecbd37bc5d44b62f062572b'}
 
+" css3 better completion
+Plug 'othree/csscomplete.vim', {'commit': 'f0059f00df5890bf81d8f011d9b98354761a31f0'}
+
 " TODO check out Ultisnips later, supposedly works well with ycm
 " TODO check out nerdtree,
 " TODO vim-javascript and flow for javascript static checking, also ternjs.
@@ -91,6 +94,8 @@ Plug 'othree/html5.vim', {'commit': '916085df16ad6bd10ecbd37bc5d44b62f062572b'}
 " TODO check out tagbar for code's outline based off tags (classes, methods etc)
 " TODO tag generation and updating: Gutentags
 " TODO check out chrisbra/NrrwRgn for focusing on excerpt of code (isolate and edit it)
+" TODO check out sheerun/vim-polyglot: collection of language plugins (syntax,
+" filetypes, indentation; like othree/html5 that is also included in it)
 call plug#end()
 
 " Eclim -> was installed by the installer with checked android support.
@@ -613,7 +618,7 @@ let g:EclimHtmlIndentDisabled = 1
 
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
 
 " " ------------------ Neocomplete
 " set completeopt=menuone,noselect
