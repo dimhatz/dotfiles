@@ -127,6 +127,22 @@ if has("gui_running")
 	endif
 endif
 
+" <C-CR> to switch between input languages
+set imi=1
+function! s:ChangeKeymapDDD()
+	if &keymap !=# "greek"
+		set keymap=greek
+	else
+		set keymap=""
+		" iminsert becomes 0 here
+		" now set it to 1, else the switch will only occur after "<esc>a"
+		set imi=1
+	endif
+	return ""
+endfunction
+
+inoremap <C-CR> <C-R>=<SID>ChangeKeymapDDD()<CR>
+
 "" System general settings
 set shortmess+=I                                    " disable start message
 set mouse=a                                         "enable mouse
