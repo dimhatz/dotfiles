@@ -53,6 +53,9 @@ Plug 'tommcdo/vim-exchange', {'commit': '05d82b87711c6c8b9b7389bfb91c24bc4f62aa8
 " prev tpope/vim-surround commit
 Plug 'tpope/vim-surround', {'commit': 'e49d6c2459e0f5569ff2d533b4df995dd7f98313'}
 
+" " prev tomtom/tcomment_vim commit
+" Plug 'tomtom/tcomment_vim', {'commit': '6f1f24840be163e85d610837567221639e268ddc'}
+
 " prev tpope/vim-commentary commit
 Plug 'tpope/vim-commentary', {'commit': 'be79030b3e8c0ee3c5f45b4333919e4830531e80'}
 

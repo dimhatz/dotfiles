@@ -731,3 +731,9 @@ imap <silent> <c-m> <c-left><c-r>=execute('let g:neocomplete#disable_auto_comple
 " ----------------------------------
 " In foxit to get j and k to go to next/prev page -> right click ribbon ->
 " "Customize ribbon" -> "Keyboard"
+
+" -------------------------------------------
+" prev tpope/vim-commentary commit
+Plug 'tpope/vim-commentary', {'commit': 'be79030b3e8c0ee3c5f45b4333919e4830531e80'}
+" ^^ Changing the above because it is too simple and will not use correct
+" comment-delimiters in code-embedded-in-other-code (like css-in-html, js-in-html, jsx too?)
