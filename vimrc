@@ -69,7 +69,10 @@ Plug 'Shougo/vimproc.vim', {'commit': '57cad7d28552a9098bf46c83111d9751b3834ef5'
 Plug 'derekmcloughlin/gvimfullscreen_win32', {'commit': '6abfbd13319f5b48e9630452cc7a7556bdef79bb'}
 
 " Plug 'Shougo/neocomplete', {'commit': 'd8caad4fc14fc1be5272bf6ebc12048212d67d2c'}
-Plug 'Valloric/YouCompleteMe', {'commit': 'b564b5d8e3858225723f91f41e1b0a4b6603a1b8'}
+
+" prev youcompleteme commit: b564b5d8e3858225723f91f41e1b0a4b6603a1b8
+" update this on its own only with ":PlugUpdate YouCompleteMe"
+Plug 'Valloric/YouCompleteMe', {'commit': 'bade99f5e9c5ba2f848cffb2d1a905e85d3ddb05'}
 
 " autoclose tags for html, xhtml
 Plug 'alvan/vim-closetag', {'commit': 'fafdc7439f7ffbf6bb9a300652e2506cb07515d3'}
