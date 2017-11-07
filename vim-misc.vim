@@ -73,8 +73,8 @@ Plug 'Shougo/neocomplete', {'commit': 'd8caad4fc14fc1be5272bf6ebc12048212d67d2c'
 " :PlugUpdate YouCompleteMe
 " Neovim: check with :CheckHealth if python3 provider is correct.
 " also check :messages to see whether ycm complains
-" ycm -> was installed by .\install.py --clang-completer --tern-completer
-" Plug 'Valloric/YouCompleteMe', {'commit': 'b564b5d8e3858225723f91f41e1b0a4b6603a1b8'}
+" ycm -> was installed by .\install.py --clang-completer --js-completer
+" Plug 'Valloric/YouCompleteMe', {'commit': 'bade99f5e9c5ba2f848cffb2d1a905e85d3ddb05'}
 " ------------------------------------------------------------------------------
 
 " gvimfullscreen_win32: uses dll, needs to be mapped like:
