@@ -635,17 +635,34 @@ if exists('$OS') && $OS ==# 'Windows_NT' && &term =~ '^xterm'
 	augroup END
 endif
 
-" eclim set itself as omnifunc for html, xml, css (possibly md too?) files.
+" eclim set itself as omnifunc for html, xml, css (other langs too?) files.
 " We undo that and enable vim's internal omnifunc.
 " Remove these to get eclipse's autocompl/validation/indentation
 
+" Disable eclim's validation for all filetypes
+let g:EclimFileTypeValidate = 0
+
+" Disable eclim's indentation for specific filetypes
 let g:EclimHtmlIndentDisabled = 1
-" alternative to set built-in (and modified by html5.vim?) indentexpr:
-" autocmd FileType html setlocal indentexpr=HtmlIndentGet(v:lnum)
+let g:EclimCssIndentDisabled = 1
+let g:EclimJavascriptIndentDisabled = 1
+let g:EclimXmlIndentDisabled = 1
+let g:EclimDtdIndentDisabled = 1
+
+" Disable eclim's validation for specific filetypes
+let g:EclimHtmlValidate = 0
+let g:EclimCssValidate = 0
+let g:EclimJavascriptValidate = 0
+let g:EclimXmlValidate = 0
+
+" " alternative to set built-in (and modified by html5.vim?) indentation via indentexpr:
+" " autocmd FileType html setlocal indentexpr=HtmlIndentGet(v:lnum)
 
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
+" if youcompleteme has not overriden eclim for js:
+" autocmd FileType css setlocal omnifunc=javascriptcomplete#CompleteJS
 
 " " ------------------ Neocomplete
 " set completeopt=menuone,noselect
