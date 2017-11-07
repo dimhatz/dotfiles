@@ -80,6 +80,10 @@ Plug 'othree/html5.vim', {'commit': '916085df16ad6bd10ecbd37bc5d44b62f062572b'}
 " css3 better completion
 Plug 'othree/csscomplete.vim', {'commit': 'f0059f00df5890bf81d8f011d9b98354761a31f0'}
 
+" javascript/jsdoc/ngdoc/flow syntax and indentation
+Plug 'pangloss/vim-javascript', {'commit': 'cea724c0e1a330fff1d38018667a748c26559a57'}
+
+
 " TODO check out Ultisnips later, supposedly works well with ycm
 " TODO check out nerdtree,
 " TODO vim-javascript and flow for javascript static checking, also ternjs.
@@ -908,7 +912,17 @@ elseif has('win32')
 	nnoremap <F11> <Esc>:call libcallnr(expand('$HOME\.vim\plugged\gvimfullscreen_win32\gvimfullscreen.dll'), "ToggleFullScreen", 0)<CR>
 endif
 
-" ---------------- profiling plugins
+" ------------ pangloss/vim-javascript ----------------------------------
+" Enables syntax highlighting for JSDocs.
+let g:javascript_plugin_jsdoc = 1
+
+" Enables some additional syntax highlighting for NGDocs. Requires JSDoc plugin to be enabled as well.
+let g:javascript_plugin_ngdoc = 1
+
+" Enables syntax highlighting for Flow.
+let g:javascript_plugin_flow = 1
+
+" ---------------- profiling plugins ------------------------------------
 " https://stackoverflow.com/questions/12213597/how-to-see-which-plugins-are-making-vim-slow
 " profile start profile.log | profile func * | profile file *
 " " At this point do slow actions
