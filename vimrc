@@ -83,7 +83,11 @@ Plug 'othree/csscomplete.vim', {'commit': 'f0059f00df5890bf81d8f011d9b98354761a3
 " javascript/jsdoc/ngdoc/flow syntax and indentation
 Plug 'pangloss/vim-javascript', {'commit': 'cea724c0e1a330fff1d38018667a748c26559a57'}
 
+" Better JSON highlighting, hides the quotes, on all lines except current - better readability.
+Plug 'elzr/vim-json', {'commit': 'f5e3181d0b33a9c51377bb7ea8492feddca8b503'}
 
+
+" -------------------- Plugin-related todo's ------------------------------
 " TODO check out Ultisnips later, supposedly works well with ycm
 " TODO check out nerdtree,
 " TODO vim-javascript and flow for javascript static checking, also ternjs.
@@ -921,6 +925,13 @@ let g:javascript_plugin_ngdoc = 1
 
 " Enables syntax highlighting for Flow.
 let g:javascript_plugin_flow = 1
+
+" ------------ vim-json ----------------------------------
+" When using indentLine plugin use:
+" let g:indentLine_noConcealCursor=""
+" OR
+" let g:indentLine_noConcealCursor="nc"
+" source: https://github.com/elzr/vim-json/issues/23#issuecomment-40293049
 
 " ---------------- profiling plugins ------------------------------------
 " https://stackoverflow.com/questions/12213597/how-to-see-which-plugins-are-making-vim-slow
