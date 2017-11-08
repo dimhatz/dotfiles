@@ -819,7 +819,7 @@ set completeopt=menuone
 " let g:ycm_always_populate_location_list = 1
 " auto close preview after leaving insert mode
 " Lets keep it == 0 since we dont allow it in menuopt anyway
-let g:ycm_autoclose_preview_window_after_insertion = 0
+let g:ycm_autoclose_preview_window_after_insertion = 1
 
 " stop highlighting warning/error parts of line, causes highlighing at the
 " same point in all the other open buffers
