@@ -110,6 +110,8 @@ Plug 'elzr/vim-json', {'commit': 'f5e3181d0b33a9c51377bb7ea8492feddca8b503'}
 " TODO check out chrisbra/NrrwRgn for focusing on excerpt of code (isolate and edit it)
 " TODO check out sheerun/vim-polyglot: collection of language plugins (syntax,
 " filetypes, indentation; like othree/html5 that is also included in it)
+" TODO check out othree/javascript-libraries-syntax.vim: special syntax for js
+" libs like react, angular, vue etc
 call plug#end()
 
 " Eclim -> was installed by the installer with checked android support.
