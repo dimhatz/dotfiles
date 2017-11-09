@@ -385,6 +385,9 @@ cnoremap <C-A> <Home>
 cnoremap <C-L> <End>
 
 " ----------------------------------------------------------------
+" <leader>c cd's into the directory on current file
+nnoremap <leader>c :cd %:p:h<CR>
+
 " Paste from main buffer into command mode, filterling out tabs and newlines
 " does not modify my main "+" register, as it uses z register.
 " This is useful for copy-pasting lines into command mode lines from vimrc.
