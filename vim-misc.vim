@@ -54,6 +54,18 @@ Plug 'Shougo/neocomplete', {'commit': 'd8caad4fc14fc1be5272bf6ebc12048212d67d2c'
 " copy plug.vim ..\.vim\autoload
 " Restart vim and ":PlugInstall youcomplete" first, then ":PlugInstall" for
 " the rest of plugins. Done.
+" -------------- vim-plug
+" the two below are auto-called by vim-plug, leaving here for future reference
+syntax enable
+filetype plugin indent on
+
+" (a better?) alternative to "syntax on"
+if !exists("g:syntax_on")
+	syntax enable
+endif
+" source: https://stackoverflow.com/questions/33380451/is-there-a-difference-between-syntax-on-and-syntax-enable-in-vimscript
+" current setting after plug#end:
+syntax on           " syntax enable syntax processing, *syntax on* overrides with defaults!
 " ------------------------------------------------------------------------------
 
 " vimproc build/install instructions
