@@ -112,6 +112,8 @@ Plug 'elzr/vim-json', {'commit': 'f5e3181d0b33a9c51377bb7ea8492feddca8b503'}
 " filetypes, indentation; like othree/html5 that is also included in it)
 " TODO check out othree/javascript-libraries-syntax.vim: special syntax for js
 " libs like react, angular, vue etc
+" TODO integrate YCM error messages into lightline: use my vim-airline-loclist
+" file as base (previously used to integrate with airline) or current airline.
 call plug#end()
 
 " Eclim -> was installed by the installer with checked android support.
