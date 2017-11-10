@@ -37,8 +37,8 @@ Plug 'lifepillar/vim-solarized8', {'commit': 'b64bca5f6ce418589986a03e37df53b3d0
 " To delete buffer without closing its window: :BD
 " qpkorr/vim-bufkill
 
-Plug 'itchyny/lightline.vim'
-Plug 'mgee/lightline-bufferline'
+Plug 'itchyny/lightline.vim' , {'commit': '8102b2c103a17c4603079d8c8429867f0c9bbd8b'}
+Plug 'mgee/lightline-bufferline', {'commit': 'a0e0b5fb8371f3694255d41dd968d1c9add8b77c'}
 
 " prev easymotion/vim-easymotion commit d55e7bf515eab93e0b49f6f762bf5b0bf808264d
 Plug 'easymotion/vim-easymotion', {'commit': 'e4d71c7ba45baf860fdaaf8c06cd9faebdccbd50'}
