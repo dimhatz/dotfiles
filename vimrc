@@ -306,9 +306,13 @@ nnoremap  ;  :
 "nnoremap  :  ;
 xnoremap  ;  :
 "xnoremap  :  ;
-" make comma the new ;
+
+" make comma the new ; (normally comma repeats f-style movements, like ";" but
+" in the opposite direction), make "\" the new comma.
 nnoremap , ;
 xnoremap , ;
+nnoremap \ ,
+xnoremap \ ,
 
 " now "C-p" and "C-n" autocomplete the beginning of the command and search.
 cnoremap <C-p> <Up>
