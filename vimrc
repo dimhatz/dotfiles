@@ -255,6 +255,9 @@ set tags-=./TAGS
 " always split below, when opening help/quickfix/etc
 set splitbelow
 
+" keep the cursor on the same colum when jumping and switching buffers (do not jump to beginning of the line)
+set nostartofline
+
 " GUI
 if has('gui_running')
 	set guicursor=a:blinkon0 " dont blink, the rest are defaults ddd new
