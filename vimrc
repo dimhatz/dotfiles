@@ -675,8 +675,7 @@ let g:EclimXmlValidate = 0
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
-" if youcompleteme has not overriden eclim for js:
-" autocmd FileType css setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 
 " " ------------------ Neocomplete
 " set completeopt=menuone,noselect
