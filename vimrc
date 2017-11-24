@@ -484,6 +484,12 @@ endfunction
 " In visual search for current selection to make it substitution target
 " xmap <Leader>s *:<C-u>%s//
 xnoremap <Leader>s :<C-u>call <SID>VSetSearch()<CR>:<C-u>set hlsearch<CR>:<C-u>%s//
+
+" <c-f> in insert types "="
+inoremap <C-F> =
+
+" <c-g> in insert types "+"
+inoremap <C-G> +
 " ============================================================================
 
 " Cool terminal shape when in xterm
