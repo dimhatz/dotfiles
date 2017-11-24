@@ -487,9 +487,11 @@ xnoremap <Leader>s :<C-u>call <SID>VSetSearch()<CR>:<C-u>set hlsearch<CR>:<C-u>%
 
 " <c-f> in insert types "="
 inoremap <C-F> =
+cnoremap <C-F> =
 
 " <c-g> in insert types "+"
 inoremap <C-G> +
+cnoremap <C-G> +
 " ============================================================================
 
 " Cool terminal shape when in xterm
