@@ -424,11 +424,11 @@ xnoremap <Leader>r :MyExecuteLineRangeDDD<CR>
 cnoremap <C-T> <C-R>
 
 " ----------------------------------------------------------------
-" c-d exits(if last window, else closes window), aka always close window.
+" <C-Q> exits(if last window, else closes window), aka always close window.
 " Now it will not quit when having open an single buffer and a help window!
 " TODO: shorten this to an expression mapping
-" nnoremap <expr> <C-D> winnr() ==# winnr('$') ? execute 'quit'  : execute 'wincmd c')
-nnoremap <C-D> :call MyCloseFuncDDD()<CR>
+" nnoremap <expr> <C-Q> winnr() ==# winnr('$') ? execute 'quit'  : execute 'wincmd c')
+nnoremap <C-Q> :call MyCloseFuncDDD()<CR>
 function! MyCloseFuncDDD()
 	if winnr() ==# winnr('$')
 		quit
