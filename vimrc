@@ -481,6 +481,9 @@ function! s:VSetSearch()
 	let @s = temp
 endfunction
 
+" In normal <leader>f will highlight all occurrences of word under cursor
+nnoremap <Leader>f viw:<C-u>call <SID>VSetSearch()<CR>:<C-u>set hlsearch<CR>
+
 " In visual search for current selection to make it substitution target
 " xmap <Leader>s *:<C-u>%s//
 xnoremap <Leader>s :<C-u>call <SID>VSetSearch()<CR>:<C-u>set hlsearch<CR>:<C-u>%s//
