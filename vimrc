@@ -53,13 +53,10 @@ Plug 'tommcdo/vim-exchange', {'commit': '05d82b87711c6c8b9b7389bfb91c24bc4f62aa8
 " prev tpope/vim-surround commit
 Plug 'tpope/vim-surround', {'commit': 'e49d6c2459e0f5569ff2d533b4df995dd7f98313'}
 
-" " prev tomtom/tcomment_vim commit
-" Plug 'tomtom/tcomment_vim', {'commit': '6f1f24840be163e85d610837567221639e268ddc'}
+" prev tomtom/tcomment_vim commit
+Plug 'tomtom/tcomment_vim', {'commit': '6f1f24840be163e85d610837567221639e268ddc'}
 
-" prev tpope/vim-commentary commit
-Plug 'tpope/vim-commentary', {'commit': 'be79030b3e8c0ee3c5f45b4333919e4830531e80'}
-
-" make the above 2 repeatable
+" make vim-surround and vim-commentary repeatable
 Plug 'tpope/vim-repeat', {'commit': '070ee903245999b2b79f7386631ffd29ce9b8e9f'}
 
 " To check whether its working :echo vimproc#system('dir')
@@ -969,6 +966,13 @@ let g:javascript_plugin_ngdoc = 1
 
 " Enables syntax highlighting for Flow.
 let g:javascript_plugin_flow = 1
+
+" ------------ tomtom/tcomment_vim
+" remove mappings with <c-_><c-_> and <leader>_
+let g:tcommentMapLeader1 = ''
+let g:tcommentMapLeader2 = ''
+" TODO remove all tcomment mappings: let g:tcommentMaps = 0
+" and manually create only the necessary ones
 
 " ------------ vim-json ----------------------------------
 " When using indentLine plugin use:
