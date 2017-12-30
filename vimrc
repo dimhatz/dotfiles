@@ -577,6 +577,10 @@ doautocmd <nomodeline> ColorschemeChangeDDD ColorScheme flattened_dark
 
 " ------------ For any statusline plugin ----------------
 set laststatus=2    " Always show status bar
+" TODO create custom statusline, using variables instead of functions, so that
+" evaluation is very fast. Change values of variables using autocmds that will
+" run functions by "scheduling" them with timers (posibbly 0 length) to ensure
+" completely non-blocking behavior.
 
 " always show tabline (Note: there used to be a bug in powerline that setting
 " tabline to 2 would cause vim to update the tabline for every keystroke)
