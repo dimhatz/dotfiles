@@ -321,6 +321,7 @@ cnoremap <C-n> <Down>
 " Space is the new leader
 nnoremap <Space> <Nop>
 xnoremap <Space> <Nop>
+onoremap <Space> <Nop>
 let mapleader = "\<Space>"
 
 " Disable <c-c> in insert, normally it exits to normal without triggering the
