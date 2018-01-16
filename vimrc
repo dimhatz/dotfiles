@@ -550,16 +550,16 @@ function! s:ColorPopupMenuSolLightDDD()
 endfunction
 
 function! s:EasymotionNoBoldDarkDDD()
-	highlight EasyMotionTarget ctermfg=12 guifg=#ff0000 gui=NONE cterm=NONE
-	highlight EasyMotionTarget2First ctermfg=14 guifg=#ffb400 gui=NONE cterm=NONE
-	highlight EasyMotionTarget2Second ctermfg=14 guifg=#b98300 gui=NONE cterm=NONE
+	highlight! EasyMotionTarget ctermfg=12 guifg=#ff0000 gui=NONE cterm=NONE
+	highlight! EasyMotionTarget2First ctermfg=14 guifg=#ffb400 gui=NONE cterm=NONE
+	highlight! EasyMotionTarget2Second ctermfg=14 guifg=#b98300 gui=NONE cterm=NONE
 endfunction
 
 function! s:EasymotionNoBoldLightDDD()
 	" EasyMotionTarget2First and second are reversed for better contrast
-	highlight EasyMotionTarget ctermfg=12 guifg=#ff0000 gui=NONE cterm=NONE
-	highlight EasyMotionTarget2Second ctermfg=14 guifg=#ffb400 gui=NONE cterm=NONE
-	highlight EasyMotionTarget2First ctermfg=14 guifg=#b98300 gui=NONE cterm=NONE
+	highlight! EasyMotionTarget ctermfg=12 guifg=#ff0000 gui=NONE cterm=NONE
+	highlight! EasyMotionTarget2Second ctermfg=14 guifg=#ffb400 gui=NONE cterm=NONE
+	highlight! EasyMotionTarget2First ctermfg=14 guifg=#b98300 gui=NONE cterm=NONE
 endfunction
 
 " when colorscheme is changed to solarized family dark/light
