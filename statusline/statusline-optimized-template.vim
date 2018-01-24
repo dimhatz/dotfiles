@@ -16,8 +16,8 @@
 hi! N1       guifg=#f0f0f0 guibg=#005478 ctermfg=254 ctermbg=24
 hi! N2       guifg=#f0f0f0 guibg=#444444 ctermfg=254 ctermbg=238
 hi! N3       guifg=#7A6E4E guibg=#151515 ctermfg=137 ctermbg=233  gui=bold
-" Mmod hl group for modified file's appearance
-hi! Mmod     guifg=#ffb964 guibg=#073642 ctermfg=172 ctermbg=0
+" MyFileModified hl group for modified file's appearance
+hi! MyFileModified     guifg=#ffb964 guibg=#073642 ctermfg=172 ctermbg=0
 hi! I1       guifg=#f0f0f0 guibg=#752822 ctermfg=254 ctermbg=88
 hi! R1       guifg=#f0f0f0 guibg=#662069 ctermfg=254 ctermbg=53
 hi! V1       guifg=#fbfbfb guibg=#2F6300 ctermfg=255 ctermbg=22
@@ -41,11 +41,13 @@ function! NIVRConditional(hlArray, minwid, exprArray)
 	" "minwid" should be a string with a number, as described in :h statusline.
 	" exprArray should be an array of 1 or 4 elements, depending on whether
 	" expression shown in each mode (Norm, Ins etc) is different or the same.
-	" Returns a string containing 
+	" Returns a string containing statusline "conditional elements". This
+	" string can readily be appended to statusline.
 	" Note: using conditional highlighting like this is a lot faster than when
 	" switching with "hi! link" back and forth. On my slower machine there is a
 	" cursor blink when entering insert mode if I use "autocmd InsertEnter" to
-	" re-link hl group of an element to another hl group.
+	" re-link hl group of an element to another hl group (or redefine the hl
+	" group with "hi!")
 	if (len(a:hlArray)!=#4)||len(a:exprArray)==#0
 		return ''
 	endif
@@ -94,7 +96,7 @@ let g:myLine.=NIVRConditional(['%4*', '%5*', '%6*', '%6*'], '4'
 			\ , ['&l:readonly||!&l:modifiable?" RO ":""'])
 
 " will be shown when file modified, one space after ## for breathing room.
-let g:myLine.='%#Mmod# %{&l:modified?expand("%:t")." [+] ":""}'
+let g:myLine.='%#MyFileModified# %{&l:modified?expand("%:t")." [+] ":""}'
 
 " will be shown when not modified, note no space before %{}, as opposed to the
 " 'modified' option above. Otherwise else 2 spaces will be shown.
@@ -109,14 +111,16 @@ let g:myLine.='%w '
 " filetype, shown as "vim" for vimscript etc
 let g:myLine.='%{&l:filetype} '
 
-" this will be displayed when encoding is not utf-8
-let g:myLine.='%#Error#%{&l:fileencoding!=#"utf-8"?" NOT UTF-8! ":""}'
+" This error will be displayed when encoding is not utf-8
+" Note: when creating new file, &fileencoding is not set, not even upon saving,
+" but we can use &encoding instead. (Triple "&" before l:encoding: "&& &l:enc")
+let g:myLine.='%#Error#%{&l:fileencoding!=#"utf-8"&&(&l:fileencoding==#""&&&l:encoding!=#"utf-8")?" NOT UTF-8! ":""}'
 
-" 'minwid' here is set to 1 because encodings 'dos', 'unix', 'mac' not the same
-" length and we pad with spaces manually, so that there is exactly one white
-" space before and after the resulting string.
+" 'minwid' here is set to 1 because encodings 'dos', 'unix', 'mac' are not of
+" the same length and we pad with spaces manually, so that there is exactly one
+" white space before and after the resulting string.
 let g:myLine.=NIVRConditional(['%4*', '%5*', '%6*', '%6*'], '1'
-			\ , ['" ".&l:fileencoding." │ ".&l:fileformat." "'])
+			\ , ['" ".(&l:fileencoding?&l:fileencoding:&l:encoding)." │ ".&l:fileformat." "'])
 
 " line percentage
 let g:myLine.=NIVRConditional(['%1*', '%2*', '%3*', '%3*'], '8'
