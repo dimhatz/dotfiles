@@ -113,13 +113,13 @@ let g:myLine.='%{&l:filetype} '
 " This error will be displayed when encoding is not utf-8
 " Note: when creating new file, &fileencoding is not set, not even upon saving,
 " but we can use &encoding instead. (Triple "&" before l:encoding: "&& &l:enc")
-let g:myLine.='%#Error#%{&l:fileencoding!=#"utf-8"&&(&l:fileencoding==#""&&&l:encoding!=#"utf-8")?" NOT UTF-8! ":""}'
+let g:myLine.='%#Error#%{&l:fileencoding==#"utf-8"||(&l:fileencoding==#""&&&l:encoding==#"utf-8")?"":" NOT UTF-8! "}'
 
 " 'minwid' here is set to 1 because encodings 'dos', 'unix', 'mac' are not of
 " the same length and we pad with spaces manually, so that there is exactly one
 " white space before and after the resulting string.
 let g:myLine.=NIVRConditional(['%4*', '%5*', '%6*', '%6*'], '1'
-			\ , ['" ".(&l:fileencoding?&l:fileencoding:&l:encoding)." │ ".&l:fileformat." "'])
+			\ , ['" ".(&l:fileencoding!=#""?&l:fileencoding:&l:encoding)." │ ".&l:fileformat." "'])
 
 " line percentage
 let g:myLine.=NIVRConditional(['%1*', '%2*', '%3*', '%3*'], '8'
