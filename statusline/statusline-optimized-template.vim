@@ -96,11 +96,11 @@ let g:myLine.=NIVRConditional(['%4*', '%5*', '%6*', '%6*'], '4'
 			\ , ['&l:readonly||!&l:modifiable?" RO ":""'])
 
 " will be shown when file modified, one space after ## for breathing room.
-let g:myLine.='%#MyFileModified# %{&l:modified?expand("%:t")." [+] ":""}'
+let g:myLine.='%#MyFileModified#%{&l:modified?expand("%:t")." [+] ":""}'
 
 " will be shown when not modified, note no space before %{}, as opposed to the
 " 'modified' option above. Otherwise else 2 spaces will be shown.
-let g:myLine.='%#LineNr#%{!&l:modified?expand("%:t"):""}'
+let g:myLine.='%#LineNr# %{!&l:modified?expand("%:t"):""}'
 
 " separator from left to right side
 let g:myLine.='%='
