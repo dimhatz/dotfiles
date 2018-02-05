@@ -95,15 +95,14 @@ let g:myLine.=NIVRConditional(['%1*', '%2*', '%3*', '%3*'], '8'
 let g:myLine.=NIVRConditional(['%4*', '%5*', '%6*', '%6*'], '4'
 			\ , ['&l:readonly||!&l:modifiable?" RO ":""'])
 
-" will be shown when file modified, one space after ## for breathing room.
-let g:myLine.='%#MyFileModified#%{&l:modified?expand("%:t")." [+] ":""}'
-
-" will be shown when not modified, note no space before %{}, as opposed to the
-" 'modified' option above. Otherwise else 2 spaces will be shown.
+" will be shown when not modified, one space after ## for breathing room.
 let g:myLine.='%#LineNr# %{!&l:modified?expand("%:t"):""}'
 
-" separator from left to right side
-let g:myLine.='%='
+" will be shown when file modified, no extra space due to the above.
+let g:myLine.='%#MyFileModified#%{&l:modified?expand("%:t")." [+] ":""}'
+
+" separator from left to right side, resetting color
+let g:myLine.='%#LineNr#%='
 
 " preview flag, shown as "[Preview]"
 let g:myLine.='%w '
