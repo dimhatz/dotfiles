@@ -16,6 +16,9 @@ let s:myActiveLine.='%8{&paste?"| PASTE ":""}'
 " will be shown when not modified, one space after ## for breathing room.
 let s:myActiveLine.='%#N3# %{!&l:modified?expand("%:t"):""}'
 
+" if unnamed buffer
+let s:myActiveLine.='%{expand("%:t")==#""?"[No Name]":""}'
+
 " will be shown when file modified, no extra space due to the above.
 let s:myActiveLine.='%#MyFileModified#%{&l:modified?expand("%:t"):""}'
 " extra padding space, else will be "file.txt[+]"
