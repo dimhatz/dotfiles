@@ -11,16 +11,17 @@ let s:myActiveLine=''
 let s:myActiveLine.='%#N2#%4{&l:readonly||!&l:modifiable?" RO ":""}'
 
 " read-only sign
-let s:myActiveLine.='%8{&paste?"| PASTE ":""}'
+let s:myActiveLine.='%7{&paste?" PASTE ":""}'
+
+" print current working dir relatively to homedir (~)
+" also works in tabline
+let s:myActiveLine.=' %{pathshorten(fnamemodify(getcwd(),":~"))} '
 
 " will be shown when not modified, one space after ## for breathing room.
-let s:myActiveLine.='%#N3# %{!&l:modified?expand("%:t"):""}'
-
-" if unnamed buffer
-let s:myActiveLine.='%{expand("%:t")==#""?"[No Name]":""}'
+let s:myActiveLine.='%#N3# %{!&l:modified?MyCurrFname():""}'
 
 " will be shown when file modified, no extra space due to the above.
-let s:myActiveLine.='%#MyFileModified#%{&l:modified?expand("%:t"):""}'
+let s:myActiveLine.='%#MyFileModified#%{&l:modified?MyCurrFname():""}'
 " extra padding space, else will be "file.txt[+]"
 let s:myActiveLine.='%{&l:modified?"  [+]":""}'
 
@@ -55,14 +56,13 @@ let s:myActiveLine.='/'
 " total lines
 let s:myActiveLine.='%-4{line("$")} '
 
-" let &statusline=s:myActiveLine
 
 " Inactive statusline, all one color
 let s:myInactiveLine='%#N3#'
 " read-only flag [RO]
 let s:myInactiveLine.='%r'
 " filename
-let s:myInactiveLine.=' %t'
+let s:myInactiveLine.=' %{MyCurrFname()}'
 " modified [+]
 let s:myInactiveLine.=' %m'
 " separator filetype and preview flag
@@ -74,6 +74,26 @@ augroup MyStatusLine
 	autocmd WinLeave * let &l:statusline=s:myInactiveLine
 	autocmd ColorScheme * hi! N1 guifg=#f0f0f0 guibg=#005478 ctermfg=254 ctermbg=24
 augroup END
+
+function! MyCurrFname()
+	" try to get file path relative to current dir
+	let l:fname=expand('%:.')
+	if l:fname==#''
+		return '[No Name]'
+	endif
+	if l:fname[0]!=#'/' && l:fname[0]!=#'\'
+		return pathshorten(l:fname)
+	endif
+	" try to get file path relative to home dir
+	let l:relToHome=fnamemodify(l:fname, ":~")
+	if l:relToHome[0]==#'~'
+		return pathshorten(l:relToHome)
+	endif
+	" if none of the above apply
+	return pathshorten(l:fname)
+endfunction
+
+let &statusline=s:myActiveLine
 
 " " how many occurrences of % in the resulting string, should be less than 80
 " " uncomment the below when testing
