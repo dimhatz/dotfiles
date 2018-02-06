@@ -841,6 +841,11 @@ let g:tcommentMapLeader2 = ''
 " let g:indentLine_noConcealCursor="nc"
 " source: https://github.com/elzr/vim-json/issues/23#issuecomment-40293049
 
+" ------------ buftabline
+" show "+" when modified
+let g:buftabline_indicators=1
+hi! link BufTabLineCurrent WildMenu
+
 " ------------ my statusline -----------------------------
 source ~/dotfiles/statusline/statusline-my-final.vim
 
