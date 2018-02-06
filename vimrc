@@ -845,6 +845,7 @@ let g:tcommentMapLeader2 = ''
 " show "+" when modified
 let g:buftabline_indicators=1
 hi! link BufTabLineCurrent WildMenu
+let g:buftabline_numbers=0
 
 " ------------ my statusline -----------------------------
 source ~/dotfiles/statusline/statusline-my-final.vim
