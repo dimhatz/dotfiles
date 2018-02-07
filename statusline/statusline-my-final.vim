@@ -75,6 +75,10 @@ augroup MyStatusLine
 	autocmd ColorScheme * hi! N1 guifg=#f0f0f0 guibg=#005478 ctermfg=254 ctermbg=24
 augroup END
 
+" Tries to get the most relevant representation of current filename.
+" Vim's built-in expand and fnamemodify will return the full path,
+" when giving them ":.:~" modifiers. They will *NOT* try to get path relative to
+" current dir and if that fails try to get path relative to ~.
 function! MyCurrFname()
 	" try to get file path relative to current dir
 	let l:fname=expand('%:.')
