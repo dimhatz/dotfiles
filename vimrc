@@ -38,7 +38,7 @@ Plug 'lifepillar/vim-solarized8', {'commit': 'b64bca5f6ce418589986a03e37df53b3d0
 " qpkorr/vim-bufkill
 
 " prev ap/vim-buftabline commit 12f29d2cb11d79c6ef1140a0af527e9231c98f69
-Plug 'ap/vim-buftabline', {'commit': '12f29d2cb11d79c6ef1140a0af527e9231c98f69'}
+" Plug 'ap/vim-buftabline', {'commit': '12f29d2cb11d79c6ef1140a0af527e9231c98f69'}
 
 " prev easymotion/vim-easymotion commit d55e7bf515eab93e0b49f6f762bf5b0bf808264d
 Plug 'easymotion/vim-easymotion', {'commit': 'e4d71c7ba45baf860fdaaf8c06cd9faebdccbd50'}
