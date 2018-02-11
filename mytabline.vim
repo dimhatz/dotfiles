@@ -210,8 +210,8 @@ function! Render()
 			let leftBudget -= bufRepr.width
 			" if budget is <=0, this is the last element and we trim its repr
 			if leftBudget <= 0
-				break
-				" let myBufReprs
+				let bufRepr.label = '<' . bufRepr.label[-leftBudget+1:]
+				return
 			endif
 		endwhile
 	endfunction

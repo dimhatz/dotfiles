@@ -6,7 +6,9 @@ hi! link MyFileModified CursorLineNr
 
 let s:myActiveLine=''
 
-" TODO add func from vim-fugitive
+" TODO make outer blue parts change color to red when modified (take color
+" from template)
+" TODO add func from vim-fugitive placeholder "master"
 " paste sign
 let s:myActiveLine.='%#N2#%4{&l:readonly||!&l:modifiable?" RO ":""}'
 
