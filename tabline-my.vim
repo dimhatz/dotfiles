@@ -141,9 +141,9 @@ function! Render()
 	" If center buffer's width is less than vim's width, there will be
 	" available space to present more buffers to the left/right of the center.
 	" There are 4 cases depending on whether the remaining bufs to the left/right
-	" can fit in the half of the available space or not.
+	" can each fit in half of the available space or not.
 	" 1. If both fit, no trimming is needed.
-	" 2,3. If only one fits, then the other needs to be filled and trimmed,
+	" 2,3. If only one fits, then the other needs to be gradually filled and trimmed,
 	" using the former's extra space.
 	" 4. Both overflow, so both need to be filled and trimmed, restricted to using
 	" only own budget.
@@ -200,23 +200,39 @@ function! Render()
 	" definition, it is called normally. In this case if the captured variables
 	" used by closure were not defined lexically-before the call line, error
 	" will be thrown.
-	function! MyAddLefts() closure
+	function! AddLefts() closure
 		while len(leftBufs) > 0
 			" remove tail
-			let bufNum = remove(leftBufs, -1)
-			let bufRepr = myBufReprs[bufNum]
+			let l:bufNum = remove(leftBufs, -1)
+			let l:bufRepr = myBufReprs[l:bufNum]
 			" prepend it to visibles
-			call insert(visibles, bufNum)
-			let leftBudget -= bufRepr.width
+			call insert(visibles, l:bufNum)
+			let leftBudget -= l:bufRepr.width
 			" if budget is <=0, this is the last element and we trim its repr
 			if leftBudget <= 0
-				let bufRepr.label = '<' . bufRepr.label[-leftBudget+1:]
+				let l:bufRepr.label = '<' . l:bufRepr.label[-leftBudget+1:]
 				return
 			endif
 		endwhile
 	endfunction
 
-	" case 0: center buffer has huge name
+	function! AddRights() closure
+		while len(rightBufs) > 0
+			" remove head
+			let l:bufNum = remove(rightBufs, 0)
+			let l:bufRepr = myBufReprs[l:bufNum]
+			" append it to visibles
+			call add(visibles, l:bufNum)
+			let rightBudget -= l:bufRepr.width
+			" if budget is <=0, this is the last element and we trim its repr
+			if rightBudget <= 0
+				let l:bufRepr.label = l:bufRepr.label[:l:bufRepr.width-2] . '>'
+				return
+			endif
+		endwhile
+	endfunction
+
+	" TODO case 0: center buffer has huge name
 	" case 1:
 	if leftBufsWidth <= leftBudget && rightBufsWidth <= rightBudget
 		let visibles = leftBufs + visibles + rightBufs
