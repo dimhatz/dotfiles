@@ -256,6 +256,7 @@ function! Render()
 				" Checking to not overflow the index as negative index is
 				" counting from the end.
 				let l:end = l:bufRepr.width-2+rightBudget
+				echom 'l:end: '.string(l:end)
 				if l:end < 0
 					let l:bufRepr.label = '>'
 				else
