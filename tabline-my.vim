@@ -1,3 +1,8 @@
+ hi! link NC Tabline
+ hi! link NCMod Tabline
+ hi! link Curr TablineSel
+ hi! link CurrMod TablineSel
+
 function! My_user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
 endfunction
@@ -26,7 +31,7 @@ function! Render()
 		return index(g:listedBufNums, a:bufn) !=# -1
 	endfunction
 	" filter() modifies in-place, which is what we need (not copying)
-	call filter(g:myBufsOrder, function('InListedBufNums'))
+	call filter(g:myBufsOrder, funcref('InListedBufNums'))
 	" with lambda
 	" call filter(g:myBufsOrder, {idx, bufn -> index(g:listedBufNums, bufn) !=# -1})
 
@@ -61,13 +66,13 @@ function! Render()
 
 		" determine highlight style
 		if currentBuf ==# bufn && bufRep.isModified
-			let bufRep.highlight = '%#MyCurrentBufMod#'
+			let bufRep.highlight = '%#CurrMod#'
 		elseif currentBuf ==# bufn && !bufRep.isModified
-			let bufRep.highlight = '%#MyCurrentBuf#'
+			let bufRep.highlight = '%#Curr#'
 		elseif currentBuf !=# bufn && bufRep.isModified
-			let bufRep.highlight = '%#MyTabBufMod#'
+			let bufRep.highlight = '%#NCMod#'
 		else
-			let bufRep.highlight = '%#MyTabBuf#'
+			let bufRep.highlight = '%#NC#'
 		endif
 
 		" update center buffer
@@ -99,15 +104,7 @@ function! Render()
 		" add the representation to the dict of representations (bufn auto
 		" converted to string as dict's key)
 		let myBufReprs[bufn]=bufRep
-		" string()
 	endfor
-
-	" sanity check: if center buffer is not in listed buffers, should never be
-	" possible
-	if index(g:listedBufNums, g:centerBuf) ==# -1
-		echom 'Mytabline error: centerBuf not in Vims listed buffers! This must not happen!'
-		let g:centerBuf = listedBufNums[0]
-	endif
 
 	echom 'tabs_per_tail '.string(tabs_per_tail)
 
@@ -128,15 +125,31 @@ function! Render()
 			let tabs_per_tail[tab.label] = get(tabs_per_tail, tab.label, 0) + 1
 		endfor
 	endwhile
-	" ----------------------------------------------------------------------
-	" TODO: add separators and "+" to each entry, pad spaces left/right
-	" ----------------------------------------------------------------------
 
-	" calculate the widths
+	" add spaces, "+" signs and separators, then calculate the widths
 	for key in keys(myBufReprs)
 		let repr = myBufReprs[key]
+		let repr.label = '  ' . repr.label
+		if repr.isModified
+			let repr.label .= '+ '
+		else
+			let repr.label .= '  '
+		endif
+		" separator to the right
+		let repr.sep = '|'
 		let repr.width = strwidth(strtrans(repr.label))
 	endfor
+
+	" If after closing current buffer an unlisted buffer becomes current, we
+	" must select another center buffer, to start building from it left and
+	" right. This case can happen when a help file is open in :vsp and the
+	" other (currently center) buffer is being closed -> help file becomes
+	" current and the split closes.
+	" Note: The purpose of g:centerBuf is to prevent displayed buffers
+	" jumping around when an unlisted buffer is opened/closed.
+	if index(g:listedBufNums, g:centerBuf) ==# -1
+		let g:centerBuf = g:listedBufNums[0]
+	endif
 
 	" If center buffer's width is less than vim's width, there will be
 	" available space to present more buffers to the left/right of the center.
@@ -147,7 +160,6 @@ function! Render()
 	" using the former's extra space.
 	" 4. Both overflow, so both need to be filled and trimmed, restricted to using
 	" only own budget.
-
 
 	let centerPosInMyBufsOrder = index(g:myBufsOrder, g:centerBuf)
 	" arrays of numbers representing buffers to the left/right of center to be
@@ -160,6 +172,7 @@ function! Render()
 		if centerPosInMyBufsOrder > 0
 			let leftBufs = g:myBufsOrder[0:centerPosInMyBufsOrder-1]
 		endif
+		" no error is thrown when index before ":" is >length, result is []
 		let rightBufs = g:myBufsOrder[centerPosInMyBufsOrder+1:]
 	endif
 	echom 'leftBufs:'.string(leftBufs)
@@ -175,8 +188,8 @@ function! Render()
 		let rightBufsWidth += myBufReprs[rightBufNum].width
 	endfor
 
-	" space left after g:centerBuf
-	let budget = &columns - myBufReprs[g:centerBuf].width
+	" space left after g:centerBuf (-1 is to offset for center's separator)
+	let budget = &columns - myBufReprs[g:centerBuf].width -1
 	let leftBudget = budget / 2
 	let rightBudget = budget - leftBudget
 
@@ -207,7 +220,8 @@ function! Render()
 			let l:bufRepr = myBufReprs[l:bufNum]
 			" prepend it to visibles
 			call insert(visibles, l:bufNum)
-			let leftBudget -= l:bufRepr.width
+			" +1 to offset fot separator that will be added later
+			let leftBudget -= l:bufRepr.width + 1
 			" if budget is <=0, this is the last element and we trim its repr
 			if leftBudget <= 0
 				let l:bufRepr.label = '<' . l:bufRepr.label[-leftBudget+1:]
@@ -223,26 +237,74 @@ function! Render()
 			let l:bufRepr = myBufReprs[l:bufNum]
 			" append it to visibles
 			call add(visibles, l:bufNum)
-			let rightBudget -= l:bufRepr.width
+			" +1 to offset fot separator that will be added later
+			let rightBudget -= l:bufRepr.width + 1
 			" if budget is <=0, this is the last element and we trim its repr
 			if rightBudget <= 0
-				let l:bufRepr.label = l:bufRepr.label[:l:bufRepr.width-2] . '>'
+				let l:bufRepr.label = l:bufRepr.label[:l:bufRepr.width-2+rightBudget] . '>'
 				return
 			endif
 		endwhile
 	endfunction
 
-	" TODO case 0: center buffer has huge name
-	" case 1:
-	if leftBufsWidth <= leftBudget && rightBufsWidth <= rightBudget
+	" case 0: center buffer has huge name
+	if budget <= 0
+		let centerRep = myBufReprs[g:centerBuf]
+		let centerRep.label = '<' . centerRep.label[-budget+1:]
+
+		" case 1: left and right are within their budget
+	elseif leftBufsWidth <= leftBudget && rightBufsWidth <= rightBudget
 		let visibles = leftBufs + visibles + rightBufs
+
+		" case 2: left fits, but right does not
+	elseif leftBufsWidth <= leftBudget
+		let rightBudget += leftBudget - leftBufsWidth
+		call AddRights()
+		let visibles = leftBufs + visibles
+
+	" case 3: right fits, but left does not
+	elseif rightBufsWidth <= rightBudget
+		let leftBudget += rightBudget - rightBufsWidth
+		call AddLefts()
+		let visibles = visibles + rightBufs
+
+	" case 4: both do not fit
+	else
+		call AddLefts()
+		call AddRights()
 	endif
+
+	" make separator " " instead of "|" in current and the one to the left
+	if index(visibles, currentBuf) > -1
+		let myBufReprs[currentBuf].sep = ' '
+		if index(visibles, currentBuf) > 0
+			let myBufReprs[visibles[index(visibles, currentBuf)-1]].sep = ' '
+		endif
+	endif
+
+	" final assembly
+	let tabline = ''
+	for bufn in visibles
+		let rep = myBufReprs[bufn]
+		let tabline .= rep.highlight . rep.label . rep.sep
+	endfor
+	let tabline .= '%#NC#%='
 	" ----------------------------------------------------------------------
 	echom 'myBufReprs '.string(myBufReprs)
 	echom ' '
 	echom 'myBufsOrder '.string(g:myBufsOrder)
 	echom ' '
 	echom 'listedBufNums '.string(g:listedBufNums)
+	echom ' '
+	echom 'visibles: '.string(visibles)
+	echom ' '
+	echom 'final rightBudget: '.string(rightBudget)
+	echom ' '
+	echom 'final leftBudget: '.string(leftBudget)
+	echom ' '
+	echom 'vims width: '.string(&columns)
+	return tabline
 endfunction
 
-call Render()
+set tabline=%!Render()
+" call Render()
