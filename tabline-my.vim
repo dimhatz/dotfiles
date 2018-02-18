@@ -220,11 +220,19 @@ function! Render()
 			let l:bufRepr = myBufReprs[l:bufNum]
 			" prepend it to visibles
 			call insert(visibles, l:bufNum)
-			" +1 to offset fot separator that will be added later
+			" +1 to offset for separator that will be added later
 			let leftBudget -= l:bufRepr.width + 1
 			" if budget is <=0, this is the last element and we trim its repr
 			if leftBudget <= 0
+				" Trimming from the left:
+				" Starting point is -leftBudget, as this is how much we are
+				" over the budget, thus so much we cut.
+				" +1 is to account for "<" symbol.
+				" -leftBudget+1 is guaranteed to be >0, no fear of overflowing
+				"  the index. If it is past length-1, no error is thrown and
+				"  empty string is the result.
 				let l:bufRepr.label = '<' . l:bufRepr.label[-leftBudget+1:]
+				" TODO: address the corner case as in AddRights below.
 				return
 			endif
 		endwhile
@@ -237,11 +245,30 @@ function! Render()
 			let l:bufRepr = myBufReprs[l:bufNum]
 			" append it to visibles
 			call add(visibles, l:bufNum)
-			" +1 to offset fot separator that will be added later
+			" +1 to offset for separator that will be added later
 			let rightBudget -= l:bufRepr.width + 1
 			" if budget is <=0, this is the last element and we trim its repr
 			if rightBudget <= 0
-				let l:bufRepr.label = l:bufRepr.label[:l:bufRepr.width-2+rightBudget] . '>'
+				" trimming from the right:
+				" Ending point (last char to be included) is at index (width - 1),
+				" another -1 is to account for "<" symbol. Further reducing the
+				" ending point by how much we are over budget.
+				" Checking to not overflow the index as negative index is
+				" counting from the end.
+				let l:end = l:bufRepr.width-2+rightBudget
+				if l:end < 0
+					let l:bufRepr.label = '>'
+				else
+					let l:bufRepr.label = l:bufRepr.label[:l:end] . '>'
+				endif
+				" HACK: for corner case when rightBudget (before subtraction)
+				" is exactly 1, so even if the label will be ">", after adding
+				" separator later, we will actually be over budget and tabline
+				" will trim itself from the left. This is problematic when
+				" first (leftmost) buffer is the current one: it becomes
+				" trimmed by 1 char and prepended with "<" by vim.
+				" So we empty rightmost element's separator.
+				let l:bufRepr.sep = ''
 				return
 			endif
 		endwhile
