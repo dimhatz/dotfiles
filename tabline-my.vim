@@ -182,10 +182,12 @@ function! Render()
 	let leftBufsWidth = 0
 	let rightBufsWidth = 0
 	for leftBufNum in leftBufs
-		let leftBufsWidth += myBufReprs[leftBufNum].width
+		" +1 to account for separator
+		let leftBufsWidth += myBufReprs[leftBufNum].width +1
 	endfor
 	for rightBufNum in rightBufs
-		let rightBufsWidth += myBufReprs[rightBufNum].width
+		" +1 to account for separator
+		let rightBufsWidth += myBufReprs[rightBufNum].width +1
 	endfor
 
 	" space left after g:centerBuf (-1 is to offset for center's separator)
