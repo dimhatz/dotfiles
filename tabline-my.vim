@@ -20,7 +20,7 @@ let g:dirsep = fnamemodify(getcwd(),':p')[-1:]
 " buffer to keep in central position when current buffer is non-user
 let g:centerBuf=winbufnr(0)
 
-function! Render()
+function! MyTablineRender()
 	" list of integers, representing vim's user buffers ids(aka non-help
 	" non-quickfix)
 	let g:listedBufNums=My_user_buffers()
@@ -54,10 +54,7 @@ function! Render()
 		" any buffer in vim's buf list and not in order list should be
 		" appended to the order list
 		if index(g:myBufsOrder, bufn) ==# -1
-			" echom 'adding buf no: '.bufn
 			call add(g:myBufsOrder, bufn)
-			" echom 'myBufsOrder: '.string(g:myBufsOrder, ',')
-			" echom ' '
 		endif
 
 		" representation for currently iterated buffer number
@@ -106,7 +103,9 @@ function! Render()
 		let myBufReprs[bufn]=bufRep
 	endfor
 
-	echom 'tabs_per_tail '.string(tabs_per_tail)
+	" ----------------------------------------------------------------------
+	" echom 'tabs_per_tail '.string(tabs_per_tail)
+	" ----------------------------------------------------------------------
 
 	" ----------------------------------------------------------------------
 	" disambiguate same-basename files by adding trailing path segments
@@ -126,7 +125,7 @@ function! Render()
 		endfor
 	endwhile
 
-	" add spaces, "+" signs and separators, then calculate the widths
+	" add spaces, "+" signs and define separators, then calculate the widths
 	for key in keys(myBufReprs)
 		let repr = myBufReprs[key]
 		let repr.label = '  ' . repr.label
@@ -157,7 +156,7 @@ function! Render()
 	" can each fit in half of the available space or not.
 	" 1. If both fit, no trimming is needed.
 	" 2,3. If only one fits, then the other needs to be gradually filled and trimmed,
-	" using the former's extra space.
+	" using the former's extra space (budget).
 	" 4. Both overflow, so both need to be filled and trimmed, restricted to using
 	" only own budget.
 
@@ -175,8 +174,10 @@ function! Render()
 		" no error is thrown when index before ":" is >length, result is []
 		let rightBufs = g:myBufsOrder[centerPosInMyBufsOrder+1:]
 	endif
-	echom 'leftBufs:'.string(leftBufs)
-	echom 'rightBufs'.string(rightBufs)
+	" ----------------------------------------------------------------------
+	" echom 'leftBufs:'.string(leftBufs)
+	" echom 'rightBufs'.string(rightBufs)
+	" ----------------------------------------------------------------------
 
 	" calculate each side's width
 	let leftBufsWidth = 0
@@ -195,10 +196,12 @@ function! Render()
 	let leftBudget = budget / 2
 	let rightBudget = budget - leftBudget
 
-	echom 'leftBufsWidth: '.leftBufsWidth
-	echom 'rightBufsWidth: '.rightBufsWidth
-	echom 'leftBudget: '.leftBudget
-	echom 'rightBudget: '.rightBudget
+	" ----------------------------------------------------------------------
+	" echom 'leftBufsWidth: '.leftBufsWidth
+	" echom 'rightBufsWidth: '.rightBufsWidth
+	" echom 'leftBudget: '.leftBudget
+	" echom 'rightBudget: '.rightBudget
+	" ----------------------------------------------------------------------
 
 	" list of buffer nums that will be displayed (either full or trimmed)
 	let visibles = []
@@ -258,7 +261,9 @@ function! Render()
 				" Checking to not overflow the index as negative index is
 				" counting from the end.
 				let l:end = l:bufRepr.width-2+rightBudget
-				echom 'l:end: '.string(l:end)
+				" ----------------------------------------------------------------------
+				" echom 'l:end: '.string(l:end)
+				" ----------------------------------------------------------------------
 				if l:end < 0
 					let l:bufRepr.label = '>'
 				else
@@ -320,21 +325,78 @@ function! Render()
 	endfor
 	let tabline .= '%#NC#%='
 	" ----------------------------------------------------------------------
-	echom 'myBufReprs '.string(myBufReprs)
-	echom ' '
-	echom 'myBufsOrder '.string(g:myBufsOrder)
-	echom ' '
-	echom 'listedBufNums '.string(g:listedBufNums)
-	echom ' '
-	echom 'visibles: '.string(visibles)
-	echom ' '
-	echom 'final rightBudget: '.string(rightBudget)
-	echom ' '
-	echom 'final leftBudget: '.string(leftBudget)
-	echom ' '
-	echom 'vims width: '.string(&columns)
+	" echom 'myBufReprs '.string(myBufReprs)
+	" echom ' '
+	" echom 'myBufsOrder '.string(g:myBufsOrder)
+	" echom ' '
+	" echom 'listedBufNums '.string(g:listedBufNums)
+	" echom ' '
+	" echom 'visibles: '.string(visibles)
+	" echom ' '
+	" echom 'final rightBudget: '.string(rightBudget)
+	" echom ' '
+	" echom 'final leftBudget: '.string(leftBudget)
+	" echom ' '
+	" echom 'vims width: '.string(&columns)
+	" ----------------------------------------------------------------------
 	return tabline
 endfunction
 
-set tabline=%!Render()
-" call Render()
+set tabline=%!MyTablineRender()
+
+function! MyBufferGoLeft()
+	let centerIdx = index(g:myBufsOrder, g:centerBuf)
+	" If current (or centerBuf if current is unlisted) is the leftmost (list head),
+	" we must go to the rightmost (cycle the current from the right).
+	" It is guaranteed that g:centerBuf is always a number from g:myBufsOrder
+	" (which contains the same numbers as listedBufNums) from the main MyTablineRender function.
+	if centerIdx > 0
+		let gotoBuf = g:myBufsOrder[centerIdx - 1]
+	else
+		let gotoBuf = g:myBufsOrder[-1]
+	endif
+	execute ":buffer " . gotoBuf
+endfunction
+
+function! MyBufferGoRight()
+	" same logic as MyBufferGoLeft()
+	let centerIdx = index(g:myBufsOrder, g:centerBuf)
+	" if center is not the rightmost
+	if centerIdx < len(g:myBufsOrder) - 1
+		let gotoBuf = g:myBufsOrder[centerIdx + 1]
+	else
+		let gotoBuf = g:myBufsOrder[0]
+	endif
+	execute ":buffer " . gotoBuf
+endfunction
+
+function! MyBufferMoveLeft()
+	" move centerBuf left in the list then refresh. Will not cycle.
+	let centerIdx = index(g:myBufsOrder, g:centerBuf)
+	if centerIdx > 0
+		" swap with the one to the left
+		let leftBufTemp = g:myBufsOrder[centerIdx - 1]
+		let g:myBufsOrder[centerIdx - 1] = g:myBufsOrder[centerIdx]
+		let g:myBufsOrder[centerIdx] = leftBufTemp
+		" force refresh tabline/statusline
+		let &ro = &ro
+	endif
+endfunction
+
+function! MyBufferMoveRight()
+	" like MyBufferMoveLeft() above
+	let centerIdx = index(g:myBufsOrder, g:centerBuf)
+	if centerIdx < len(g:myBufsOrder) - 1
+		" swap with the one to the left
+		let rightBufTemp = g:myBufsOrder[centerIdx + 1]
+		let g:myBufsOrder[centerIdx + 1] = g:myBufsOrder[centerIdx]
+		let g:myBufsOrder[centerIdx] = rightBufTemp
+		" force refresh tabline/statusline
+		let &ro = &ro
+	endif
+endfunction
+
+command! MyBufferGoLeft call MyBufferGoLeft()
+command! MyBufferGoRight call MyBufferGoRight()
+command! MyBufferMoveLeft call MyBufferMoveLeft()
+command! MyBufferMoveRight call MyBufferMoveRight()
