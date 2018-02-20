@@ -81,7 +81,7 @@ augroup MyStatusLine
 	autocmd!
 	autocmd VimEnter,WinEnter,BufWinEnter * let &l:statusline=s:myActiveLine
 	autocmd WinLeave * let &l:statusline=s:myInactiveLine
-	autocmd ColorScheme * hi! N1 guifg=#f0f0f0 guibg=#005478 ctermfg=254 ctermbg=24
+	autocmd ColorScheme * source ~/dotfiles/statusline-final.vim
 augroup END
 
 " Tries to get the most relevant representation of current filename.

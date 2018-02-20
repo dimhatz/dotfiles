@@ -413,3 +413,8 @@ command! MyBufferGoLeft call MyBufferGoLeft()
 command! MyBufferGoRight call MyBufferGoRight()
 command! MyBufferMoveLeft call MyBufferMoveLeft()
 command! MyBufferMoveRight call MyBufferMoveRight()
+
+augroup MyTabLine
+	autocmd!
+	autocmd ColorScheme * source ~/dotfiles/tabline-my.vim
+augroup END

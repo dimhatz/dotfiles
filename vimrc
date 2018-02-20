@@ -141,6 +141,7 @@ if has("gui_running")
 	elseif has("x11")
 	" Also for GTK 1
 	endif
+	" TODO: remove all italics and use terminus bitmap font(has greek) with (windows install with options: "il2" and "td1"
 endif
 
 " <C-CR> to switch between input languages
@@ -850,6 +851,7 @@ let g:buftabline_numbers=0
 
 " ------------ my statusline -----------------------------
 source ~/dotfiles/statusline-final.vim
+source ~/dotfiles/tabline-my.vim
 
 " ---------------- profiling plugins ------------------------------------
 " https://stackoverflow.com/questions/12213597/how-to-see-which-plugins-are-making-vim-slow
