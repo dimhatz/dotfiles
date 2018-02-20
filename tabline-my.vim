@@ -1,7 +1,20 @@
- hi! link NC Tabline
- hi! link NCMod Tabline
- hi! link Curr TablineSel
- hi! link CurrMod TablineSel
+" TODO: synchronize with statusline colors and deduplicate.
+" my deep blue from statusline
+hi! N1 guifg=#eee8d5 guibg=#005478 ctermfg=7 ctermbg=24
+" my deep red from statusline
+hi! I1 guifg=#f0f0f0 guibg=#752822 ctermfg=254 ctermbg=88
+
+" colors for non-current buffer (non-modified)
+hi! link NC LineNr
+" colors for non-current buffer (modified)
+hi! link NCMod DiffChange
+" colors for current buffer (non-modified)
+hi! link Curr N1
+" colors for current buffer (modified)
+hi! link CurrMod I1
+" colors for "|" separator
+hi! link TablineSep LineNr
+
 
 function! My_user_buffers() " help buffers are always unlisted, but quickfix buffers are not
 	return filter(range(1,bufnr('$')),'buflisted(v:val) && "quickfix" !=? getbufvar(v:val, "&buftype")')
@@ -321,7 +334,7 @@ function! MyTablineRender()
 	let tabline = ''
 	for bufn in visibles
 		let rep = myBufReprs[bufn]
-		let tabline .= rep.highlight . rep.label . rep.sep
+		let tabline .= rep.highlight . rep.label . '%#TablineSep#' . rep.sep
 	endfor
 	let tabline .= '%#NC#%='
 	" ----------------------------------------------------------------------

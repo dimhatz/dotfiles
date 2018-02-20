@@ -1,8 +1,15 @@
+" N1->N2->N3<-N2<-N1 are for colors for non-modified files (left-to-right)
+" my deep blue
 hi! N1 guifg=#eee8d5 guibg=#005478 ctermfg=7 ctermbg=24
-" hi! N1 guifg=#f0f0f0 guibg=#005478 ctermfg=254 ctermbg=24
+" my deep red
+hi! I1 guifg=#f0f0f0 guibg=#752822 ctermfg=254 ctermbg=88
+" my deep green
+" hi! V1 guifg=#fbfbfb guibg=#2F6300 ctermfg=255 ctermbg=22
+
+" CursorLineNr   xxx term=bold ctermfg=11 guifg=yellow
 hi! link N2 Visual
 hi! link N3 LineNr
-hi! link MyFileModified CursorLineNr
+hi! link MyStatusLineFileMod DiffChange
 
 let s:myActiveLine=''
 
@@ -23,7 +30,7 @@ let s:myActiveLine.=' %{pathshorten(fnamemodify(getcwd(),":~"))} '
 let s:myActiveLine.='%#N3# %{!&l:modified?MyCurrFname():""}'
 
 " will be shown when file modified, no extra space due to the above.
-let s:myActiveLine.='%#MyFileModified#%{&l:modified?MyCurrFname():""}'
+let s:myActiveLine.='%#MyStatusLineFileMod#%{&l:modified?MyCurrFname():""}'
 " extra padding space, else will be "file.txt[+]"
 let s:myActiveLine.='%{&l:modified?"  [+]":""}'
 
@@ -103,6 +110,7 @@ let &statusline=s:myActiveLine
 
 " " how many occurrences of % in the resulting string, should be less than 80
 " " uncomment the below when testing
+" -----------------------------------------------------------------------------
 " let s:myActiveLineItemsNo=strlen(substitute(s:myActiveLine, "[^%]", "","g"))
 " if s:myActiveLineItemsNo <= 80
 " 	echo "LineItems: " . s:myActiveLineItemsNo . ". (Max is 80) All good."
@@ -111,3 +119,4 @@ let &statusline=s:myActiveLine
 " 	echo "LineItems: " . s:myActiveLineItemsNo . ". (Max is 80) Max exceeded."
 " 	echohl Normal
 " endif
+" -----------------------------------------------------------------------------
