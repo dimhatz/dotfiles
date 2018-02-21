@@ -136,7 +136,8 @@ if has("gui_running")
 		" set guifont=Source_Code_Pro_Medium:h10:cANSI:qDRAFT
 		" set guifont=Terminus:h12:cGREEK:qNONANTIALIASED
 		" zev peep 8x16 is same size as terminus:h12 ``.,;
-		set guifont=peep:h12:cOEM:qNONANTIALIASED
+		set guifont=Source_Code_Pro_Semibold:h10:cANSI:qDRAFT
+		nnoremap <F4> :set guifont=Source_Code_Pro_Semibold:h10:cANSI:qCLEARTYPE<CR>
 		nnoremap <F5> :set guifont=Source_Code_Pro_Medium:h10:cANSI:qDRAFT<CR>
 		nnoremap <F6> :set guifont=Source_Code_Pro_Semibold:h10:cANSI:qDRAFT<CR>
 		nnoremap <F7> :set guifont=Terminus:h12:cGREEK:qNONANTIALIASED<CR>
