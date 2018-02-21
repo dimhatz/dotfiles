@@ -133,7 +133,16 @@ if has("gui_running")
 		" no extra spacing - not checked on gtk vim linux
 		set linespace=0
 	elseif has("gui_win32")
-		set guifont=Source_Code_Pro_Medium:h10:cANSI:qDRAFT
+		" set guifont=Source_Code_Pro_Medium:h10:cANSI:qDRAFT
+		" set guifont=Terminus:h12:cGREEK:qNONANTIALIASED
+		" zev peep 8x16 is same size as terminus:h12 ``.,;
+		set guifont=peep:h12:cOEM:qNONANTIALIASED
+		nnoremap <F5> :set guifont=Source_Code_Pro_Medium:h10:cANSI:qDRAFT<CR>
+		nnoremap <F6> :set guifont=Source_Code_Pro_Semibold:h10:cANSI:qDRAFT<CR>
+		nnoremap <F7> :set guifont=Terminus:h12:cGREEK:qNONANTIALIASED<CR>
+		nnoremap <F8> :set guifont=peep:h12:cOEM:qNONANTIALIASED<CR>
+		" set guifont=unscii:h12:cGREEK:qDRAFT
+		" set guifont=@unscii:h12:cGREEK:qDRAFT
 		" no extra spacing, linespace was 1 by default, increase if
 		" underlines cover other lines
 		set linespace=0
