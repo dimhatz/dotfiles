@@ -19,7 +19,7 @@ xterm*metaSendsEscape: true
 xterm*termName: xterm-256color
 xterm*locale: true
 xterm*utf8: 2
-Xterm*utf8: 2
+XTerm*utf8: 2
 xterm*faceName: MonaVu:style=Regular:size=10
 xterm*cursorBlink: false
 
