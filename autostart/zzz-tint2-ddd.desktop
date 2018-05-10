@@ -1,0 +1,7 @@
+[Desktop Entry]
+# suppress all messages, because it writes "ac power found" to stderr every 1 min
+# needs sh -c to work, otherwize would not even start
+Exec=sh -c "tint2 > /dev/null 2>&1"
+Terminal=false
+Type=Application
+OnlyShowIn=OPENBOX;

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Exec=conky
+Terminal=false
+Type=Application
+OnlyShowIn=OPENBOX;
