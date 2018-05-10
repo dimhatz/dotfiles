@@ -1,9 +1,18 @@
 !============ [General info about Xresources] ==========
-! source: https://unix.stackexchange.com/questions/216723/xterm-or-xterm-in-configuration-file
+! ddd comments:
+! - check man 7 X section about resources for more info
 ! - resource names are case-sensitive
+! - syntax for a resource is: Component1.Component2.Component3....ComponentName
+! - also: * matches any sequence of components and ? matches any one component. These are called bindings (== wildcards).
+! - Component1 is the app itself. The others are widgets of the app.
+! - Each component can be identified by its class (starts with capital) or instance name (lowercase).
+! - Instance names are more precise and take precedence over class names. Class names take precedence over wildcards (obviously, as they are more precise)
+!
+! source: https://unix.stackexchange.com/questions/216723/xterm-or-xterm-in-configuration-file
 ! - conventionally X resource names use a leading capital letter for class name. when the first letter of the class name is X, there's a convention to make the second letter capitalized. So we get XTerm. Some programs do not follow the convention.
 ! - conventionally, the instance name is the actual name of the program (its filename). If you happen to rename the program (as happens occasionally, e.g., xterm.real) that changes the name. The program doesn't have to do this, but it's done often. xterm does it.
 ! usually the class name is a constant. It is not in xterm, because it expects one of two classes: XTerm or UXTerm (3 leading capitals). The latter is used for the uxterm script, simplifying the way the fonts are specified (it's a wrapper, see below).
+!
 !============ [Fonts] ==========
 Xft.autohint: 0
 Xft.antialias: 1
