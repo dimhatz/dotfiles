@@ -9,9 +9,9 @@
 ! - Instance names are more precise and take precedence over class names. Class names take precedence over wildcards (obviously, as they are more precise)
 !
 ! source: https://unix.stackexchange.com/questions/216723/xterm-or-xterm-in-configuration-file
-! - conventionally X resource names use a leading capital letter for class name. when the first letter of the class name is X, there's a convention to make the second letter capitalized. So we get XTerm. Some programs do not follow the convention.
-! - conventionally, the instance name is the actual name of the program (its filename). If you happen to rename the program (as happens occasionally, e.g., xterm.real) that changes the name. The program doesn't have to do this, but it's done often. xterm does it.
-! usually the class name is a constant. It is not in xterm, because it expects one of two classes: XTerm or UXTerm (3 leading capitals). The latter is used for the uxterm script, simplifying the way the fonts are specified (it's a wrapper, see below).
+! - conventionally X resource names use a leading capital letter for class name. when the first letter of the class name is X, theres a convention to make the second letter capitalized. So we get XTerm. Some programs do not follow the convention.
+! - conventionally, the instance name is the actual name of the program (its filename). If you happen to rename the program (as happens occasionally, e.g., xterm.real) that changes the name. The program doesnt have to do this, but its done often. xterm does it.
+! usually the class name is a constant. It is not in xterm, because it expects one of two classes: XTerm or UXTerm (3 leading capitals). The latter is used for the uxterm script, simplifying the way the fonts are specified (its a wrapper, see below).
 !
 !============ [Fonts] ==========
 Xft.autohint: 0
@@ -26,6 +26,7 @@ Xcursor.theme: Adwaita
 !============ [XTerm stuff] ==========
 ! For adjusting relative height between glyphs
 !XTerm*scaleHeight: 0.9
+!
 ! DONT FORGET TO USE CLIPBOARD MANAGER LIKE PARCELLITE TO KEEP CLIPBOARD FROM
 ! DISAPPEARING WHEN APPLICATION EXITS
 !
@@ -36,6 +37,28 @@ Xcursor.theme: Adwaita
 ! them without changing their normal environment.  If you already use a
 ! UTF-8 locale like almost everyone does these days, uxterm is not needed
 ! or useful.
+!
+! If some option is not present, but set to an unusual value, check /etc/X11/app-defaults/XTerm and XTerm-color and UXTerm
+!
+! Set consistent escape sequences
+! source: http://www.hypexr.org/linux_ruboff.php#bsolution http://www.ibb.net/~anne/keyboard/keyboard.html#Xterm
+! When using <c-v> in xterm or vim:
+! delete should give [3~ and backspace should give 
+! On xubuntu 18.04 HOME gives OH and END gives OF and seems to work fine so far with man and less, but not with the below HOME and END.
+! If having trouble with home or end, try modifying overrides like this:
+!
+!xterm*VT100.Translations: \
+!        #override <Key>BackSpace: string(0x7f) \n\
+!		  <Key>Delete:    string(0x1b) string("[3~") \n\
+!		  <Key>Home:      string("\033[1~") \n\
+!		  <Key>End:       string("\033[4~")
+!
+! erase sequence is now  instead of , and <c-h> can now be used in vim bindings
+xterm*ttyModes: erase ^?
+xterm*VT100.Translations: \
+        #override <Key>BackSpace: string(0x7f) \n\
+		  <Key>Delete:    string(0x1b) string("[3~")
+! rest of my settings
 xterm*selectToClipboard: true
 XTerm*selectToClipboard: true
 xterm*metaSendsEscape: true
@@ -43,6 +66,10 @@ xterm*termName: xterm-256color
 xterm*locale: true
 xterm*utf8: 2
 XTerm*utf8: 2
+! from /etc/X11/app-defaults/UXTerm
+xterm*utf8Title: true
+! xterm*fontMenu.Label:  Unicode Fonts
+! ---
 xterm*faceName: MonaVu:style=Regular:size=10
 xterm*cursorBlink: false
 
