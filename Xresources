@@ -1,3 +1,9 @@
+!============ [General info about Xresources] ==========
+! source: https://unix.stackexchange.com/questions/216723/xterm-or-xterm-in-configuration-file
+! - resource names are case-sensitive
+! - conventionally X resource names use a leading capital letter for class name. when the first letter of the class name is X, there's a convention to make the second letter capitalized. So we get XTerm. Some programs do not follow the convention.
+! - conventionally, the instance name is the actual name of the program (its filename). If you happen to rename the program (as happens occasionally, e.g., xterm.real) that changes the name. The program doesn't have to do this, but it's done often. xterm does it.
+! usually the class name is a constant. It is not in xterm, because it expects one of two classes: XTerm or UXTerm (3 leading capitals). The latter is used for the uxterm script, simplifying the way the fonts are specified (it's a wrapper, see below).
 !============ [Fonts] ==========
 Xft.autohint: 0
 Xft.antialias: 1
@@ -13,6 +19,14 @@ Xcursor.theme: Adwaita
 !XTerm*scaleHeight: 0.9
 ! DONT FORGET TO USE CLIPBOARD MANAGER LIKE PARCELLITE TO KEEP CLIPBOARD FROM
 ! DISAPPEARING WHEN APPLICATION EXITS
+!
+! TLDR: Set utf8 and do not use uxterm (which is just a wrapper).
+! Source:  https://lists.debian.org/debian-user/2016/11/msg00780.html 
+! Nowadays uxterm is pretty much obsolete, but 15 years ago UTF-8 locales
+! were rather esoteric, and the uxterm wrapper allowed people to easily test
+! them without changing their normal environment.  If you already use a
+! UTF-8 locale like almost everyone does these days, uxterm is not needed
+! or useful.
 xterm*selectToClipboard: true
 XTerm*selectToClipboard: true
 xterm*metaSendsEscape: true
