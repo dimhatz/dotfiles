@@ -469,7 +469,7 @@
     </keybind>
     <keybind key="W-Return">
       <action name="Execute">
-        <command>uxterm</command>
+        <command>xterm</command>
       </action>
     </keybind>
   </keyboard>
