@@ -13,6 +13,14 @@
 ! - conventionally, the instance name is the actual name of the program (its filename). If you happen to rename the program (as happens occasionally, e.g., xterm.real) that changes the name. The program doesnt have to do this, but its done often. xterm does it.
 ! usually the class name is a constant. It is not in xterm, because it expects one of two classes: XTerm or UXTerm (3 leading capitals). The latter is used for the uxterm script, simplifying the way the fonts are specified (its a wrapper, see below).
 !
+!
+! From my notes on fonts:
+! To check current xft settings:
+! appres Xft
+! appres xft
+! (the second one is for instances? - check my .Xresources file with more info on the difference)
+! Also, to check all the Xresources values set by user (not the system defaults, as opposed to appres that will print those too):
+! xrdb -query
 !============ [Fonts] ==========
 Xft.autohint: 0
 Xft.antialias: 1

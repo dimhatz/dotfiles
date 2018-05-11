@@ -53,8 +53,34 @@ dunst ← not sure if auto-installed with openbox, also maybe just use xfce’s 
 xbacklight ← for backlight control using keys (see commented out section in openbox’s rc.xml )
 
 
+-----------------------
+Fonts
 
+Do not use conf.d directory inside ~/.config/fontconfig/ with linking into conf.d from /etc/fonts/conf.avail/ because they are not guaranteed to override the ones in /etc/fonts/conf.d/
+This is because if they use <edit ... mode="append"> the value will not be overwritten.
+Better to just put everything in ~/.config/fontconfig/fonts.conf like this:
+<match target="font">
+	<edit name="rgba" mode="assign"><const>rgb</const></edit>
+</match>
 
+Also note that *no reloading* is needed to change configurations like above.
+Just kill all instances of the app and restart it to see changes.
+To make sure the config is read:
+FC_DEBUG=1024 thunar
+will print debug messages for reading configs and their order, and since user settings have prefix 50-user.conf there are more confs loaded afterwards: 60-* etc. It is possible but not likely that those override user settings, as most of them will just append.
 
+For checking whether fontconfig settings (ex. for Ubuntu font) are applied correctly and not overriden by another .conf: 
+fc-match --verbose Ubuntu
+and it will report all the hinting settings, ex: hitstyle: 1 means hintslight, see the fontconfig docs table with constants names and their values (man fonts-conf).
 
+lxappearance seems to set font settings in ~/.gtkrc-2.0 and ~/.config/gtk-3.0/settings.ini, along with other options. However, the font rendering setting seems to be correctly recognized (like hintfull) but impossible to set from lxappearance: no effect and upon lxappearance's restart the values return to the old ones. OTOH, in XFCE's appearance app there are immediate changes - its because it (also) sets Xresources Xft values (not sure whether XFCE stores the other settings in a separate place - most likely)
+That is confirmed by running:
+appres Xft
+appres xft
+(the second one is for instances? - check my .Xresources file with more info on the difference)
+Also, to check all the Xresources values set by user (not the system defaults, as opposed to appres that will print those too):
+xrdb -query
+
+The conclusion is: most likely the applications themselves choose first Xresources Xft settings, and only after that fontconfig and gtkrc and the rest. The only way to ensure correct rendering is to set all 3!!!
+-----------------------
 
