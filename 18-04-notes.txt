@@ -23,6 +23,8 @@ sudo add-apt-repository ppa:tista/adapta
 sudo apt-get update
 Arc theme:
 sudo apt install arc-theme
+
+WARNING: ~/.gtkrc-2.0 and ~/.config/gtk-3.0/settings.ini are overwritten by lxappearance, by rm'ing first, so do not symlink them when installing them, just cp!
 -----------------------
 tint2 notification area: When using Faenza-darkest and other Faenza themes, the icon of nm-applet becomes small when setting vertical and horiz offsets to 4 (considering a width of the panel 32, 2px border on notif. area). This has as a result, the icon to be found from another theme, and it is a dark one.
 -----------------------
