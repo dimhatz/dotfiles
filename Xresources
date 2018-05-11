@@ -30,7 +30,10 @@ Xft.hintstyle: hintslight
 Xft.dpi: 96
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
-Xcursor.theme: Adwaita
+!Xcursor.theme: Adwaita
+!Xcursor.theme: DMZ-White
+! size can be 16, 32, 48, 64
+!Xcursor.size: 16
 
 !============ [XTerm stuff] ==========
 ! For adjusting relative height between glyphs
