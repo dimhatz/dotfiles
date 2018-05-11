@@ -30,6 +30,8 @@ Xft.hintstyle: hintslight
 Xft.dpi: 96
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
+! intentionally non-existent cursor theme should force use of current default, at least under Openbox
+Xcursor.theme: ThisIsIntentionalDDD
 !Xcursor.theme: Adwaita
 !Xcursor.theme: DMZ-White
 ! size can be 16, 32, 48, 64
