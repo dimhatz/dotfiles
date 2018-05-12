@@ -86,6 +86,9 @@ xterm*utf8Title: true
 ! ---
 ! setting Source Code Pro to Semibold makes it detect Semibold as both normal and bold variant, thus stopping showing bolds (which is what we want)
 ! when setting name to "Source Code Pro Semibold" and not setting style, the start stdout messages are the same, except for italic font xterm reports property "matrix=1 0.2 0 1" when using "style:" and omitting it when not using "style:" (using "Source Code Pro Semibold" with "style" also gives matrix, so matrix on italics is reported when style is set). When not specifying style (and matrix is not shown), xterm uses fonts real italics and doesnt show greek chars!
+! according to man xterm, best way to get fonts name is:
+! fc-list :scalable=true:spacing=mono: family
+! and use the exact output, so semibold seems to be: "Source Code Pro,Source Code Pro Semibold" but then it complains that there are too many fonts for fNorm. So the correct one would be "Source Code Pro Semibold".
 xterm*faceName: Source Code Pro Semibold:style=Semibold:size=10
 !xterm*faceName: Source Code Pro Semibold:size=10
 !xterm*faceName: Source Code Pro:style=Semibold:size=10
