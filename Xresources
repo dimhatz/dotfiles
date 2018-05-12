@@ -39,7 +39,7 @@ Xcursor.theme: ThisIsIntentionalDDD
 
 !============ [XTerm stuff] ==========
 ! For adjusting relative height between glyphs
-!XTerm*scaleHeight: 0.9
+XTerm*scaleHeight: 0.9
 !
 ! DONT FORGET TO USE CLIPBOARD MANAGER LIKE PARCELLITE TO KEEP CLIPBOARD FROM
 ! DISAPPEARING WHEN APPLICATION EXITS
