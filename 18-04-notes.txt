@@ -86,5 +86,11 @@ Also, to check all the Xresources values set by user (not the system defaults, a
 xrdb -query
 
 The conclusion is: most likely the applications themselves choose first Xresources Xft settings, and only after that fontconfig and gtkrc and the rest. The only way to ensure correct rendering is to set all 3!!!
+
+New Fonts installation:
+copy new fonts to ~/.local/share/fonts/ which in my setup should be symlink to ~/dotfiles/fonts/
+then: fc-cache -frv
+to force regeneration of all font caches.
+For programming fonts, prefer ttf over otf, from a quick search they should be less troublesome, even though oft is newer and more advanced - not sure whether its worth bothering with otf for programming fonts.
 -----------------------
 
