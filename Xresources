@@ -91,6 +91,7 @@ xterm*faceName: Source Code Pro:style=Semibold:size=10
 !xterm*font:
 ! stop showing bold fonts (regardless of whether bitmap or not), overrides alwaysBoldMode and boldMode resource settings, which is what we want, even if we dont set these
 !xterm*allowBoldFonts: false
+! TODO: set semibold as italic font (check xterm's startup stdout). Also, for some reason, when setting Source Code Pro's style Regular, it matches Black as bold font!!!
 xterm*cursorBlink: false
 ! on startup, print to stdout summary of loaded fonts for debugging
 ! xterm*reportFonts: true

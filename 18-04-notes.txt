@@ -87,10 +87,29 @@ xrdb -query
 
 The conclusion is: most likely the applications themselves choose first Xresources Xft settings, and only after that fontconfig and gtkrc and the rest. The only way to ensure correct rendering is to set all 3!!!
 
+-----------------------
 New Fonts installation:
 copy new fonts to ~/.local/share/fonts/ which in my setup should be symlink to ~/dotfiles/fonts/
 then: fc-cache -frv
 to force regeneration of all font caches.
 For programming fonts, prefer ttf over otf, from a quick search they should be less troublesome, even though oft is newer and more advanced - not sure whether its worth bothering with otf for programming fonts.
+-----------------------
+Italics: test if italics escape sequence is recognized:
+echo -e "\e[3m is this italics? Small letter A is a \e[23m"
+If Source Code Pro is set up correctly in xterm, check letter a, which should be different, not just "auto-obliqued"??? - not sure. If that is the case, make sure xterm picks up correct fonts for the italics, check stdout on xterm's startup.
+If italics esc sequence is not recognized and all the chars are printed exactly:
+mkdir $HOME/.terminfo
+touch xterm-256color.terminfo
+Inside of the xterm-256color.terminfo file put:
+
+xterm-256color|xterm with 256 colors and italic,
+  sitm=\E[3m, ritm=\E[23m,
+  use=xterm-256color,
+
+yes, with comma at the end, then:
+tic -o $HOME/.terminfo xterm-256color.terminfo
+
+Done, xterm now can recognize italics! Check again the test echo sequence or in vim: hi Comment cterm=italic
+Source: https://sookocheff.com/post/vim/italics/
 -----------------------
 
