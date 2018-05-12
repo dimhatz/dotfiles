@@ -101,6 +101,8 @@ xterm*faceName: Source Code Pro Semibold:style=Semibold:size=10
 xterm*cursorBlink: false
 ! on startup, print to stdout summary of loaded fonts for debugging
 xterm*reportFonts: true
+! show an empty box where a glyph is missing
+xterm*showMissingGlyphs: true
 
 ! urxvt stuff
 URxvt.font: xft:MonaVu:Regular:size=10
