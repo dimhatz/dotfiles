@@ -85,7 +85,7 @@ xterm*utf8Title: true
 ! xterm*fontMenu.Label:  Unicode Fonts
 ! ---
 ! setting Source Code Pro to Semibold makes it detect Semibold as both normal and bold variant, thus stopping showing bolds (which is what we want)
-xterm*faceName: Source Code Pro:style=Semibold:size=10
+xterm*faceName: Source Code Pro:size=10
 ! If bitmap fonts are used (not ttf?) what to use as bold font (because if the corresponding real bold font is not found, xterm will perform overstriking, that is artificial production of bold font by widening shapes by 1px). Must be same width/heigth as normal font, otherwise is ignored. Also check alwaysBoldMode, boldMode and font resources: man xterm. Also faceName resource for difference of bitmaps/truetype.
 !xterm*boldFont:
 !xterm*font:

@@ -880,7 +880,9 @@ source ~/dotfiles/tabline-my.vim
 " TODO find a way to convert input to greek from vim, while still typing ENG
 " some mapping to "set keymap=greek" or "set keymap=greek_utf-8" ασδφ.
 " Source Code Pro Font cannot correctly display greek in comments because
-" italics lack greek letters.
+" italics lack greek letters? This seems to happen on win7 gvim, ubuntu 18.04
+" xterm + vim8, but not with ubuntu 18.04 + gvim-gtk2 and not with ubuntu
+" 18.04 xfce-terminal + vim as they displayed greek italics correctly. Weird!
 " Sauce Code Pro NF does not have this issue, because it uses automatically derived
 " oblique. The resulting "Italics" have more inclination than SourceCodePro and
 " some letters appear to be "cut" at the left edge.
@@ -889,6 +891,10 @@ source ~/dotfiles/tabline-my.vim
 " but this will override the default colorscheme's behavior that may be using
 " italics + color to distinguish comments, and reusing the color for smth else.
 " Also, with auto-derived obliques it's not easy to distinguish "/", "|" and "\".
+" TODO maybe just remove the unneeded ttfs for Source Code Pro Black, Medium,
+" etc from the system... That way there is less chance of error for apps.
+" P.S. On winows7 gvim likely chooses Black variant for bold IIRC when regular
+" or medium variant is default (instead of choosing Bold variant)!!!
 " -------------------------------------------------------------------
 " for future fuzzy finder (like ctrlp)
 " set wildignore+=*/build/**
