@@ -7,6 +7,8 @@ In order to get graphical prompt for root authentication, we must be running:
 /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
 To make it autostart, we must copy its file from /etc/xdg/autostart to ~/.config/autostart and add to “OnlyShowIn” field “OPENBOX;” ← seems to work only when all capital to recognize openbox session!!!
 -----------------------
+Obconf's openbox settings is unable to correctly set font to "Ubuntu Bold" and sets it to "Ubuntu Medium". To change it edit rc.xml and choose "Ubuntu" as font and "Bold" instead of "Normal".
+-----------------------
 To disable updates use “software and updates utility”, aka software-properties-gtk.
 To check whether the effect took place, see files:
 /etc/apt/apt.conf.d/20auto-upgrades
