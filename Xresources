@@ -100,7 +100,7 @@ xterm*faceName: Source Code Pro Semibold:style=Semibold:size=10
 ! TODO: set semibold as italic font (check xterm's startup stdout). Also, for some reason, when setting Source Code Pro's style Regular, it matches Black as bold font!!! When omitting style it sets Bold and Italic ttfs correctly. Almost surely this has to do with font server font-config not matching correctly. Maybe there is a way to force different settings that will result in different queries from xterm for bolds and italics.
 xterm*cursorBlink: false
 ! on startup, print to stdout summary of loaded fonts for debugging
-! xterm*reportFonts: true
+xterm*reportFonts: true
 
 ! urxvt stuff
 URxvt.font: xft:MonaVu:Regular:size=10
