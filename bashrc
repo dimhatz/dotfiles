@@ -15,6 +15,9 @@ BASE16_SHELL="$HOME/.dark-term-theme.sh"
 # Disable freezing screen with c-s (and unfreezing with c-q)
 stty -ixon
 
+# Make default esc sequence for backspace ^? (in case it was ^H) so that we can map c-h in vim
+stty erase ^?
+
 # Set eof char to ^Q instead of ^D - works, not sure if needed
 #stty eof ^Q
 
