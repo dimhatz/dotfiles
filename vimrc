@@ -129,7 +129,7 @@ let g:loaded_netrwPlugin = 1
 " as of Jul 2017 nvim always returns 0 for has("gui_running")
 if has("gui_running")
 	if has("gui_gtk2") " TODO add gtk3 too
-		set guifont=Source\ Code\ Pro\ Medium\ 10
+		set guifont=Source\ Code\ Pro\ Semibold\ 10
 		" no extra spacing - not checked on gtk vim linux
 		set linespace=0
 	elseif has("gui_win32")
@@ -525,6 +525,10 @@ if &term =~ '^xterm'
 	" 24bit color for mintty -> to be checked on xterm, hopefully perform.
 	" is not affected and we can stop sourcing custom color palette into xterm.
 	if exists('$OS') && $OS ==# 'Windows_NT'
+		set termguicolors
+	endif
+	" to make sure we are not running in windows or emulated environment
+	if exists('$DESKTOP_SESSION')
 		set termguicolors
 	endif
 endif
