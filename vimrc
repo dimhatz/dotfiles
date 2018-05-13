@@ -865,8 +865,8 @@ hi! link BufTabLineCurrent WildMenu
 let g:buftabline_numbers=0
 
 " ------------ my statusline -----------------------------
-source ~/dotfiles/statusline-final.vim
-source ~/dotfiles/tabline-my.vim
+source ~/dotfiles/vim-statusline-final.vim
+source ~/dotfiles/vim-tabline-my.vim
 
 " ---------------- profiling plugins ------------------------------------
 " https://stackoverflow.com/questions/12213597/how-to-see-which-plugins-are-making-vim-slow
