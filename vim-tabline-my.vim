@@ -416,5 +416,5 @@ command! MyBufferMoveRight call MyBufferMoveRight()
 
 augroup MyTabLine
 	autocmd!
-	autocmd ColorScheme * source ~/dotfiles/tabline-my.vim
+	autocmd ColorScheme * source ~/dotfiles/vim-tabline-my.vim
 augroup END

@@ -522,8 +522,16 @@ if &term =~ '^xterm'
 	" 5 -> blinking vertical bar
 	" 6 -> solid vertical bar
 
-	" 24bit color for mintty -> to be checked on xterm, hopefully perform.
-	" is not affected and we can stop sourcing custom color palette into xterm.
+	" xterm as of 2018 does not support true color as it meant to be used with
+	" termguicolors. When xterm receives truecolor escape sequence, it maps it
+	" to a close enough value from default 256 colors. However, it is possible
+	" to remap these 256 colors to any 24bit color with a different set of escape
+	" sequences (or the first 16 using Xresources).
+	" Themes like solarized and gruvbox offer custom color palette (xresources
+	" for solarized, special script for gruvbox that can be called from
+	" bashrc).
+
+	" 24bit color for mintty
 	if exists('$OS') && $OS ==# 'Windows_NT'
 		set termguicolors
 	endif
