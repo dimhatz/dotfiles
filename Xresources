@@ -103,7 +103,5 @@ xterm*cursorBlink: false
 xterm*reportFonts: true
 ! show an empty box where a glyph is missing
 xterm*showMissingGlyphs: true
-
-! urxvt stuff
-URxvt.font: xft:MonaVu:Regular:size=10
-URxvt*cursorBlink: false
+! accept special escape sequences for changing color on the fly
+xterm*dynamicColors: true
