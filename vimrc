@@ -536,6 +536,9 @@ if &term =~ '^xterm'
 		set termguicolors
 	endif
 	" to make sure we are not running in windows or emulated environment
+	" to get solarized (flat) theme working properly, we need first to set xterm
+	" xresources to have first 16 colors set to solarized palette (also setting
+	" cursor color) and afterwards also set termguicolors in vim
 	if exists('$DESKTOP_SESSION')
 		set termguicolors
 	endif
