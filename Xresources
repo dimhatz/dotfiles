@@ -107,4 +107,4 @@ xterm*showMissingGlyphs: true
 xterm*dynamicColors: true
 ! apply solarized dark palette
 ! TODO make it a shell script using escape sequences sourced by bashrc. That way it is possible to change theme on the fly without restarting terminal. Use examples base16 (my old custom term theme) and gruvbox.
-#include "dotfiles/dircolors-solarized/dircolors.ansi-dark"
+#include "dotfiles/Xresources.solarized.dark.ddd"
