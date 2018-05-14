@@ -1,8 +1,8 @@
 ! source: https://github.com/solarized/xresources
-! The original did not work when merging, had to prepend 'xterm' before '*'.
-! xrdb -load worked, but that's clear+load, not merge.
-! Failing to take effect after merging is likely caused by some ubuntu's default
-! system-set resource, with higher priority than the general '*'
+! The original did not work when merging, had to prepend "xterm" before "*".
+! xrdb -load worked, but thats clear+load, not merge.
+! Failing to take effect after merging is likely caused by some ubuntus default
+! system-set resource, with higher priority than the general "*"
 #define S_base03        #002b36
 #define S_base02        #073642
 #define S_base01        #586e75
