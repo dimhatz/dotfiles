@@ -107,6 +107,11 @@ xterm*showMissingGlyphs: true
 xterm*dynamicColors: true
 ! always assume bold fonts have line-drawing characters. Helps when using with Source Code Pro Semibold to show vertical line for indentation, so that it is continuous.
 xterm*forceBoxChars: true
+! allow termcaps to help vim better identify terminal info and other stuff. true is default.
+xterm*allowTcapOps: true
+! do not map bold chars to bright versions (colors 0..7 -> 8..15). Breaks solarized without termguicolors on.
+! may break other themes, if false? TODO: investigate
+xterm*boldColors: false
 ! apply solarized dark palette
 ! TODO make it a shell script using escape sequences sourced by bashrc. That way it is possible to change theme on the fly without restarting terminal. Use examples base16 (my old custom term theme) and gruvbox.
 #include "dotfiles/Xresources.solarized.dark.ddd"
