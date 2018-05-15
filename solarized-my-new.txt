@@ -3,6 +3,8 @@ correct conversions with https://nixsensor.com/free-color-converter/
 D50 2 and D50 2 for input/output reference and xyz box checked (likely doesnt matter)
 other sites do not confirm conversions from original table because they likely set d65 instead of d50. Also likely d50 2degrees vs 10degrees doesnt matter (produce same numbers?) -> 10 is newer 1964 vs 1931 for 2.
 Even better site: https://www.easyrgb.com/en/convert.php#inputFORM
+Or even better gpick program with settings directly to d50 10 -> Just manually set the value and the other will adjust on the fly.
+
 
 Orig
 name      hex        lab           rgb            hsb
@@ -17,24 +19,24 @@ base3     #fdf6e3    97  00  10    253 246 227     44  10  99
 
 
 My: swaps/shift from lab hues (2 last numbers)
-name      hex        lab
-base03    #2A2517    15  00  10
-base02    #343022    20 -00  10
-base01    #606D6E    45 -05 -02
-base00    #6A7A7C    50 -06 -03
-base0     #7E959D    60 -07 -07
-base1     #8BA2AA    65 -07 -07
-base2     #C5F0FF    92 -12 -12
-base3     #D3FEFF    97 -12 -12
+name      hex        lab          hex again
+base03    #292517    15  00  10   #292517
+base02    #343022    20 -00  10   #343022
+base01    #606D6E    45 -05 -02   #606D6E
+base00    #6A7A7C    50 -06 -03   #6A7A7C
+base0     #7E959D    60 -07 -07   #7E959D
+base1     #8BA2AA    65 -07 -07   #8BA2AA
+base2     #C5F0FF    92 -12 -12   #C5F0FF
+base3     #D3FEFF    97 -12 -12   #D3FEFF
 
 
 My: swaps/shift from hsb hue (first num)
 name      hex        hsb
-base03    #     44 100  21
-base02    #     44  90  26
-base01    #    180  25  46
-base00    #    186  23  51
-base0     #    195  13  59
-base1     #    194   9  63
-base2     #    192  11  93
-base3     #    193  10  99
+base03    #     44 100  21  #362700 -> ugly brown!
+base02    #     44  90  26  #423207
+base01    #    180  25  46  #587575
+base00    #    186  23  51  #647F82
+base0     #    195  13  59  #839296
+base1     #    194   9  63  #929DA1
+base2     #    192  11  93  #D3E8ED
+base3     #    193  10  99  #E3F7FC
