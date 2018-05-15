@@ -508,10 +508,12 @@ inoremap <C-G> +
 cnoremap <C-G> +
 " ============================================================================
 
-" Cool terminal shape when in xterm
+" Change cursor shape when in xterm on entering insert and replace modes
 if &term =~ '^xterm'
-	" solid underscore
+	" solid vertical bar in insert
 	let &t_SI .= "\<Esc>[6 q"
+	" solid underscore in replace
+	let &t_SR .= "\<Esc>[4 q"
 	" solid block
 	let &t_EI .= "\<Esc>[2 q"
 	" 1 or 0 -> blinking block
