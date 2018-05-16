@@ -40,3 +40,7 @@ base0     #    195  13  59  #839296
 base1     #    194   9  63  #929DA1
 base2     #    192  11  93  #D3E8ED
 base3     #    193  10  99  #E3F7FC
+
+Conslusion: for now, putting hues in different order does not give good results when using lab or hsb (aka hsv). Lab gave somewhat better results but still does not feel "symmetric".
+Better would be to just make 8 gradations, starting from a dark hue.
+Also more color theory and taking into account which of those 8 colors will be paired with each other.
