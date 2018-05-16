@@ -18,6 +18,8 @@ xterm*fadeColor:             S_base03
 xterm*cursorColor:           S_base1
 xterm*pointerColorBackground:S_base01
 xterm*pointerColorForeground:S_base1
+! pointerColor must be the correct pointerColorForeground according to man
+xterm*pointerColor:S_base1
 
 #define S_yellow        #b58900
 #define S_orange        #cb4b16
