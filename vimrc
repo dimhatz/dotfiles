@@ -13,8 +13,10 @@ else
 	let g:plughomeddd='~/.vim/plugged'
 endif
 
-" always start in home dir on windows
-cd ~
+if has('win32') || has('win64')
+	" always start in home dir on windows
+	cd ~
+endif
 
 " ================== Plugin manager ===========================================
 call plug#begin(g:plughomeddd)
