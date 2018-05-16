@@ -114,4 +114,6 @@ xterm*allowTcapOps: true
 xterm*boldColors: false
 ! apply solarized dark palette
 ! TODO make it a shell script using escape sequences sourced by bashrc. That way it is possible to change theme on the fly without restarting terminal. Use examples base16 (my old custom term theme) and gruvbox.
+! Hide mouse pointer when typing: Always (2)
+xterm*pointerMode: 2
 #include "dotfiles/Xresources.solarized.dark.ddd"
