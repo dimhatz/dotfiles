@@ -12,6 +12,7 @@ ln -s ~/dotfiles/Xresources ~/.Xresources
 
 mkdir -p ~/.local/share/themes
 ln -s ~/dotfiles/openbox-ddd-theme/ ~/.local/share/themes/openbox-ddd-theme
+ln -s ~/dotfiles/openbox/ ~/.config/openbox
 
 mkdir -p ~/.config/tint2
 ln -s ~/dotfiles/tint2/tint2rc ~/.config/tint2/tint2rc
