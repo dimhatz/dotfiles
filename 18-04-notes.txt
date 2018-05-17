@@ -38,7 +38,7 @@ tint2 notification area: When using Faenza-darkest and other Faenza themes, the 
 -----------------------
 -----------------------
 installed:
-gsimplecal
+gsimplecal - better than orage
 faenza-icon-theme
 arc-theme
 conky-all
@@ -52,11 +52,11 @@ compton
 vim-gtk ← there is also gtk3 version. better?
 lxappearance
 lxappearance-obconf
-dunst ← not auto-installed with openbox, also maybe just use xfce’s notification service?
+dunst ← not auto-installed with openbox, better than xfce’s notification service, uses less ram and does not init xfconfd upon first run.
 xbacklight ← for backlight control using keys (see commented out section in openbox’s rc.xml )
 
 on xubuntu2 vm:
-sudo apt install gsimplecal faenza-icon-theme arc-theme conky-all feh mate-system-monitor tint2 openbox openbox-menu lxappearance lxappearance-obconf xbacklight volumeicon-alsa
+sudo apt install gsimplecal faenza-icon-theme arc-theme conky-all feh mate-system-monitor tint2 openbox openbox-menu lxappearance lxappearance-obconf xbacklight volumeicon-alsa dunst
 -----------------------
 Fonts
 
