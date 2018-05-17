@@ -109,7 +109,8 @@ xterm-256color|xterm with 256 colors and italic,
 yes, with comma at the end, then:
 tic -o $HOME/.terminfo xterm-256color.terminfo
 
-Done, xterm now can recognize italics! Check again the test echo sequence or in vim: hi Comment cterm=italic
+Done, xterm now can recognize italics! Check again the test echo sequence or in vim:
+hi Comment cterm=italic
 Source: https://sookocheff.com/post/vim/italics/
 -----------------------
 
