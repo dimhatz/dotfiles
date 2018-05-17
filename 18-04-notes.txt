@@ -53,7 +53,7 @@ compton
 vim-gtk ← there is also gtk3 version. better?
 lxappearance
 lxappearance-obconf
-dunst ← not sure if auto-installed with openbox, also maybe just use xfce’s notification service?
+dunst ← not auto-installed with openbox, also maybe just use xfce’s notification service?
 xbacklight ← for backlight control using keys (see commented out section in openbox’s rc.xml )
 
 
@@ -66,6 +66,9 @@ Better to just put everything in ~/.config/fontconfig/fonts.conf like this:
 <match target="font">
 	<edit name="rgba" mode="assign"><const>rgb</const></edit>
 </match>
+
+link the dir:
+ln -s ~/dotfiles/fontconfig/ ~/.config/fontconfig
 
 Also note that *no reloading* is needed to change configurations like above.
 Just kill all instances of the app and restart it to see changes.
@@ -90,6 +93,7 @@ The conclusion is: most likely the applications themselves choose first Xresourc
 -----------------------
 New Fonts installation:
 copy new fonts to ~/.local/share/fonts/ which in my setup should be symlink to ~/dotfiles/fonts/
+ln -s ~/dotfiles/fonts/ ~/.local/share/fonts
 then: fc-cache -frv
 to force regeneration of all font caches.
 For programming fonts, prefer ttf over otf, from a quick search they should be less troublesome, even though oft is newer and more advanced - not sure whether its worth bothering with otf for programming fonts.
