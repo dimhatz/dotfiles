@@ -1,0 +1,19 @@
+# TODO: remove all existing links / dirs
+ln -s ~/dotfiles/fontconfig/ ~/.config/fontconfig
+ln -s ~/dotfiles/fonts/ ~/.local/share/fonts
+
+ln -s ~/dotfiles/autostart/ ~/.config/autostart
+
+# will be overwritten by rm'ing first by lxappearance. linking is pointless.
+cp ~/dotfiles/gtkrc-2.0 ~/.gtkrc-2.0
+cp ~/dotfiles/gtk-3.0/settings.ini ~/.config/gtk-3.0/settings.ini
+
+ln -s ~/dotfiles/Xresources ~/.Xresources
+
+mkdir -p ~/.local/share/themes
+ln -s ~/dotfiles/openbox-ddd-theme/ ~/.local/share/themes/openbox-ddd-theme
+
+mkdir -p ~/.config/tint2
+ln -s ~/dotfiles/tint2/tint2rc ~/.config/tint2/tint2rc
+
+ln -s ~/dotfiles/conky/ ~/.config/conky
