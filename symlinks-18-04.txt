@@ -18,3 +18,6 @@ mkdir -p ~/.config/tint2
 ln -s ~/dotfiles/tint2/tint2rc ~/.config/tint2/tint2rc
 
 ln -s ~/dotfiles/conky/ ~/.config/conky
+
+# TODO: change when using custom bashrc, as ubuntu's bashrc locates .dircolors and uses it
+ln -s ~/dotfiles/dircolors-solarized/dircolors.ansi-dark ~/.dircolors
