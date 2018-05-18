@@ -116,5 +116,5 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# ddd new -> TODO: diff with orig ubuntu
-stty -ixon erase ^?
+# ddd new
+stty -ixon -ixoff erase ^?
