@@ -56,7 +56,7 @@ dunst ← not auto-installed with openbox, better than xfce’s notification ser
 xbacklight ← for backlight control using keys (see commented out section in openbox’s rc.xml )
 
 on xubuntu2 vm:
-sudo apt install gsimplecal faenza-icon-theme arc-theme conky-all feh mate-system-monitor tint2 openbox openbox-menu lxappearance lxappearance-obconf xbacklight volumeicon-alsa dunst
+sudo apt install gsimplecal faenza-icon-theme arc-theme conky-all feh mate-system-monitor tint2 openbox openbox-menu lxappearance lxappearance-obconf xbacklight volumeicon-alsa dunst lxtask htop
 -----------------------
 Fonts
 
