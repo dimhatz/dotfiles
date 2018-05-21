@@ -1,4 +1,4 @@
-# TODO: remove all existing links / dirs
+# TODO: remove all existing links / dirs and mkdir -p all nonexistent dirs
 ln -s ~/dotfiles/fontconfig/ ~/.config/fontconfig
 ln -s ~/dotfiles/fonts/ ~/.local/share/fonts
 
@@ -21,3 +21,7 @@ ln -s ~/dotfiles/conky/ ~/.config/conky
 
 # TODO: change when using custom bashrc, as ubuntu's bashrc locates .dircolors and uses it
 ln -s ~/dotfiles/dircolors-solarized/dircolors.ansi-dark ~/.dircolors
+
+mkdir -p ~/.local/share/applications/
+ln -s ~/dotfiles/local/share/applications/debian-xterm.desktop ~/.local/share/applications/debian-xterm.desktop
+ln -s ~/dotfiles/local/share/applications/gsimplecal.desktop ~/.local/share/applications/gsimplecal.desktop
