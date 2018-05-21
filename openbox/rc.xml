@@ -770,6 +770,15 @@
       </size>
       <maximized>Vertical</maximized>
     </application>
+	<!-- exclude glxgears from half-of-screen rule -->
+    <application title="glxgears">
+      <position force="no">
+      </position>
+      <size>
+        <width>default</width>
+      </size>
+      <maximized>no</maximized>
+    </application>
     <!--
   # this is an example with comments through out. use these to make your
   # own rules, but without the comments of course.
