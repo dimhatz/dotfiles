@@ -1,0 +1,4 @@
+# this is sourced at the beginning of X session but before window manager
+
+# keyboard layouts
+setxkbmap -model pc105 -layout us,gr,ru -variant ,,phonetic_winkeys -option grp:alt_shift_toggle &

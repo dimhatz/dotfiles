@@ -25,3 +25,5 @@ ln -s ~/dotfiles/dircolors-solarized/dircolors.ansi-dark ~/.dircolors
 mkdir -p ~/.local/share/applications/
 ln -s ~/dotfiles/local/share/applications/debian-xterm.desktop ~/.local/share/applications/debian-xterm.desktop
 ln -s ~/dotfiles/local/share/applications/gsimplecal.desktop ~/.local/share/applications/gsimplecal.desktop
+
+ln -s ~/dotfiles/xprofile ~/.xprofile
