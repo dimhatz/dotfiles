@@ -181,7 +181,8 @@
   <keyboard>
     <chainQuitKey>C-g</chainQuitKey>
     <!-- ddd keys -->
-    <keybind key="W-h">
+    <!-- TODO change to w-h and w-l -->
+    <keybind key="W-S-h">
       <!-- <action name="UnmaximizeFull"/> -->
       <action name="Unmaximize"/>
       <action name="MaximizeVert"/>
