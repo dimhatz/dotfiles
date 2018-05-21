@@ -770,11 +770,28 @@
       </size>
       <maximized>Vertical</maximized>
     </application>
-	<!-- exclude glxgears from half-of-screen rule -->
+    <!-- exclude glxgears from half-of-screen rule -->
     <application title="glxgears">
       <position force="no">
+      <!-- by itself glxgears chooses top left corner, will ignore centering if not forced -->
+        <x>center</x>
+        <y>center</y>
       </position>
       <size>
+        <width>default</width>
+      </size>
+      <maximized>no</maximized>
+    </application>
+    <!-- exclude gsimplecal from half-of-screen rule -->
+    <application class="Gsimplecal">
+      <position force="no">
+      <!-- setting x and y to 'default' does not work (seems to get the 'defaults' from above general '*' rule), so lets put it bottom right corner -->
+        <x>-1</x>
+        <y>-1</y>
+      </position>
+      <focus>yes</focus>
+      <size>
+        <!-- setting this to default works! -->
         <width>default</width>
       </size>
       <maximized>no</maximized>
