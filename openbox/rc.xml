@@ -757,6 +757,15 @@
     <!-- ddd remove all decorations (there is another setting to still keep the border) -->
     <application class="*">
       <decor>no</decor>
+      <position force="yes">
+        <x>0</x>
+        <y>0</y>
+        <monitor>1</monitor>
+      </position>
+      <size>
+        <width>1/2</width>
+      </size>
+      <maximized>Vertical</maximized>
     </application>
     <!--
   # this is an example with comments through out. use these to make your
