@@ -1,3 +1,5 @@
+Virtualbox: when using "additional driver" for virtual vga, the glxgears frames are at ~400fps, and otherwise at ~700fps. Likely related to vsync. Also a few vbox services are installed too. For now better stick with defaults.
+-----------------------
 Conky width currently is 31px
 Tint2 width must be at least that size, so that openbox’s resizing sequence does not bump into it’s border (openbox performs “window move” 6 times as a workaround to ensure that the last border it bumps into is the panel’s on the left or end of screen on the right).
 Thus, setting tint2’s width to >=31px is to ensure less flicker due to less border bumping.
