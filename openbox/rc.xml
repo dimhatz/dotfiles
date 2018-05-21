@@ -758,10 +758,12 @@
     <!-- ddd remove all decorations (there is another setting to still keep the border) -->
     <application class="*">
       <decor>no</decor>
+    </application>
+    <!-- additionally force every normal window (aka non-dock etc) to start occupying left half of screen -->
+    <application type="normal">
       <position force="yes">
         <x>0</x>
         <y>0</y>
-        <monitor>1</monitor>
       </position>
       <size>
         <width>1/2</width>
