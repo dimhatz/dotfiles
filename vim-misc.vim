@@ -1,4 +1,9 @@
 " -------- unused plugins -------------------------------------------
+" Plug 'Shougo/neocomplete', {'commit': 'd8caad4fc14fc1be5272bf6ebc12048212d67d2c'}
+
+" prev ap/vim-buftabline commit 12f29d2cb11d79c6ef1140a0af527e9231c98f69
+Plug 'ap/vim-buftabline', {'commit': '12f29d2cb11d79c6ef1140a0af527e9231c98f69'}
+
 "Plug 'dimxdim/jellybat'
 
 " prev vim-airline/vim-airline commit a914cfb75438c36eefd2d7ee73da5196b0b0c2da

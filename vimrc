@@ -35,12 +35,17 @@ Plug 'altercation/vim-colors-solarized', {'commit': '528a59f26d12278698bb946f8fb
 " prev lifepillar/vim-solarized8 commit
 Plug 'lifepillar/vim-solarized8', {'commit': 'b64bca5f6ce418589986a03e37df53b3d0625575'}
 
+" well supported theme, needs terminal palette or gvim
+Plug 'morhetz/gruvbox', {'commit': 'cb4e7a5643f7d2dd40e694bcbd28c4b89b185e86'}
+
+" well supported collection of themes, needs terminal palette or gvim
+Plug 'chriskempson/base16-vim', {'commit': '7959654e57c05511134e55bda20e9a6bcb8fcfb0'}
+
+Plug 'dimxdim/jellybat'
+
 " --------------- Plugins
 " TODO: To delete buffer without closing its window: :BD
 " qpkorr/vim-bufkill
-
-" prev ap/vim-buftabline commit 12f29d2cb11d79c6ef1140a0af527e9231c98f69
-" Plug 'ap/vim-buftabline', {'commit': '12f29d2cb11d79c6ef1140a0af527e9231c98f69'}
 
 " prev easymotion/vim-easymotion commit d55e7bf515eab93e0b49f6f762bf5b0bf808264d
 Plug 'easymotion/vim-easymotion', {'commit': 'e4d71c7ba45baf860fdaaf8c06cd9faebdccbd50'}
@@ -66,8 +71,6 @@ Plug 'Shougo/vimproc.vim', {'commit': '57cad7d28552a9098bf46c83111d9751b3834ef5'
 
 " Fullscreen gvim on windows (uses dll)
 Plug 'derekmcloughlin/gvimfullscreen_win32', {'commit': '6abfbd13319f5b48e9630452cc7a7556bdef79bb'}
-
-" Plug 'Shougo/neocomplete', {'commit': 'd8caad4fc14fc1be5272bf6ebc12048212d67d2c'}
 
 " prev youcompleteme commit: bade99f5e9c5ba2f848cffb2d1a905e85d3ddb05
 " update this on its own only with ":PlugUpdate YouCompleteMe"
@@ -205,6 +208,7 @@ set backspace=indent,eol,start      "allow backspacing everything in insert mode
 set list                 "highlight whitespace
 "set listchars=tab:│\ ,trail:•,extends:❯,precedes:❮,nbsp:■   " does not display on windows without directx render
 set listchars=tab:│\ ,trail:•,extends:»,precedes:«,nbsp:■
+set fillchars=vert:│  " separator line between vsplit windows instead of ugly |. TODO add special chars for folds and diffs
 "set shiftround          " Round indent to multiple of 'shiftwidth'. +Applies to > and <
 "set smarttab            " insert blanks according to shiftwidth (else tabstop or softtabstop)
 set wrap            " wrap text on eol (default)
