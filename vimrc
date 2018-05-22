@@ -41,6 +41,9 @@ Plug 'morhetz/gruvbox', {'commit': 'cb4e7a5643f7d2dd40e694bcbd28c4b89b185e86'}
 " well supported collection of themes, needs terminal palette or gvim
 Plug 'chriskempson/base16-vim', {'commit': '7959654e57c05511134e55bda20e9a6bcb8fcfb0'}
 
+
+Plug 'trevordmiller/nova-vim', {'commit': 'd4d41ecebe19f7ba84e58e2edaee28493455bbe1'}
+
 Plug 'dimxdim/jellybat'
 
 " --------------- Plugins
