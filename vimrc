@@ -94,6 +94,8 @@ Plug 'pangloss/vim-javascript', {'commit': 'cea724c0e1a330fff1d38018667a748c2655
 " Better JSON highlighting, hides the quotes, on all lines except current - better readability.
 Plug 'elzr/vim-json', {'commit': 'f5e3181d0b33a9c51377bb7ea8492feddca8b503'}
 
+Plug 'dimxdim/simple_greek_utf-8.vim'
+
 
 " -------------------- Plugin-related todo's ------------------------------
 " TODO check out Ultisnips later, supposedly works well with ycm
@@ -166,8 +168,8 @@ endif
 " <C-CR> to switch between input languages
 set imi=1
 function! s:ChangeKeymapDDD()
-	if &keymap !=# "greek"
-		set keymap=greek
+	if &keymap !=# "simple_greek_utf-8"
+		set keymap=simple_greek_utf-8
 	else
 		set keymap=""
 		" iminsert becomes 0 here
