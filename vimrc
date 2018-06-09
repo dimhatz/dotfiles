@@ -168,8 +168,10 @@ endif
 " <C-CR> to switch between input languages
 set imi=1
 function! s:ChangeKeymapDDD()
-	if &keymap !=# "simple_greek_utf-8"
-		set keymap=simple_greek_utf-8
+	if &keymap ==# ""
+		set keymap=my_greek
+	elseif &keymap ==# "my_greek"
+		set keymap=my_russian
 	else
 		set keymap=""
 		" iminsert becomes 0 here
@@ -179,7 +181,7 @@ function! s:ChangeKeymapDDD()
 	return ""
 endfunction
 
-inoremap <C-CR> <C-R>=<SID>ChangeKeymapDDD()<CR>
+inoremap <C-l> <C-R>=<SID>ChangeKeymapDDD()<CR>
 
 "" System general settings
 set shortmess+=I                                    " disable start message
@@ -759,7 +761,7 @@ let g:ycm_complete_in_comments = 1
 let g:ycm_key_invoke_completion = '<C-space>'
 
 " manual trigger non-semantic completion
-inoremap <silent><C-l> <C-r>=execute(['let g:ycm_auto_trigger=1' , 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI' , 'let g:ycm_auto_trigger=0'], "silent")<CR>
+inoremap <silent><C-x> <C-r>=execute(['let g:ycm_auto_trigger=1' , 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI' , 'let g:ycm_auto_trigger=0'], "silent")<CR>
 
 " any char on the cursor, for mulibyte chars works with :echo, but not with
 " command like: let g:smth = {any of 2 lines below} (g:snth will not have
