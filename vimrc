@@ -94,7 +94,7 @@ Plug 'pangloss/vim-javascript', {'commit': 'cea724c0e1a330fff1d38018667a748c2655
 " Better JSON highlighting, hides the quotes, on all lines except current - better readability.
 Plug 'elzr/vim-json', {'commit': 'f5e3181d0b33a9c51377bb7ea8492feddca8b503'}
 
-Plug 'dimxdim/simple_greek_utf-8.vim'
+Plug 'dimxdim/my-keyboard-layouts.vim'
 
 
 " -------------------- Plugin-related todo's ------------------------------
