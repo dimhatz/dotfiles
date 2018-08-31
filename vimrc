@@ -75,9 +75,15 @@ Plug 'Shougo/vimproc.vim', {'commit': '57cad7d28552a9098bf46c83111d9751b3834ef5'
 " Fullscreen gvim on windows (uses dll)
 Plug 'derekmcloughlin/gvimfullscreen_win32', {'commit': '6abfbd13319f5b48e9630452cc7a7556bdef79bb'}
 
-" prev youcompleteme commit: bade99f5e9c5ba2f848cffb2d1a905e85d3ddb05
-" update this on its own only with ":PlugUpdate YouCompleteMe"
-Plug 'Valloric/YouCompleteMe', {'commit': '290dd94721d1bc97fab4f2e975a0cf6258abfbac'}
+" YCM will be loaded only if there exists (and is readable) ~/.use_ycm_ddd
+" flag file and the running env is not msys (mintty with git bash).
+" This is to prevent from it being installed with PlugInstall on systems where
+" it will not be needed (servers etc)
+if (filereadable(expand("~/.use_ycm_ddd")) && !(exists('$MSYSTEM') && $MSYSTEM !=# ''))
+	" prev youcompleteme commit: bade99f5e9c5ba2f848cffb2d1a905e85d3ddb05
+	" update this on its own only with ":PlugUpdate YouCompleteMe"
+	Plug 'Valloric/YouCompleteMe', {'commit': '290dd94721d1bc97fab4f2e975a0cf6258abfbac'}
+endif
 
 " autoclose tags for html, xhtml
 Plug 'alvan/vim-closetag', {'commit': 'fafdc7439f7ffbf6bb9a300652e2506cb07515d3'}
@@ -546,8 +552,8 @@ if &term =~ '^xterm'
 	" for solarized, special script for gruvbox that can be called from
 	" bashrc).
 
-	" 24bit color for mintty
-	if exists('$OS') && $OS ==# 'Windows_NT'
+	" 24bit color for mintty - checking for env var MSYSTEM to exist and be not empty
+	if exists('$MSYSTEM') && $MSYSTEM !=# ''
 		set termguicolors
 	endif
 	" to make sure we are not running in windows or emulated environment
