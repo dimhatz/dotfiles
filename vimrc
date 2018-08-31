@@ -79,7 +79,7 @@ Plug 'derekmcloughlin/gvimfullscreen_win32', {'commit': '6abfbd13319f5b48e963045
 " flag file and the running env is not msys (mintty with git bash).
 " This is to prevent from it being installed with PlugInstall on systems where
 " it will not be needed (servers etc)
-if (filereadable(expand("~/.use_ycm_ddd")) && !(exists('$MSYSTEM') && $MSYSTEM !=# ''))
+if (filereadable(expand("~/.ycm_enable_ddd")) && !(exists('$MSYSTEM') && $MSYSTEM !=# ''))
 	" prev youcompleteme commit: bade99f5e9c5ba2f848cffb2d1a905e85d3ddb05
 	" update this on its own only with ":PlugUpdate YouCompleteMe"
 	Plug 'Valloric/YouCompleteMe', {'commit': '290dd94721d1bc97fab4f2e975a0cf6258abfbac'}
