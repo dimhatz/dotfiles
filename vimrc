@@ -358,7 +358,7 @@ let mapleader = "\<Space>"
 
 " Disable <c-c> in insert, normally it exits to normal without triggering the
 " InsertLeave autocommands - never a good idea.
-inoremap <c-c> <nop>
+" inoremap <c-c> <nop>
 
 " for navigation of wrapped lines --> investigate side effects
 nnoremap j gj
@@ -767,7 +767,7 @@ let g:ycm_complete_in_comments = 1
 let g:ycm_key_invoke_completion = '<C-space>'
 
 " manual trigger non-semantic completion
-inoremap <silent><C-x> <C-r>=execute(['let g:ycm_auto_trigger=1' , 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI' , 'let g:ycm_auto_trigger=0'], "silent")<CR>
+inoremap <silent><C-c> <C-r>=execute(['let g:ycm_auto_trigger=1' , 'doautocmd <nomodeline> ycmcompletemecursormove TextChangedI' , 'let g:ycm_auto_trigger=0'], "silent")<CR>
 
 " any char on the cursor, for mulibyte chars works with :echo, but not with
 " command like: let g:smth = {any of 2 lines below} (g:snth will not have
