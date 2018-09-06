@@ -1,0 +1,33 @@
+" visualbell is not implemented but will make ideavim stop sound errors
+set visualbell
+nnoremap <C-s> :w<CR>
+set clipboard=unnamedplus
+
+set surround
+" must not use noremaps (because of <Plug>?)
+" nmap s ys
+nmap s <Plug>YSurround
+" vmap s S
+vmap s <Plug>VSurround
+" here nnoremap works!
+nnoremap <Space> <nop>
+nnoremap S <nop>
+
+nnoremap x "_d
+vnoremap x "_d
+nnoremap X "_D
+
+nnoremap <C-k> $
+nnoremap <C-j> ^
+
+inoremap <C-k> <ESC>A
+inoremap <C-j> <ESC>I
+
+" keeping v as ideavim default visual (instead of <c-v>), as it screws up
+" surround
+nnoremap <C-v> V
+nnoremap V <C-v>
+
+" better at the end of file, to not mess up any nmaps
+nnoremap ; :
+nnoremap : ;
