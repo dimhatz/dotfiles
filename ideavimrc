@@ -1,6 +1,7 @@
 " visualbell is not implemented but will make ideavim stop sound errors
 set visualbell
 nnoremap <C-s> :w<CR>
+inoremap <C-s> <ESC>:w<CR>
 set clipboard=unnamedplus
 
 set surround
@@ -31,3 +32,6 @@ nnoremap V <C-v>
 " better at the end of file, to not mess up any nmaps
 nnoremap ; :
 nnoremap : ;
+
+set ignorecase
+set incsearch
