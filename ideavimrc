@@ -14,7 +14,7 @@ vmap s <Plug>VSurround
 nnoremap <Space> <nop>
 nnoremap S <nop>
 
-nnoremap x "_d
+nnoremap x "_x
 vnoremap x "_d
 nnoremap X "_D
 
@@ -35,3 +35,5 @@ nnoremap : ;
 
 set ignorecase
 set incsearch
+
+nnoremap Y y$
