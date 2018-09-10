@@ -1,6 +1,7 @@
 " location of vimrc on windows c:\users\username\_vimrc
 set nocompatible               " Be iMproved
 
+" http://vim.wikia.com/wiki/Fix_syntax_highlighting
 " set synmaxcol=128
 " syntax sync minlines=256
 
