@@ -110,7 +110,7 @@ Plug 'dimxdim/my-keyboard-layouts.vim'
 " -------------------- Plugin-related todo's ------------------------------
 " TODO check out Ultisnips later, supposedly works well with ycm
 " TODO check out nerdtree,
-" TODO vim-javascript and flow for javascript static checking, also ternjs.
+" TODO vim-javascript and flow for javascript static checking, also tsserver.
 " TODO w0rp/ale, async linting, like syntastic?
 " TODO check out ctrlp and also FelikZ/ctrlp-py-matcher for faster ctrlp
 " also it is supposedly better on windows with ag. Ripgrep must be even
