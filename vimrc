@@ -153,10 +153,19 @@ if has("gui_running")
 		" no extra spacing - not checked on gtk vim linux
 		set linespace=0
 	elseif has("gui_win32")
-		" set guifont=Source_Code_Pro_Medium:h10:cANSI:qDRAFT
 		" set guifont=Terminus:h12:cGREEK:qNONANTIALIASED
 		" zev peep 8x16 is same size as terminus:h12 ``.,;
+
 		set guifont=Source_Code_Pro_Semibold:h10:cANSI:qDRAFT
+		" workaround for windows sucky scaling, when there is scaling at 125%
+		" or 150%, the font becomes thicker and harder to read, look at
+		" lowercase 'e', it almost like greek theta! At 175% seems ok again.
+		" P.S. this is on LTSB edition x64, not sure whether more current
+		" editions fix it.
+		if filereadable(expand("~/.ddd_win_scaling_125"))
+			set guifont=Source_Code_Pro_Medium:h10:cANSI:qDRAFT
+		endif
+
 		nnoremap <F5> :set guifont=Source_Code_Pro_Medium:h10:cANSI:qDRAFT<CR>
 		nnoremap <F6> :set guifont=Source_Code_Pro_Semibold:h10:cANSI:qDRAFT<CR>
 		nnoremap <F7> :set guifont=Terminus:h12:cGREEK:qNONANTIALIASED<CR>
