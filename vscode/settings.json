@@ -1,0 +1,81 @@
+{
+    "editor.fontFamily": "Source Code Pro",
+    "vim.easymotionMarkerFontFamily": "Source Code Pro",
+    "vim.easymotionMarkerFontWeight": "SemiBold",
+    "vim.useSystemClipboard": true,
+    "vim.leader": "<space>",
+    "vim.easymotion": true,
+    "vim.easymotionKeys": "hklyuiopnm,qwertzxcvbasdgjf;",
+    "vim.handleKeys": {
+        "<C-k>": true,
+        "<C-j>": true,
+        "<C-s>": true
+    },
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": [ "<leader>", "k"],
+            "after": [ "<leader>", "<leader>", "k" ]
+        },
+        {
+            "before": [ "<leader>", "j"],
+            "after": [ "<leader>", "<leader>", "j" ]
+        },
+        {
+            "before": [ "<leader>", "w"],
+            "after": [ "<leader>", "<leader>", "w" ]
+        },
+        {
+            "before": [ "<leader>", "e"],
+            "after": [ "<leader>", "<leader>", "e" ]
+        },
+        {
+            "before": [ "<leader>", "b"],
+            "after": [ "<leader>", "<leader>", "b" ]
+        },
+        {
+            "before": [ "<c-s>" ],
+            "commands": [ ":w" ]
+        },
+        {
+            "before": [ "c-v" ],
+            "after": [ "V"]
+        },
+        {
+            "before": [ "V" ],
+            "after": [ "c-v"]
+        },
+        {
+            "before": [ "x" ],
+            "after": [ "\"", "_", "d", "l"]
+        }
+    ],
+    "vim.visualModeKeyBindingsNonRecursive": [
+        {
+            "before": [ "p", ],
+            "after": [ "p", "g", "v", "y" ]
+        },
+        {
+            "before": [ "x" ],
+            "after": [ "\"", "_", "d"]
+        }
+    ],
+    "vim.insertModeKeyBindingsNonRecursive": [
+        // {
+        //     // does not work
+        //     "before": [ "c-s" ],
+        //     "after": [ "<ESC>"],
+        //     "commands": [":w"]
+        // }
+
+        // {
+        //     "before": [ "c-k" ],
+        //     "after": [ "<ESC>", "A"]
+        // },
+        // {
+        //     "before": [ "c-j" ],
+        //     "after": [ "<ESC>", "I"]
+        // }
+    ],
+    "workbench.startupEditor": "newUntitledFile",
+    "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\cmd.exe"
+}
