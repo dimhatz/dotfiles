@@ -5,15 +5,15 @@
     "vim.useSystemClipboard": true,
     "vim.leader": "<space>",
     "vim.easymotion": true,
-    "vim.easymotionKeys": "hklyuiopnm,qwertzxcvbasdgjf;",
+    "vim.easymotionKeys": "hklyuiopnmqwertzxcvbasdgjf;",
     "vim.handleKeys": {
         "<C-k>": true,
         "<C-j>": true,
         "<C-s>": true,
         "<C-[>": true,
         "<C-]>": true,
-        "C-pageup": true,
-        "C-pagedown": true
+        "<C-pageup>": true,
+        "<C-pagedown>": true
     },
     "vim.normalModeKeyBindingsNonRecursive": [
         {
@@ -53,12 +53,18 @@
         {
             "before": [ "x" ],
             "after": [ "\"", "_", "d", "l"]
+        },
+        {
+            "before": [ "X" ],
+            "after": [ "\"", "_", "D"]
         }
     ],
     "vim.visualModeKeyBindingsNonRecursive": [
         {
             "before": [ "p"],
             "after": [ "p", "g", "v", "y" ]
+            // alternatively, the below works too, but results in needing 2 undo actions to undo
+            // "after": [ "\"", "_", "d", "P" ]
         },
         {
             "before": [ "x" ],
