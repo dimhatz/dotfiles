@@ -2,6 +2,6 @@
 [
     {
         "key": "ctrl+s",
-        "command": "-workbench.action.files.save"
+        "command": "extension.vim_ctrl+["
     }
 ]
