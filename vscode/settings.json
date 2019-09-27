@@ -57,6 +57,12 @@
         {
             "before": [ "X" ],
             "after": [ "\"", "_", "D"]
+        },
+        {
+            "before": [ "<Esc>" ],
+            "after": [ "<Esc>"],
+            // do not add "extension.vim_escape" to commands, it will result in infinite loop (maybe this is the way recursive mapping is implemented...)
+            "commands": [ ":noh"]
         }
     ],
     "vim.visualModeKeyBindingsNonRecursive": [
@@ -84,5 +90,8 @@
 	"mongo.shell.path": "c:\\mongodb-win32-x86_64-2012plus-4.2.0\\bin\\mongo.exe",
     "extensions.autoUpdate": false,
     "extensions.autoCheckUpdates": false,
-    "update.mode": "manual"
+    "update.mode": "manual",
+    "vim.highlightedyank.enable": true,
+    "vim.hlsearch": true,
+    // "vim.debug.loggingLevelForConsole": "debug"
 }
