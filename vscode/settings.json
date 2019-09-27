@@ -79,4 +79,7 @@
     "workbench.startupEditor": "newUntitledFile",
     "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\cmd.exe",
 	"mongo.shell.path": "c:\\mongodb-win32-x86_64-2012plus-4.2.0\\bin\\mongo.exe"
+    "extensions.autoUpdate": false,
+    "extensions.autoCheckUpdates": false,
+    "update.mode": "manual"
 }
