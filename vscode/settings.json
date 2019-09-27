@@ -82,7 +82,8 @@
             // workaround: I have mapped <C-s> to vim's <C-[> in keybindings.json,
             // vscodevim will not map <c-s> directly, because it does not listen for this key combination
             "before": [ "<C-[>"],
-            "commands": ["extension.vim_escape", "workbench.action.files.save"]
+            "after": [ "<Esc>"],
+            "commands": ["workbench.action.files.save"]
         }
     ],
     "workbench.startupEditor": "newUntitledFile",
@@ -92,6 +93,6 @@
     "extensions.autoCheckUpdates": false,
     "update.mode": "manual",
     "vim.highlightedyank.enable": true,
-    "vim.hlsearch": true,
+    "vim.hlsearch": true
     // "vim.debug.loggingLevelForConsole": "debug"
 }
