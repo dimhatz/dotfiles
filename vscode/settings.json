@@ -1,7 +1,6 @@
 {
-    "editor.fontFamily": "Source Code Pro",
-    "vim.easymotionMarkerFontFamily": "Source Code Pro",
-    "vim.easymotionMarkerFontWeight": "SemiBold",
+    "editor.fontFamily": "Source Code Pro Medium",
+    "vim.easymotionMarkerFontFamily": "Source Code Pro Medium",
     "vim.useSystemClipboard": true,
     "vim.leader": "<space>",
     "vim.easymotion": true,
@@ -93,6 +92,10 @@
     "extensions.autoCheckUpdates": false,
     "update.mode": "manual",
     "vim.highlightedyank.enable": true,
-    "vim.hlsearch": true
+    "vim.hlsearch": true,
+    "vim.visualstar": true,
+    "editor.cursorBlinking": "solid",
+    "vim.easymotionMarkerWidthPerChar": 9,
+    "vim.easymotionMarkerYOffset": 3
     // "vim.debug.loggingLevelForConsole": "debug"
 }
