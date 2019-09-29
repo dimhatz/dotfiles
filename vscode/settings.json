@@ -98,7 +98,20 @@
                     "args": []
                 }
             ]
-        }
+        },
+        {
+            // workaround to stop opening folds when stepping into them, this will also make j move between wrapped lines, insteaad of skipping
+            // https://github.com/VSCodeVim/Vim/issues/1004
+            "before": [ "j" ],
+            "after": ["g", "j"],
+            "commands": []
+        },
+        {
+            // workaround analogous to j above
+            "before": [ "k" ],
+            "after": ["g", "k"],
+            "commands": []
+        },
     ],
     "vim.visualModeKeyBindingsNonRecursive": [
         {
@@ -135,6 +148,8 @@
     "vim.visualstar": true,
     "editor.cursorBlinking": "solid",
     "vim.easymotionMarkerWidthPerChar": 9,
-    "vim.easymotionMarkerYOffset": 3
+    "vim.easymotionMarkerYOffset": 3,
+    "telemetry.enableTelemetry": false,
+    "telemetry.enableCrashReporter": false
     // "vim.debug.loggingLevelForConsole": "debug"
 }
