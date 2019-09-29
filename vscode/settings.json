@@ -112,6 +112,24 @@
             "after": ["g", "k"],
             "commands": []
         },
+        {
+            // Y yanks till end of line
+            "before": [ "Y" ],
+            "after": ["y", "$"],
+            "commands": []
+        },
+        {
+            // <c-j> will show more screen downwards (scroll the screen upwards)
+            "before": [ "c-j" ],
+            "after": [ "c-e" ],
+            "commands": []
+        },
+        {
+            // <c-k> will show more screen upwards (scroll the screen downwards)
+            "before": [ "c-k" ],
+            "after": [ "c-y" ],
+            "commands": []
+        }
     ],
     "vim.visualModeKeyBindingsNonRecursive": [
         {
@@ -123,6 +141,10 @@
         {
             "before": [ "x" ],
             "after": [ "\"", "_", "d"]
+        },
+        {
+            "before": [ "s" ],
+            "after": ["S"]
         }
     ],
     "vim.insertModeKeyBindingsNonRecursive": [
