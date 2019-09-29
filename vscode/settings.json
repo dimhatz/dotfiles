@@ -5,15 +5,16 @@
     "vim.leader": "<space>",
     "vim.easymotion": true,
     "vim.easymotionKeys": "hklyuiopnmqwertzxcvbasdgjf;",
-    "vim.handleKeys": {
-        "<C-k>": true,
-        "<C-j>": true,
-        "<C-s>": true,
-        "<C-[>": true,
-        "<C-]>": true,
-        "<C-pageup>": true,
-        "<C-pagedown>": true
-    },
+    // no need to explicitly handle keys, only use when needing to set to false to give the key back to vscode
+    // "vim.handleKeys": {
+    //     "<C-k>": true,
+    //     "<C-j>": true,
+    //     "<C-s>": true,
+    //     "<C-[>": true,
+    //     "<C-]>": true,
+    //     "<C-pageup>": true,
+    //     "<C-pagedown>": true
+    // },
     "vim.normalModeKeyBindingsNonRecursive": [
         {
             // workaround: I have mapped <C-s> to vim's <C-[> in keybindings.json,
@@ -22,46 +23,81 @@
             "commands": ["extension.vim_escape", "workbench.action.files.save"]
         },
         {
+            // use <leader> prefix instead of <leader><leader> for easymotion
             "before": [ "<leader>", "k"],
             "after": [ "<leader>", "<leader>", "k" ]
         },
         {
+            // use <leader> prefix instead of <leader><leader> for easymotion
             "before": [ "<leader>", "j"],
             "after": [ "<leader>", "<leader>", "j" ]
         },
         {
+            // use <leader> prefix instead of <leader><leader> for easymotion
             "before": [ "<leader>", "w"],
             "after": [ "<leader>", "<leader>", "w" ]
         },
         {
+            // use <leader> prefix instead of <leader><leader> for easymotion
             "before": [ "<leader>", "e"],
             "after": [ "<leader>", "<leader>", "e" ]
         },
         {
+            // use <leader> prefix instead of <leader><leader> for easymotion
             "before": [ "<leader>", "b"],
             "after": [ "<leader>", "<leader>", "b" ]
         },
         {
+            // <c-v> to enter visual line
+            // do not use map v <c-v> because the commands for visual will misbehave (like surrounding visual etc)
             "before": [ "c-v" ],
             "after": [ "V"]
         },
         {
+            // this is the new visual block
             "before": [ "V" ],
             "after": [ "c-v"]
         },
         {
+            // delete char into black hole
             "before": [ "x" ],
             "after": [ "\"", "_", "d", "l"]
         },
         {
+            // delete till end of the line into black hole
             "before": [ "X" ],
             "after": [ "\"", "_", "D"]
         },
         {
+            // esc in normal removes hlsearch
             "before": [ "<Esc>" ],
             "after": [ "<Esc>"],
             // do not add "extension.vim_escape" to commands, it will result in infinite loop (maybe this is the way recursive mapping is implemented...)
             "commands": [ ":noh"]
+        },
+        {
+            // workaround for undo to not undo multiple steps etc, also will update the modified symbol on tab when undoing to last saved chage
+            // todo: remove this when fixed: https://github.com/VSCodeVim/Vim/issues/2007
+            "before": [ "u" ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "undo",
+                    "args": []
+                }
+            ]
+        },
+        {
+            // workaround for undo to not undo multiple steps etc, also will update the modified symbol on tab when undoing to last saved chage
+            // todo: remove this when fixed: https://github.com/VSCodeVim/Vim/issues/2007
+            "before": [ "<C-r>" ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "redo",
+                    "args": []
+                }
+            ]
         }
     ],
     "vim.visualModeKeyBindingsNonRecursive": [
@@ -78,11 +114,14 @@
     ],
     "vim.insertModeKeyBindingsNonRecursive": [
         {
-            // workaround: I have mapped <C-s> to vim's <C-[> in keybindings.json,
+            // workaround: I have mapped vscode's <C-s> to vim's <C-[> in keybindings.json,
             // vscodevim will not map <c-s> directly, because it does not listen for this key combination
             "before": [ "<C-[>"],
             "after": [ "<Esc>"],
-            "commands": ["workbench.action.files.save"]
+            "commands": [":w"]
+            // alternatively
+            // "commands": ["workbench.action.files.save"]
+            // not sure whether this makes any difference, but using :w just in case vim handles the actions queue so that there is no race condition
         }
     ],
     "workbench.startupEditor": "newUntitledFile",
