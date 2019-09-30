@@ -17,6 +17,12 @@
     // },
     "vim.normalModeKeyBindingsNonRecursive": [
         {
+            // surround with s instead of ys
+            "before": [ "s" ],
+            "after": [ "y", "s" ],
+            "commands": []
+        },
+        {
             // workaround: I have mapped <C-s> to vim's <C-[> in keybindings.json,
             // vscodevim will not map <c-s> directly, because it does not listen for this key combination
             "before": [ "<C-[>"],
