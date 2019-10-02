@@ -12,6 +12,7 @@
     //     "<C-s>": true,
     //     "<C-[>": true,
     //     "<C-]>": true,
+    //     "<C-q>": true,
     //     "<C-pageup>": true,
     //     "<C-pagedown>": true
     // },

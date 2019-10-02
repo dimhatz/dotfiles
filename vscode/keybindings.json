@@ -3,5 +3,29 @@
     {
         "key": "ctrl+s",
         "command": "extension.vim_ctrl+["
-    }
+    },
+    // {
+    //     "key": "ctrl+1",
+    //     "command": "editor.fold",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+shift+[",
+    //     "command": "-editor.fold",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+1",
+    //     "command": "-workbench.action.focusFirstEditorGroup"
+    // },
+    {
+        "key": "ctrl+l",
+        "command": "workbench.action.navigateRight",
+        "when": "vim.mode != 'Insert'"
+    },
+    {
+        "key": "ctrl+h",
+        "command": "workbench.action.navigateLeft",
+        "when": "vim.mode != 'Insert'"
+    },
 ]
