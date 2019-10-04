@@ -103,18 +103,32 @@
             ]
         },
         {
-            // workaround to stop opening folds when stepping into them, this will also make j move between wrapped lines, insteaad of skipping
-            // https://github.com/VSCodeVim/Vim/issues/1004
+            // use vscode's movement to avoid opening folds, likely faster than mapping to gj/gk, dj still works
             "before": [ "j" ],
-            "after": ["g", "j"],
-            "commands": []
+            "after": [],
+            "commands": ["cursorDown"]
         },
         {
-            // workaround analogous to j above
+            // use vscode's movement to avoid opening folds, likely faster than mapping to gj/gk, dj still works
             "before": [ "k" ],
-            "after": ["g", "k"],
-            "commands": []
+            "after": [],
+            "commands": ["cursorUp"]
         },
+        // {
+        //     // workaround to stop opening folds when stepping into them, this will also make j move between wrapped lines, insteaad of skipping
+        //     // https://github.com/VSCodeVim/Vim/issues/1004
+        //     "before": [ "j" ],
+        //     "after": ["g", "j"],
+        //     "commands": []
+        //     // cursorUp
+        //     // cursorDown
+        // },
+        // {
+        //     // workaround analogous to j above
+        //     "before": [ "k" ],
+        //     "after": ["g", "k"],
+        //     "commands": []
+        // },
         {
             // Y yanks till end of line
             "before": [ "Y" ],
