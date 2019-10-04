@@ -5,17 +5,13 @@
     "vim.leader": "<space>",
     "vim.easymotion": true,
     "vim.easymotionKeys": "hklyuiopnmqwertzxcvbasdgjf;",
-    // no need to explicitly handle keys, only use when needing to set to false to give the key back to vscode
-    // "vim.handleKeys": {
-    //     "<C-k>": true,
-    //     "<C-j>": true,
-    //     "<C-s>": true,
-    //     "<C-[>": true,
-    //     "<C-]>": true,
-    //     "<C-q>": true,
-    //     "<C-pageup>": true,
-    //     "<C-pagedown>": true
-    // },
+    // some keys need to also be set here
+    // as per https://github.com/VSCodeVim/Vim/blob/master/package.json
+    "vim.handleKeys": {
+        // opens/closes file explorer sidebar
+        // c-b would not work without <> here
+        "<C-b>": false
+    },
     "vim.normalModeKeyBindingsNonRecursive": [
         {
             // surround with s instead of ys
