@@ -1,5 +1,12 @@
 {
     "editor.fontFamily": "Source Code Pro Medium",
+    // "editor.quickSuggestionsDelay": 1000,
+    // disable automatic triggering of autocompletion
+    "editor.quickSuggestions": {
+        "other": false,
+        "comments": false,
+        "strings": false
+    },
     "vim.easymotionMarkerFontFamily": "Source Code Pro Medium",
     "vim.useSystemClipboard": true,
     "vim.leader": "<space>",
