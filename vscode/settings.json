@@ -7,6 +7,7 @@
         "comments": false,
         "strings": false
     },
+    "editor.scrollBeyondLastLine": false,
     "vim.easymotionMarkerFontFamily": "Source Code Pro Medium",
     "vim.useSystemClipboard": true,
     "vim.leader": "<space>",
