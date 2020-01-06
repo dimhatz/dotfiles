@@ -146,14 +146,16 @@
         {
             // <c-j> will show more screen downwards (scroll the screen upwards)
             "before": [ "c-j" ],
-            "after": [ "c-e" ],
-            "commands": []
+            // scrolling will lag a lot if mapped with "after", using "command" instead
+            // "after": [ "c-e" ],
+            "commands": ["scrollLineDown"]
         },
         {
             // <c-k> will show more screen upwards (scroll the screen downwards)
             "before": [ "c-k" ],
-            "after": [ "c-y" ],
-            "commands": []
+            // scrolling will lag a lot if mapped with "after", using "command" instead
+            // "after": [ "c-y" ],
+            "commands": ["scrollLineUp"]
         }
     ],
     "vim.visualModeKeyBindingsNonRecursive": [
