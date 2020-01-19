@@ -8,6 +8,7 @@
         "strings": false
     },
     "editor.scrollBeyondLastLine": false,
+    "html.mirrorCursorOnMatchingTag": false,
     "vim.easymotionMarkerFontFamily": "Source Code Pro Medium",
     "vim.useSystemClipboard": true,
     "vim.leader": "<space>",
