@@ -199,6 +199,7 @@
     "vim.easymotionMarkerWidthPerChar": 9,
     "vim.easymotionMarkerYOffset": 3,
     "telemetry.enableTelemetry": false,
-    "telemetry.enableCrashReporter": false
+    "telemetry.enableCrashReporter": false,
+    "files.autoSave": "off"
     // "vim.debug.loggingLevelForConsole": "debug"
 }
