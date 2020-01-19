@@ -157,6 +157,16 @@
             // scrolling will lag a lot if mapped with "after", using "command" instead
             // "after": [ "c-y" ],
             "commands": ["scrollLineUp"]
+        },
+        {
+            // parens go to prev tab (open editor)
+            "before": [ "(" ],
+            "commands": ["workbench.action.previousEditor"]
+        },
+        {
+            // parens go to next tab (open editor)
+            "before": [ ")" ],
+            "commands": ["workbench.action.nextEditor"]
         }
     ],
     "vim.visualModeKeyBindingsNonRecursive": [
