@@ -22,6 +22,18 @@
         "<C-b>": false
     },
     "vim.normalModeKeyBindingsNonRecursive": [
+        // {
+        //     // does not work: also close parameter hints on <esc>, 
+        //     // use <shift-esc> instead (already active by default)
+        //     "before": [ "<ESC>" ],
+        //     "after": [ "<ESC>" ],
+        //     "commands": ["editor.action.closeParameterHints"]
+        // },
+        {
+            // gt to trigger parameter hints
+            "before": [ "g", "t" ],
+            "commands": ["editor.action.triggerParameterHints"]
+        },
         {
             // surround with s instead of ys
             "before": [ "s" ],
