@@ -97,7 +97,7 @@
             "before": [ "<Esc>" ],
             "after": [ "<Esc>"],
             // do not add "extension.vim_escape" to commands, it will result in infinite loop (maybe this is the way recursive mapping is implemented...)
-            "commands": [ ":noh"]
+            "commands": [ ":noh", "closeParameterHints"]
         },
         {
             // workaround for undo to not undo multiple steps etc, also will update the modified symbol on tab when undoing to last saved chage
