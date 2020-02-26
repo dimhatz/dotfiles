@@ -224,6 +224,18 @@
     "telemetry.enableTelemetry": false,
     "telemetry.enableCrashReporter": false,
     "files.autoSave": "off",
-    "diffEditor.renderSideBySide": false
+    "diffEditor.renderSideBySide": false,
+    "gitlens.currentLine.enabled": false,
+    "gitlens.hovers.currentLine.over": "line",
+    "gitlens.codeLens.enabled": false,
+    "extensions.ignoreRecommendations": false,
+    "gitlens.views.repositories.location": "gitlens",
+    "gitlens.views.fileHistory.location": "gitlens",
+    "gitlens.views.lineHistory.location": "gitlens",
+    "gitlens.views.compare.location": "gitlens",
+    "gitlens.views.search.location": "gitlens",
+    "gitlens.statusBar.alignment": "left",
+    "gitlens.hovers.currentLine.enabled": false,
+    "gitlens.blame.toggleMode": "window"
     // "vim.debug.loggingLevelForConsole": "debug"
 }
