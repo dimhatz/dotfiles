@@ -236,6 +236,7 @@
     "gitlens.views.search.location": "gitlens",
     "gitlens.statusBar.alignment": "left",
     "gitlens.hovers.currentLine.enabled": false,
-    "gitlens.blame.toggleMode": "window"
+    "gitlens.blame.toggleMode": "window",
+    "git.enableSmartCommit": true
     // "vim.debug.loggingLevelForConsole": "debug"
 }
