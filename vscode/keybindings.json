@@ -75,7 +75,7 @@
         "when": "editorTextFocus && foldingEnabled"
     },
     {
-        "key": "ctrl+1",
+        "key": "ctrl+2",
         "command": "editor.foldLevel2",
         "when": "editorTextFocus && foldingEnabled"
     },
