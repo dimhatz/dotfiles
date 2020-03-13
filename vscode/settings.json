@@ -1,6 +1,6 @@
 {
     "window.menuBarVisibility": "toggle",
-    "editor.fontFamily": "Source Code Pro Medium",
+    "editor.fontFamily": "Source Code Pro Regular",
     // "editor.quickSuggestionsDelay": 1000,
     // disable automatic triggering of autocompletion
     "editor.quickSuggestions": {
