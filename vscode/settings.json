@@ -24,6 +24,11 @@
     },
     "vim.normalModeKeyBindingsNonRecursive": [
         {
+            // gr goes to references of thing under cursor
+            "before": [ "g", "r" ],
+            "commands": ["editor.action.goToReferences"]
+        },
+        {
             // restore default, c-t searches for symbol under cursor in workspace
             // (like <c-p> followed by #). This is likely less useful than find occurrencess etc
             "before": [ "<C-t>" ],
