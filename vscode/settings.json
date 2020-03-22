@@ -207,6 +207,26 @@
             // alternatively
             // "commands": ["workbench.action.files.save"]
             // not sure whether this makes any difference, but using :w just in case vim handles the actions queue so that there is no race condition
+        },
+        {
+            // c-j now chooses suggestion from autocomplete
+            "before": [ "<C-j>"],
+            "after": [ "<C-n>"]
+        },
+        {
+            // c-k now chooses suggestion from autocomplete
+            "before": [ "<C-k>"],
+            "after": [ "<C-p>"]
+        },
+        {
+            // disable since we now use c-j
+            "before": [ "<C-n>"],
+            "after": [ "<nop>"]
+        },
+        {
+            // disable since we now use c-k
+            "before": [ "<C-p>"],
+            "after": [ "<nop>"]
         }
     ],
     "workbench.startupEditor": "newUntitledFile",
