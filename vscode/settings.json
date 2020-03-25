@@ -29,6 +29,11 @@
             "commands": ["editor.action.goToReferences"]
         },
         {
+            // gr goes to references of thing under cursor
+            "before": [ "<C-f>" ],
+            "after": [ "y", "e", "/", "<C-v>", "<CR>" ],
+        },
+        {
             // restore default, c-t searches for symbol under cursor in workspace
             // (like <c-p> followed by #). This is likely less useful than find occurrencess etc
             "before": [ "<C-t>" ],
