@@ -2,12 +2,16 @@
     "window.menuBarVisibility": "toggle",
     "editor.fontFamily": "Source Code Pro Regular",
     // "editor.quickSuggestionsDelay": 1000,
-    // disable automatic triggering of autocompletion
-    "editor.quickSuggestions": {
-        "other": false,
-        "comments": false,
-        "strings": false
-    },
+    // disable automatic triggering of autocompletion should be equivalent to (unless they add more options):
+    // "editor.quickSuggestions": {
+    //     "other": false,
+    //     "comments": false,
+    //     "strings": false
+    // },
+    "editor.quickSuggestions": false,
+
+    "editor.acceptSuggestionOnCommitCharacter": true,
+    "editor.suggestOnTriggerCharacters": false,
     "editor.scrollBeyondLastLine": false,
     "html.mirrorCursorOnMatchingTag": false,
     "vim.easymotionMarkerFontFamily": "Source Code Pro Medium",
