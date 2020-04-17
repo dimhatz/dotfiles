@@ -107,6 +107,11 @@
             "after": [ "\"", "_", "D"]
         },
         {
+            // do not yank what is being changed (would overwrite what is already yanked in main register)
+            "before": [ "c" ],
+            "after": [ "\"", "_", "c"]
+        },
+        {
             // esc in normal removes hlsearch
             "before": [ "<Esc>" ],
             "after": [ "<Esc>"],
