@@ -214,7 +214,11 @@
         {
             "before": [ "s" ],
             "after": ["S"]
-        }
+        },
+        {
+            "before": [ "c" ],
+            "after": [ "\"", "_", "c"]
+        },
     ],
     "vim.insertModeKeyBindingsNonRecursive": [
         {
