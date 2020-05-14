@@ -112,6 +112,11 @@
             "after": [ "\"", "_", "c"]
         },
         {
+            // do not yank what is being changed (would overwrite what is already yanked in main register)
+            "before": [ "C" ],
+            "after": [ "\"", "_", "C"]
+        },
+        {
             // esc in normal removes hlsearch
             "before": [ "<Esc>" ],
             "after": [ "<Esc>"],
@@ -281,6 +286,7 @@
     "gitlens.hovers.currentLine.enabled": false,
     "gitlens.blame.toggleMode": "window",
     "git.enableSmartCommit": true,
-    "editor.minimap.enabled": false
+    "editor.minimap.enabled": false,
+    "tslint.suppressWhileTypeErrorsPresent": true
     // "vim.debug.loggingLevelForConsole": "debug"
 }
