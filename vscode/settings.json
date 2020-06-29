@@ -287,6 +287,7 @@
     "gitlens.blame.toggleMode": "window",
     "git.enableSmartCommit": true,
     "editor.minimap.enabled": false,
-    "tslint.suppressWhileTypeErrorsPresent": true
+    "tslint.suppressWhileTypeErrorsPresent": true,
+    "files.eol": "\n"
     // "vim.debug.loggingLevelForConsole": "debug"
 }
