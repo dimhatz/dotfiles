@@ -14,6 +14,9 @@
     "editor.suggestOnTriggerCharacters": false,
     "editor.scrollBeyondLastLine": false,
     "editor.linkedEditing": true,
+
+
+    // ----------------------------------- ORIGINAL VIM SETTINGS BEGIN --------------------------------------------------
     "vim.useSystemClipboard": true,
     "vim.leader": "<space>",
     "vim.easymotion": true,
@@ -256,17 +259,21 @@
             "after": [ "<nop>"]
         }
     ],
+    "vim.highlightedyank.enable": true,
+    "vim.hlsearch": true,
+    "vim.visualstar": true,
+    "vim.easymotionMarkerYOffset": 3,
+    // "vim.debug.loggingLevelForConsole": "debug"
+
+    // ----------------------------------- ORIGINAL VIM SETTINGS END --------------------------------------------------
+
     "workbench.startupEditor": "newUntitledFile",
     "terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
 	"mongo.shell.path": "c:\\mongodb-win32-x86_64-2012plus-4.2.0\\bin\\mongo.exe",
     "extensions.autoUpdate": false,
     "extensions.autoCheckUpdates": false,
     "update.mode": "manual",
-    "vim.highlightedyank.enable": true,
-    "vim.hlsearch": true,
-    "vim.visualstar": true,
     "editor.cursorBlinking": "solid",
-    "vim.easymotionMarkerYOffset": 3,
     "telemetry.enableTelemetry": false,
     "telemetry.enableCrashReporter": false,
     "files.autoSave": "off",
@@ -289,5 +296,4 @@
     "files.eol": "\n",
     "eslint.run": "onSave",
     "debug.javascript.autoAttachFilter": "always"
-    // "vim.debug.loggingLevelForConsole": "debug"
 }
