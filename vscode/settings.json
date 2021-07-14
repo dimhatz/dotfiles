@@ -257,7 +257,7 @@
         }
     ],
     "workbench.startupEditor": "newUntitledFile",
-    "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\cmd.exe",
+    "terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
 	"mongo.shell.path": "c:\\mongodb-win32-x86_64-2012plus-4.2.0\\bin\\mongo.exe",
     "extensions.autoUpdate": false,
     "extensions.autoCheckUpdates": false,
@@ -287,6 +287,7 @@
     "editor.minimap.enabled": false,
     "tslint.suppressWhileTypeErrorsPresent": true,
     "files.eol": "\n",
-    "eslint.run": "onSave"
+    "eslint.run": "onSave",
+    "debug.javascript.autoAttachFilter": "always"
     // "vim.debug.loggingLevelForConsole": "debug"
 }
