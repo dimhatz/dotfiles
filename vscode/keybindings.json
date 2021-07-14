@@ -1,185 +1,184 @@
 // Place your key bindings in this file to override the defaultsauto[]
+// According to the old https://vscode.readthedocs.io/en/latest/getstarted/keybindings/ the rules are evaluated bottom to top, stopping at first match
 [
-    {
-        "key": "ctrl+s",
-        "command": "extension.vim_ctrl+["
-    },
+    // neovim: sending <C-s> (that is `nnoremap <ESC>:Write<CR>` in init.vim) will
+    // change the position of cursor to the previous word (maybe also de-syncing neovim instance?)
+    // not using it for now
     // {
-    //     "key": "ctrl+1",
-    //     "command": "editor.fold",
-    //     "when": "editorTextFocus && foldingEnabled"
+    //     "key": "ctrl+s",
+    //     "command": "vscode-neovim.send",
+    //     "when": "editorTextFocus && neovim.mode == insert",
+    //     "args": "<C-s>"
     // },
-    // {
-    //     "key": "ctrl+shift+[",
-    //     "command": "-editor.fold",
-    //     "when": "editorTextFocus && foldingEnabled"
-    // },
-    // {
-    //     "key": "ctrl+1",
-    //     "command": "-workbench.action.focusFirstEditorGroup"
-    // },
+
     {
         "key": "ctrl+l",
         "command": "workbench.action.navigateRight",
-        "when": "vim.mode != 'Insert'"
+        "when": "neovim.mode != insert"
     },
     {
         "key": "ctrl+h",
         "command": "workbench.action.navigateLeft",
-        "when": "vim.mode != 'Insert'"
+        "when": "neovim.mode != insert"
     },
+    // remove c-c from insert (it is equivalent to <ESC>), since it does not trigger insertleave commands and is never a good idea
     {
-        "key": "ctrl+1",
-        "command": "-workbench.action.focusFirstEditorGroup"
+        "key": "ctrl+c",
+        "command": "-vscode-neovim.escape",
+        "when": "editorTextFocus && neovim.ctrlKeysInsert && neovim.init && neovim.mode == 'insert'"
     },
-    {
-        "key": "ctrl+2",
-        "command": "-workbench.action.focusSecondEditorGroup"
-    },
-    {
-        "key": "ctrl+3",
-        "command": "-workbench.action.focusThirdEditorGroup"
-    },
-    {
-        "key": "ctrl+4",
-        "command": "-workbench.action.focusFourthEditorGroup"
-    },
-    {
-        "key": "ctrl+5",
-        "command": "-workbench.action.focusFifthEditorGroup"
-    },
-    {
-        "key": "ctrl+6",
-        "command": "-workbench.action.focusSixthEditorGroup"
-    },
-    {
-        "key": "ctrl+7",
-        "command": "-workbench.action.focusSeventhEditorGroup"
-    },
-    {
-        "key": "ctrl+8",
-        "command": "-workbench.action.focusEighthEditorGroup"
-    },
-    {
-        "key": "ctrl+9",
-        "command": "-workbench.action.lastEditorInGroup"
-    },
-    {
-        "key": "ctrl+1",
-        "command": "editor.foldLevel1",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+1",
-        "command": "-editor.foldLevel1",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+2",
-        "command": "editor.foldLevel2",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+2",
-        "command": "-editor.foldLevel2",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+3",
-        "command": "editor.foldLevel3",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+3",
-        "command": "-editor.foldLevel3",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+4",
-        "command": "editor.foldLevel4",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+4",
-        "command": "-editor.foldLevel4",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+5",
-        "command": "editor.foldLevel5",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+5",
-        "command": "-editor.foldLevel5",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+6",
-        "command": "editor.foldLevel6",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+6",
-        "command": "-editor.foldLevel6",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+7",
-        "command": "editor.foldLevel7",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+7",
-        "command": "-editor.foldLevel7",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+0",
-        "command": "-workbench.action.focusSideBar"
-    },
-    {
-        "key": "ctrl+0",
-        "command": "editor.unfoldAll",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+j",
-        "command": "-editor.unfoldAll",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+9",
-        "command": "editor.foldAll",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+0",
-        "command": "-editor.foldAll",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+j",
-        "command": "-workbench.action.togglePanel"
-    },
+    // {
+    //     "key": "ctrl+1",
+    //     "command": "-workbench.action.focusFirstEditorGroup"
+    // },
+    // {
+    //     "key": "ctrl+2",
+    //     "command": "-workbench.action.focusSecondEditorGroup"
+    // },
+    // {
+    //     "key": "ctrl+3",
+    //     "command": "-workbench.action.focusThirdEditorGroup"
+    // },
+    // {
+    //     "key": "ctrl+4",
+    //     "command": "-workbench.action.focusFourthEditorGroup"
+    // },
+    // {
+    //     "key": "ctrl+5",
+    //     "command": "-workbench.action.focusFifthEditorGroup"
+    // },
+    // {
+    //     "key": "ctrl+6",
+    //     "command": "-workbench.action.focusSixthEditorGroup"
+    // },
+    // {
+    //     "key": "ctrl+7",
+    //     "command": "-workbench.action.focusSeventhEditorGroup"
+    // },
+    // {
+    //     "key": "ctrl+8",
+    //     "command": "-workbench.action.focusEighthEditorGroup"
+    // },
+    // {
+    //     "key": "ctrl+9",
+    //     "command": "-workbench.action.lastEditorInGroup"
+    // },
+    // {
+    //     "key": "ctrl+1",
+    //     "command": "editor.foldLevel1",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+k ctrl+1",
+    //     "command": "-editor.foldLevel1",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+2",
+    //     "command": "editor.foldLevel2",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+k ctrl+2",
+    //     "command": "-editor.foldLevel2",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+3",
+    //     "command": "editor.foldLevel3",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+k ctrl+3",
+    //     "command": "-editor.foldLevel3",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+4",
+    //     "command": "editor.foldLevel4",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+k ctrl+4",
+    //     "command": "-editor.foldLevel4",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+5",
+    //     "command": "editor.foldLevel5",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+k ctrl+5",
+    //     "command": "-editor.foldLevel5",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+6",
+    //     "command": "editor.foldLevel6",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+k ctrl+6",
+    //     "command": "-editor.foldLevel6",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+7",
+    //     "command": "editor.foldLevel7",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+k ctrl+7",
+    //     "command": "-editor.foldLevel7",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+0",
+    //     "command": "-workbench.action.focusSideBar"
+    // },
+    // {
+    //     "key": "ctrl+0",
+    //     "command": "editor.unfoldAll",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+k ctrl+j",
+    //     "command": "-editor.unfoldAll",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+9",
+    //     "command": "editor.foldAll",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+k ctrl+0",
+    //     "command": "-editor.foldAll",
+    //     "when": "editorTextFocus && foldingEnabled"
+    // },
+    // {
+    //     "key": "ctrl+j",
+    //     "command": "-workbench.action.togglePanel"
+    // },
     {
         "key": "ctrl+j",
         "command": "workbench.action.quickOpenNavigateNextInFilePicker",
-        "when": "inFilesPicker && inQuickOpen"
+        "when": "inQuickOpen"
     },
     {
         "key": "ctrl+p",
         "command": "-workbench.action.quickOpenNavigateNextInFilePicker",
-        "when": "inFilesPicker && inQuickOpen"
+        "when": "inQuickOpen"
     },
     {
         "key": "ctrl+k",
         "command": "workbench.action.quickOpenNavigatePreviousInFilePicker",
-        "when": "inFilesPicker && inQuickOpen"
+        "when": "inQuickOpen"
     },
     {
         "key": "ctrl+shift+p",
         "command": "-workbench.action.quickOpenNavigatePreviousInFilePicker",
-        "when": "inFilesPicker && inQuickOpen"
+        "when": "inQuickOpen"
     },
 ]
