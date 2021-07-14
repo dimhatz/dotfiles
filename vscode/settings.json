@@ -268,7 +268,6 @@
     // ----------------------------------- ORIGINAL VIM SETTINGS END --------------------------------------------------
 
     "workbench.startupEditor": "newUntitledFile",
-    "terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
 	"mongo.shell.path": "c:\\mongodb-win32-x86_64-2012plus-4.2.0\\bin\\mongo.exe",
     "extensions.autoUpdate": false,
     "extensions.autoCheckUpdates": false,
@@ -295,5 +294,7 @@
     "tslint.suppressWhileTypeErrorsPresent": true,
     "files.eol": "\n",
     "eslint.run": "onSave",
-    "debug.javascript.autoAttachFilter": "always"
+    "debug.javascript.autoAttachFilter": "always",
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "vscode-neovim.neovimExecutablePaths.win32": "C:\\Users\\dim\\nvim-win64-0.5.0\\Neovim\\bin\\nvim.exe"
 }
