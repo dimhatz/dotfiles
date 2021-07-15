@@ -62,6 +62,7 @@ if exists('g:vscode')
     nnoremap <silent> ( :<C-u>call VSCodeNotify('workbench.action.previousEditor')<CR>
     nnoremap <silent> ) :<C-u>call VSCodeNotify('workbench.action.nextEditor')<CR>
 
+	" watch for folding support https://github.com/asvetliakov/vscode-neovim/pull/502
 
 else
     " ---------------------- neovim-specific stuff goes here
