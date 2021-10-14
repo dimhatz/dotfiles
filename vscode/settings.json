@@ -302,5 +302,8 @@
         }
     },
     "workbench.editor.tabCloseButton": "off",
-    "problems.decorations.enabled": false
+    "problems.decorations.enabled": false,
+    "angular.experimental-ivy": true,
+    "haskell.updateBehavior": "prompt",
+    "haskell.plugin.ghcide-type-lenses.config.mode": "exported"
 }
