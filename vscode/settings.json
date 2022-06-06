@@ -1,328 +1,330 @@
 {
-    "window.menuBarVisibility": "toggle",
-    "editor.fontFamily": "Source Code Pro Regular",
-    // "editor.quickSuggestionsDelay": 1000,
-    // disable automatic triggering of autocompletion should be equivalent to (unless they add more options):
-    // "editor.quickSuggestions": {
-    //     "other": false,
-    //     "comments": false,
-    //     "strings": false
+  "window.menuBarVisibility": "toggle",
+  "editor.fontFamily": "Source Code Pro Regular",
+  // "editor.quickSuggestionsDelay": 1000,
+  // disable automatic triggering of autocompletion should be equivalent to (unless they add more options):
+  // "editor.quickSuggestions": {
+  //     "other": false,
+  //     "comments": false,
+  //     "strings": false
+  // },
+  "editor.quickSuggestions": false,
+
+  "editor.acceptSuggestionOnCommitCharacter": true,
+  "editor.suggestOnTriggerCharacters": false,
+  "editor.scrollBeyondLastLine": false,
+  "editor.linkedEditing": true,
+
+  // ----------------------------------- ORIGINAL VIM SETTINGS BEGIN --------------------------------------------------
+  "vim.useSystemClipboard": true,
+  "vim.leader": "<space>",
+  "vim.easymotion": true,
+  "vim.easymotionKeys": "hklyuiopnmqwertzxcvbasdgjf;",
+  // some keys need to also be set here
+  // as per https://github.com/VSCodeVim/Vim/blob/master/package.json
+  "vim.handleKeys": {
+    // opens/closes file explorer sidebar
+    // c-b would not work without <> here
+    "<C-b>": false
+  },
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      // gr goes to references of thing under cursor
+      "before": ["g", "r"],
+      "commands": ["editor.action.goToReferences"]
+    },
+    {
+      // gr goes to references of thing under cursor
+      "before": ["<C-f>"],
+      "after": ["y", "e", "/", "<C-v>", "<CR>"]
+    },
+    {
+      // restore default, c-t searches for symbol under cursor in workspace
+      // (like <c-p> followed by #). This is likely less useful than find occurrencess etc
+      "before": ["<C-t>"],
+      "commands": ["workbench.action.showAllSymbols"]
+    },
+    {
+      // gt to trigger parameter hints
+      "before": ["g", "t"],
+      "commands": ["editor.action.triggerParameterHints"]
+    },
+    {
+      // surround with s instead of ys
+      "before": ["s"],
+      "after": ["y", "s"],
+      "commands": []
+    },
+    {
+      // workaround: I have mapped <C-s> to vim's <C-[> in keybindings.json,
+      // vscodevim will not map <c-s> directly, because it does not listen for this key combination
+      "before": ["<C-[>"],
+      "commands": ["extension.vim_escape", "workbench.action.files.save"]
+    },
+    {
+      // use <leader> prefix instead of <leader><leader> for easymotion
+      "before": ["<leader>", "k"],
+      "after": ["<leader>", "<leader>", "k"]
+    },
+    {
+      // use <leader> prefix instead of <leader><leader> for easymotion
+      "before": ["<leader>", "j"],
+      "after": ["<leader>", "<leader>", "j"]
+    },
+    {
+      // use <leader> prefix instead of <leader><leader> for easymotion
+      "before": ["<leader>", "w"],
+      "after": ["<leader>", "<leader>", "w"]
+    },
+    {
+      // use <leader> prefix instead of <leader><leader> for easymotion
+      "before": ["<leader>", "e"],
+      "after": ["<leader>", "<leader>", "e"]
+    },
+    {
+      // use <leader> prefix instead of <leader><leader> for easymotion
+      "before": ["<leader>", "b"],
+      "after": ["<leader>", "<leader>", "b"]
+    },
+    {
+      // <c-v> to enter visual line
+      // do not use map v <c-v> because the commands for visual will misbehave (like surrounding visual etc)
+      "before": ["c-v"],
+      "after": ["V"]
+    },
+    {
+      // this is the new visual block
+      "before": ["V"],
+      "after": ["c-v"]
+    },
+    {
+      // delete char into black hole
+      "before": ["x"],
+      "after": ["\"", "_", "d", "l"]
+    },
+    {
+      // delete till end of the line into black hole
+      "before": ["X"],
+      "after": ["\"", "_", "D"]
+    },
+    {
+      // do not yank what is being changed (would overwrite what is already yanked in main register)
+      "before": ["c"],
+      "after": ["\"", "_", "c"]
+    },
+    {
+      // do not yank what is being changed (would overwrite what is already yanked in main register)
+      "before": ["C"],
+      "after": ["\"", "_", "C"]
+    },
+    {
+      // esc in normal removes hlsearch
+      "before": ["<Esc>"],
+      "after": ["<Esc>"],
+      // do not add "extension.vim_escape" to commands, it will result in infinite loop (maybe this is the way recursive mapping is implemented...)
+      "commands": [":noh", "closeParameterHints"]
+    },
+    {
+      // workaround for undo to not undo multiple steps etc, also will update the modified symbol on tab when undoing to last saved chage
+      // todo: remove this when fixed: https://github.com/VSCodeVim/Vim/issues/2007
+      "before": ["u"],
+      "after": [],
+      "commands": [
+        {
+          "command": "undo",
+          "args": []
+        }
+      ]
+    },
+    {
+      // workaround for undo to not undo multiple steps etc, also will update the modified symbol on tab when undoing to last saved chage
+      // todo: remove this when fixed: https://github.com/VSCodeVim/Vim/issues/2007
+      "before": ["<C-r>"],
+      "after": [],
+      "commands": [
+        {
+          "command": "redo",
+          "args": []
+        }
+      ]
+    },
+    {
+      // use vscode's movement to avoid opening folds, likely faster than mapping to gj/gk, dj still works
+      "before": ["j"],
+      "after": [],
+      "commands": ["cursorDown"]
+    },
+    {
+      // use vscode's movement to avoid opening folds, likely faster than mapping to gj/gk, dj still works
+      "before": ["k"],
+      "after": [],
+      "commands": ["cursorUp"]
+    },
+    // {
+    //     // workaround to stop opening folds when stepping into them, this will also make j move between wrapped lines, insteaad of skipping
+    //     // https://github.com/VSCodeVim/Vim/issues/1004
+    //     "before": [ "j" ],
+    //     "after": ["g", "j"],
+    //     "commands": []
+    //     // cursorUp
+    //     // cursorDown
     // },
-    "editor.quickSuggestions": false,
+    // {
+    //     // workaround analogous to j above
+    //     "before": [ "k" ],
+    //     "after": ["g", "k"],
+    //     "commands": []
+    // },
+    {
+      // Y yanks till end of line
+      "before": ["Y"],
+      "after": ["y", "$"],
+      "commands": []
+    },
+    {
+      // <c-j> will show more screen downwards (scroll the screen upwards)
+      "before": ["c-j"],
+      // scrolling will lag a lot if mapped with "after", using "command" instead
+      // "after": [ "c-e" ],
+      "commands": ["scrollLineDown"]
+    },
+    {
+      // <c-k> will show more screen upwards (scroll the screen downwards)
+      "before": ["c-k"],
+      // scrolling will lag a lot if mapped with "after", using "command" instead
+      // "after": [ "c-y" ],
+      "commands": ["scrollLineUp"]
+    },
+    {
+      // parens go to prev tab (open editor)
+      "before": ["("],
+      "commands": ["workbench.action.previousEditor"]
+    },
+    {
+      // parens go to next tab (open editor)
+      "before": [")"],
+      "commands": ["workbench.action.nextEditor"]
+    }
+  ],
+  "vim.visualModeKeyBindingsNonRecursive": [
+    {
+      "before": ["p"],
+      "after": ["p", "g", "v", "y"]
+      // alternatively, the below works too, but results in needing 2 undo actions to undo
+      // "after": [ "\"", "_", "d", "P" ]
+    },
+    {
+      "before": ["x"],
+      "after": ["\"", "_", "d"]
+    },
+    {
+      "before": ["s"],
+      "after": ["S"]
+    },
+    {
+      "before": ["c"],
+      "after": ["\"", "_", "c"]
+    }
+  ],
+  "vim.insertModeKeyBindingsNonRecursive": [
+    {
+      // workaround: I have mapped vscode's <C-s> to vim's <C-[> in keybindings.json,
+      // vscodevim will not map <c-s> directly, because it does not listen for this key combination
+      "before": ["<C-[>"],
+      "after": ["<Esc>"],
+      "commands": [":w"]
+      // alternatively
+      // "commands": ["workbench.action.files.save"]
+      // not sure whether this makes any difference, but using :w just in case vim handles the actions queue so that there is no race condition
+    },
+    {
+      // c-j now chooses suggestion from autocomplete
+      "before": ["<C-j>"],
+      "after": ["<C-n>"]
+    },
+    {
+      // c-k now chooses suggestion from autocomplete
+      "before": ["<C-k>"],
+      "after": ["<C-p>"]
+    },
+    {
+      // disable since we now use c-j
+      "before": ["<C-n>"],
+      "after": ["<nop>"]
+    },
+    {
+      // disable since we now use c-k
+      "before": ["<C-p>"],
+      "after": ["<nop>"]
+    }
+  ],
+  "vim.highlightedyank.enable": true,
+  "vim.hlsearch": true,
+  "vim.visualstar": true,
+  "vim.easymotionMarkerYOffset": 3,
+  // "vim.debug.loggingLevelForConsole": "debug"
 
-    "editor.acceptSuggestionOnCommitCharacter": true,
-    "editor.suggestOnTriggerCharacters": false,
-    "editor.scrollBeyondLastLine": false,
-    "editor.linkedEditing": true,
+  // ----------------------------------- ORIGINAL VIM SETTINGS END --------------------------------------------------
 
-
-    // ----------------------------------- ORIGINAL VIM SETTINGS BEGIN --------------------------------------------------
-    "vim.useSystemClipboard": true,
-    "vim.leader": "<space>",
-    "vim.easymotion": true,
-    "vim.easymotionKeys": "hklyuiopnmqwertzxcvbasdgjf;",
-    // some keys need to also be set here
-    // as per https://github.com/VSCodeVim/Vim/blob/master/package.json
-    "vim.handleKeys": {
-        // opens/closes file explorer sidebar
-        // c-b would not work without <> here
-        "<C-b>": false
-    },
-    "vim.normalModeKeyBindingsNonRecursive": [
-        {
-            // gr goes to references of thing under cursor
-            "before": [ "g", "r" ],
-            "commands": ["editor.action.goToReferences"]
-        },
-        {
-            // gr goes to references of thing under cursor
-            "before": [ "<C-f>" ],
-            "after": [ "y", "e", "/", "<C-v>", "<CR>" ],
-        },
-        {
-            // restore default, c-t searches for symbol under cursor in workspace
-            // (like <c-p> followed by #). This is likely less useful than find occurrencess etc
-            "before": [ "<C-t>" ],
-            "commands": ["workbench.action.showAllSymbols"]
-        },
-        {
-            // gt to trigger parameter hints
-            "before": [ "g", "t" ],
-            "commands": ["editor.action.triggerParameterHints"]
-        },
-        {
-            // surround with s instead of ys
-            "before": [ "s" ],
-            "after": [ "y", "s" ],
-            "commands": []
-        },
-        {
-            // workaround: I have mapped <C-s> to vim's <C-[> in keybindings.json,
-            // vscodevim will not map <c-s> directly, because it does not listen for this key combination
-            "before": [ "<C-[>"],
-            "commands": ["extension.vim_escape", "workbench.action.files.save"]
-        },
-        {
-            // use <leader> prefix instead of <leader><leader> for easymotion
-            "before": [ "<leader>", "k"],
-            "after": [ "<leader>", "<leader>", "k" ]
-        },
-        {
-            // use <leader> prefix instead of <leader><leader> for easymotion
-            "before": [ "<leader>", "j"],
-            "after": [ "<leader>", "<leader>", "j" ]
-        },
-        {
-            // use <leader> prefix instead of <leader><leader> for easymotion
-            "before": [ "<leader>", "w"],
-            "after": [ "<leader>", "<leader>", "w" ]
-        },
-        {
-            // use <leader> prefix instead of <leader><leader> for easymotion
-            "before": [ "<leader>", "e"],
-            "after": [ "<leader>", "<leader>", "e" ]
-        },
-        {
-            // use <leader> prefix instead of <leader><leader> for easymotion
-            "before": [ "<leader>", "b"],
-            "after": [ "<leader>", "<leader>", "b" ]
-        },
-        {
-            // <c-v> to enter visual line
-            // do not use map v <c-v> because the commands for visual will misbehave (like surrounding visual etc)
-            "before": [ "c-v" ],
-            "after": [ "V"]
-        },
-        {
-            // this is the new visual block
-            "before": [ "V" ],
-            "after": [ "c-v"]
-        },
-        {
-            // delete char into black hole
-            "before": [ "x" ],
-            "after": [ "\"", "_", "d", "l"]
-        },
-        {
-            // delete till end of the line into black hole
-            "before": [ "X" ],
-            "after": [ "\"", "_", "D"]
-        },
-        {
-            // do not yank what is being changed (would overwrite what is already yanked in main register)
-            "before": [ "c" ],
-            "after": [ "\"", "_", "c"]
-        },
-        {
-            // do not yank what is being changed (would overwrite what is already yanked in main register)
-            "before": [ "C" ],
-            "after": [ "\"", "_", "C"]
-        },
-        {
-            // esc in normal removes hlsearch
-            "before": [ "<Esc>" ],
-            "after": [ "<Esc>"],
-            // do not add "extension.vim_escape" to commands, it will result in infinite loop (maybe this is the way recursive mapping is implemented...)
-            "commands": [ ":noh", "closeParameterHints"]
-        },
-        {
-            // workaround for undo to not undo multiple steps etc, also will update the modified symbol on tab when undoing to last saved chage
-            // todo: remove this when fixed: https://github.com/VSCodeVim/Vim/issues/2007
-            "before": [ "u" ],
-            "after": [],
-            "commands": [
-                {
-                    "command": "undo",
-                    "args": []
-                }
-            ]
-        },
-        {
-            // workaround for undo to not undo multiple steps etc, also will update the modified symbol on tab when undoing to last saved chage
-            // todo: remove this when fixed: https://github.com/VSCodeVim/Vim/issues/2007
-            "before": [ "<C-r>" ],
-            "after": [],
-            "commands": [
-                {
-                    "command": "redo",
-                    "args": []
-                }
-            ]
-        },
-        {
-            // use vscode's movement to avoid opening folds, likely faster than mapping to gj/gk, dj still works
-            "before": [ "j" ],
-            "after": [],
-            "commands": ["cursorDown"]
-        },
-        {
-            // use vscode's movement to avoid opening folds, likely faster than mapping to gj/gk, dj still works
-            "before": [ "k" ],
-            "after": [],
-            "commands": ["cursorUp"]
-        },
-        // {
-        //     // workaround to stop opening folds when stepping into them, this will also make j move between wrapped lines, insteaad of skipping
-        //     // https://github.com/VSCodeVim/Vim/issues/1004
-        //     "before": [ "j" ],
-        //     "after": ["g", "j"],
-        //     "commands": []
-        //     // cursorUp
-        //     // cursorDown
-        // },
-        // {
-        //     // workaround analogous to j above
-        //     "before": [ "k" ],
-        //     "after": ["g", "k"],
-        //     "commands": []
-        // },
-        {
-            // Y yanks till end of line
-            "before": [ "Y" ],
-            "after": ["y", "$"],
-            "commands": []
-        },
-        {
-            // <c-j> will show more screen downwards (scroll the screen upwards)
-            "before": [ "c-j" ],
-            // scrolling will lag a lot if mapped with "after", using "command" instead
-            // "after": [ "c-e" ],
-            "commands": ["scrollLineDown"]
-        },
-        {
-            // <c-k> will show more screen upwards (scroll the screen downwards)
-            "before": [ "c-k" ],
-            // scrolling will lag a lot if mapped with "after", using "command" instead
-            // "after": [ "c-y" ],
-            "commands": ["scrollLineUp"]
-        },
-        {
-            // parens go to prev tab (open editor)
-            "before": [ "(" ],
-            "commands": ["workbench.action.previousEditor"]
-        },
-        {
-            // parens go to next tab (open editor)
-            "before": [ ")" ],
-            "commands": ["workbench.action.nextEditor"]
-        }
-    ],
-    "vim.visualModeKeyBindingsNonRecursive": [
-        {
-            "before": [ "p"],
-            "after": [ "p", "g", "v", "y" ]
-            // alternatively, the below works too, but results in needing 2 undo actions to undo
-            // "after": [ "\"", "_", "d", "P" ]
-        },
-        {
-            "before": [ "x" ],
-            "after": [ "\"", "_", "d"]
-        },
-        {
-            "before": [ "s" ],
-            "after": ["S"]
-        },
-        {
-            "before": [ "c" ],
-            "after": [ "\"", "_", "c"]
-        },
-    ],
-    "vim.insertModeKeyBindingsNonRecursive": [
-        {
-            // workaround: I have mapped vscode's <C-s> to vim's <C-[> in keybindings.json,
-            // vscodevim will not map <c-s> directly, because it does not listen for this key combination
-            "before": [ "<C-[>"],
-            "after": [ "<Esc>"],
-            "commands": [":w"]
-            // alternatively
-            // "commands": ["workbench.action.files.save"]
-            // not sure whether this makes any difference, but using :w just in case vim handles the actions queue so that there is no race condition
-        },
-        {
-            // c-j now chooses suggestion from autocomplete
-            "before": [ "<C-j>"],
-            "after": [ "<C-n>"]
-        },
-        {
-            // c-k now chooses suggestion from autocomplete
-            "before": [ "<C-k>"],
-            "after": [ "<C-p>"]
-        },
-        {
-            // disable since we now use c-j
-            "before": [ "<C-n>"],
-            "after": [ "<nop>"]
-        },
-        {
-            // disable since we now use c-k
-            "before": [ "<C-p>"],
-            "after": [ "<nop>"]
-        }
-    ],
-    "vim.highlightedyank.enable": true,
-    "vim.hlsearch": true,
-    "vim.visualstar": true,
-    "vim.easymotionMarkerYOffset": 3,
-    // "vim.debug.loggingLevelForConsole": "debug"
-
-    // ----------------------------------- ORIGINAL VIM SETTINGS END --------------------------------------------------
-
-    "workbench.startupEditor": "newUntitledFile",
-	"mongo.shell.path": "c:\\mongodb-win32-x86_64-2012plus-4.2.0\\bin\\mongo.exe",
-    "extensions.autoUpdate": false,
-    "extensions.autoCheckUpdates": false,
-    "update.mode": "manual",
-    "editor.cursorBlinking": "solid",
-    "telemetry.enableTelemetry": false,
-    "telemetry.enableCrashReporter": false,
-    "files.autoSave": "off",
-    "diffEditor.renderSideBySide": false,
-    "gitlens.currentLine.enabled": false,
-    "gitlens.hovers.currentLine.over": "line",
-    "gitlens.codeLens.enabled": false,
-    "extensions.ignoreRecommendations": false,
-    "gitlens.views.repositories.location": "gitlens",
-    "gitlens.views.fileHistory.location": "gitlens",
-    "gitlens.views.lineHistory.location": "gitlens",
-    "gitlens.views.compare.location": "gitlens",
-    "gitlens.views.search.location": "gitlens",
-    "gitlens.statusBar.alignment": "left",
-    "gitlens.hovers.currentLine.enabled": false,
-    "gitlens.blame.toggleMode": "window",
-    "git.enableSmartCommit": true,
-    "editor.minimap.enabled": false,
-    "tslint.suppressWhileTypeErrorsPresent": true,
-    "files.eol": "\n",
-    "eslint.run": "onSave",
-    "terminal.integrated.defaultProfile.windows": "Git Bash",
-    "terminal.integrated.profiles.windows": {
-        "C:\\Program Files\\Git\\bin\\bash.exe (migrated)": {
-            "path": "C:\\Program Files\\Git\\bin\\bash.exe",
-            "args": []
-        }
-    },
-    "workbench.editor.tabCloseButton": "off",
-    "problems.decorations.enabled": false,
-    "angular.experimental-ivy": true,
-    "haskell.updateBehavior": "prompt",
-    "haskell.plugin.ghcide-type-lenses.config.mode": "diagnostics",
-    "[typescriptreact]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[jsonc]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "editor.formatOnSave": true,
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "javascript.preferences.importModuleSpecifier": "relative",
-    "typescript.preferences.importModuleSpecifier": "relative",
-    "window.newWindowDimensions": "inherit",
-    "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[html]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
+  "workbench.startupEditor": "newUntitledFile",
+  "mongo.shell.path": "c:\\mongodb-win32-x86_64-2012plus-4.2.0\\bin\\mongo.exe",
+  "extensions.autoUpdate": false,
+  "extensions.autoCheckUpdates": false,
+  "update.mode": "manual",
+  "editor.cursorBlinking": "solid",
+  "telemetry.enableTelemetry": false,
+  "telemetry.enableCrashReporter": false,
+  "files.autoSave": "off",
+  "diffEditor.renderSideBySide": false,
+  "gitlens.currentLine.enabled": false,
+  "gitlens.hovers.currentLine.over": "line",
+  "gitlens.codeLens.enabled": false,
+  "extensions.ignoreRecommendations": false,
+  "gitlens.views.repositories.location": "gitlens",
+  "gitlens.views.fileHistory.location": "gitlens",
+  "gitlens.views.lineHistory.location": "gitlens",
+  "gitlens.views.compare.location": "gitlens",
+  "gitlens.views.search.location": "gitlens",
+  "gitlens.statusBar.alignment": "left",
+  "gitlens.hovers.currentLine.enabled": false,
+  "gitlens.blame.toggleMode": "window",
+  "git.enableSmartCommit": true,
+  "editor.minimap.enabled": false,
+  "tslint.suppressWhileTypeErrorsPresent": true,
+  "files.eol": "\n",
+  "eslint.run": "onSave",
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "terminal.integrated.profiles.windows": {
+    "C:\\Program Files\\Git\\bin\\bash.exe (migrated)": {
+      "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+      "args": []
+    }
+  },
+  "workbench.editor.tabCloseButton": "off",
+  "problems.decorations.enabled": false,
+  "angular.experimental-ivy": true,
+  "haskell.updateBehavior": "prompt",
+  "haskell.plugin.ghcide-type-lenses.config.mode": "diagnostics",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.formatOnSave": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "window.newWindowDimensions": "inherit",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "gitlens.currentLine.pullRequests.enabled": false,
+  "gitlens.codeLens.authors.enabled": false,
+  "editor.codeLens": false
 }
