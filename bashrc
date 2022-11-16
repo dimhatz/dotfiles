@@ -44,6 +44,9 @@ export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 # Auto-launching ssh-agent on Git for Windows
 # TODO: exit here if linux
 
+# cd to home (on windows it starts in /)
+cd ~
+
 env=~/.ssh/agent.env
 
 agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
