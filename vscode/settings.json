@@ -2,13 +2,12 @@
   "window.menuBarVisibility": "toggle",
   "editor.fontFamily": "Source Code Pro Regular",
   // "editor.quickSuggestionsDelay": 1000,
-  // disable automatic triggering of autocompletion should be equivalent to (unless they add more options):
-  // "editor.quickSuggestions": {
-  //     "other": false,
-  //     "comments": false,
-  //     "strings": false
-  // },
-  "editor.quickSuggestions": false,
+  // disable automatic triggering of autocompletion
+  "editor.quickSuggestions": {
+    "other": "off",
+    "comments": "off",
+    "strings": "off"
+  },
 
   "editor.acceptSuggestionOnCommitCharacter": true,
   "editor.suggestOnTriggerCharacters": false,
@@ -315,8 +314,8 @@
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "javascript.preferences.importModuleSpecifier": "relative",
-  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifier": "non-relative",
   "window.newWindowDimensions": "inherit",
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
