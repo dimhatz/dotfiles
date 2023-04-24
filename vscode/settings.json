@@ -1,6 +1,18 @@
 /*
 ----------------------------------------
 (home)
+current:
+Version: 1.77.3 (user setup)
+Commit: 704ed70d4fd1c6bd6342c436f1ede30d1cff4710
+Date: 2023-04-12T09:16:02.548Z
+Electron: 19.1.11
+Chromium: 102.0.5005.196
+Node.js: 16.14.2
+V8: 10.2.154.26-electron.0
+OS: Windows_NT x64 10.0.19044
+Sandboxed: No
+
+old:
 Version: 1.73.1 (user setup)
 Commit: 6261075646f055b99068d3688932416f2346dd3b
 Date: 2022-11-09T04:27:29.066Z
@@ -10,19 +22,6 @@ Node.js: 16.14.2
 V8: 10.2.154.15-electron.0
 OS: Windows_NT x64 10.0.19044
 Sandboxed: No
-
-
-old:
-Version: 1.67.1 (user setup)
-Commit: da15b6fd3ef856477bf6f4fb29ba1b7af717770d
-Date: 2022-05-06T12:37:03.389Z
-Electron: 17.4.1
-Chromium: 98.0.4758.141
-Node.js: 16.13.0
-V8: 9.8.177.13-electron.0
-OS: Windows_NT x64 10.0.19044
-
-
 
 ------------------
 Extensions:
