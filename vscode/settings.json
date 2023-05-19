@@ -274,6 +274,20 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
     {
       "before": ["c"],
       "after": ["\"", "_", "c"]
+    },
+    {
+      // <c-j> will show more screen downwards (scroll the screen upwards)
+      "before": ["c-j"],
+      // scrolling will lag a lot if mapped with "after", using "command" instead
+      // "after": [ "c-e" ],
+      "commands": ["scrollLineDown"]
+    },
+    {
+      // <c-k> will show more screen upwards (scroll the screen downwards)
+      "before": ["c-k"],
+      // scrolling will lag a lot if mapped with "after", using "command" instead
+      // "after": [ "c-y" ],
+      "commands": ["scrollLineUp"]
     }
   ],
   "vim.insertModeKeyBindingsNonRecursive": [
@@ -288,25 +302,39 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
       // not sure whether this makes any difference, but using :w just in case vim handles the actions queue so that there is no race condition
     },
     {
-      // c-j now chooses suggestion from autocomplete
-      "before": ["<C-j>"],
-      "after": ["<C-n>"]
+      // <c-j> will show more screen downwards (scroll the screen upwards)
+      "before": ["c-j"],
+      // scrolling will lag a lot if mapped with "after", using "command" instead
+      // "after": [ "c-e" ],
+      "commands": ["scrollLineDown"]
     },
     {
-      // c-k now chooses suggestion from autocomplete
-      "before": ["<C-k>"],
-      "after": ["<C-p>"]
-    },
-    {
-      // disable since we now use c-j
-      "before": ["<C-n>"],
-      "after": ["<nop>"]
-    },
-    {
-      // disable since we now use c-k
-      "before": ["<C-p>"],
-      "after": ["<nop>"]
+      // <c-k> will show more screen upwards (scroll the screen downwards)
+      "before": ["c-k"],
+      // scrolling will lag a lot if mapped with "after", using "command" instead
+      // "after": [ "c-y" ],
+      "commands": ["scrollLineUp"]
     }
+    // { // disabling since we use vscode's bindings to c-j / c-k for selecting from autocomplete suggestions
+    //   // c-j now chooses suggestion from autocomplete
+    //   "before": ["<C-j>"],
+    //   "after": ["<C-n>"]
+    // },
+    // {
+    //   // c-k now chooses suggestion from autocomplete
+    //   "before": ["<C-k>"],
+    //   "after": ["<C-p>"]
+    // },
+    // {
+    //   // disable since we now use c-j
+    //   "before": ["<C-n>"],
+    //   "after": ["<nop>"]
+    // },
+    // {
+    //   // disable since we now use c-k
+    //   "before": ["<C-p>"],
+    //   "after": ["<nop>"]
+    // },
   ],
   "vim.highlightedyank.enable": true,
   "vim.hlsearch": true,
@@ -377,5 +405,6 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
   "gitlens.currentLine.pullRequests.enabled": false,
   "gitlens.codeLens.authors.enabled": false,
   "editor.codeLens": false,
-  "window.menuBarVisibility": "compact"
+  "window.menuBarVisibility": "compact",
+  "telemetry.telemetryLevel": "off"
 }
