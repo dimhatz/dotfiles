@@ -51,7 +51,6 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
 
 */
 {
-  "window.menuBarVisibility": "toggle",
   "editor.fontFamily": "Source Code Pro Regular",
   // "editor.quickSuggestionsDelay": 1000,
   // disable automatic triggering of autocompletion
@@ -377,5 +376,6 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
   },
   "gitlens.currentLine.pullRequests.enabled": false,
   "gitlens.codeLens.authors.enabled": false,
-  "editor.codeLens": false
+  "editor.codeLens": false,
+  "window.menuBarVisibility": "compact"
 }
