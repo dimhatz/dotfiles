@@ -2,6 +2,17 @@
 ----------------------------------------
 (home)
 current:
+Version: 1.87.2 (user setup)
+Commit: 863d2581ecda6849923a2118d93a088b0745d9d6
+Date: 2024-03-08T15:20:17.278Z
+Electron: 27.3.2
+ElectronBuildId: 26836302
+Chromium: 118.0.5993.159
+Node.js: 18.17.1
+V8: 11.8.172.18-electron.0
+OS: Windows_NT x64 10.0.19044
+
+old:
 Version: 1.77.3 (user setup)
 Commit: 704ed70d4fd1c6bd6342c436f1ede30d1cff4710
 Date: 2023-04-12T09:16:02.548Z
@@ -12,26 +23,15 @@ V8: 10.2.154.26-electron.0
 OS: Windows_NT x64 10.0.19044
 Sandboxed: No
 
-old:
-Version: 1.73.1 (user setup)
-Commit: 6261075646f055b99068d3688932416f2346dd3b
-Date: 2022-11-09T04:27:29.066Z
-Electron: 19.0.17
-Chromium: 102.0.5005.167
-Node.js: 16.14.2
-V8: 10.2.154.15-electron.0
-OS: Windows_NT x64 10.0.19044
-Sandboxed: No
-
 ------------------
 Extensions:
 
 - Editorconfig 0.16.4 -> 
-- ESLint 2.1.16 -> 2.2.2
-- Gitlens 11.2.1 -> 12.0.6
+- ESLint 2.1.16 -> 2.2.2 -> 2.4.4
+- Gitlens 11.2.1 -> 12.0.6 -> 14.9.0
 - Neovim 0.0.82
-- Prettier 5.8.0 -> 9.5.0
-- Vim 1.20.3 -> v1.24.3
+- Prettier 5.8.0 -> 9.5.0 -> 10.4.0
+- Vim 1.20.3 -> v1.24.3 -> 1.27.1
 - Hugo language support 1.3.1
 - Elm (by Elm tooling) 2.4.1
 Chrome Extension Manifest JSON Schema v1.0.2
@@ -339,36 +339,24 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
   "vim.highlightedyank.enable": true,
   "vim.hlsearch": true,
   "vim.visualstar": true,
-  "vim.easymotionMarkerYOffset": 3,
-  // "vim.debug.loggingLevelForConsole": "debug"
 
   // ----------------------------------- ORIGINAL VIM SETTINGS END --------------------------------------------------
 
   "workbench.startupEditor": "newUntitledFile",
-  "mongo.shell.path": "c:\\mongodb-win32-x86_64-2012plus-4.2.0\\bin\\mongo.exe",
   "extensions.autoUpdate": false,
   "extensions.autoCheckUpdates": false,
   "update.mode": "manual",
   "editor.cursorBlinking": "solid",
-  "telemetry.enableTelemetry": false,
-  "telemetry.enableCrashReporter": false,
   "files.autoSave": "off",
   "diffEditor.renderSideBySide": false,
   "gitlens.currentLine.enabled": false,
   "gitlens.hovers.currentLine.over": "line",
   "gitlens.codeLens.enabled": false,
   "extensions.ignoreRecommendations": false,
-  "gitlens.views.repositories.location": "gitlens",
-  "gitlens.views.fileHistory.location": "gitlens",
-  "gitlens.views.lineHistory.location": "gitlens",
-  "gitlens.views.compare.location": "gitlens",
-  "gitlens.views.search.location": "gitlens",
   "gitlens.statusBar.alignment": "left",
   "gitlens.hovers.currentLine.enabled": false,
   "gitlens.blame.toggleMode": "window",
   "git.enableSmartCommit": true,
-  "editor.minimap.enabled": false,
-  "tslint.suppressWhileTypeErrorsPresent": true,
   "files.eol": "\n",
   "eslint.run": "onSave",
   "terminal.integrated.defaultProfile.windows": "Git Bash",
@@ -378,9 +366,7 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
       "args": []
     }
   },
-  "workbench.editor.tabCloseButton": "off",
   "problems.decorations.enabled": false,
-  "angular.experimental-ivy": true,
   "haskell.updateBehavior": "prompt",
   "haskell.plugin.ghcide-type-lenses.config.mode": "diagnostics",
   "[typescriptreact]": {
@@ -406,5 +392,8 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
   "gitlens.codeLens.authors.enabled": false,
   "editor.codeLens": false,
   "window.menuBarVisibility": "compact",
-  "telemetry.telemetryLevel": "off"
+  "telemetry.telemetryLevel": "off",
+  "workbench.editor.tabActionCloseVisibility": false,
+  "editor.minimap.enabled": false,
+  "workbench.colorTheme": "Default Dark+"
 }
