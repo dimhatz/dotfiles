@@ -1,207 +1,207 @@
 // Place your key bindings in this file to override the defaultsauto[]
 [
-    {
-        "key": "ctrl+s",
-        "command": "extension.vim_ctrl+["
-    },
-    // {
-    //     "key": "ctrl+1",
-    //     "command": "editor.fold",
-    //     "when": "editorTextFocus && foldingEnabled"
-    // },
-    // {
-    //     "key": "ctrl+shift+[",
-    //     "command": "-editor.fold",
-    //     "when": "editorTextFocus && foldingEnabled"
-    // },
-    // {
-    //     "key": "ctrl+1",
-    //     "command": "-workbench.action.focusFirstEditorGroup"
-    // },
-    {
-        "key": "ctrl+l",
-        "command": "workbench.action.navigateRight",
-        "when": "vim.mode != 'Insert'"
-    },
-    {
-        "key": "ctrl+h",
-        "command": "workbench.action.navigateLeft",
-        "when": "vim.mode != 'Insert'"
-    },
-    {
-        "key": "ctrl+1",
-        "command": "-workbench.action.focusFirstEditorGroup"
-    },
-    {
-        "key": "ctrl+2",
-        "command": "-workbench.action.focusSecondEditorGroup"
-    },
-    {
-        "key": "ctrl+3",
-        "command": "-workbench.action.focusThirdEditorGroup"
-    },
-    {
-        "key": "ctrl+4",
-        "command": "-workbench.action.focusFourthEditorGroup"
-    },
-    {
-        "key": "ctrl+5",
-        "command": "-workbench.action.focusFifthEditorGroup"
-    },
-    {
-        "key": "ctrl+6",
-        "command": "-workbench.action.focusSixthEditorGroup"
-    },
-    {
-        "key": "ctrl+7",
-        "command": "-workbench.action.focusSeventhEditorGroup"
-    },
-    {
-        "key": "ctrl+8",
-        "command": "-workbench.action.focusEighthEditorGroup"
-    },
-    {
-        "key": "ctrl+9",
-        "command": "-workbench.action.lastEditorInGroup"
-    },
-    {
-        "key": "ctrl+1",
-        "command": "editor.foldLevel1",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+1",
-        "command": "-editor.foldLevel1",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+2",
-        "command": "editor.foldLevel2",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+2",
-        "command": "-editor.foldLevel2",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+3",
-        "command": "editor.foldLevel3",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+3",
-        "command": "-editor.foldLevel3",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+4",
-        "command": "editor.foldLevel4",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+4",
-        "command": "-editor.foldLevel4",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+5",
-        "command": "editor.foldLevel5",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+5",
-        "command": "-editor.foldLevel5",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+6",
-        "command": "editor.foldLevel6",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+6",
-        "command": "-editor.foldLevel6",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+7",
-        "command": "editor.foldLevel7",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+7",
-        "command": "-editor.foldLevel7",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+0",
-        "command": "-workbench.action.focusSideBar"
-    },
-    {
-        "key": "ctrl+0",
-        "command": "editor.unfoldAll",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+j",
-        "command": "-editor.unfoldAll",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+9",
-        "command": "editor.foldAll",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k ctrl+0",
-        "command": "-editor.foldAll",
-        "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+j",
-        "command": "-workbench.action.togglePanel"
-    },
-    {
-        "key": "ctrl+j",
-        "command": "workbench.action.quickOpenNavigateNextInFilePicker",
-        "when": "inFilesPicker && inQuickOpen"
-    },
-    {
-        "key": "ctrl+p",
-        "command": "-workbench.action.quickOpenNavigateNextInFilePicker",
-        "when": "inFilesPicker && inQuickOpen"
-    },
-    {
-        "key": "ctrl+k",
-        "command": "workbench.action.quickOpenNavigatePreviousInFilePicker",
-        "when": "inFilesPicker && inQuickOpen"
-    },
-    {
-        "key": "ctrl+shift+p",
-        "command": "-workbench.action.quickOpenNavigatePreviousInFilePicker",
-        "when": "inFilesPicker && inQuickOpen"
-    },
-    {
-        // Found through using `Ctrl-Shift-P shortcuts` -> Developer debug shortcuts
-        "key": "ctrl+J",
-        "command": "selectNextSuggestion",
-        "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
-    },
-    {
-        // Found through using `Ctrl-Shift-P shortcuts` -> Developer debug shortcuts
-        "key": "ctrl+K",
-        "command": "selectPrevSuggestion",
-        "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
-    },
-    {
-        // Do not override vscode's `Ctrl-P`
-        "key": "ctrl+p",
-        "command": "-extension.vim_ctrl+p",
-    },
-    {
-        // Do not override vscode's `Ctrl-N`
-        "key": "ctrl+n",
-        "command": "-extension.vim_ctrl+n",
-    }
+  {
+    "key": "ctrl+s",
+    "command": "extension.vim_ctrl+["
+  },
+  // {
+  //     "key": "ctrl+1",
+  //     "command": "editor.fold",
+  //     "when": "editorTextFocus && foldingEnabled"
+  // },
+  // {
+  //     "key": "ctrl+shift+[",
+  //     "command": "-editor.fold",
+  //     "when": "editorTextFocus && foldingEnabled"
+  // },
+  // {
+  //     "key": "ctrl+1",
+  //     "command": "-workbench.action.focusFirstEditorGroup"
+  // },
+  {
+    "key": "ctrl+l",
+    "command": "workbench.action.navigateRight",
+    "when": "vim.mode != 'Insert'"
+  },
+  {
+    "key": "ctrl+h",
+    "command": "workbench.action.navigateLeft",
+    "when": "vim.mode != 'Insert'"
+  },
+  {
+    "key": "ctrl+1",
+    "command": "-workbench.action.focusFirstEditorGroup"
+  },
+  {
+    "key": "ctrl+2",
+    "command": "-workbench.action.focusSecondEditorGroup"
+  },
+  {
+    "key": "ctrl+3",
+    "command": "-workbench.action.focusThirdEditorGroup"
+  },
+  {
+    "key": "ctrl+4",
+    "command": "-workbench.action.focusFourthEditorGroup"
+  },
+  {
+    "key": "ctrl+5",
+    "command": "-workbench.action.focusFifthEditorGroup"
+  },
+  {
+    "key": "ctrl+6",
+    "command": "-workbench.action.focusSixthEditorGroup"
+  },
+  {
+    "key": "ctrl+7",
+    "command": "-workbench.action.focusSeventhEditorGroup"
+  },
+  {
+    "key": "ctrl+8",
+    "command": "-workbench.action.focusEighthEditorGroup"
+  },
+  {
+    "key": "ctrl+9",
+    "command": "-workbench.action.lastEditorInGroup"
+  },
+  {
+    "key": "ctrl+1",
+    "command": "editor.foldLevel1",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+k ctrl+1",
+    "command": "-editor.foldLevel1",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+2",
+    "command": "editor.foldLevel2",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+k ctrl+2",
+    "command": "-editor.foldLevel2",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+3",
+    "command": "editor.foldLevel3",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+k ctrl+3",
+    "command": "-editor.foldLevel3",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+4",
+    "command": "editor.foldLevel4",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+k ctrl+4",
+    "command": "-editor.foldLevel4",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+5",
+    "command": "editor.foldLevel5",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+k ctrl+5",
+    "command": "-editor.foldLevel5",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+6",
+    "command": "editor.foldLevel6",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+k ctrl+6",
+    "command": "-editor.foldLevel6",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+7",
+    "command": "editor.foldLevel7",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+k ctrl+7",
+    "command": "-editor.foldLevel7",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+0",
+    "command": "-workbench.action.focusSideBar"
+  },
+  {
+    "key": "ctrl+0",
+    "command": "editor.unfoldAll",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+k ctrl+j",
+    "command": "-editor.unfoldAll",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+9",
+    "command": "editor.foldAll",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+k ctrl+0",
+    "command": "-editor.foldAll",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "ctrl+j",
+    "command": "-workbench.action.togglePanel"
+  },
+  {
+    "key": "ctrl+j",
+    "command": "workbench.action.quickOpenNavigateNextInFilePicker",
+    "when": "inFilesPicker && inQuickOpen"
+  },
+  {
+    "key": "ctrl+p",
+    "command": "-workbench.action.quickOpenNavigateNextInFilePicker",
+    "when": "inFilesPicker && inQuickOpen"
+  },
+  {
+    "key": "ctrl+k",
+    "command": "workbench.action.quickOpenNavigatePreviousInFilePicker",
+    "when": "inFilesPicker && inQuickOpen"
+  },
+  {
+    "key": "ctrl+shift+p",
+    "command": "-workbench.action.quickOpenNavigatePreviousInFilePicker",
+    "when": "inFilesPicker && inQuickOpen"
+  },
+  {
+    // Found through using `Ctrl-Shift-P shortcuts` -> Developer debug shortcuts
+    "key": "ctrl+J",
+    "command": "selectNextSuggestion",
+    "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
+  },
+  {
+    // Found through using `Ctrl-Shift-P shortcuts` -> Developer debug shortcuts
+    "key": "ctrl+K",
+    "command": "selectPrevSuggestion",
+    "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
+  },
+  {
+    // Do not override vscode's `Ctrl-P`
+    "key": "ctrl+p",
+    "command": "-extension.vim_ctrl+p"
+  },
+  {
+    // Do not override vscode's `Ctrl-N`
+    "key": "ctrl+n",
+    "command": "-extension.vim_ctrl+n"
+  }
 ]
