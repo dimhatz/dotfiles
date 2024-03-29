@@ -194,4 +194,14 @@
         "command": "selectPrevSuggestion",
         "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
     },
+    {
+        // Do not override vscode's `Ctrl-P`
+        "key": "ctrl+p",
+        "command": "-extension.vim_ctrl+p",
+    },
+    {
+        // Do not override vscode's `Ctrl-N`
+        "key": "ctrl+n",
+        "command": "-extension.vim_ctrl+n",
+    }
 ]
