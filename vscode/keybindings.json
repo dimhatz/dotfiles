@@ -183,13 +183,13 @@
     "when": "inFilesPicker && inQuickOpen"
   },
   {
-    // Found through using `Ctrl-Shift-P shortcuts` -> Developer debug shortcuts
+    // Found through using command palette `Ctrl-Shift-P shortcuts` -> Developer debug shortcuts
     "key": "ctrl+J",
     "command": "selectNextSuggestion",
     "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
   },
   {
-    // Found through using `Ctrl-Shift-P shortcuts` -> Developer debug shortcuts
+    // Found through using command palette `Ctrl-Shift-P shortcuts` -> Developer debug shortcuts
     "key": "ctrl+K",
     "command": "selectPrevSuggestion",
     "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
