@@ -5,19 +5,24 @@
     "command": "extension.vim_ctrl+["
   },
   // {
-  //     "key": "ctrl+1",
-  //     "command": "editor.fold",
-  //     "when": "editorTextFocus && foldingEnabled"
+  //   // run multiple commands example
+  //   "command": "runCommands",
+  //   "key": "ctrl+s",
+  //   "args": {
+  //     "commands": [
+  //       "workbench.action.files.save"
+  //       // {
+  //       //   // use commands that take args
+  //       //   "command": "editor.actions.findWithArgs",
+  //       //   "args": {
+  //       //     "searchString": "trouble"
+  //       //   }
+  //       // }
+  //     ]
+  //   },
+  //   "when": "editorTextFocus" // can use context keys
   // },
-  // {
-  //     "key": "ctrl+shift+[",
-  //     "command": "-editor.fold",
-  //     "when": "editorTextFocus && foldingEnabled"
-  // },
-  // {
-  //     "key": "ctrl+1",
-  //     "command": "-workbench.action.focusFirstEditorGroup"
-  // },
+
   {
     "key": "ctrl+l",
     "command": "workbench.action.navigateRight",
@@ -200,8 +205,18 @@
     "command": "-extension.vim_ctrl+p"
   },
   {
-    // Do not override vscode's `Ctrl-N`
-    "key": "ctrl+n",
-    "command": "-extension.vim_ctrl+n"
+    "key": "backspace",
+    "command": "-extension.vim_backspace",
+    "when": "editorTextFocus && vim.active && !inDebugRepl"
+  },
+  {
+    "key": "ctrl+w",
+    "command": "deleteWordLeft",
+    "when": "textInputFocus && !editorReadonly"
+  },
+  {
+    "key": "ctrl+backspace",
+    "command": "-deleteWordLeft",
+    "when": "textInputFocus && !editorReadonly"
   }
 ]
