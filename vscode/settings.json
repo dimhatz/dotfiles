@@ -400,6 +400,7 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
   "telemetry.telemetryLevel": "off",
   "workbench.editor.tabActionCloseVisibility": false,
   "editor.minimap.enabled": false,
-  "workbench.colorTheme": "Default Dark+"
+  "workbench.colorTheme": "Default Dark+",
+  "update.enableWindowsBackgroundUpdates": false
   // "workbench.editor.empty.hint": "hidden",
 }
