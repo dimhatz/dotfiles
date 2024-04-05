@@ -205,18 +205,13 @@
     "command": "-extension.vim_ctrl+p"
   },
   {
-    "key": "backspace",
-    "command": "-extension.vim_backspace",
-    "when": "editorTextFocus && vim.active && !inDebugRepl"
-  },
-  {
     "key": "ctrl+w",
     "command": "deleteWordLeft",
-    "when": "textInputFocus && !editorReadonly"
+    "when": "textInputFocus && !editorReadonly && editorTextFocus && vim.active && !inDebugRepl && vim.mode == 'Insert'"
   },
   {
-    "key": "ctrl+backspace",
-    "command": "-deleteWordLeft",
-    "when": "textInputFocus && !editorReadonly"
+    "key": "ctrl+v",
+    "command": "editor.action.clipboardPasteAction",
+    "when": "textInputFocus && !editorReadonly && editorTextFocus && vim.active && !inDebugRepl && vim.mode == 'Insert'"
   }
 ]
