@@ -2,26 +2,80 @@
 [
   {
     "key": "ctrl+s",
-    "command": "extension.vim_ctrl+["
+    "command": "extension.vim_ctrl+[",
+    "when": "editorTextFocus && vim.active"
   },
+
   // {
-  //   // run multiple commands example
-  //   "command": "runCommands",
-  //   "key": "ctrl+s",
-  //   "args": {
-  //     "commands": [
-  //       "workbench.action.files.save"
-  //       // {
-  //       //   // use commands that take args
-  //       //   "command": "editor.actions.findWithArgs",
-  //       //   "args": {
-  //       //     "searchString": "trouble"
-  //       //   }
-  //       // }
-  //     ]
-  //   },
-  //   "when": "editorTextFocus" // can use context keys
+  //   // make vscode not send "j" to vim when in normal mode
+  //   // use if vim scroll becomes too slow (we remap to 'cursorDown' anyway)
+  //   // not sure if this will cause issues when used
+  //   "key": "j",
+  //   "command": "cursorDown",
+  //   "when": "textInputFocus && editorTextFocus && vim.active && !inDebugRepl && vim.mode == 'Normal'"
   // },
+  {
+    "key": "ctrl+m",
+    "command": "cursorMove",
+    "args": {
+      "to": "viewPortCenter"
+    }
+  },
+
+  {
+    "key": "ctrl+j",
+    "command": "scrollLineDown",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+k",
+    "command": "scrollLineUp",
+    "when": "editorTextFocus"
+  },
+
+  {
+    "key": "alt+j",
+    // run multiple commands example
+    "command": "runCommands",
+    "args": {
+      "commands": [
+        {
+          "command": "editorScroll",
+          "args": {
+            "to": "down",
+            "by": "line",
+            "revealCursor": true
+          }
+        },
+        "cursorDown"
+      ]
+    },
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+k",
+    "command": "runCommands",
+    "args": {
+      "commands": [
+        {
+          "command": "editorScroll",
+          "args": {
+            "to": "up",
+            "by": "line",
+            "revealCursor": true
+          }
+        },
+        "cursorUp"
+      ]
+    },
+    "when": "editorTextFocus"
+  },
+
+  {
+    "key": "Backspace",
+    "command": "deleteLeft",
+    "when": "editorTextFocus && vim.mode == 'Insert'"
+  },
 
   {
     "key": "ctrl+l",
@@ -189,13 +243,13 @@
   },
   {
     // Found through using command palette `Ctrl-Shift-P shortcuts` -> Developer debug shortcuts
-    "key": "ctrl+J",
+    "key": "ctrl+j",
     "command": "selectNextSuggestion",
     "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
   },
   {
     // Found through using command palette `Ctrl-Shift-P shortcuts` -> Developer debug shortcuts
-    "key": "ctrl+K",
+    "key": "ctrl+k",
     "command": "selectPrevSuggestion",
     "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus || suggestWidgetVisible && textInputFocus && !suggestWidgetHasFocusedSuggestion"
   },

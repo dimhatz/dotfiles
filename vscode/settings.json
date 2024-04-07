@@ -85,11 +85,18 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
       "before": ["g", "r"],
       "commands": ["editor.action.goToReferences"]
     },
+
     {
-      // gr goes to references of thing under cursor
+      // c-f is more accessible than '*'
       "before": ["<C-f>"],
-      "after": ["y", "e", "/", "<C-v>", "<CR>"]
+      "after": ["*"]
     },
+    {
+      // '*' is now a noop
+      "before": ["*"],
+      "after": []
+    },
+
     {
       // restore default, c-t searches for symbol under cursor in workspace
       // (like <c-p> followed by #). This is likely less useful than find occurrencess etc
@@ -101,6 +108,7 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
       "before": ["g", "t"],
       "commands": ["editor.action.triggerParameterHints"]
     },
+
     {
       // surround with s instead of ys -> "<plugys>" is a special hack as seen here: https://github.com/VSCodeVim/Vim/issues/6848#issuecomment-875798184
       "before": ["s"],
@@ -108,10 +116,54 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
       "commands": []
     },
     {
-      // workaround: I have mapped <C-s> to vim's <C-[> in keybindings.json,
+      // sw -> siw
+      "before": ["s", "w"],
+      "after": ["<plugys>", "i", "w"]
+    },
+
+    {
+      // dw -> daw
+      "before": ["d", "w"],
+      "after": ["d", "a", "w"]
+    },
+    {
+      // daw -> noop
+      "before": ["d", "a", "w"],
+      "after": []
+    },
+    {
+      // diw -> noop
+      "before": ["d", "i", "w"],
+      "after": []
+    },
+
+    {
+      // cw -> ciw
+      "before": ["c", "w"],
+      "after": ["c", "i", "w"]
+    },
+    {
+      // caw -> noop
+      "before": ["c", "a", "w"],
+      "after": []
+    },
+    {
+      // ciw -> noop
+      "before": ["c", "i", "w"],
+      "after": []
+    },
+
+    {
+      // This triggers when pressing <C-s>, due to my binding of <C-s> to vim's <C-[> in keybindings.json,
       // vscodevim will not map <c-s> directly, because it does not listen for this key combination
+      // This double-mapping allows to not trigger :noh when saving with <c-s>.
       "before": ["<C-[>"],
-      "commands": ["extension.vim_escape", "workbench.action.files.save"]
+      "after": ["<Esc>"],
+
+      // ":w" takes less time than "workbench.action.files.save" (3ms vs 34ms)
+      "commands": [":w"]
+      // the below works, but will use escape recursively
+      // "commands": ["extension.vim_escape", "workbench.action.files.save"]
     },
     {
       // use <leader> prefix instead of <leader><leader> for easymotion
@@ -139,8 +191,6 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
       "after": ["<leader>", "<leader>", "b"]
     },
     {
-      // <c-v> to enter visual line
-      // do not use map v <c-v> because the commands for visual will misbehave (like surrounding visual etc)
       "before": ["c-v"],
       "after": ["V"]
     },
@@ -155,9 +205,24 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
       "after": ["\"", "_", "d", "l"]
     },
     {
+      // 'z' is the 'd' into the black hole
+      "before": ["z"],
+      "after": ["\"", "_", "d"]
+    },
+    {
+      // 'zz' is the 'dd' into the black hole
+      "before": ["z", "z"],
+      "after": ["\"", "_", "d", "d"]
+    },
+    {
       // delete till end of the line into black hole
-      "before": ["X"],
+      "before": ["Z"],
       "after": ["\"", "_", "D"]
+    },
+    {
+      // the old X is noop
+      "before": ["X"],
+      "after": []
     },
     {
       // do not yank what is being changed (would overwrite what is already yanked in main register)
@@ -233,20 +298,20 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
       "after": ["y", "$"],
       "commands": []
     },
-    {
-      // <c-j> will show more screen downwards (scroll the screen upwards)
-      "before": ["c-j"],
-      // scrolling will lag a lot if mapped with "after", using "command" instead
-      // "after": [ "c-e" ],
-      "commands": ["scrollLineDown"]
-    },
-    {
-      // <c-k> will show more screen upwards (scroll the screen downwards)
-      "before": ["c-k"],
-      // scrolling will lag a lot if mapped with "after", using "command" instead
-      // "after": [ "c-y" ],
-      "commands": ["scrollLineUp"]
-    },
+    // {
+    //   // <c-j> will show more screen downwards (scroll the screen upwards)
+    //   "before": ["c-j"],
+    //   // scrolling will lag a lot if mapped with "after", using "command" instead
+    //   // "after": [ "c-e" ],
+    //   "commands": ["scrollLineDown"]
+    // },
+    // {
+    //   // <c-k> will show more screen upwards (scroll the screen downwards)
+    //   "before": ["c-k"],
+    //   // scrolling will lag a lot if mapped with "after", using "command" instead
+    //   // "after": [ "c-y" ],
+    //   "commands": ["scrollLineUp"]
+    // },
     {
       // parens go to prev tab (open editor)
       "before": ["("],
@@ -256,17 +321,37 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
       // parens go to next tab (open editor)
       "before": [")"],
       "commands": ["workbench.action.nextEditor"]
+    },
+    {
+      // m is the new z
+      "before": ["m"],
+      "after": ["z"]
+    },
+    {
+      // mm is the new za
+      "before": ["m", "m"],
+      "after": ["z", "a"]
     }
+    // {
+    //   // test: use vscode's jumplist
+    // not using this: does not leave a mark when using '*', <c-o> will not return to the original '*' point, if it was navigated with j/k
+    //   "before": ["<C-o>"],
+    //   "commands": ["workbench.action.navigateBack"]
+    // },
   ],
   "vim.visualModeKeyBindingsNonRecursive": [
     {
       "before": ["p"],
-      "after": ["p", "g", "v", "y"]
-      // alternatively, the below works too, but results in needing 2 undo actions to undo
-      // "after": [ "\"", "_", "d", "P" ]
+      // non-repeatable
+      "commands": ["editor.action.clipboardPasteAction", "extension.vim_escape"]
+      // the below works too, but repeat pastes to the same spot
+      // "after": ["p", "g", "v", "y"]
+      // the below works too, but results in needing 2 undo actions to undo
+      // repeat does not work as expected, only does P, buggy when selected region is till the end of line
+      // "after": ["\"", "_", "d", "P"]
     },
     {
-      "before": ["x"],
+      "before": ["z"],
       "after": ["\"", "_", "d"]
     },
     {
@@ -277,66 +362,56 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
       "before": ["c"],
       "after": ["\"", "_", "c"]
     },
+
     {
-      // <c-j> will show more screen downwards (scroll the screen upwards)
-      "before": ["c-j"],
-      // scrolling will lag a lot if mapped with "after", using "command" instead
-      // "after": [ "c-e" ],
-      "commands": ["scrollLineDown"]
+      // c-f is more accessible than '*'
+      "before": ["<C-f>"],
+      "after": ["*"]
     },
     {
-      // <c-k> will show more screen upwards (scroll the screen downwards)
-      "before": ["c-k"],
-      // scrolling will lag a lot if mapped with "after", using "command" instead
-      // "after": [ "c-y" ],
-      "commands": ["scrollLineUp"]
+      // '*' is now a noop
+      "before": ["*"],
+      "after": []
     }
+
+    // {
+    //   // <c-j> will show more screen downwards (scroll the screen upwards)
+    //   "before": ["c-j"],
+    //   // scrolling will lag a lot if mapped with "after", using "command" instead
+    //   "commands": ["scrollLineDown"]
+    // },
+    // {
+    //   // <c-k> will show more screen upwards (scroll the screen downwards)
+    //   "before": ["c-k"],
+    //   // scrolling will lag a lot if mapped with "after", using "command" instead
+    //   // "after": [ "c-y" ],
+    //   "commands": ["scrollLineUp"]
+    // }
   ],
   "vim.insertModeKeyBindingsNonRecursive": [
     {
-      // workaround: I have mapped vscode's <C-s> to vim's <C-[> in keybindings.json,
+      // This triggers when pressing <C-s>, due to my binding of <C-s> to vim's <C-[> in keybindings.json,
       // vscodevim will not map <c-s> directly, because it does not listen for this key combination
       "before": ["<C-[>"],
       "after": ["<Esc>"],
+      // ":w" takes less time than "workbench.action.files.save" (3ms vs 34ms)
       "commands": [":w"]
-      // alternatively
       // "commands": ["workbench.action.files.save"]
-      // not sure whether this makes any difference, but using :w just in case vim handles the actions queue so that there is no race condition
-    },
-    {
-      // <c-j> will show more screen downwards (scroll the screen upwards)
-      "before": ["c-j"],
-      // scrolling will lag a lot if mapped with "after", using "command" instead
-      // "after": [ "c-e" ],
-      "commands": ["scrollLineDown"]
-    },
-    {
-      // <c-k> will show more screen upwards (scroll the screen downwards)
-      "before": ["c-k"],
-      // scrolling will lag a lot if mapped with "after", using "command" instead
-      // "after": [ "c-y" ],
-      "commands": ["scrollLineUp"]
     }
-    // { // disabling since we use vscode's bindings to c-j / c-k for selecting from autocomplete suggestions
-    //   // c-j now chooses suggestion from autocomplete
-    //   "before": ["<C-j>"],
-    //   "after": ["<C-n>"]
+    // {
+    //   // <c-j> will show more screen downwards (scroll the screen upwards)
+    //   "before": ["c-j"],
+    //   // scrolling will lag a lot if mapped with "after", using "command" instead
+    //   // "after": [ "c-e" ],
+    //   "commands": ["scrollLineDown"]
     // },
     // {
-    //   // c-k now chooses suggestion from autocomplete
-    //   "before": ["<C-k>"],
-    //   "after": ["<C-p>"]
-    // },
-    // {
-    //   // disable since we now use c-j
-    //   "before": ["<C-n>"],
-    //   "after": ["<nop>"]
-    // },
-    // {
-    //   // disable since we now use c-k
-    //   "before": ["<C-p>"],
-    //   "after": ["<nop>"]
-    // },
+    //   // <c-k> will show more screen upwards (scroll the screen downwards)
+    //   "before": ["c-k"],
+    //   // scrolling will lag a lot if mapped with "after", using "command" instead
+    //   // "after": [ "c-y" ],
+    //   "commands": ["scrollLineUp"]
+    // }
   ],
   "vim.highlightedyank.enable": true,
   "vim.hlsearch": true,
