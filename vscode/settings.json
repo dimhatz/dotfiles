@@ -32,6 +32,9 @@ Extensions:
 - Vim 1.20.3 -> v1.24.3 -> 1.27.1 (seems to lag) -> running my own fork
 
 - Prettier 5.8.0 -> 9.5.0 -> 10.4.0
+- vscode-neovim 1.8.1 (seems to lag when scrolling)
+- neovim binary: 0.9.5
+
 - Hugo language support 1.3.1
 - Elm (by Elm tooling) 2.4.1
 Chrome Extension Manifest JSON Schema v1.0.2
