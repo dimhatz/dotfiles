@@ -1,117 +1,25 @@
---[[
+if vim.g.neovide then
+  vim.g.neovide_refresh_rate = 60
+  vim.g.neovide_cursor_animate_in_insert_mode = false
+  -- vim.g.neovide_no_idle = true
+  -- TODO: set options for subpixel rendering
+end
 
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
+vim.o.guifont = 'Source Code Pro:h10.5'
 
-What is Kickstart?
-
-  Kickstart.nvim is *not* a distribution.
-
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
-Kickstart Guide:
-
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
-
-    If you don't know what this means, type the following:
-      - <escape key>
-      - :
-      - Tutor
-      - <enter key>
-
-    (If you already know the Neovim basics, you can skip this step.)
-
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
-
-If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now! :)
---]]
-
--- Set <space> as the leader key
--- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed
-vim.g.have_nerd_font = false
-
--- [[ Setting options ]]
--- See `:help vim.opt`
--- NOTE: You can change these options as you wish!
---  For more options, you can see `:help option-list`
-
--- Make line numbers default
+vim.g.have_nerd_font = true
 vim.opt.number = true
--- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
-
--- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
 -- Sync clipboard between OS and Neovim.
---  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
 vim.opt.clipboard = 'unnamedplus'
 
@@ -128,8 +36,8 @@ vim.opt.smartcase = true
 -- Keep signcolumn on by default
 vim.opt.signcolumn = 'yes'
 
--- Decrease update time
-vim.opt.updatetime = 250
+-- How often swap is written to disk (ms after nothing is typed)
+vim.opt.updatetime = 4000
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
@@ -143,7 +51,10 @@ vim.opt.splitbelow = true
 --  See `:help 'list'`
 --  and `:help 'listchars'`
 vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+-- tab:│\ ,trail:•,extends:»,precedes:«,nbsp:■
+-- trail = '·', trail = '•',
+vim.opt.listchars = { tab = '│ ', trail = '•', nbsp = '■', extends = '»', precedes = '«' }
+vim.opt.showbreak = '↪  ' -- can also use '▶ ', if not rendered
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -154,47 +65,89 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
--- [[ Basic Keymaps ]]
---  See `:help vim.keymap.set()`
+-- set wildmode=list:longest,full       " complete longest common, then cycle with tab, back cycle shift-tab
+vim.opt.wildmode = 'list:longest,full'
 
+--------------------------------------------- KEYBINDINGS ----------------------------------------------------------------------
+
+local remap = vim.keymap.set
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+remap('n', '<C-q>', '<Cmd>qa<CR>')
+remap('n', '<C-c>', '<Cmd>bdelete<CR>')
+remap('n', '<Esc>', '<Cmd>nohlsearch<CR>')
 
--- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+remap('n', ';', ':')
+remap('n', ':', ';')
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+remap('n', '<C-s>', '<Cmd>write<CR>')
+remap('i', '<C-s>', '<Esc><Cmd>write<CR>')
 
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+-- do not copy text into registers when replacing it
+remap('n', 'c', '"_c')
+remap('v', 'c', '"_c')
+remap('n', 'x', '"_x', { desc = 'delete char into black hole' })
+remap('n', 'z', '"_d', { desc = 'delete into black hole' })
+remap('n', 'zz', '"_dd', { desc = 'delete line into black hole' })
+remap('v', 'x', '"_d')
+remap('v', 'z', '"_d')
 
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+remap('n', 'j', 'gj') -- navigate wrapped lines
+remap('n', 'k', 'gk')
+remap('n', '{', '<Cmd>bprev<CR>', { silent = true })
+remap('n', '}', '<Cmd>bnext<CR>', { silent = true })
 
--- [[ Basic Autocommands ]]
+remap('n', 'v', '<C-v>')
+remap('n', '<C-v>', 'V')
+remap('n', 'V', 'v')
+
+remap('n', '<C-\\>', 'gUiw') -- Uppercase word in norm/insert
+remap('i', '<C-\\>', '<Esc>gUiwea') -- FIXME: does not repeat
+
+remap('n', '<C-f>', '*', { desc = '<C-f> is the new *' })
+remap('n', '*', '<cmd>echo "<C-f> is the new *"<CR>', { desc = '<C-f> is the new *' })
+
+remap('i', '<C-v>', '<C-r>+', { desc = '<C-v> is paste in insert' })
+
+-- " Reselect pasted text linewise, ( `[ is jump to beginning of changed/yanked )
+remap('n', '<Leader>v', '`[V`]', { desc = 'Reselect pasted text linewise' })
+
+remap('n', 'm', 'z', { desc = 'm is the new z (folds)' })
+remap('n', 'mm', 'za', { desc = 'toggle fold (za)' })
+
+-- remap('v', 'p', 'p:let @+=@0<CR>', { desc = 'Pasting in visual does not override the + register', silent = true }) -- original from my vimrc
+remap('v', 'p', 'p:let @v=@+|let @+=@0<CR>', { desc = 'Pasting in visual stores the overwritten text in "v register', silent = true })
+-- remap('v', 'p', 'p:let @v=@+<Bar>let @+=@0<CR>', { desc = 'Pasting in visual stores the overwritten text in "v register', silent = true }) -- also works
+
+remap('n', '<C-j>', '<C-e>', { desc = 'Scroll down 1 line' })
+remap('n', '<C-k>', '<C-y>', { desc = 'Scroll up 1 line' })
+remap('i', '<C-j>', '<C-e><C-y>', { desc = 'Scroll down 1 line' })
+remap('i', '<C-k>', '<C-y><C-e>', { desc = 'Scroll up 1 line' })
+remap('n', '<C-h>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' })
+remap('n', '<C-l>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
+remap('n', '<A-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' }) -- same as above, but with Alt, alacritty re-exposes (in flashes) the mouse if its inside terminal
+remap('n', '<A-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
+remap('n', '<C-m>', 'M', { desc = 'Put cursor in the center of the screen' })
+remap('n', 'M', 'zz', { desc = 'Center the screen on the cursor' })
+
+-- -- Diagnostic keymaps
+-- remap('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
+-- remap('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
+-- remap('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
+-- remap('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+
+------------------------------------------------------- AUTOCOMMANDS --------------------------------------------------------------------------
+
 --  See `:help lua-guide-autocommands`
+vim.api.nvim_create_autocmd({ 'FileType' }, {
+  desc = 'gd inside helpfiles jumps to links',
+  group = vim.api.nvim_create_augroup('my-helpfile-jump', { clear = true }),
+  pattern = { 'help' },
+  callback = function(opts)
+    remap('n', 'gd', '<C-]>', { silent = true, buffer = opts.buf, desc = 'Go to link inside helpfile' })
+  end,
+})
 
--- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
 --  See `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
@@ -203,6 +156,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
+
+------------------------------------------------------- PLUGINS --------------------------------------------------------------------------------
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -366,19 +321,19 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      remap('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+      remap('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+      remap('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      remap('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      remap('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+      remap('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      remap('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+      remap('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+      remap('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+      remap('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '<leader>/', function()
+      remap('n', '<leader>/', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
           winblend = 10,
@@ -388,7 +343,7 @@ require('lazy').setup({
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
-      vim.keymap.set('n', '<leader>s/', function()
+      remap('n', '<leader>s/', function()
         builtin.live_grep {
           grep_open_files = true,
           prompt_title = 'Live Grep in Open Files',
@@ -396,7 +351,7 @@ require('lazy').setup({
       end, { desc = '[S]earch [/] in Open Files' })
 
       -- Shortcut for searching your Neovim configuration files
-      vim.keymap.set('n', '<leader>sn', function()
+      remap('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
     end,
