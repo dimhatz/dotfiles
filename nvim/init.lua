@@ -88,6 +88,8 @@ remap('n', 'c', '"_c')
 remap('v', 'c', '"_c')
 remap('n', 'x', '"_x', { desc = 'delete char into black hole' })
 remap('n', 'z', '"_d', { desc = 'delete into black hole' })
+remap('n', 'Z', '"_D', { desc = 'delete into black hole' })
+remap('n', 'X', '<cmd>echo "use Z to delete into black hole till end of line"<CR>')
 remap('n', 'zz', '"_dd', { desc = 'delete line into black hole' })
 remap('v', 'x', '"_d')
 remap('v', 'z', '"_d')
@@ -125,10 +127,12 @@ remap('i', '<C-j>', '<C-e><C-y>', { desc = 'Scroll down 1 line' })
 remap('i', '<C-k>', '<C-y><C-e>', { desc = 'Scroll up 1 line' })
 remap('n', '<C-h>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' })
 remap('n', '<C-l>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
-remap('n', '<A-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' }) -- same as above, but with Alt, alacritty re-exposes (in flashes) the mouse if its inside terminal
-remap('n', '<A-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
+-- remap('n', '<A-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' }) -- same as above, but with Alt, alacritty re-exposes (in flashes) the mouse if its inside terminal
+-- remap('n', '<A-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
 remap('n', '<C-m>', 'M', { desc = 'Put cursor in the center of the screen' })
 remap('n', 'M', 'zz', { desc = 'Center the screen on the cursor' })
+
+remap('n', '<C-z>', ':e!<CR>', { desc = 'Undo all changes since file last saved' }) -- TODO: find workaround for viewport being positioned in the center,:h getwininfo(), :h line(), :h winsaveview(), -> vim.fn
 
 -- -- Diagnostic keymaps
 -- remap('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
@@ -159,8 +163,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 ------------------------------------------------------- PLUGINS --------------------------------------------------------------------------------
 
--- [[ Install `lazy.nvim` plugin manager ]]
---    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
+-- Lazy.nvim bootstrap
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
@@ -168,19 +171,7 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
--- [[ Configure and install plugins ]]
---
---  To check the current status of your plugins, run
---    :Lazy
---
---  You can press `?` in this menu for help. Use `:q` to close the window
---
---  To update plugins you can run
---    :Lazy update
---
--- NOTE: Here is where you install your plugins.
 require('lazy').setup({
-  -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
