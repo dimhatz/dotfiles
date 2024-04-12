@@ -68,6 +68,8 @@ vim.opt.scrolloff = 10
 -- set wildmode=list:longest,full       " complete longest common, then cycle with tab, back cycle shift-tab
 vim.opt.wildmode = 'list:longest,full'
 
+vim.opt.foldmethod = 'indent'
+
 -- TODO: always show gutter (signs)
 
 --------------------------------------------- KEYBINDINGS ----------------------------------------------------------------------
@@ -136,7 +138,16 @@ remap('n', 'M', 'zz', { desc = 'Center the screen on the cursor' })
 
 remap('n', '<C-z>', ':e!<CR>', { desc = 'Undo all changes since file last saved' }) -- TODO: find workaround for viewport being positioned in the center,:h getwininfo(), :h line(), :h winsaveview(), -> vim.fn
 
--- -- Diagnostic keymaps
+remap('n', '<C-F1>', '<Cmd>set foldlevel=1<CR>', { desc = 'Fold all text at level 1' })
+remap('n', '<C-F2>', '<Cmd>set foldlevel=2<CR>', { desc = 'Fold all text at level 2' })
+remap('n', '<C-F3>', '<Cmd>set foldlevel=3<CR>', { desc = 'Fold all text at level 3' })
+remap('n', '<C-F4>', '<Cmd>set foldlevel=4<CR>', { desc = 'Fold all text at level 4' })
+remap('n', '<C-F5>', '<Cmd>set foldlevel=5<CR>', { desc = 'Fold all text at level 5' })
+remap('n', '<C-F6>', '<Cmd>set foldlevel=6<CR>', { desc = 'Fold all text at level 6' })
+remap('n', '<C-F7>', '<Cmd>set foldlevel=7<CR>', { desc = 'Fold all text at level 7' })
+remap('n', '<C-F10>', '<Cmd>set foldlevel=999<CR>', { desc = 'Unfold all' })
+
+-- -- Diagnostic keymps
 -- remap('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 -- remap('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 -- remap('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
@@ -215,13 +226,19 @@ require('lazy').setup({
         style = 'warmer',
         colors = {
           -- https://www.w3schools.com/colors/colors_picker.asp
+          -- TODO: add better search within document '/' highlights (black cursor is not very distinct)
+          -- TODO: matchparen highlight not distinct
           cyan = '#56c2a7',
           blue = '#819ae4',
           grey = '#818998',
           fg = '#b6bdc8',
         },
+        code_style = {
+          comments = 'none',
+        },
       }
       vim.cmd 'colorscheme onedark'
+      -- vim.cmd.hi 'Comment gui=none' -- TODO: investigate
     end,
   },
 
@@ -394,43 +411,9 @@ require('lazy').setup({
       { 'folke/neodev.nvim', opts = {} },
     },
     config = function()
-      -- Brief aside: **What is LSP?**
-      --
-      -- LSP is an initialism you've probably heard, but might not understand what it is.
-      --
-      -- LSP stands for Language Server Protocol. It's a protocol that helps editors
-      -- and language tooling communicate in a standardized fashion.
-      --
-      -- In general, you have a "server" which is some tool built to understand a particular
-      -- language (such as `gopls`, `lua_ls`, `rust_analyzer`, etc.). These Language Servers
-      -- (sometimes called LSP servers, but that's kind of like ATM Machine) are standalone
-      -- processes that communicate with some "client" - in this case, Neovim!
-      --
-      -- LSP provides Neovim with features like:
-      --  - Go to definition
-      --  - Find references
-      --  - Autocompletion
-      --  - Symbol Search
-      --  - and more!
-      --
-      -- Thus, Language Servers are external tools that must be installed separately from
-      -- Neovim. This is where `mason` and related plugins come into play.
-      --
-      -- If you're wondering about lsp vs treesitter, you can check out the wonderfully
-      -- and elegantly composed help section, `:help lsp-vs-treesitter`
-
-      --  This function gets run when an LSP attaches to a particular buffer.
-      --    That is to say, every time a new file is opened that is associated with
-      --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
-      --    function will be executed to configure the current buffer
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
-          -- NOTE: Remember that Lua is a real programming language, and as such it is possible
-          -- to define small helper and utility functions so you don't have to repeat yourself.
-          --
-          -- In this case, we create a function that lets us more easily define mappings specific
-          -- for LSP related items. It sets the mode, buffer and description for us each time.
           local map = function(keys, func, desc)
             vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
