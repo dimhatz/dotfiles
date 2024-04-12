@@ -542,6 +542,11 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      -- vim.api.nvim_create_user_command('MyMasonInstallAll', function()
+      --   local packages = table.concat(opts.ensure_installed, ' ')
+      --   vim.cmd('MasonInstall ' .. packages)
+      -- end, {})
+
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
