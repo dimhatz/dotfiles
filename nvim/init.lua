@@ -69,6 +69,7 @@ vim.opt.scrolloff = 10
 vim.opt.wildmode = 'list:longest,full'
 
 vim.opt.foldmethod = 'indent'
+vim.opt.foldlevel = 999
 
 -- TODO: always show gutter (signs)
 
