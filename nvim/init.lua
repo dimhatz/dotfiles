@@ -148,6 +148,10 @@ remap('n', '<C-F6>', '<Cmd>set foldlevel=6<CR>', { desc = 'Fold all text at leve
 remap('n', '<C-F7>', '<Cmd>set foldlevel=7<CR>', { desc = 'Fold all text at level 7' })
 remap('n', '<C-F10>', '<Cmd>set foldlevel=999<CR>', { desc = 'Unfold all' })
 
+-- now C-p and C-n autocomplete the beginning of the command and search.
+remap('c', '<C-p>', '<Up>', { desc = 'Autocomplete in command mode' })
+remap('c', '<C-n>', '<Down>', { desc = 'Autocomplete in command mode' })
+
 -- -- Diagnostic keymps
 -- remap('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 -- remap('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
