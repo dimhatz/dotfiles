@@ -405,7 +405,7 @@ require('lazy').setup({
   {
     'neovim/nvim-lspconfig',
     dependencies = {
-      -- versioning here: run once
+      -- versioning of lsp servers here: run once
       -- MasonInstall lua-language-server@3.7.4 stylua@v0.20.0
       { 'williamboman/mason.nvim', opts = {} }, -- just for installation and adding to nvim path, all the config of language servers is manual
       { 'folke/neodev.nvim', opts = {} }, -- this should take care of the lua paths, nvim libraries to be present in completions etc
@@ -679,27 +679,16 @@ require('lazy').setup({
       },
     },
     opts = {
-      notify_on_error = false,
-      format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
-
-        return {
-          timeout_ms = 1000,
-          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-          -- lsp_fallback = false,
-        }
-      end,
+      notify_on_error = true,
+      async = false, -- not legal option here, but just in case
+      format_on_save = {
+        -- I recommend these options. See :help conform.format for details.
+        lsp_fallback = false,
+        timeout_ms = 1000,
+        async = false, -- not legal option here, but just in case
+      },
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use a sub-list to tell conform to run *until* a formatter
-        -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
       },
     },
   },
