@@ -404,12 +404,13 @@ require('lazy').setup({
 
   {
     'neovim/nvim-lspconfig',
+    enabled = true,
     dependencies = {
       -- versioning of lsp servers here: run once
       -- MasonInstall lua-language-server@3.7.4 stylua@v0.20.0
       { 'williamboman/mason.nvim', opts = {} }, -- just for installation and adding to nvim path, all the config of language servers is manual
       { 'folke/neodev.nvim', opts = {} }, -- this should take care of the lua paths, nvim libraries to be present in completions etc
-      { 'j-hui/fidget.nvim', opts = {} }, -- shows lsp messages, not sure how useful this is
+      -- { 'j-hui/fidget.nvim', opts = {} }, -- shows lsp messages, not sure how useful this is --> lags when only lspconfig is used (no treesitter for better speed)
     },
 
     config = function()
@@ -524,6 +525,8 @@ require('lazy').setup({
         lua = { 'stylua' },
       },
     },
+  },
+  { -- Autocompletion
   },
 
   -- { -- Autocompletion
@@ -671,8 +674,10 @@ require('lazy').setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
+
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    enabled = false,
     build = ':TSUpdate',
     opts = {
       ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
