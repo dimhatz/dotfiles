@@ -77,13 +77,42 @@ vim.opt.foldlevel = 999
 -- TODO: always show gutter (signs)
 
 --------------------------------------------- KEYBINDINGS ----------------------------------------------------------------------
+-- -- another snippet (not tested)
+-- local function close_floating()
+--   for _, win in ipairs(vim.api.nvim_list_wins()) do
+--     local config = vim.api.nvim_win_get_config(win)
+--     if config.relative ~= '' then
+--       vim.api.nvim_win_close(win, false)
+--     end
+--   end
+-- end
+
+local closeHoveringWindows = function()
+  local base_win_id = vim.api.nvim_get_current_win()
+  local windows = vim.api.nvim_tabpage_list_wins(0)
+  for _, win_id in ipairs(windows) do
+    if win_id ~= base_win_id then
+      local win_cfg = vim.api.nvim_win_get_config(win_id)
+      if win_cfg.relative == 'win' and win_cfg.win == base_win_id then
+        vim.api.nvim_win_close(win_id, false)
+        return
+      end
+    end
+  end
+end
+
+local onEsc = function()
+  vim.cmd('nohlsearch')
+  closeHoveringWindows() -- close the lsp hover windows
+end
 
 local remap = vim.keymap.set
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
 remap('n', '<C-q>', '<Cmd>qa<CR>')
 remap('n', '<C-c>', '<Cmd>bdelete<CR>')
-remap('n', '<Esc>', '<Cmd>nohlsearch<CR>')
+-- remap('n', '<Esc>', '<Cmd>nohlsearch<CR>')
+remap('n', '<Esc>', onEsc)
 
 remap('n', ';', ':')
 remap('n', ':', ';')
