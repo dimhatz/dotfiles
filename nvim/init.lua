@@ -69,7 +69,7 @@ vim.opt.scrolloff = 10
 vim.opt.wildmode = 'list:longest,full'
 
 -- do not open scratch buffer
-vim.opt.completeopt = 'menu,menuone'
+vim.opt.completeopt = 'menu,menuone,noselect' -- as suggested by cmp plugin, removing noselect does not seem to make a difference
 
 vim.opt.foldmethod = 'indent'
 vim.opt.foldlevel = 999
@@ -131,8 +131,8 @@ remap('v', 'p', 'p:let @v=@+|let @+=@0<CR>', { desc = 'Pasting in visual stores 
 
 remap('n', '<C-j>', '<C-e>', { desc = 'Scroll down 1 line' })
 remap('n', '<C-k>', '<C-y>', { desc = 'Scroll up 1 line' })
-remap('i', '<C-j>', '<C-e><C-y>', { desc = 'Scroll down 1 line' })
-remap('i', '<C-k>', '<C-y><C-e>', { desc = 'Scroll up 1 line' })
+remap('i', '<C-j>', '<C-o><C-e>', { desc = 'Scroll down 1 line' })
+remap('i', '<C-k>', '<C-o><C-y>', { desc = 'Scroll up 1 line' })
 remap('n', '<C-h>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' })
 remap('n', '<C-l>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
 -- remap('n', '<A-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' }) -- same as above, but with Alt, alacritty re-exposes (in flashes) the mouse if its inside terminal
@@ -194,6 +194,10 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
   --------------------------------------------- COLORS -------------------------------------------------------------------------------------
+  {
+    'lunarvim/darkplus.nvim',
+    priority = 1000, -- Make sure to load this before all the other start plugins.
+  },
   {
     'folke/tokyonight.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
@@ -527,6 +531,42 @@ require('lazy').setup({
     },
   },
   { -- Autocompletion
+    'hrsh7th/nvim-cmp',
+    dependencies = {
+      { 'hrsh7th/cmp-buffer' }, -- apparently not needed, text suggestions show anyway, also messes up results, showing text on top
+      { 'hrsh7th/cmp-path' },
+      { 'hrsh7th/cmp-nvim-lsp' },
+      { 'dcampos/cmp-snippy', dependencies = { 'dcampos/nvim-snippy' } },
+    },
+    config = function()
+      local cmp = require('cmp')
+      cmp.setup({
+        snippet = {
+          -- REQUIRED - you must specify a snippet engine
+          expand = function(args)
+            require('snippy').expand_snippet(args.body) -- For `snippy` users.
+          end,
+        },
+        completion = { autocomplete = false },
+        window = {
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
+        },
+        mapping = cmp.mapping.preset.insert({
+          ['<C-l>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-h>'] = cmp.mapping.scroll_docs(4),
+          ['<C-d>'] = cmp.mapping.complete(),
+          ['<C-e>'] = cmp.mapping.abort(),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        }),
+        sources = cmp.config.sources({
+          { name = 'nvim_lsp' },
+          { name = 'buffer' },
+          { name = 'path' },
+          { name = 'snippy' },
+        }),
+      })
+    end,
   },
 
   -- { -- Autocompletion
