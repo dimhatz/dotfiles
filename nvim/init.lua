@@ -1,3 +1,4 @@
+-- NOTE: use :lua vim.diagnostic.setqflist() to all diagnostics into a quickfix list
 if vim.g.neovide then
   vim.g.neovide_refresh_rate = 60
   vim.g.neovide_cursor_animate_in_insert_mode = false
@@ -182,7 +183,9 @@ remap('n', '<C-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
 remap('n', '<C-m>', 'M', { desc = 'Put cursor in the center of the screen' })
 remap('n', 'M', 'zz', { desc = 'Center the screen on the cursor' })
 
-remap('n', '<C-z>', ':e!<CR>', { desc = 'Undo all changes since file last saved' }) -- TODO: find workaround for viewport being positioned in the center,:h getwininfo(), :h line(), :h winsaveview(), -> vim.fn
+-- TODO: find workaround for viewport being positioned in the center,:h getwininfo(), :h line(), :h winsaveview(), -> vim.fn
+-- post workaround: https://github.com/neovim/neovim/issues/9179
+remap('n', '<C-z>', ':e!<CR>', { desc = 'Undo all changes since file last saved' })
 
 remap('n', '<C-F1>', '<Cmd>set foldlevel=1<CR>', { desc = 'Fold all text at level 1' })
 remap('n', '<C-F2>', '<Cmd>set foldlevel=2<CR>', { desc = 'Fold all text at level 2' })
@@ -493,6 +496,16 @@ require('lazy').setup({
     end,
   },
 
+  { -- typescript completion, calls nvim-lspconfig, spawns an additional tsserver instance for diagnostics
+    'pmizio/typescript-tools.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
+    opts = {
+      -- settings = {
+      --   separate_diagnostic_server = true,
+      -- }
+    },
+  },
+
   {
     'neovim/nvim-lspconfig',
     enabled = true,
@@ -595,7 +608,7 @@ require('lazy').setup({
     -- spawns node instance for its server, but does not close it when nvim exits. At least reuses the same instance when another file is opened
     'nvimtools/none-ls.nvim',
     dependencies = {
-      'plenary.nvim',
+      'nvim-lua/plenary.nvim',
       'nvimtools/none-ls-extras.nvim', -- https://github.com/nvimtools/none-ls-extras.nvim/tree/main/lua/none-ls
     },
     config = function()
@@ -637,6 +650,7 @@ require('lazy').setup({
       },
     },
   },
+
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
     dependencies = {
@@ -746,26 +760,11 @@ require('lazy').setup({
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
   },
-
-  -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
-  -- init.lua. If you want these files, they are in the repository, so you can just download them and
-  -- place them in the correct locations.
-
-  -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-  --
-  --  Here are some example plugins that I've included in the Kickstart repository.
-  --  Uncomment any of the lines below to enable them (you will need to restart nvim).
-  --
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-
-  -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    This is the easiest way to modularize your config.
-  --
-  --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
-  -- { import = 'custom.plugins' },
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+    -- shows the surrounding function's signature (line) at the top line (if it was scrolled above), disabled for now until treesitter becomes fast
+    enabled = false,
+  },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
