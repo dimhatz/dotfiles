@@ -14,6 +14,8 @@
   "mini.nvim": { "branch": "main", "commit": "8371930e8b624feabf994c3382143e83e009ed9f" },
   "monokai-pro.nvim": { "branch": "master", "commit": "aafde73a622435891d36b411d8623e705ead6293" },
   "neodev.nvim": { "branch": "main", "commit": "ce9a2e8eaba5649b553529c5498acb43a6c317cd" },
+  "none-ls-extras.nvim": { "branch": "main", "commit": "f0746bf4f1a21d6e1d2002f671fb9b46d2146de7" },
+  "none-ls.nvim": { "branch": "main", "commit": "09a7c58e9283dda582d9805f6b182b5b9f137ec7" },
   "nvim-cmp": { "branch": "main", "commit": "ce16de5665c766f39c271705b17fff06f7bcb84f" },
   "nvim-lspconfig": { "branch": "master", "commit": "e25c4cdecd3d58c0deccce0f372426c8c480bcce" },
   "nvim-snippy": { "branch": "master", "commit": "6295b6cb30725c343a8986096c9f04b0e7646c52" },

@@ -498,7 +498,8 @@ require('lazy').setup({
     enabled = true,
     dependencies = {
       -- versioning of lsp servers here: run once
-      -- MasonInstall lua-language-server@3.7.4 stylua@v0.20.0
+      -- MasonInstall lua-language-server@3.7.4 stylua@v0.20.0 eslint_d@13.1.2
+      -- versions can be found here: https://github.com/mason-org/mason-registry/blob/main/packages/
       { 'williamboman/mason.nvim', opts = {} }, -- just for installation and adding to nvim path, all the config of language servers is manual
       { 'folke/neodev.nvim', opts = {} }, -- this should take care of the lua paths, nvim libraries to be present in completions etc
       -- { 'j-hui/fidget.nvim', opts = {} }, -- shows lsp messages, not sure how useful this is --> lags when only lspconfig is used (no treesitter for better speed)
@@ -586,6 +587,25 @@ require('lazy').setup({
             })
           end
         end,
+      })
+    end,
+  },
+
+  { -- None-ls used for linting only (provides diagnostic linter messages AND code actions, unlike nvim-lint, which only does diagnostics)
+    -- spawns node instance for its server, but does not close it when nvim exits. At least reuses the same instance when another file is opened
+    'nvimtools/none-ls.nvim',
+    dependencies = {
+      'plenary.nvim',
+      'nvimtools/none-ls-extras.nvim', -- https://github.com/nvimtools/none-ls-extras.nvim/tree/main/lua/none-ls
+    },
+    config = function()
+      local null_ls = require('null-ls')
+      null_ls.setup({
+        -- debug = true, -- for :NullLsInfo, :NullLsLog
+        sources = {
+          require('none-ls.code_actions.eslint_d'),
+          require('none-ls.diagnostics.eslint_d'),
+        },
       })
     end,
   },
