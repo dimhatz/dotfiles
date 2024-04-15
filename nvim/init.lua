@@ -153,8 +153,8 @@ remap('n', '}', '<Cmd>bnext<CR>', { silent = true })
 remap('n', '<C-v>', 'V')
 remap('n', 'V', '<C-v>')
 
-remap('n', '<C-\\>', 'gUiw') -- Uppercase word in norm/insert
-remap('i', '<C-\\>', '<Esc>gUiwea') -- FIXME: does not repeat
+remap('n', '<C-u>', 'gUiw') -- Uppercase word in norm/insert
+remap('i', '<C-u>', '<Esc>gUiwea') -- FIXME: does not repeat
 
 remap('n', '<C-f>', '*', { desc = '<C-f> is the new *' })
 remap('n', '*', '<cmd>echo "<C-f> is the new *"<CR>', { desc = '<C-f> is the new *' })
@@ -312,7 +312,7 @@ require('lazy').setup({
 
   { 'numToStr/Comment.nvim', opts = {} },
 
-  {
+  { -- alternative: mini.jump2d in case this does not work well, this one does not support visual
     'smoka7/hop.nvim',
     version = '*',
     config = function()
