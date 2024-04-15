@@ -329,6 +329,12 @@ require('lazy').setup({
         topdelete = { text = '▒' },
         changedelete = { text = '▒' },
       },
+      on_attach = function()
+        local gitsigns = require('gitsigns')
+        remap('n', '<Leader>gh', gitsigns.preview_hunk, { desc = '[G]itsigns preview [H]unk' })
+        remap('n', '<Leader>gi', gitsigns.preview_hunk_inline, { desc = '[G]itsigns preview hunk [I]nline' })
+        remap('n', '<Leader>gr', gitsigns.reset_hunk, { desc = '[G]itsigns [R]eset hunk' })
+      end,
     },
   },
 
@@ -345,6 +351,7 @@ require('lazy').setup({
         ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
         ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+        ['<leader>g'] = { name = '[G]itsigns', _ = 'which_key_ignore' },
       })
     end,
   },
