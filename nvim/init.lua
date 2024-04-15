@@ -74,9 +74,11 @@ vim.opt.completeopt = 'menu,menuone,noselect' -- as suggested by cmp plugin, rem
 vim.opt.foldmethod = 'indent'
 vim.opt.foldlevel = 999
 
+-- Set highlight on search, will be cleared on <Esc> in normal
+vim.opt.hlsearch = true
+
 -- TODO: always show gutter (signs)
 
---------------------------------------------- KEYBINDINGS ----------------------------------------------------------------------
 -- -- another snippet (not tested)
 -- local function close_floating()
 --   for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -86,17 +88,29 @@ vim.opt.foldlevel = 999
 --     end
 --   end
 -- end
+--
+--
+-- -- works, but lengthy
+-- local closeHoveringWindows = function()
+--   local base_win_id = vim.api.nvim_get_current_win()
+--   local windows = vim.api.nvim_tabpage_list_wins(0)
+--   for _, win_id in ipairs(windows) do
+--     if win_id ~= base_win_id then
+--       local win_cfg = vim.api.nvim_win_get_config(win_id)
+--       if win_cfg.relative == 'win' and win_cfg.win == base_win_id then
+--         vim.api.nvim_win_close(win_id, false)
+--         return
+--       end
+--     end
+--   end
+-- end
+--
+--------------------------------------------- KEYBINDINGS ----------------------------------------------------------------------
 
 local closeHoveringWindows = function()
-  local base_win_id = vim.api.nvim_get_current_win()
-  local windows = vim.api.nvim_tabpage_list_wins(0)
-  for _, win_id in ipairs(windows) do
-    if win_id ~= base_win_id then
-      local win_cfg = vim.api.nvim_win_get_config(win_id)
-      if win_cfg.relative == 'win' and win_cfg.win == base_win_id then
-        vim.api.nvim_win_close(win_id, false)
-        return
-      end
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_get_config(win).relative == 'win' then
+      vim.api.nvim_win_close(win, false)
     end
   end
 end
@@ -107,8 +121,7 @@ local onEsc = function()
 end
 
 local remap = vim.keymap.set
--- Set highlight on search, but clear on pressing <Esc> in normal mode
-vim.opt.hlsearch = true
+
 remap('n', '<C-q>', '<Cmd>qa<CR>')
 remap('n', '<C-c>', '<Cmd>bdelete<CR>')
 -- remap('n', '<Esc>', '<Cmd>nohlsearch<CR>')
