@@ -502,6 +502,7 @@ require('lazy').setup({
 
   { -- typescript completion, calls nvim-lspconfig, spawns an additional tsserver instance for diagnostics
     'pmizio/typescript-tools.nvim',
+    enabled = true,
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
     opts = {
       -- settings = {
@@ -735,10 +736,32 @@ require('lazy').setup({
 
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
-    enabled = false,
+    enabled = true,
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'lua',
+        'luadoc',
+        'vim',
+        'vimdoc',
+        'javascript',
+        'typescript',
+        'vue',
+        'html',
+        'css',
+        'scss',
+        'markdown',
+        'json',
+        'jsonc',
+        'tsx',
+        -- do not have parsers:
+        -- 'jsx',
+        -- 'javascriptreact',
+        -- 'typescriptreact',
+        -- 'sass',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
