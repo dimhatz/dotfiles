@@ -277,6 +277,7 @@ require('lazy').setup({
   -- },
   {
     'navarasu/onedark.nvim',
+    lazy = false,
     priority = 1000, -- Ensure it loads first
     init = function()
       require('onedark').setup({
@@ -309,16 +310,50 @@ require('lazy').setup({
 
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
-  -- Use `opts = {}` to force a plugin to be loaded.
-  --  This is equivalent to: `require('Comment').setup({})`
-  -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
 
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
-  --    require('gitsigns').setup({ ... })
-  --
-  -- See `:help gitsigns` to understand what the configuration keys do
+  {
+    'smoka7/hop.nvim',
+    version = '*',
+    config = function()
+      local hop = require('hop')
+      hop.setup({
+        jump_on_sole_occurrence = false,
+        uppercase_labels = true,
+        multi_windows = false,
+        create_hl_autocmd = true,
+        -- keys = 'ASDGHKLQWERTYUIOPZXCVBNMFJ;',
+      })
+      local hint = require('hop.hint')
+      remap('n', '<Leader>w', function()
+        hop.hint_words({ direction = hint.HintDirection.AFTER_CURSOR })
+      end, { desc = 'Hop to following [W]ords' })
+
+      remap('n', '<Leader>e', function()
+        hop.hint_words({ direction = hint.HintDirection.AFTER_CURSOR, hint_position = hint.HintPosition.END })
+      end, { desc = 'Hop to following words [E]nds' })
+
+      remap('n', '<Leader>b', function()
+        hop.hint_words({ direction = hint.HintDirection.BEFORE_CURSOR })
+      end, { desc = 'Hop to words [B]efore' })
+
+      remap('n', '<Leader>k', function()
+        hop.hint_lines_skip_whitespace({ direction = hint.HintDirection.BEFORE_CURSOR })
+      end, { desc = 'Hop to lines up - [K] motion' })
+
+      remap('n', '<Leader>j', function()
+        hop.hint_lines_skip_whitespace({ direction = hint.HintDirection.AFTER_CURSOR })
+      end, { desc = 'Hop to lines down - [J] motion' })
+
+      -- vim.cmd.hi('HopNextKey gui=bold guifg=#77ff33') -- bright green
+      -- vim.cmd.hi('HopNextKey gui=bold guifg=#00ffff') -- bright cyan
+      vim.cmd.hi('HopNextKey gui=bold guifg=#ffff00') -- bright yellow
+      vim.cmd.hi('HopNextKey1 gui=bold guifg=#ffff00') -- bright yellow
+      vim.cmd.hi('HopNextKey2 gui=bold guifg=#ffff00') -- bright yellow
+    end,
+    -- TODO: create highlight groups for better appearance, :h hop-highlights
+  },
+
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
