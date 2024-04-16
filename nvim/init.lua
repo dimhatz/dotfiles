@@ -203,6 +203,25 @@ remap('c', '<C-n>', '<Down>', { desc = 'Autocomplete in command mode' })
 remap('n', 'cw', 'ciw')
 remap('n', 'dw', 'daw')
 
+-- <C-f> / # in visual search the selection, <Leader>f in normal highlights word under cursor, but does not jump to it
+-- currently, nvim has a remap, but cases that have e.g. backslash are not handled properly,
+-- e.g. when selecting "\V" and pressing *, nvim will highlight the whole page
+vim.api.nvim_exec2(
+  [[
+  function! g:MyVSetSearch(cmdtype)
+    let temp = @s
+    norm! gv"sy
+    let @/ = '\V' . substitute(escape(@s, a:cmdtype.'\'), '\n', '\\n', 'g')
+    let @s = temp
+  endfunction
+
+  xnoremap <C-f> :<C-u>call g:MyVSetSearch('/')<CR>/<C-R>=@/<CR><CR>
+  xnoremap # :<C-u>call g:MyVSetSearch('?')<CR>?<C-R>=@/<CR><CR>
+  nnoremap <Leader>f viw:<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
+]],
+  {}
+)
+
 -- -- Diagnostic keymps
 -- remap('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 -- remap('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
@@ -631,16 +650,16 @@ require('lazy').setup({
   { -- Autoformat
     'dimhatz/conform.nvim', -- TODO: switch to original repo once my fix is merged
     lazy = false,
-    keys = {
-      {
-        '<leader>f',
-        function()
-          require('conform').format({ async = false, lsp_fallback = false })
-        end,
-        mode = 'n',
-        desc = '[F]ormat buffer',
-      },
-    },
+    -- keys = {
+    --   {
+    --     '<leader>f',
+    --     function()
+    --       require('conform').format({ async = false, lsp_fallback = false })
+    --     end,
+    --     mode = 'n',
+    --     desc = '[F]ormat buffer',
+    --   },
+    -- },
     opts = {
       -- log_level = vim.log.levels.TRACE,
       notify_on_error = true,
