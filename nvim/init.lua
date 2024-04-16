@@ -651,6 +651,13 @@ require('lazy').setup({
         timeout_ms = 1000,
         async = false, -- not legal option here, but just in case
       },
+      formatters = {
+        prettierd = { -- set env variable for prettierd to only allow it using local version of prettier
+          env = {
+            PRETTIERD_LOCAL_PRETTIER_ONLY = 1,
+          },
+        },
+      },
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Use a sub-list to run only the first available formatter, e.g. `{ { 'prettierd', 'prettier' } },`
