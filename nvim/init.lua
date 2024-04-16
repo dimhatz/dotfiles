@@ -629,7 +629,7 @@ require('lazy').setup({
   },
 
   { -- Autoformat
-    'stevearc/conform.nvim',
+    'dimhatz/conform.nvim', -- TODO: switch to original repo once my fix is merged
     lazy = false,
     keys = {
       {
@@ -637,11 +637,12 @@ require('lazy').setup({
         function()
           require('conform').format({ async = false, lsp_fallback = false })
         end,
-        mode = '',
+        mode = 'n',
         desc = '[F]ormat buffer',
       },
     },
     opts = {
+      -- log_level = vim.log.levels.TRACE,
       notify_on_error = true,
       async = false, -- not legal option here, but just in case
       format_on_save = {
@@ -652,6 +653,22 @@ require('lazy').setup({
       },
       formatters_by_ft = {
         lua = { 'stylua' },
+        -- Use a sub-list to run only the first available formatter, e.g. `{ { 'prettierd', 'prettier' } },`
+        javascript = { { 'prettierd', 'prettier' } },
+        typescript = { { 'prettierd', 'prettier' } },
+        vue = { { 'prettierd', 'prettier' } },
+        html = { { 'prettierd', 'prettier' } },
+        css = { { 'prettierd', 'prettier' } },
+        scss = { { 'prettierd', 'prettier' } },
+        json = { { 'prettierd', 'prettier' } },
+        jsonc = { { 'prettierd', 'prettier' } },
+        tsx = { { 'prettierd', 'prettier' } },
+        jsx = { { 'prettierd', 'prettier' } },
+        javascriptreact = { { 'prettierd', 'prettier' } },
+        typescriptreact = { { 'prettierd', 'prettier' } },
+        sass = { { 'prettierd', 'prettier' } },
+        yaml = { { 'prettierd', 'prettier' } },
+        markdown = { { 'prettierd', 'prettier' } },
       },
     },
   },
