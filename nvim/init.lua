@@ -203,7 +203,7 @@ remap('c', '<C-n>', '<Down>', { desc = 'Autocomplete in command mode' })
 remap('n', 'cw', 'ciw')
 remap('n', 'dw', 'daw')
 
--- <C-f> / # in visual search the selection, <Leader>f in normal highlights word under cursor, but does not jump to it
+-- <C-f> / # in visual search the selection, <Leader>f in normal/visual highlights word under cursor, but does not jump to it
 -- currently, nvim has a remap, but cases that have e.g. backslash are not handled properly,
 -- e.g. when selecting "\V" and pressing *, nvim will highlight the whole page
 vim.api.nvim_exec2(
@@ -218,6 +218,7 @@ vim.api.nvim_exec2(
   xnoremap <C-f> :<C-u>call g:MyVSetSearch('/')<CR>/<C-R>=@/<CR><CR>
   xnoremap # :<C-u>call g:MyVSetSearch('?')<CR>?<C-R>=@/<CR><CR>
   nnoremap <Leader>f viw:<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
+  xnoremap <Leader>f :<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
 ]],
   {}
 )
