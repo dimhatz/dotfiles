@@ -352,7 +352,6 @@ require('lazy').setup({
   {
     'HiPhish/rainbow-delimiters.nvim',
     init = function()
-      ---@type rainbow_delimiters.config
       require('rainbow-delimiters.setup').setup({
         -- strategy = {},
         -- query = {},
