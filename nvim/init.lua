@@ -416,10 +416,10 @@ require('lazy').setup({
       },
       on_attach = function()
         local gitsigns = require('gitsigns')
-        remap('n', '<Leader>gh', gitsigns.preview_hunk, { desc = '[G]itsigns preview [H]unk' })
-        remap('n', '<Leader>gi', gitsigns.preview_hunk_inline, { desc = '[G]itsigns preview hunk [I]nline' })
         remap('n', '<Leader>gr', gitsigns.reset_hunk, { desc = '[G]itsigns [R]eset hunk' })
-        remap('n', '<Leader>gn', function()
+        remap('n', 'gh', gitsigns.preview_hunk, { desc = '[G]itsigns preview [H]unk' })
+        -- remap('n', 'gi', gitsigns.preview_hunk_inline, { desc = '[G]itsigns preview hunk [I]nline' })
+        remap('n', 'gn', function()
           if vim.wo.diff then
             vim.cmd.normal({ ']c', bang = true })
           else
@@ -427,7 +427,7 @@ require('lazy').setup({
           end
         end, { desc = '[G]itsigns go to [N]ext hunk' })
 
-        remap('n', '<Leader>gp', function()
+        remap('n', 'gp', function()
           if vim.wo.diff then
             vim.cmd.normal({ '[c', bang = true })
           else
