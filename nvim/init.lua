@@ -124,7 +124,6 @@ end
 local remap = vim.keymap.set
 
 remap('n', '<C-q>', '<Cmd>qa<CR>')
-remap('n', '<C-c>', '<Cmd>bdelete<CR>')
 -- remap('n', '<Esc>', '<Cmd>nohlsearch<CR>')
 remap('n', '<Esc>', onEsc)
 
@@ -148,8 +147,14 @@ remap('v', 'z', '"_d')
 
 remap('n', 'j', 'gj') -- navigate wrapped lines
 remap('n', 'k', 'gk')
-remap('n', '{', '<Cmd>bprev<CR>', { silent = true })
-remap('n', '}', '<Cmd>bnext<CR>', { silent = true })
+
+-- using barbar's commands instead of bprev / bnext, to make sure it stays in sync
+remap('n', '(', '<Cmd>BufferPrevious<CR>')
+remap('n', ')', '<Cmd>BufferNext<CR>')
+remap('n', '<C-c>', '<Cmd>bdelete<CR>') -- avoiding '<Cmd>BufferClose<CR>' as it does not remove help window when closing it
+remap('n', '{', '<Cmd>BufferMovePrevious<CR>')
+remap('n', '}', '<Cmd>BufferMoveNext<CR>')
+remap('n', '<Leader>b', '<Cmd>BufferPick<CR>', { desc = 'Jump to buffer' })
 
 remap('n', '<C-v>', 'V')
 remap('n', 'V', '<C-v>')
@@ -202,9 +207,6 @@ remap('c', '<C-n>', '<Down>', { desc = 'Autocomplete in command mode' })
 
 remap('n', 'cw', 'ciw')
 remap('n', 'dw', 'daw')
-
-remap('n', '(', '<Cmd>bprevius<CR>')
-remap('n', ')', '<Cmd>bnext<CR>')
 
 -- <C-f> / # in visual search the selection, <Leader>f in normal/visual highlights word under cursor, but does not jump to it
 -- currently, nvim has a remap, but cases that have e.g. backslash are not handled properly,
@@ -814,6 +816,22 @@ require('lazy').setup({
         return '%2l:%-2v'
       end
     end,
+  },
+
+  { -- tab line
+    'romgrk/barbar.nvim',
+    dependencies = {
+      'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+      'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+    },
+    init = function()
+      vim.g.barbar_auto_setup = false
+    end,
+    opts = {
+      animation = true,
+      tabpages = true,
+    },
+    -- version = '^1.0.0', -- optional: only update when a new 1.x version is released
   },
 
   { -- Highlight, edit, and navigate code
