@@ -533,7 +533,7 @@ require('lazy').setup({
       remap('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       remap('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       remap('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      remap('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      -- remap('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
       remap('n', '<leader>/', function()
