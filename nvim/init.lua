@@ -352,17 +352,20 @@ require('lazy').setup({
         -- keys = 'ASDGHKLQWERTYUIOPZXCVBNMFJ;',
       })
       local hint = require('hop.hint')
-      remap('n', '<Leader>w', function()
+
+      -- remap('n', '<Leader>w', '<Cmd>HopWordAC<CR>') -- old mapping
+      remap('n', 'f', function()
         hop.hint_words({ direction = hint.HintDirection.AFTER_CURSOR })
       end, { desc = 'Hop to following [W]ords' })
+
+      -- remap('n', '<Leader>b', '<Cmd>HopWordBC<CR>') -- old mapping
+      remap('n', 't', function()
+        hop.hint_words({ direction = hint.HintDirection.BEFORE_CURSOR })
+      end, { desc = 'Hop to words [B]efore' })
 
       remap('n', '<Leader>e', function()
         hop.hint_words({ direction = hint.HintDirection.AFTER_CURSOR, hint_position = hint.HintPosition.END })
       end, { desc = 'Hop to following words [E]nds' })
-
-      remap('n', '<Leader>b', function()
-        hop.hint_words({ direction = hint.HintDirection.BEFORE_CURSOR })
-      end, { desc = 'Hop to words [B]efore' })
 
       remap('n', '<Leader>k', function()
         hop.hint_lines_skip_whitespace({ direction = hint.HintDirection.BEFORE_CURSOR })
@@ -574,26 +577,26 @@ require('lazy').setup({
           -- Find references for the word under your cursor.
           map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
-          -- Jump to the implementation of the word under your cursor.
-          --  Useful when your language has ways of declaring types without an actual implementation.
-          map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-
+          -- -- Jump to the implementation of the word under your cursor.
+          -- --  Useful when your language has ways of declaring types without an actual implementation.
+          -- map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          --
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
           map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
-
-          -- Fuzzy find all the symbols in your current document.
-          --  Symbols are things like variables, functions, types, etc.
-          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-
-          -- Fuzzy find all the symbols in your current workspace.
-          --  Similar to document symbols, except searches over your entire project.
-          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-
-          -- Rename the variable under your cursor.
-          --  Most Language Servers support renaming across files, etc.
-          map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+          --
+          -- -- Fuzzy find all the symbols in your current document.
+          -- --  Symbols are things like variables, functions, types, etc.
+          -- map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+          --
+          -- -- Fuzzy find all the symbols in your current workspace.
+          -- --  Similar to document symbols, except searches over your entire project.
+          -- map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+          --
+          -- -- Rename the variable under your cursor.
+          -- --  Most Language Servers support renaming across files, etc.
+          -- map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
