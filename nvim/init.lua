@@ -689,7 +689,7 @@ require('lazy').setup({
   },
 
   { -- Autoformat
-    'dimhatz/conform.nvim', -- TODO: switch to original repo once my fix is merged
+    'stevearc/conform.nvim', -- TODO: switch to original repo once my fix is merged
     lazy = false,
     -- keys = {
     --   {
