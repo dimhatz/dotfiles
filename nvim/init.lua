@@ -356,22 +356,39 @@ require('lazy').setup({
       -- remap('n', '<Leader>w', '<Cmd>HopWordAC<CR>') -- old mapping
       remap('n', 'f', function()
         hop.hint_words({ direction = hint.HintDirection.AFTER_CURSOR })
-      end, { desc = 'Hop to following [W]ords' })
+      end, { desc = 'Hop to [F]ollowing words' })
+      remap('v', 'f', function()
+        hop.hint_words({ direction = hint.HintDirection.AFTER_CURSOR })
+      end, { desc = 'Hop to [F]ollowing words' })
 
       -- remap('n', '<Leader>b', '<Cmd>HopWordBC<CR>') -- old mapping
       remap('n', 't', function()
         hop.hint_words({ direction = hint.HintDirection.BEFORE_CURSOR })
-      end, { desc = 'Hop to words [B]efore' })
+      end, { desc = 'Hop to words before (torwards top)' })
+      remap('v', 't', function()
+        hop.hint_words({ direction = hint.HintDirection.BEFORE_CURSOR })
+      end, { desc = 'Hop to words before (torwards top)' })
 
+      -- WARN: do not remap to "composite" keys that start with <Leader>e, e.g.
+      -- remap('n', '<Leader>ef' ...) <-- this will cause a timeout before our "more direct" remap is triggered
       remap('n', '<Leader>e', function()
+        hop.hint_words({ direction = hint.HintDirection.AFTER_CURSOR, hint_position = hint.HintPosition.END })
+      end, { desc = 'Hop to following words [E]nds' })
+      remap('v', '<Leader>e', function()
         hop.hint_words({ direction = hint.HintDirection.AFTER_CURSOR, hint_position = hint.HintPosition.END })
       end, { desc = 'Hop to following words [E]nds' })
 
       remap('n', '<Leader>k', function()
         hop.hint_lines_skip_whitespace({ direction = hint.HintDirection.BEFORE_CURSOR })
       end, { desc = 'Hop to lines up - [K] motion' })
+      remap('v', '<Leader>k', function()
+        hop.hint_lines_skip_whitespace({ direction = hint.HintDirection.BEFORE_CURSOR })
+      end, { desc = 'Hop to lines up - [K] motion' })
 
       remap('n', '<Leader>j', function()
+        hop.hint_lines_skip_whitespace({ direction = hint.HintDirection.AFTER_CURSOR })
+      end, { desc = 'Hop to lines down - [J] motion' })
+      remap('v', '<Leader>j', function()
         hop.hint_lines_skip_whitespace({ direction = hint.HintDirection.AFTER_CURSOR })
       end, { desc = 'Hop to lines down - [J] motion' })
 
@@ -399,6 +416,21 @@ require('lazy').setup({
         remap('n', '<Leader>gh', gitsigns.preview_hunk, { desc = '[G]itsigns preview [H]unk' })
         remap('n', '<Leader>gi', gitsigns.preview_hunk_inline, { desc = '[G]itsigns preview hunk [I]nline' })
         remap('n', '<Leader>gr', gitsigns.reset_hunk, { desc = '[G]itsigns [R]eset hunk' })
+        remap('n', '<Leader>gn', function()
+          if vim.wo.diff then
+            vim.cmd.normal({ ']c', bang = true })
+          else
+            gitsigns.nav_hunk('next')
+          end
+        end, { desc = '[G]itsigns go to [N]ext hunk' })
+
+        remap('n', '<Leader>gp', function()
+          if vim.wo.diff then
+            vim.cmd.normal({ '[c', bang = true })
+          else
+            gitsigns.nav_hunk('prev')
+          end
+        end, { desc = '[G]itsigns go to [P]revious hunk' })
       end,
     },
   },
