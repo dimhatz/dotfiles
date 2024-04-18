@@ -1,3 +1,4 @@
+-- TODO: map <c-m> to <c-p>
 -- NOTE: use :lua vim.diagnostic.setqflist() to all diagnostics into a quickfix list
 if vim.g.neovide then
   vim.g.neovide_refresh_rate = 60
@@ -342,7 +343,31 @@ require('lazy').setup({
 
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
+  -- gc to comment
   { 'numToStr/Comment.nvim', opts = {} },
+
+  -- autoclose parens, quotes etc
+  { 'm4xshen/autoclose.nvim', opts = {} },
+
+  {
+    'HiPhish/rainbow-delimiters.nvim',
+    init = function()
+      ---@type rainbow_delimiters.config
+      require('rainbow-delimiters.setup').setup({
+        -- strategy = {},
+        -- query = {},
+        highlight = {
+          'RainbowDelimiterYellow',
+          'RainbowDelimiterViolet',
+          'RainbowDelimiterBlue',
+          -- 'RainbowDelimiterRed',
+          -- 'RainbowDelimiterCyan',
+          -- -- 'RainbowDelimiterGreen',
+          -- -- 'RainbowDelimiterOrange',
+        },
+      })
+    end,
+  },
 
   { -- alternative: mini.jump2d in case this does not work well, this one does not support visual
     'smoka7/hop.nvim',
