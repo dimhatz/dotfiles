@@ -271,6 +271,17 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   --------------------------------------------- COLORS -------------------------------------------------------------------------------------
   {
+    'rockyzhang24/arctic.nvim',
+    dependencies = { 'rktjmp/lush.nvim' },
+    name = 'arctic',
+    branch = 'main',
+    priority = 1000,
+    config = function()
+      -- vim.cmd('colorscheme arctic')
+      -- vim.cmd.hi('Comment gui=none')
+    end,
+  },
+  {
     'lunarvim/darkplus.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
@@ -331,7 +342,6 @@ require('lazy').setup({
         },
       })
       vim.cmd('colorscheme onedark')
-      -- vim.cmd.hi 'Comment gui=none' -- TODO: investigate
     end,
   },
 
@@ -343,13 +353,20 @@ require('lazy').setup({
     end,
   },
 
+  { 'NvChad/nvim-colorizer.lua', opts = {
+    user_default_options = {
+      mode = 'virtualtext',
+      virtualtext = '■',
+    },
+  } },
+
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   -- gc to comment
   { 'numToStr/Comment.nvim', opts = {} },
 
   -- autoclose parens, quotes etc
-  { 'm4xshen/autoclose.nvim', opts = {} },
+  { 'm4xshen/autoclose.nvim', opts = { options = { disable_command_mode = true } } },
 
   {
     'HiPhish/rainbow-delimiters.nvim',
@@ -587,6 +604,7 @@ require('lazy').setup({
   },
 
   { -- typescript completion, calls nvim-lspconfig, spawns an additional tsserver instance for diagnostics
+    -- another one if this one does not work: yioneko/vtsls
     'pmizio/typescript-tools.nvim',
     enabled = true,
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
@@ -810,7 +828,12 @@ require('lazy').setup({
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
+    lazy = false,
+    priority = 1000,
     config = function()
+      -- vim.o.background = 'dark'
+      -- vim.cmd.colorscheme('mycolors')
+
       -- Better Around/Inside textobjects
       -- Auto-jumps to next text object: to jump+visual inside next parens: vi)
       -- For larger scrope, press i) again
@@ -834,6 +857,8 @@ require('lazy').setup({
       remap('n', 'ds', 'sd', { remap = true })
       remap('n', 'cs', 'sc', { remap = true })
 
+      -- TODO: replace with something fully customizable, e.g. feline (that also has tabline), rebelot/heirline.nvim (even
+      -- more customizable? manually set update triggers), tamton-aquib/staline.nvim also seems good
       local statusline = require('mini.statusline')
       statusline.setup({ use_icons = vim.g.have_nerd_font })
 
