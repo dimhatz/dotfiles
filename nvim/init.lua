@@ -79,6 +79,8 @@ vim.opt.foldlevel = 999
 -- Set highlight on search, will be cleared on <Esc> in normal
 vim.opt.hlsearch = true
 
+vim.o.termguicolors = true
+
 -- TODO: always show gutter (signs)
 
 -- -- another snippet (not tested)
