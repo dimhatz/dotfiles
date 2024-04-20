@@ -22,11 +22,11 @@
 -- #19cec7
 --
 -- my tests (munsell)
--- 5pb #1998fa
+-- 5pb #1998fa -> oklch maxed l: #1f9bfe
 -- 7.5p #f235fc, 10p #ff1fe9
 -- 2.5r #ff426e, 5r #ff4557
 -- 2.5yr #ff8c2e, 5yr #ffae2b
--- 5y #ffe51f, 7.5y #ffe51f
+-- 5y #ffe51f, 7.5y #fce40d, 5y-maxed #ffe51f
 -- 10g #12ff2a, 2.5g #54ff98
 -- 5bg #5bfce7, 7.5bg #51fcf4, 10bg #42dee3
 --
