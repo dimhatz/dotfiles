@@ -386,6 +386,26 @@ require('lazy').setup({
       })
     end,
   },
+  {
+    'olimorris/persisted.nvim',
+    lazy = false, -- make sure the plugin is always loaded at startup
+    opts = {
+      autosave = true, -- automatically save session files when exiting Neovim
+      autoload = true, -- automatically load the session for the cwd on Neovim startup
+      on_autoload_no_session = function() -- function to run when `autoload = true` but there is no session to load
+        vim.notify('No existing session to load.')
+      end,
+      follow_cwd = false, -- change session file name to match current working directory if it changes
+      use_git_branch = false, -- create session files based on the branch of a git enabled repository
+      -- ignored_dirs = { vim.fn.expand('$HOME') }, -- trying to ignore home dir also leads to ignoring all the subdirs
+      telescope = {
+        reset_prompt = true, -- Reset the Telescope prompt after an action?
+        mappings = { -- table of mappings for the Telescope extension
+          delete_session = '<c-d>',
+        },
+      },
+    },
+  },
 
   { -- alternative: mini.jump2d in case this does not work well, this one does not support visual
     'smoka7/hop.nvim',
@@ -558,12 +578,16 @@ require('lazy').setup({
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
+          persisted = {
+            layout_config = { width = 0.55, height = 0.55 },
+          },
         },
       })
 
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+      pcall(require('telescope').load_extension('persisted'))
 
       -- See `:help telescope.builtin`
       local builtin = require('telescope.builtin')
@@ -576,6 +600,7 @@ require('lazy').setup({
       remap('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       remap('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       remap('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+      remap('n', '<leader>sp', '<Cmd>Telescope persisted<CR>', { desc = '[S]earch [P]ersisted session' })
       -- remap('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
