@@ -99,18 +99,32 @@ local pal4 = {
   base0D = '#5bcf86', -- Functions, Methods, Attribute IDs, Headings
   base0E = '#ff9181', -- Keywords, Storage, Selector, Markup Italic, Diff Changed
   base0F = '#d098fc', -- Deprecated, Opening/Closing Embedded Language Tags
+}
 
-  fg = '#b4b4b4',
-  bg = '#1e1e1e',
-  dark1 = '#4b4b4b',
-  dark2 = '#7d7d7d',
-  cya = '#01d3a2',
-  blu = '#05c5ff',
-  vio = '#d098fc',
-  re = '#000000',
-  ora = '#ff9181',
-  yel = '#babc47',
-  gre = '#78cc71',
+-- l: 80%, c: 0.135, equidistant 5 colors, starting with orangE
+-- (57.07) #ffa661
+-- (129) #a3cf6d
+-- (201) #0cd7e1
+-- (273 fallback) #a8baff
+-- (345) #fb99d2
+local pal80 = {
+  base00 = '#1e1e1e', -- bg (23.5%)
+  base01 = '#383838', -- (34.2)
+  base02 = '#555555', -- (44.9)
+  base03 = '#737373', -- (55.6)
+  base04 = '#939393', -- (66.3)
+  base05 = '#cacaca', -- fg (83.8)
+  base06 = '#d6d6d6', -- (87.7)
+  base07 = '#383838', -- base01
+
+  base08 = '#a8baff', -- Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
+  base09 = '#ffa661', -- Integers, Boolean, Constants, XML Attributes, Markup Link Url
+  base0A = '#a3cf6d', -- Classes, Markup Bold, Search Text Background
+  base0B = '#fb99d2', -- Strings, Inherited Class, Markup Code, Diff Inserted
+  base0C = '#a3cf6d', -- Support, Regular Expressions, Escape Characters, Markup Quotes
+  base0D = '#0cd7e1', -- Functions, Methods, Attribute IDs, Headings
+  base0E = '#ffa661', -- Keywords, Storage, Selector, Markup Italic, Diff Changed
+  base0F = '#fb99d2', -- Deprecated, Opening/Closing Embedded Language Tags
 }
 
 -- base00 - Default Background
