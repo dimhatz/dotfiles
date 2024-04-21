@@ -77,7 +77,7 @@ local pal3 = {
 -- l: 77%, c: 0.15 six colors. color -> max chroma if possible (by the eye)
 -- #05c5ff (228.4) -> towards rEd #5aa7ff -> desaturate to 0.14 #30c4fa -> 0.13 #44c4f5
 -- #21d2a2 (168.2) -> #01d3a2 -> more brightness max chroma #04f2b9
--- #78cc71 (142.33) -> #0fda02 max -> less saturated #53d44b, towards blUe #5bcf86
+-- #78cc71 (142.33) -> #0fda02 max -> less saturated #53d44b, towards blUe (153) #5bcf86
 -- #bbbc35 (109.77) -> #bcbc00 -> slightly desaturated #babc47
 -- #d098fc (308.86) -> #d197ff
 -- #ff9181 (29.32), fallback
@@ -99,6 +99,39 @@ local pal4 = {
   base0D = '#5bcf86', -- Functions, Methods, Attribute IDs, Headings
   base0E = '#ff9181', -- Keywords, Storage, Selector, Markup Italic, Diff Changed
   base0F = '#d098fc', -- Deprecated, Opening/Closing Embedded Language Tags
+}
+
+-- 80%, 0.135, grEen till viol fixed, the rest equidistant
+-- (153) #72d794
+-- (228, fallb) #50cdff
+-- (309, sligh fallb) #d7a5ff
+--
+-- equal distance:
+-- (17 fallb) #ff9fa3
+-- (85) #e5b64a
+-- as above + 10
+-- (27) #ffa196
+-- (95) #d9bc4a
+--
+local pal4hi = {
+
+  base00 = '#1e1e1e', -- bg (23.5%)
+  base01 = '#383838', -- (34.2)
+  base02 = '#555555', -- (44.9)
+  base03 = '#737373', -- (55.6)
+  base04 = '#939393', -- (66.3)
+  base05 = '#cacaca', -- fg (83.8)
+  base06 = '#d6d6d6', -- (87.7)
+  base07 = '#383838', -- base01
+
+  base08 = '#50cdff', -- Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
+  base09 = '#ffa196', -- Integers, Boolean, Constants, XML Attributes, Markup Link Url
+  base0A = '#d9bc4a', -- Classes, Markup Bold, Search Text Background
+  base0B = '#d7a5ff', -- Strings, Inherited Class, Markup Code, Diff Inserted
+  base0C = '#d9bc4a', -- Support, Regular Expressions, Escape Characters, Markup Quotes
+  base0D = '#72d794', -- Functions, Methods, Attribute IDs, Headings
+  base0E = '#ffa196', -- Keywords, Storage, Selector, Markup Italic, Diff Changed
+  base0F = '#d7a5ff', -- Deprecated, Opening/Closing Embedded Language Tags
 }
 
 -- l: 80%, c: 0.135, equidistant 5 colors, starting with orangE
@@ -126,6 +159,14 @@ local pal80 = {
   base0E = '#ffa661', -- Keywords, Storage, Selector, Markup Italic, Diff Changed
   base0F = '#fb99d2', -- Deprecated, Opening/Closing Embedded Language Tags
 }
+
+-- todo: check how these look
+-- l: 80% c: 0.135, starting with at 230.37
+-- (231) #5cccff (fallback, auto-desaturated to 0.125)
+-- (303) #ceaaff (fallback)
+-- (15) #ff9ea6 (fallback)
+-- (87) #e3b749
+-- (159) #65d89e
 
 -- base00 - Default Background
 -- base01 - Lighter Background (Used for status bars, line number and folding marks)
@@ -202,7 +243,7 @@ local pal2 = {
 }
 
 require('mini.base16').setup({
-  palette = pal4,
+  palette = pal4hi,
   -- palette = {
   --   base00 = '#1e1e1e', -- bg (23.5%)
   --   base01 = '#383838', -- (34.2)
