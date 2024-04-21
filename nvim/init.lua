@@ -80,6 +80,7 @@ vim.opt.foldlevel = 999
 vim.opt.hlsearch = true
 
 vim.o.termguicolors = true
+vim.o.background = 'dark'
 
 -- TODO: always show gutter (signs)
 
@@ -271,6 +272,63 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   --------------------------------------------- COLORS -------------------------------------------------------------------------------------
   {
+    'RRethy/base16-nvim',
+    lazy = false,
+    priority = math.huge,
+    init = function()
+      require('base16-colorscheme').setup({
+        base00 = '#1e1e1e', -- bg (23.5%)
+        base01 = '#383838', -- (34.2)
+        base02 = '#555555', -- (44.9)
+        base03 = '#737373', -- (55.6)
+        base04 = '#939393', -- (66.3)
+        -- base05 = '#cacaca', -- fg (83.8)
+        base05 = '#d6d6d6', -- fg (83.8)
+        base06 = '#d6d6d6', -- (87.7)
+        base07 = '#383838', -- base01
+
+        base08 = '#50cdff', -- Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
+        base09 = '#d7a5ff', -- Integers, Boolean, Constants, XML Attributes, Markup Link Url
+        base0A = '#72d794', -- Classes, Markup Bold, Search Text Background
+        base0B = '#ffa196', -- Strings, Inherited Class, Markup Code, Diff Inserted
+        base0C = '#000000', -- Support, Regular Expressions, Escape Characters, Markup Quotes
+        -- base0D = '#d9bc4a', -- orig
+        base0D = '#dec97c', -- 0.1 + 83.5%
+        base0E = '#d7a5ff', -- Keywords, Storage, Selector, Markup Italic, Diff Changed
+        base0F = '#d7a5ff', -- Deprecated, Opening/Closing Embedded Language Tags
+        -- base00 = '#16161D',
+        -- base01 = '#2c313c',
+        -- base02 = '#3e4451',
+        -- base03 = '#6c7891',
+        -- base04 = '#565c64',
+        -- base05 = '#abb2bf',
+        -- base06 = '#9a9bb3',
+        -- base07 = '#c5c8e6',
+        -- base08 = '#e06c75',
+        -- base09 = '#d19a66',
+        -- base0A = '#e5c07b',
+        -- base0B = '#98c379',
+        -- base0C = '#56b6c2',
+        -- base0D = '#0184bc',
+        -- base0E = '#c678dd',
+        -- base0F = '#a06949',
+      })
+    end,
+  },
+  {
+    'Iron-E/nvim-highlite',
+    config = function()
+      -- OPTIONAL: setup the plugin. See "Configuration" for information
+      require('highlite').setup({ generator = { plugins = { vim = false }, syntax = false } })
+
+      -- or one of the alternate colorschemes (see the "Built-in Colorschemes" section)
+      -- vim.api.nvim_command('colorscheme highlite-sonokai')
+    end,
+    lazy = false,
+    priority = math.huge,
+    branch = 'master-v4',
+  },
+  {
     'rockyzhang24/arctic.nvim',
     dependencies = { 'rktjmp/lush.nvim' },
     name = 'arctic',
@@ -341,7 +399,7 @@ require('lazy').setup({
           comments = 'none',
         },
       })
-      vim.cmd('colorscheme onedark')
+      -- vim.cmd('colorscheme onedark')
     end,
   },
 
@@ -703,6 +761,7 @@ require('lazy').setup({
           -- -- Rename the variable under your cursor.
           -- --  Most Language Servers support renaming across files, etc.
           -- map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+          map('<F2>', vim.lsp.buf.rename, 'Rename under cursor')
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
