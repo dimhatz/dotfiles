@@ -75,7 +75,7 @@ local pal3 = {
 }
 
 -- l: 77%, c: 0.15 six colors. color -> max chroma if possible (by the eye)
--- #05c5ff (228.4) -> towards rEd #5aa7ff
+-- #05c5ff (228.4) -> towards rEd #5aa7ff -> desaturate to 0.14 #30c4fa -> 0.13 #44c4f5
 -- #21d2a2 (168.2) -> #01d3a2 -> more brightness max chroma #04f2b9
 -- #78cc71 (142.33) -> #0fda02 max -> less saturated #53d44b, towards blUe #5bcf86
 -- #bbbc35 (109.77) -> #bcbc00 -> slightly desaturated #babc47
@@ -91,7 +91,7 @@ local pal4 = {
   base06 = '#d6d6d6', -- (87.7)
   base07 = '#383838', -- base01
 
-  base08 = '#05c5ff', -- Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
+  base08 = '#30c4fa', -- Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
   base09 = '#ff9181', -- Integers, Boolean, Constants, XML Attributes, Markup Link Url
   base0A = '#bbbc35', -- Classes, Markup Bold, Search Text Background
   base0B = '#d098fc', -- Strings, Inherited Class, Markup Code, Diff Inserted
