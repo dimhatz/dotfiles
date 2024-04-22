@@ -242,48 +242,68 @@ local pal2 = {
   cyan = '#5bfce7',
 }
 
-require('mini.base16').setup({
-  palette = pal4hi,
-  -- palette = {
-  --   base00 = '#1e1e1e', -- bg (23.5%)
-  --   base01 = '#383838', -- (34.2)
-  --   base02 = '#555555', -- (44.9)
-  --   base03 = '#737373', -- (55.6)
-  --   base04 = '#939393', -- (66.3)
-  --   -- base05 = '#b4b4b4', -- fg (77)
-  --   base05 = '#cacaca', -- fg (83.8)
-  --   base06 = '#d6d6d6', -- (87.7)
-  --   base07 = '#383838', -- base01
-  --   base08 = pal4.blu,
-  --   base09 = pal4.ora,
-  --   base0A = pal4.cya,
-  --   base0B = pal4.gre,
-  --   base0C = pal4.cya,
-  --   base0D = pal4.vio,
-  --   base0E = pal4.ora,
-  --   base0F = pal4.blu,
-  -- },
-  --   base00 = '#112641',
-  --   base01 = '#3a475e',
-  --   base02 = '#606b81',
-  --   base03 = '#8691a7',
-  --   base04 = '#d5dc81',
-  --   base05 = '#e2e98f',
-  --   base06 = '#eff69c',
-  --   base07 = '#fcffaa',
-  --   base08 = '#ffcfa0',
-  --   base09 = '#cc7e46',
-  --   base0A = '#46a436',
-  --   base0B = '#9ff895',
-  --   base0C = '#ca6ecf',
-  --   base0D = '#42f7ff',
-  --   base0E = '#ffc4ff',
-  --   base0F = '#00a5c5',
-  use_cterm = false,
-  plugins = {
-    default = true,
-  },
-})
+-- require('mini.base16').setup({
+--   palette = pal4hi,
+--   -- palette = {
+--   --   base00 = '#1e1e1e', -- bg (23.5%)
+--   --   base01 = '#383838', -- (34.2)
+--   --   base02 = '#555555', -- (44.9)
+--   --   base03 = '#737373', -- (55.6)
+--   --   base04 = '#939393', -- (66.3)
+--   --   -- base05 = '#b4b4b4', -- fg (77)
+--   --   base05 = '#cacaca', -- fg (83.8)
+--   --   base06 = '#d6d6d6', -- (87.7)
+--   --   base07 = '#383838', -- base01
+--   --   base08 = pal4.blu,
+--   --   base09 = pal4.ora,
+--   --   base0A = pal4.cya,
+--   --   base0B = pal4.gre,
+--   --   base0C = pal4.cya,
+--   --   base0D = pal4.vio,
+--   --   base0E = pal4.ora,
+--   --   base0F = pal4.blu,
+--   -- },
+--   --   base00 = '#112641',
+--   --   base01 = '#3a475e',
+--   --   base02 = '#606b81',
+--   --   base03 = '#8691a7',
+--   --   base04 = '#d5dc81',
+--   --   base05 = '#e2e98f',
+--   --   base06 = '#eff69c',
+--   --   base07 = '#fcffaa',
+--   --   base08 = '#ffcfa0',
+--   --   base09 = '#cc7e46',
+--   --   base0A = '#46a436',
+--   --   base0B = '#9ff895',
+--   --   base0C = '#ca6ecf',
+--   --   base0D = '#42f7ff',
+--   --   base0E = '#ffc4ff',
+--   --   base0F = '#00a5c5',
+--   use_cterm = false,
+--   plugins = {
+--     default = true,
+--   },
+-- })
 
--- require('mini.hues').setup({ background = '#11262d', foreground = '#c0c8cc', accent = 'yellow' })
+require('base16-colorscheme').setup({
+  base00 = '#1e1e1e', -- bg (23.5%)
+  base01 = '#383838', -- (34.2)
+  base02 = '#555555', -- (44.9)
+  base03 = '#737373', -- (55.6)
+  base04 = '#939393', -- (66.3)
+  -- base05 = '#cacaca', -- fg (83.8)
+  base05 = '#d6d6d6', -- fg (83.8)
+  base06 = '#d6d6d6', -- (87.7)
+  base07 = '#383838', -- base01
+
+  base08 = '#50cdff', -- Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
+  base09 = '#d7a5ff', -- Integers, Boolean, Constants, XML Attributes, Markup Link Url
+  base0A = '#72d794', -- Classes, Markup Bold, Search Text Background
+  base0B = '#ffa196', -- Strings, Inherited Class, Markup Code, Diff Inserted
+  base0C = '#72d794', -- Support, Regular Expressions, Escape Characters, Markup Quotes
+  -- base0D = '#d9bc4a', -- orig
+  base0D = '#dec97c', -- 0.1 + 83.5%
+  base0E = '#d7a5ff', -- Keywords, Storage, Selector, Markup Italic, Diff Changed
+  base0F = '#d7a5ff', -- Deprecated, Opening/Closing Embedded Language Tags
+})
 vim.g.colors_name = 'mycolors'
