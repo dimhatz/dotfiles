@@ -24,9 +24,9 @@ local c = {
   base03 = '#868686', -- (62)
   base04 = '#aeaeae', -- (75)
   base05fg = '#d7d7d7', -- fg (88)
-  base06white = '#ffffff', -- (100)
-  base07 = '#383838', -- base01
 
+  blackest = '#000000',
+  whitest = '#ffffff',
   -- dark versions are desaturated to 46%
   blue = '#50cdff', -- Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
   blue_dark = '#006180', -- (fallb)
@@ -49,8 +49,8 @@ require('base16-colorscheme').setup({
   base03 = c.base03, -- (62) -- Comments, Invisibles, Line Highlighting
   base04 = c.base04, -- (75) -- Dark Foreground (Used for status bars)
   base05 = c.base05fg, -- fg (88) -- Default Foreground, Caret, Delimiters, Operators
-  base06 = c.base06white, -- (100) -- Light Foreground (Not often used)
-  base07 = c.base07, -- base01 -- Light Background (Not often used)
+  base06 = c.whitest, -- (100) -- Light Foreground (Not often used)
+  base07 = c.base04, -- base04 -- Light Background (Not often used)
 
   base08 = c.blue, -- Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
   base09 = c.violet, -- Integers, Boolean, Constants, XML Attributes, Markup Link Url
@@ -62,6 +62,16 @@ require('base16-colorscheme').setup({
   base0F = c.violet, -- Deprecated, Opening/Closing Embedded Language Tags
 })
 
-hi('Search', { bg = c.green_dark, fg = c.base06white })
+hi('Search', { bg = c.peach_dark, fg = c.whitest })
+hi('IncSearch', { bg = c.peach_dark, fg = c.whitest })
+hi('CursorLine', { bg = c.blackest })
+hi('CursorLineNr', { bg = c.blackest, fg = c.base03 })
+hi('LineNr', { fg = c.base02 })
+
+-- barbar
+hi('BufferDefaultCurrent', { bg = c.base01, fg = c.whitest })
+vim.api.nvim_set_hl(0, 'BufferDefaultCurrent', { bg = '#000000', fg = '#ffffff' })
 
 vim.g.colors_name = 'mycolors'
+
+return c

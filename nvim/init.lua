@@ -270,6 +270,8 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+My_colors = nil
+
 require('lazy').setup({
   --------------------------------------------- COLORS -------------------------------------------------------------------------------------
   {
@@ -288,10 +290,11 @@ require('lazy').setup({
         dapui = false,
       })
 
-      -- not needed (?), since we are calling this anyway from our colors
+      -- no need to setup, since we are calling this anyway from our colors
       -- require('base16-colorscheme').setup()
 
-      vim.cmd.colorscheme('mycolors')
+      -- initializing here, to ensure base16 was added to path by Lazy, since we need it in mycolors.lua
+      My_colors = require('mycolors')
     end,
   },
 
@@ -300,7 +303,6 @@ require('lazy').setup({
     dependencies = { 'rktjmp/lush.nvim' },
     name = 'arctic',
     branch = 'main',
-    priority = 1000,
     config = function()
       -- vim.cmd('colorscheme arctic')
       -- vim.cmd.hi('Comment gui=none')
@@ -308,7 +310,6 @@ require('lazy').setup({
   },
   {
     'lunarvim/darkplus.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
       -- vim.cmd.colorscheme('darkplus')
       -- vim.cmd.hi 'Comment gui=none'
@@ -316,7 +317,6 @@ require('lazy').setup({
   },
   {
     'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
       -- vim.cmd.colorscheme 'tokyonight-night'
       -- vim.cmd.hi 'Comment gui=none'
@@ -325,7 +325,6 @@ require('lazy').setup({
 
   {
     'loctvl842/monokai-pro.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
       -- vim.cmd.colorscheme 'monokai-pro-octagon'
     end,
@@ -341,7 +340,6 @@ require('lazy').setup({
 
   -- {
   --   'olimorris/onedarkpro.nvim',
-  --   priority = 1000, -- Ensure it loads first
   --   init = function()
   --     vim.cmd 'colorscheme onedark'
   --   end,
@@ -349,7 +347,6 @@ require('lazy').setup({
   {
     'navarasu/onedark.nvim',
     lazy = false,
-    priority = 1000, -- Ensure it loads first
     init = function()
       require('onedark').setup({
         style = 'warmer',
@@ -372,7 +369,6 @@ require('lazy').setup({
 
   {
     'rebelot/kanagawa.nvim',
-    priority = 1000, -- Ensure it loads first
     init = function()
       -- vim.cmd 'colorscheme kanagawa'
     end,
@@ -935,6 +931,7 @@ require('lazy').setup({
     dependencies = {
       'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
       'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+      'olimorris/persisted.nvim', -- to make sure persisted has listener for our autocmd
     },
     init = function()
       vim.g.barbar_auto_setup = false
@@ -943,6 +940,11 @@ require('lazy').setup({
       require('barbar').setup({
         animation = true,
         tabpages = true,
+        icons = {
+          filetype = {
+            enabled = false,
+          },
+        },
       })
 
       -- save buffer order before quitting (from barbar's documentation)
@@ -956,6 +958,8 @@ require('lazy').setup({
           vim.api.nvim_exec_autocmds('User', { pattern = 'SessionSavePre' })
         end,
       })
+
+      vim.api.nvim_set_hl(0, 'BufferDefaultCurrent', { bg = My_colors.blackest, fg = My_colors.whitest })
     end,
     -- version = '^1.0.0', -- optional: only update when a new 1.x version is released
   },
