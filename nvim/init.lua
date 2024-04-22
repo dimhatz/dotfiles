@@ -139,6 +139,7 @@ remap('i', '<C-s>', '<Esc><Cmd>write<CR>')
 
 -- do not copy text into registers when replacing it
 remap('n', 'c', '"_c')
+remap('n', 'C', '"_C')
 remap('v', 'c', '"_c')
 remap('n', 'x', '"_x', { desc = 'delete char into black hole' })
 remap('n', 'z', '"_d', { desc = 'delete into black hole' })
@@ -279,19 +280,7 @@ require('lazy').setup({
       vim.cmd.colorscheme('mycolors')
     end,
   },
-  {
-    'Iron-E/nvim-highlite',
-    config = function()
-      -- OPTIONAL: setup the plugin. See "Configuration" for information
-      require('highlite').setup({ generator = { plugins = { vim = false }, syntax = false } })
 
-      -- or one of the alternate colorschemes (see the "Built-in Colorschemes" section)
-      -- vim.api.nvim_command('colorscheme highlite-sonokai')
-    end,
-    lazy = false,
-    priority = math.huge,
-    branch = 'master-v4',
-  },
   {
     'rockyzhang24/arctic.nvim',
     dependencies = { 'rktjmp/lush.nvim' },
@@ -375,12 +364,21 @@ require('lazy').setup({
     end,
   },
 
-  { 'NvChad/nvim-colorizer.lua', opts = {
-    user_default_options = {
-      mode = 'virtualtext',
-      virtualtext = '■',
+  {
+    'NvChad/nvim-colorizer.lua',
+    opts = {
+      filetypes = { 'lua' },
+      user_default_options = {
+        mode = 'virtualtext',
+        virtualtext = '',
+        names = false,
+        RGB = true,
+        RRGGBB = true,
+        RRGGBBAA = true,
+        always_update = false,
+      },
     },
-  } },
+  },
 
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
