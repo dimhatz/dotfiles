@@ -276,7 +276,21 @@ require('lazy').setup({
     'RRethy/base16-nvim',
     lazy = false,
     priority = math.huge,
-    init = function()
+    -- config instead of init, to execute after the plugin was loaded
+    config = function()
+      require('base16-colorscheme').with_config({
+        telescope = true,
+        indentblankline = true,
+        cmp = true,
+        notify = false,
+        ts_rainbow = false,
+        illuminate = false,
+        dapui = false,
+      })
+
+      -- not needed (?), since we are calling this anyway from our colors
+      -- require('base16-colorscheme').setup()
+
       vim.cmd.colorscheme('mycolors')
     end,
   },
@@ -917,6 +931,7 @@ require('lazy').setup({
 
   { -- tab line
     'romgrk/barbar.nvim',
+    lazy = false,
     dependencies = {
       'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
       'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
@@ -924,10 +939,24 @@ require('lazy').setup({
     init = function()
       vim.g.barbar_auto_setup = false
     end,
-    opts = {
-      animation = true,
-      tabpages = true,
-    },
+    config = function()
+      require('barbar').setup({
+        animation = true,
+        tabpages = true,
+      })
+
+      -- save buffer order before quitting (from barbar's documentation)
+      vim.opt.sessionoptions:append('globals')
+      vim.api.nvim_create_autocmd({ 'User' }, {
+        pattern = 'PersistedSavePre',
+        desc = 'Save buffers position in barbar before closing session',
+        group = vim.api.nvim_create_augroup('my-persistent-barbar', { clear = true }),
+        callback = function()
+          -- this will inform barbar to save positions
+          vim.api.nvim_exec_autocmds('User', { pattern = 'SessionSavePre' })
+        end,
+      })
+    end,
     -- version = '^1.0.0', -- optional: only update when a new 1.x version is released
   },
 
