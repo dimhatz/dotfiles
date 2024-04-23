@@ -87,6 +87,7 @@ local function apply_colors()
   hi('Comment', { fg = c.base03 })
   hi('TSComment', { link = 'Comment' })
   hi('MatchParen', { bg = c.base02, fg = c.whitest, bold = true }) -- bold standout reverse
+  hi('Wildmenu', { link = 'Search' })
 
   -- lsp
   hi('LspReferenceText', { bg = c.base01 })
@@ -104,6 +105,12 @@ local function apply_colors()
   hi('RainbowDelimiterViolet', { fg = c.violet_brightest_magenta })
 
   hi('TSTypeBuiltin', { link = 'TSType' })
+
+  -- links IblWhitespace -> Whitespace -> NonText
+  -- not sure where IblWhitespace is shown
+  -- hi('NonText', { fg = c.base01 })
+  hi('IblScope', { fg = c.base02 })
+  hi('IblIndent', { fg = c.base01 })
 
   vim.g.colors_name = 'mycolors'
 end

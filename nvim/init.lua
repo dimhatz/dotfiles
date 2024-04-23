@@ -396,6 +396,31 @@ require('lazy').setup({
       })
     end,
   },
+
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+    opts = {},
+    config = function()
+      require('ibl').overwrite({
+        indent = {
+          char = '│', -- center(│), left (▏)
+        },
+        scope = {
+          enabled = true, -- the brighter highlighting of the current scope's guide
+          show_start = false,
+        },
+        whitespace = {
+          remove_blankline_trail = false,
+        },
+      })
+
+      -- Replaces the first indentation guide for space indentation with a normal (from docs)
+      -- local hooks = require('ibl.hooks')
+      -- hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_space_indent_level)
+    end,
+  },
+
   {
     'olimorris/persisted.nvim',
     lazy = false, -- make sure the plugin is always loaded at startup
@@ -794,18 +819,8 @@ require('lazy').setup({
   },
 
   { -- Autoformat
-    'stevearc/conform.nvim', -- TODO: switch to original repo once my fix is merged
+    'stevearc/conform.nvim',
     lazy = false,
-    -- keys = {
-    --   {
-    --     '<leader>f',
-    --     function()
-    --       require('conform').format({ async = false, lsp_fallback = false })
-    --     end,
-    --     mode = 'n',
-    --     desc = '[F]ormat buffer',
-    --   },
-    -- },
     opts = {
       -- log_level = vim.log.levels.TRACE,
       notify_on_error = true,
@@ -982,7 +997,7 @@ require('lazy').setup({
           },
           button = ' ', -- '' default, '○' also works well
           modified = { button = '●' }, -- '●' default
-          -- do not remove separator, it will cause filename label shifts when switching between buffers
+          -- do not remove left separator, it will cause filename label shifts when switching between buffers
           -- separator = {
           --   left = '', -- default: '▎'
           --   right = '', -- default: ''
