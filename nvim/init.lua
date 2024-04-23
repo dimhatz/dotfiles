@@ -1,3 +1,5 @@
+-- for binaries on windows:
+-- choco install -y ripgrep wget fd unzip gzip mingw make
 -- TODO: map <c-m> to <c-p>
 -- NOTE: use :lua vim.diagnostic.setqflist() to all diagnostics into a quickfix list
 if vim.g.neovide then
@@ -270,8 +272,6 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
-My_colors = nil
-
 require('lazy').setup({
   --------------------------------------------- COLORS -------------------------------------------------------------------------------------
   {
@@ -294,7 +294,7 @@ require('lazy').setup({
       -- require('base16-colorscheme').setup()
 
       -- initializing here, to ensure base16 was added to path by Lazy, since we need it in mycolors.lua
-      My_colors = require('mycolors')
+      require('mycolors').apply_colors()
     end,
   },
 
@@ -570,7 +570,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+      { 'nvim-tree/nvim-web-devicons' },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -938,12 +938,21 @@ require('lazy').setup({
     end,
     config = function()
       require('barbar').setup({
+        clickable = false, -- do not accidentally trigger closing
         animation = true,
         tabpages = true,
         icons = {
           filetype = {
             enabled = false,
           },
+          button = ' ', -- '' default, '○' also works well
+          modified = { button = '●' }, -- '●' default
+          -- do not remove separator, it will cause filename label shifts when switching between buffers
+          -- separator = {
+          --   left = '', -- default: '▎'
+          --   right = '', -- default: ''
+          -- },
+          separator_at_end = false,
         },
       })
 
@@ -959,7 +968,7 @@ require('lazy').setup({
         end,
       })
 
-      vim.api.nvim_set_hl(0, 'BufferDefaultCurrent', { bg = My_colors.blackest, fg = My_colors.whitest })
+      require('mycolors').apply_colors_barbar()
     end,
     -- version = '^1.0.0', -- optional: only update when a new 1.x version is released
   },
