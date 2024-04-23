@@ -29,6 +29,7 @@ end
 -- for adjustments: https://oklch.com/
 local c = {
   base00bg = '#1d1d1d', -- bg (23)
+  base00light = '#2c2c2c', -- (29.5)
   base01 = '#3d3d3d', -- (36)
   base02 = '#606060', -- (49)
   base03 = '#868686', -- (62)
@@ -73,11 +74,18 @@ local function apply_colors()
     base0F = c.violet, -- Deprecated, Opening/Closing Embedded Language Tags
   })
 
+  hi('Visual', { bg = c.base03, fg = c.blackest })
   hi('Search', { bg = c.peach_dark, fg = c.whitest })
   hi('IncSearch', { bg = c.peach_dark, fg = c.whitest })
   hi('CursorLine', { bg = c.blackest })
   hi('CursorLineNr', { bg = c.blackest, fg = c.base03 })
   hi('LineNr', { fg = c.base02 })
+  hi('Comment', { fg = c.base03 })
+  hi('TSComment', { link = 'Comment' })
+
+  hi('LspReferenceText', { bg = c.base00light })
+  hi('LspReferenceRead', { bg = c.base00light })
+  hi('LspReferenceWrite', { bg = c.base00light })
 
   -- barbar
   hi('BufferDefaultCurrent', { bg = c.base01, fg = c.whitest })
