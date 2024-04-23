@@ -81,6 +81,10 @@ vim.opt.foldlevel = 999
 -- Set highlight on search, will be cleared on <Esc> in normal
 vim.opt.hlsearch = true
 
+-- when searching, pressing n, will show "search hit BOTTOM, continuing at TOP"
+-- also, disables showing search hit count on top of command line (we still have it in our statusline)
+vim.opt.shortmess:append('S')
+
 vim.o.termguicolors = true
 vim.o.background = 'dark'
 
@@ -315,26 +319,13 @@ require('lazy').setup({
       -- vim.cmd.hi('Comment gui=none')
     end,
   },
-  {
-    'lunarvim/darkplus.nvim',
-    init = function()
-      -- vim.cmd.colorscheme('darkplus')
-      -- vim.cmd.hi 'Comment gui=none'
-    end,
-  },
-  {
-    'folke/tokyonight.nvim',
-    init = function()
-      -- vim.cmd.colorscheme 'tokyonight-night'
-      -- vim.cmd.hi 'Comment gui=none'
-    end,
-  },
+
+  { 'lunarvim/darkplus.nvim' },
+
+  { 'folke/tokyonight.nvim' },
 
   {
     'loctvl842/monokai-pro.nvim',
-    init = function()
-      -- vim.cmd.colorscheme 'monokai-pro-octagon'
-    end,
     config = function()
       require('monokai-pro').setup({
         devicons = vim.g.have_nerd_font, -- highlight the icons of `nvim-web-devicons`
@@ -343,18 +334,9 @@ require('lazy').setup({
     end,
   },
 
-  -- both below use 'onedark' colorscheme name
-
-  -- {
-  --   'olimorris/onedarkpro.nvim',
-  --   init = function()
-  --     vim.cmd 'colorscheme onedark'
-  --   end,
-  -- },
   {
     'navarasu/onedark.nvim',
-    lazy = false,
-    init = function()
+    config = function()
       require('onedark').setup({
         style = 'warmer',
         colors = {
@@ -374,12 +356,7 @@ require('lazy').setup({
     end,
   },
 
-  {
-    'rebelot/kanagawa.nvim',
-    init = function()
-      -- vim.cmd 'colorscheme kanagawa'
-    end,
-  },
+  { 'rebelot/kanagawa.nvim' },
 
   {
     'NvChad/nvim-colorizer.lua',
@@ -413,12 +390,8 @@ require('lazy').setup({
         -- query = {},
         highlight = {
           'RainbowDelimiterYellow',
-          'RainbowDelimiterViolet',
           'RainbowDelimiterBlue',
-          -- 'RainbowDelimiterRed',
-          -- 'RainbowDelimiterCyan',
-          -- -- 'RainbowDelimiterGreen',
-          -- -- 'RainbowDelimiterOrange',
+          'RainbowDelimiterViolet',
         },
       })
     end,

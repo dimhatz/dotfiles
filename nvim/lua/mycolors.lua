@@ -38,17 +38,21 @@ local c = {
 
   blackest = '#000000',
   whitest = '#ffffff',
-  -- dark versions are desaturated to 46%
+  -- dark versions are darkened to 46%
   blue = '#50cdff', -- Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
+  -- blue_cyan_bright = '#1fe4fe', -- 84%, 0.1422, 209
+  blue_brightest_cyan = '#0ce4ff', -- oklch(84.23% 0.1446 209.98)
   blue_dark = '#006180', -- (fallb)
   violet = '#d7a5ff', -- Integers, Boolean, Constants, XML Attributes, Markup Link Url
+  violet_brightest_magenta = '#ffa7fb', -- 84.2%, 0.146, 328
   violet_dark = '#6e3e90',
   green = '#72d794', -- Classes, Markup Bold, Search Text Background
   green_dark = '#006a36',
   peach = '#ffa196', -- Strings, Inherited Class, Markup Code, Diff Inserted
   peach_dark = '#8d3a33',
-  peach_faded = '#dc8277', -- 70%
-  -- yellow = '#d9bc4a', -- orig
+  -- peach_less_dark = '#dc8277', -- 70%
+  -- yellow_saturated = '#d9bc4a', -- orig color at 80%
+  yellow_brightest = '#ffc707',
   yellow = '#dec97c', -- 0.1 + 83.5%
   yellow_dark = '#695700', -- (fallb)
 }
@@ -82,14 +86,24 @@ local function apply_colors()
   hi('LineNr', { fg = c.base02 })
   hi('Comment', { fg = c.base03 })
   hi('TSComment', { link = 'Comment' })
+  hi('MatchParen', { bg = c.base02, fg = c.whitest, bold = true }) -- bold standout reverse
 
-  hi('LspReferenceText', { bg = c.base00light })
-  hi('LspReferenceRead', { bg = c.base00light })
-  hi('LspReferenceWrite', { bg = c.base00light })
+  -- lsp
+  hi('LspReferenceText', { bg = c.base01 })
+  hi('LspReferenceRead', { link = 'LspReferenceText' })
+  hi('LspReferenceWrite', { link = 'LspReferenceText' })
 
-  -- barbar
-  hi('BufferDefaultCurrent', { bg = c.base01, fg = c.whitest })
-  vim.api.nvim_set_hl(0, 'BufferDefaultCurrent', { bg = '#000000', fg = '#ffffff' })
+  -- cmp
+  hi('CmpItemAbbr', { bg = c.base00bg })
+  hi('CmpItemAbbrMatch', { fg = c.peach })
+  hi('CmpItemAbbrMatchFuzzy', { fg = c.peach })
+
+  -- rainbow delimiters
+  hi('RainbowDelimiterYellow', { fg = c.yellow_brightest })
+  hi('RainbowDelimiterBlue', { fg = c.blue_brightest_cyan })
+  hi('RainbowDelimiterViolet', { fg = c.violet_brightest_magenta })
+
+  hi('TSTypeBuiltin', { link = 'TSType' })
 
   vim.g.colors_name = 'mycolors'
 end
