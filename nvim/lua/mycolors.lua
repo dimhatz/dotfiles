@@ -1,3 +1,13 @@
+-- NOTE: to see all the active colors:
+-- :enew
+-- (to enable colorizer, set ft:)
+-- :set ft=text
+-- (to capture all the output into register)
+-- :redir @z
+-- :silent hi
+-- "zp
+-- :redir END
+
 -- creates global highlight group, with namespace ns=0 (global)
 local function hi(name, opts)
   vim.api.nvim_set_hl(0, name, opts)

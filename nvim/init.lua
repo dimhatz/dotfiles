@@ -45,7 +45,7 @@ vim.opt.updatetime = 4000
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
-vim.opt.timeoutlen = 300
+vim.opt.timeoutlen = 500
 
 -- Configure how new splits should be opened
 vim.opt.splitright = true
@@ -139,7 +139,9 @@ remap('n', ':', ';')
 remap('n', '<C-s>', '<Cmd>write<CR>')
 remap('i', '<C-s>', '<Esc><Cmd>write<CR>')
 
+remap('n', 'dw', 'daw')
 -- do not copy text into registers when replacing it
+remap('n', 'cw', '"_ciw')
 remap('n', 'c', '"_c')
 remap('n', 'C', '"_C')
 remap('v', 'c', '"_c')
@@ -158,7 +160,8 @@ remap('n', 'k', 'gk')
 -- using barbar's commands instead of bprev / bnext, to make sure it stays in sync
 remap('n', '(', '<Cmd>BufferPrevious<CR>')
 remap('n', ')', '<Cmd>BufferNext<CR>')
-remap('n', '<C-c>', '<Cmd>bdelete<CR>') -- avoiding '<Cmd>BufferClose<CR>' as it does not remove help window when closing it
+-- remap('n', '<C-c>', '<Cmd>bdelete<CR>') -- when closing with bdelete, it also closes current window
+remap('n', '<C-c>', '<Cmd>BufferClose<CR>') -- preserves windows structure
 remap('n', '{', '<Cmd>BufferMovePrevious<CR>')
 remap('n', '}', '<Cmd>BufferMoveNext<CR>')
 remap('n', '<Leader>b', '<Cmd>BufferPick<CR>', { desc = 'Jump to buffer' })
@@ -211,9 +214,6 @@ remap('n', '<C-F10>', '<Cmd>set foldlevel=999<CR>', { desc = 'Unfold all' })
 -- now C-p and C-n autocomplete the beginning of the command and search.
 remap('c', '<C-p>', '<Up>', { desc = 'Autocomplete in command mode' })
 remap('c', '<C-n>', '<Down>', { desc = 'Autocomplete in command mode' })
-
-remap('n', 'cw', 'ciw')
-remap('n', 'dw', 'daw')
 
 -- <C-f> / # in visual search the selection, <Leader>f in normal/visual highlights word under cursor, but does not jump to it
 -- currently, nvim has a remap, but cases that have e.g. backslash are not handled properly,
@@ -377,7 +377,7 @@ require('lazy').setup({
   {
     'NvChad/nvim-colorizer.lua',
     opts = {
-      filetypes = { 'lua' },
+      filetypes = { 'lua', 'text' },
       user_default_options = {
         mode = 'virtualtext',
         virtualtext = '',
@@ -537,7 +537,32 @@ require('lazy').setup({
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     config = function() -- This is the function that runs, AFTER loading
-      require('which-key').setup()
+      require('which-key').setup({
+        plugins = {
+          marks = true, -- shows a list of your marks on ' and `
+          registers = true, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
+          -- the presets plugin, adds help for a bunch of default keybindings in Neovim
+          -- No actual key bindings are created
+          spelling = {
+            enabled = false, -- enabling this will show WhichKey when pressing z= to select spelling suggestions
+          },
+          presets = {
+            operators = false, -- adds help for operators like d, y, ...
+            motions = false, -- adds help for motions
+            text_objects = false, -- help for text objects triggered after entering an operator
+            windows = true, -- default bindings on <c-w>
+            nav = true, -- misc bindings to work with windows
+            z = false, -- we use z as "_d (bindings for folds, spelling and others prefixed with z)
+            g = true, -- bindings for prefixed with g
+          },
+        },
+        window = {
+          border = 'single',
+        },
+        triggers_blacklist = {
+          n = { 'd' },
+        },
+      })
 
       -- Document existing key chains
       require('which-key').register({
