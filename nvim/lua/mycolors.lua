@@ -56,7 +56,7 @@ local c = {
   green_less_dark = '#2c9758',
   peach = '#ffa196', -- Strings, Inherited Class, Markup Code, Diff Inserted
   peach_dark = '#8d3a33',
-  peach_less_dark = '#bb635a', -- 70%
+  peach_less_dark = '#bb635a',
   -- yellow_saturated = '#d9bc4a', -- orig color at 80%
   yellow_brightest = '#ffff00',
   -- yellow_brightest = '#ffc707',
@@ -101,7 +101,7 @@ local function apply_colors()
   hi('DiagnosticError', { fg = c.peach_less_dark })
   hi('DiagnosticWarn', { fg = c.yellow_less_dark })
   hi('DiagnosticHint', { fg = c.green_less_dark })
-  hi('DiagnosticInfo', { fg = c.violet_less_dark })
+  hi('DiagnosticInfo', { fg = c.blue_less_dark })
 
   hi('TSComment', { link = 'Comment' })
   hi('MatchParen', { bg = c.base02, fg = c.whitest, bold = true }) -- bold standout reverse
@@ -119,9 +119,9 @@ local function apply_colors()
   hi('CmpItemAbbrMatchFuzzy', { fg = c.peach })
 
   -- rainbow delimiters
-  hi('RainbowDelimiterYellow', { fg = c.yellow_brightest })
-  hi('RainbowDelimiterBlue', { fg = c.blue_brightest_cyan })
-  hi('RainbowDelimiterViolet', { fg = c.violet_brightest_magenta })
+  hi('RainbowDelimiterYellow', { fg = c.yellow_brightest, bold = true })
+  hi('RainbowDelimiterBlue', { fg = c.blue_brightest_cyan, bold = true })
+  hi('RainbowDelimiterViolet', { fg = c.violet_brightest_magenta, bold = true })
 
   -- links IblWhitespace -> Whitespace -> NonText
   -- not sure where IblWhitespace is shown

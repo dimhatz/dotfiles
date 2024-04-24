@@ -494,14 +494,7 @@ require('lazy').setup({
       remap('v', '<Leader>j', function()
         hop.hint_lines_skip_whitespace({ direction = hint.HintDirection.AFTER_CURSOR })
       end, { desc = 'Hop to lines down - [J] motion' })
-
-      -- vim.cmd.hi('HopNextKey gui=bold guifg=#77ff33') -- bright green
-      -- vim.cmd.hi('HopNextKey gui=bold guifg=#00ffff') -- bright cyan
-      -- vim.cmd.hi('HopNextKey gui=bold guifg=#ffff00') -- bright yellow
-      -- vim.cmd.hi('HopNextKey1 gui=bold guifg=#ffff00') -- bright yellow
-      -- vim.cmd.hi('HopNextKey2 gui=bold guifg=#ffff00') -- bright yellow
     end,
-    -- TODO: create highlight groups for better appearance, :h hop-highlights
   },
 
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
@@ -900,7 +893,27 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  {
+    -- TODO: test test
+    -- FIXME: test
+    -- HACK: test
+    -- WARNING: test
+    -- NOTE: test
+    'folke/todo-comments.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = {
+      signs = false,
+      highlight = {
+        keyword = 'wide_fg',
+        multiline = false, -- only act on a single line
+        after = '', -- do not add colors to the following text
+        before = '',
+      },
+      gui_style = {
+        fg = 'bold,italic',
+      },
+    },
+  },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
