@@ -88,6 +88,8 @@ vim.opt.shortmess:append('S')
 vim.o.termguicolors = true
 vim.o.background = 'dark'
 
+vim.o.sessionoptions = 'buffers,curdir,folds,tabpages,winpos,winsize,help,globals' -- globals needed by barbar to restore tab positions (with autocmds)
+
 -- TODO: always show gutter (signs)
 
 -- -- another snippet (not tested)
@@ -205,14 +207,14 @@ remap('n', 'M', 'zz', { desc = 'Center the screen on the cursor' })
 
 remap('n', '<C-z>', ':e!<CR>', { desc = 'Undo all changes since file last saved' })
 
-remap('n', '<C-F1>', '<Cmd>set foldlevel=1<CR>', { desc = 'Fold all text at level 1' })
-remap('n', '<C-F2>', '<Cmd>set foldlevel=2<CR>', { desc = 'Fold all text at level 2' })
-remap('n', '<C-F3>', '<Cmd>set foldlevel=3<CR>', { desc = 'Fold all text at level 3' })
-remap('n', '<C-F4>', '<Cmd>set foldlevel=4<CR>', { desc = 'Fold all text at level 4' })
-remap('n', '<C-F5>', '<Cmd>set foldlevel=5<CR>', { desc = 'Fold all text at level 5' })
-remap('n', '<C-F6>', '<Cmd>set foldlevel=6<CR>', { desc = 'Fold all text at level 6' })
-remap('n', '<C-F7>', '<Cmd>set foldlevel=7<CR>', { desc = 'Fold all text at level 7' })
-remap('n', '<C-F10>', '<Cmd>set foldlevel=999<CR>', { desc = 'Unfold all' })
+remap('n', '<C-F1>', '<Cmd>setlocal foldlevel=1<CR>', { desc = 'Fold all text at level 1' })
+remap('n', '<C-F2>', '<Cmd>setlocal foldlevel=2<CR>', { desc = 'Fold all text at level 2' })
+remap('n', '<C-F3>', '<Cmd>setlocal foldlevel=3<CR>', { desc = 'Fold all text at level 3' })
+remap('n', '<C-F4>', '<Cmd>setlocal foldlevel=4<CR>', { desc = 'Fold all text at level 4' })
+remap('n', '<C-F5>', '<Cmd>setlocal foldlevel=5<CR>', { desc = 'Fold all text at level 5' })
+remap('n', '<C-F6>', '<Cmd>setlocal foldlevel=6<CR>', { desc = 'Fold all text at level 6' })
+remap('n', '<C-F7>', '<Cmd>setlocal foldlevel=7<CR>', { desc = 'Fold all text at level 7' })
+remap('n', '<C-F10>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Unfold all' })
 
 -- now C-p and C-n autocomplete the beginning of the command and search.
 remap('c', '<C-p>', '<Up>', { desc = 'Autocomplete in command mode' })
@@ -248,7 +250,7 @@ vim.api.nvim_exec2(
 
 --  See `:help lua-guide-autocommands`
 vim.api.nvim_create_autocmd({ 'FileType' }, {
-  desc = 'gd inside helpfiles jumps to links',
+  desc = 'My: gd inside helpfiles jumps to links',
   group = vim.api.nvim_create_augroup('my-helpfile-jump', { clear = true }),
   pattern = { 'help' },
   callback = function(opts)
@@ -258,12 +260,47 @@ vim.api.nvim_create_autocmd({ 'FileType' }, {
 
 --  See `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight when yanking (copying) text',
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+  desc = 'My: Highlight when yanking (copying) text',
+  group = vim.api.nvim_create_augroup('my-highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank()
   end,
 })
+
+-- -- when restoring a session, correctly restore folds in inactive buffers
+-- -- related: see above: vim.o.sessionoptions, vim.o.viewoptions
+-- vim.api.nvim_create_autocmd('BufWinLeave', {
+--   pattern = '.',
+--   desc = 'My: Save window view to preserve folds in the buffer',
+--   group = vim.api.nvim_create_augroup('my-save-window-view', { clear = true }),
+--   callback = function()
+--     vim.print('saving view')
+--     -- for each buffer, a view file will be written in nvim-data/view
+--     vim.cmd.mkview()
+--   end,
+-- })
+--
+-- vim.api.nvim_create_autocmd('BufWinEnter', {
+--   pattern = '.',
+--   desc = 'My: Restore window view to preserve folds in the buffer',
+--   group = vim.api.nvim_create_augroup('my-restore-window-view', { clear = true }),
+--   callback = function()
+--     vim.print('restoring view')
+--     vim.cmd.loadview()
+--   end,
+-- })
+-- TODO: white this in lua
+vim.api.nvim_exec2(
+  [[
+  set viewoptions-=options
+  augroup my_remember_folds
+    autocmd!
+    autocmd BufWinLeave *.* if &ft !=# 'help' | mkview | endif
+    autocmd BufWinEnter *.* if &ft !=# 'help' | silent! loadview | endif
+  augroup END
+]],
+  {}
+)
 
 ------------------------------------------------------- PLUGINS --------------------------------------------------------------------------------
 
@@ -1045,7 +1082,7 @@ require('lazy').setup({
       })
 
       -- save buffer order before quitting (from barbar's documentation)
-      vim.opt.sessionoptions:append('globals')
+      -- vim.opt.sessionoptions:append('globals') -- already done at top of the file
       vim.api.nvim_create_autocmd({ 'User' }, {
         pattern = 'PersistedSavePre',
         desc = 'Save buffers position in barbar before closing session',
