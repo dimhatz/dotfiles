@@ -497,9 +497,9 @@ require('lazy').setup({
 
       -- vim.cmd.hi('HopNextKey gui=bold guifg=#77ff33') -- bright green
       -- vim.cmd.hi('HopNextKey gui=bold guifg=#00ffff') -- bright cyan
-      vim.cmd.hi('HopNextKey gui=bold guifg=#ffff00') -- bright yellow
-      vim.cmd.hi('HopNextKey1 gui=bold guifg=#ffff00') -- bright yellow
-      vim.cmd.hi('HopNextKey2 gui=bold guifg=#ffff00') -- bright yellow
+      -- vim.cmd.hi('HopNextKey gui=bold guifg=#ffff00') -- bright yellow
+      -- vim.cmd.hi('HopNextKey1 gui=bold guifg=#ffff00') -- bright yellow
+      -- vim.cmd.hi('HopNextKey2 gui=bold guifg=#ffff00') -- bright yellow
     end,
     -- TODO: create highlight groups for better appearance, :h hop-highlights
   },

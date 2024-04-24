@@ -38,23 +38,31 @@ local c = {
 
   blackest = '#000000',
   whitest = '#ffffff',
-  -- dark versions are darkened to 46%
+
+  -- 'dark' versions are darkened to 46%, 'less_dark' versions are darkened to 60%
   blue = '#50cdff', -- Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
   -- blue_cyan_bright = '#1fe4fe', -- 84%, 0.1422, 209
   blue_brightest_cyan = '#0ce4ff', -- oklch(84.23% 0.1446 209.98)
   blue_dark = '#006180', -- (fallb)
+  blue_less_dark = '#008db7', -- 60
+
   violet = '#d7a5ff', -- Integers, Boolean, Constants, XML Attributes, Markup Link Url
-  violet_brightest_magenta = '#ffa7fb', -- 84.2%, 0.146, 328
+  -- violet_brightest_magenta = '#ffa7fb', -- 84.2%, 0.146, 328
+  violet_brightest_magenta = '#ffa7ff', -- same as above, maxed blue channel (rbg)
   violet_dark = '#6e3e90',
+  violet_less_dark = '#9867bc',
   green = '#72d794', -- Classes, Markup Bold, Search Text Background
   green_dark = '#006a36',
+  green_less_dark = '#2c9758',
   peach = '#ffa196', -- Strings, Inherited Class, Markup Code, Diff Inserted
   peach_dark = '#8d3a33',
-  -- peach_less_dark = '#dc8277', -- 70%
+  peach_less_dark = '#bb635a', -- 70%
   -- yellow_saturated = '#d9bc4a', -- orig color at 80%
-  yellow_brightest = '#ffc707',
+  yellow_brightest = '#ffff00',
+  -- yellow_brightest = '#ffc707',
   yellow = '#dec97c', -- 0.1 + 83.5%
   yellow_dark = '#695700', -- (fallb)
+  yellow_less_dark = '#9f7b00',
 }
 
 local function apply_colors()
@@ -85,14 +93,25 @@ local function apply_colors()
   hi('CursorLineNr', { bg = c.blackest, fg = c.base03 })
   hi('LineNr', { fg = c.base02 })
   hi('Comment', { fg = c.base03 })
+
+  hi('Error', { fg = c.peach })
+  hi('ErrorMsg', { link = 'Error' })
+  hi('WarningMsg', { fg = c.yellow })
+
+  hi('DiagnosticError', { fg = c.peach_less_dark })
+  hi('DiagnosticWarn', { fg = c.yellow_less_dark })
+  hi('DiagnosticHint', { fg = c.green_less_dark })
+  hi('DiagnosticInfo', { fg = c.violet_less_dark })
+
   hi('TSComment', { link = 'Comment' })
   hi('MatchParen', { bg = c.base02, fg = c.whitest, bold = true }) -- bold standout reverse
   hi('Wildmenu', { link = 'Search' })
 
-  -- lsp
+  -- lsp / treesitter
   hi('LspReferenceText', { bg = c.base01 })
   hi('LspReferenceRead', { link = 'LspReferenceText' })
   hi('LspReferenceWrite', { link = 'LspReferenceText' })
+  hi('TSTypeBuiltin', { link = 'TSType' }) -- do not show global types as italics
 
   -- cmp
   hi('CmpItemAbbr', { bg = c.base00bg })
@@ -104,13 +123,16 @@ local function apply_colors()
   hi('RainbowDelimiterBlue', { fg = c.blue_brightest_cyan })
   hi('RainbowDelimiterViolet', { fg = c.violet_brightest_magenta })
 
-  hi('TSTypeBuiltin', { link = 'TSType' })
-
   -- links IblWhitespace -> Whitespace -> NonText
   -- not sure where IblWhitespace is shown
   -- hi('NonText', { fg = c.base01 })
   hi('IblScope', { fg = c.base02 })
   hi('IblIndent', { fg = c.base01 })
+
+  -- hop
+  hi('HopNextKey', { fg = c.yellow_brightest })
+  hi('HopNextKey1', { fg = c.yellow_brightest })
+  hi('HopNextKey2', { fg = c.yellow_brightest })
 
   vim.g.colors_name = 'mycolors'
 end
@@ -132,6 +154,10 @@ local function apply_colors_barbar()
   hi('BufferDefaultVisibleMod', { bg = c.base02, fg = c.yellow })
 
   hi('BufferTabpageFill', { bg = c.base01 })
+
+  hi('BufferDefaultCurrentTarget', { fg = c.yellow_brightest, bg = c.blackest })
+  hi('BufferDefaultInactiveTarget', { link = 'BufferDefaultCurrentTarget' })
+  hi('BufferDefaultVisibleTarget', { link = 'BufferDefaultCurrentTarget' })
 end
 
 local M = {}
