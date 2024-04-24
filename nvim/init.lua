@@ -144,6 +144,7 @@ remap('n', '<C-s>', '<Cmd>write<CR>')
 remap('i', '<C-s>', '<Esc><Cmd>write<CR>')
 
 remap('n', 'dw', 'daw')
+remap('n', 'yw', 'yiw')
 -- do not copy text into registers when replacing it
 remap('n', 'cw', '"_ciw')
 remap('n', 'c', '"_c')
@@ -276,15 +277,18 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
   --------------------------------------------- COLORS -------------------------------------------------------------------------------------
-  --
-  { -- prevent scrolling (centering the cursorline) when changing buffers
+
+  -- BranimirE/fix-auto-scroll.nvim, prevent scrolling (centering the cursorline) when changing buffers
+  {
+    'BranimirE/fix-auto-scroll.nvim',
     -- lua port of https://vim.fandom.com/wiki/Avoid_scrolling_when_switch_buffers
     -- TODO: find workaround for viewport being positioned in the center,:h getwininfo(), :h line(), :h winsaveview(), -> vim.fn
     -- post workaround: https://github.com/neovim/neovim/issues/9179
-    'BranimirE/fix-auto-scroll.nvim',
     config = true,
     event = 'VeryLazy',
   },
+
+  -- RRethy/base16-nvim
   {
     'RRethy/base16-nvim',
     lazy = false,
@@ -309,6 +313,7 @@ require('lazy').setup({
     end,
   },
 
+  -- rockyzhang24/arctic.nvim
   {
     'rockyzhang24/arctic.nvim',
     dependencies = { 'rktjmp/lush.nvim' },
@@ -324,6 +329,7 @@ require('lazy').setup({
 
   { 'folke/tokyonight.nvim' },
 
+  -- loctvl842/monokai-pro.nvim
   {
     'loctvl842/monokai-pro.nvim',
     config = function()
@@ -334,6 +340,7 @@ require('lazy').setup({
     end,
   },
 
+  -- navarasu/onedark.nvim
   {
     'navarasu/onedark.nvim',
     config = function()
@@ -358,6 +365,7 @@ require('lazy').setup({
 
   { 'rebelot/kanagawa.nvim' },
 
+  -- NvChad/nvim-colorizer.lua
   {
     'NvChad/nvim-colorizer.lua',
     opts = {
@@ -382,6 +390,7 @@ require('lazy').setup({
   -- autoclose parens, quotes etc
   { 'm4xshen/autoclose.nvim', opts = { options = { disable_command_mode = true } } },
 
+  -- HiPhish/rainbow-delimiters.nvim
   {
     'HiPhish/rainbow-delimiters.nvim',
     init = function()
@@ -397,6 +406,7 @@ require('lazy').setup({
     end,
   },
 
+  -- lukas-reineke/indent-blankline.nvim
   {
     'lukas-reineke/indent-blankline.nvim',
     main = 'ibl',
@@ -421,6 +431,7 @@ require('lazy').setup({
     end,
   },
 
+  -- olimorris/persisted.nvim
   {
     'olimorris/persisted.nvim',
     lazy = false, -- make sure the plugin is always loaded at startup
@@ -442,8 +453,10 @@ require('lazy').setup({
     },
   },
 
-  { -- alternative: mini.jump2d in case this does not work well, this one does not support visual
+  -- smoka7/hop.nvim
+  {
     'smoka7/hop.nvim',
+    -- alternative: mini.jump2d in case this does not work well, this one does not support visual
     version = '*',
     config = function()
       local hop = require('hop')
@@ -497,7 +510,8 @@ require('lazy').setup({
     end,
   },
 
-  { -- Adds git related signs to the gutter, as well as utilities for managing changes
+  -- lewis6991/gitsigns.nvim, Adds git related signs to the gutter, as well as utilities for managing changes
+  {
     'lewis6991/gitsigns.nvim',
     opts = {
       signs = {
@@ -531,7 +545,8 @@ require('lazy').setup({
     },
   },
 
-  { -- Useful plugin to show you pending keybinds.
+  -- folke/which-key.nvim, shows pending keybinds.
+  {
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     config = function() -- This is the function that runs, AFTER loading
@@ -574,7 +589,8 @@ require('lazy').setup({
     end,
   },
 
-  { -- Fuzzy Finder (files, lsp, etc)
+  -- nvim-telescope/telescope.nvim, Fuzzy Finder (files, lsp, etc)
+  {
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
     branch = '0.1.x',
@@ -681,9 +697,11 @@ require('lazy').setup({
     end,
   },
 
-  { -- typescript completion, calls nvim-lspconfig, spawns an additional tsserver instance for diagnostics
-    -- another one if this one does not work: yioneko/vtsls
+  -- pmizio/typescript-tools.nvim
+  {
     'pmizio/typescript-tools.nvim',
+    -- typescript completion, calls nvim-lspconfig, spawns an additional tsserver instance for diagnostics
+    -- another one if this one does not work: yioneko/vtsls
     enabled = true,
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
     opts = {
@@ -693,6 +711,7 @@ require('lazy').setup({
     },
   },
 
+  -- neovim/nvim-lspconfig
   {
     'neovim/nvim-lspconfig',
     enabled = true,
@@ -792,9 +811,11 @@ require('lazy').setup({
     end,
   },
 
-  { -- None-ls used for linting only (provides diagnostic linter messages AND code actions, unlike nvim-lint, which only does diagnostics)
-    -- spawns node instance for its server, but does not close it when nvim exits. At least reuses the same instance when another file is opened
+  -- nvimtools/none-ls.nvim, linting (not used as formatter)
+  {
     'nvimtools/none-ls.nvim',
+    -- None-ls used for linting only (provides diagnostic linter messages AND code actions, unlike nvim-lint, which only does diagnostics)
+    -- spawns node instance for its server, but does not close it when nvim exits. At least reuses the same instance when another file is opened
     dependencies = {
       'nvim-lua/plenary.nvim',
       'nvimtools/none-ls-extras.nvim', -- https://github.com/nvimtools/none-ls-extras.nvim/tree/main/lua/none-ls
@@ -811,7 +832,8 @@ require('lazy').setup({
     end,
   },
 
-  { -- Autoformat
+  -- stevearc/conform.nvim, formatter
+  {
     'stevearc/conform.nvim',
     lazy = false,
     opts = {
@@ -853,7 +875,8 @@ require('lazy').setup({
     },
   },
 
-  { -- Autocompletion
+  -- hrsh7th/nvim-cmp, Autocompletion
+  {
     'hrsh7th/nvim-cmp',
     dependencies = {
       { 'hrsh7th/cmp-buffer' }, -- apparently not needed, text suggestions show anyway, also messes up results, showing text on top
@@ -892,14 +915,14 @@ require('lazy').setup({
     end,
   },
 
-  -- Highlight todo, notes, etc in comments
+  -- folke/todo-comments.nvim, Highlight todo, notes, etc in comments
   {
+    'folke/todo-comments.nvim',
     -- TODO: test test
     -- FIXME: test
     -- HACK: test
-    -- WARNING: test
+    -- WARN: test
     -- NOTE: test
-    'folke/todo-comments.nvim',
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = {
       signs = false,
@@ -915,7 +938,8 @@ require('lazy').setup({
     },
   },
 
-  { -- Collection of various small independent plugins/modules
+  -- echasnovski/mini.nvim, Collection of various small independent plugins/modules
+  {
     'echasnovski/mini.nvim',
     lazy = false,
     priority = 1000,
@@ -988,7 +1012,8 @@ require('lazy').setup({
     end,
   },
 
-  { -- tab line
+  -- romgrk/barbar.nvim, tab line
+  {
     'romgrk/barbar.nvim',
     lazy = false,
     dependencies = {
@@ -1036,7 +1061,8 @@ require('lazy').setup({
     -- version = '^1.0.0', -- optional: only update when a new 1.x version is released
   },
 
-  { -- Highlight, edit, and navigate code
+  -- nvim-treesitter/nvim-treesitter
+  {
     'nvim-treesitter/nvim-treesitter',
     enabled = true,
     build = ':TSUpdate',
@@ -1089,6 +1115,8 @@ require('lazy').setup({
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
   },
+
+  -- nvim-treesitter/nvim-treesitter-context, sticks surrounding function's signature to the top line
   {
     'nvim-treesitter/nvim-treesitter-context',
     -- shows the surrounding function's signature (line) at the top line (if it was scrolled above), disabled for now until treesitter becomes fast
