@@ -357,9 +357,9 @@ require('lazy').setup({
     -- config instead of init, to execute after the plugin was loaded
     config = function()
       require('base16-colorscheme').with_config({
-        telescope = true,
-        indentblankline = true,
-        cmp = true,
+        telescope = false,
+        indentblankline = false,
+        cmp = false,
         notify = false,
         ts_rainbow = false,
         illuminate = false,
@@ -787,6 +787,29 @@ require('lazy').setup({
 
     config = function()
       local lspconfig = require('lspconfig')
+
+      -- taken from here: https://github.com/neovim/nvim-lspconfig/wiki/UI-Customization#borders
+      require('lspconfig.ui.windows').default_options.border = 'single' -- border around LspInfo window
+      -- local border = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' } -- from telescope help
+
+      local border = {
+        { '╭', 'FloatBorder' },
+        { '─', 'FloatBorder' },
+        { '╮', 'FloatBorder' },
+        { '│', 'FloatBorder' },
+        { '╯', 'FloatBorder' },
+        { '─', 'FloatBorder' },
+        { '╰', 'FloatBorder' },
+        { '│', 'FloatBorder' },
+      }
+
+      local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+      ---@diagnostic disable-next-line: duplicate-set-field
+      function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+        opts = opts or {}
+        opts.border = opts.border or border
+        return orig_util_open_floating_preview(contents, syntax, opts, ...)
+      end
 
       -------------------------- server configs -------------------------
       -- example to setup lua_ls and enable call snippets
