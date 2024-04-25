@@ -225,18 +225,18 @@ remap('c', '<C-n>', '<Down>', { desc = 'Autocomplete in command mode' })
 -- e.g. when selecting "\V" and pressing *, nvim will highlight the whole page
 vim.api.nvim_exec2(
   [[
-  function! g:MyVSetSearch(cmdtype)
-    let temp = @s
-    norm! gv"sy
-    let @/ = '\V' . substitute(escape(@s, a:cmdtype.'\'), '\n', '\\n', 'g')
-    let @s = temp
-  endfunction
+    function! g:MyVSetSearch(cmdtype)
+      let temp = @s
+      norm! gv"sy
+      let @/ = '\V' . substitute(escape(@s, a:cmdtype.'\'), '\n', '\\n', 'g')
+      let @s = temp
+    endfunction
 
-  xnoremap <C-f> :<C-u>call g:MyVSetSearch('/')<CR>/<C-R>=@/<CR><CR>
-  xnoremap # :<C-u>call g:MyVSetSearch('?')<CR>?<C-R>=@/<CR><CR>
-  nnoremap <Leader>f viw:<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
-  xnoremap <Leader>f :<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
-]],
+    xnoremap <C-f> :<C-u>call g:MyVSetSearch('/')<CR>/<C-R>=@/<CR><CR>
+    xnoremap # :<C-u>call g:MyVSetSearch('?')<CR>?<C-R>=@/<CR><CR>
+    nnoremap <Leader>f viw:<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
+    xnoremap <Leader>f :<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
+  ]],
   {}
 )
 
@@ -292,13 +292,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- TODO: white this in lua
 vim.api.nvim_exec2(
   [[
-  set viewoptions-=options
-  augroup my_remember_folds
-    autocmd!
-    autocmd BufWinLeave *.* if &ft !=# 'help' | mkview | endif
-    autocmd BufWinEnter *.* if &ft !=# 'help' | silent! loadview | endif
-  augroup END
-]],
+    set viewoptions-=options
+    augroup my_remember_folds
+      autocmd!
+      autocmd BufWinLeave *.* if &ft !=# 'help' | mkview | endif
+      autocmd BufWinEnter *.* if &ft !=# 'help' | silent! loadview | endif
+    augroup END
+  ]],
   {}
 )
 
