@@ -145,19 +145,41 @@ remap('n', ':', ';')
 remap('n', '<C-s>', '<Cmd>write<CR>')
 remap('i', '<C-s>', '<Esc><Cmd>write<CR>')
 
-remap('n', 'dw', 'daw')
-remap('n', 'yw', 'yiw')
--- do not copy text into registers when replacing it
-remap('n', 'cw', '"_ciw')
-remap('n', 'c', '"_c')
+-- To avoid operator pending delay, and the possibility to actually perform e.g. dw,
+-- we perform operator remapping -> onore <expr>w v:operator == 'd' ? 'aw' : '<esc>'
+-- NOTE: adding remap option { nowait = true } does not help, it is not what its puropose is.
+-- NOTE2: this is not triggered by `v`
+-- NOTE3: our remap of z becomes instant too (and e.g. `ze` triggers this func correctly)
+local function my_w()
+  -- dw -> daw, cw -> ciw, yw -> yiw
+  if vim.v.operator == 'd' then
+    return 'aw'
+  elseif vim.v.operator == 'c' or vim.v.operator == 'y' then
+    return 'iw'
+  elseif vim.v.operator == 'g@' then -- custom operator, like with surround
+    return 'w' -- return itself unchanged, do not return `iw`, since other plugins may be using custom operators too
+  end
+  vim.print(vim.v.operator)
+  return '<Esc>'
+end
+
+local function my_z()
+  -- dz -> dd, to make zz -> "_dd
+  if vim.v.operator == 'd' then
+    return 'd'
+  end
+  return '<Esc>'
+end
+
+remap('o', 'w', my_w, { expr = true })
+remap('o', 'z', my_z, { expr = true })
+
 remap('n', 'C', '"_C')
 remap('v', 'c', '"_c')
 remap('n', 'x', '"_x', { desc = 'delete char into black hole' })
 remap('n', 'z', '"_d', { desc = 'delete into black hole' })
 remap('n', 'Z', '"_D', { desc = 'delete into black hole' })
 remap('n', 'X', '<cmd>echo "use Z to delete into black hole till end of line"<CR>')
-remap('n', 'zz', '"_dd', { desc = 'delete line into black hole' })
-remap('n', 'zw', '"_daw') -- be consistent with dw -> daw
 remap('v', 'x', '"_d')
 remap('v', 'z', '"_d')
 
@@ -240,12 +262,21 @@ vim.api.nvim_exec2(
   {}
 )
 
+-- TODO: check these out, adjust setup
 -- -- Diagnostic keymps
 -- remap('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 -- remap('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 -- remap('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 -- remap('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- vim.diagnostic.config({
+--   virtual_text = false,
+--   float = {
+--     header = false,
+--     border = 'rounded',
+--     focusable = true,
+--   },
+-- })
 ------------------------------------------------------- AUTOCOMMANDS --------------------------------------------------------------------------
 
 --  See `:help lua-guide-autocommands`
@@ -1017,7 +1048,7 @@ require('lazy').setup({
         before = '',
       },
       gui_style = {
-        fg = 'bold,italic',
+        fg = 'bold',
       },
     },
   },
@@ -1051,8 +1082,6 @@ require('lazy').setup({
       })
 
       remap('n', 'sw', 'siw', { remap = true }) -- be consistent with cw -> ciw
-      remap('n', 'ds', 'sd', { remap = true })
-      remap('n', 'cs', 'sc', { remap = true })
 
       -- TODO: replace with something fully customizable, e.g. feline (that also has tabline), rebelot/heirline.nvim (even
       -- more customizable? manually set update triggers), tamton-aquib/staline.nvim also seems good
