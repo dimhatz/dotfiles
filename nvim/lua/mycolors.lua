@@ -134,6 +134,31 @@ local function apply_colors()
   hi('HopNextKey1', { fg = c.yellow_brightest })
   hi('HopNextKey2', { fg = c.yellow_brightest })
 
+  -- telescope
+  hi('TelescopeMatching', { fg = c.yellow_brightest })
+  hi('TelescopeSelection', { bg = c.base02, fg = c.blackest, bold = true })
+
+  -- gitsigns
+  hi('DiffAdd', { fg = c.green })
+  hi('DiffChange', { fg = c.blue })
+  hi('DiffDelete', { fg = c.peach })
+  hi('DiffText', { fg = c.yellow })
+
+  hi('GitGutterAdd', { link = 'DiffAdd' })
+  hi('GitGutterChange', { link = 'DiffChange' })
+  hi('GitGutterDelete', { link = 'DiffDelete' })
+  hi('GitGutterChangeDelete', { link = 'DiffChange' })
+
+  hi('DiffAdded', { link = 'DiffAdd' })
+  hi('DiffFile', { link = 'DiffText' })
+  hi('DiffNewFile', { link = 'DiffAdd' })
+  hi('DiffLine', { fg = c.violet })
+  hi('DiffRemoved', { link = 'DiffAdd' })
+
+  hi('GitSignsAddInline', { bg = c.green_dark, fg = c.whitest })
+  hi('GitSignsDeleteInline', { bg = c.peach_dark, fg = c.whitest })
+  hi('GitSignsChangeInline', { bg = c.blue_dark, fg = c.whitest })
+
   vim.g.colors_name = 'mycolors'
 end
 
