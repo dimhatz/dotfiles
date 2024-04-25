@@ -490,9 +490,9 @@ require('lazy').setup({
         -- strategy = {},
         -- query = {},
         highlight = {
-          'RainbowDelimiterYellow',
           'RainbowDelimiterBlue',
           'RainbowDelimiterViolet',
+          'RainbowDelimiterYellow',
         },
       })
     end,
