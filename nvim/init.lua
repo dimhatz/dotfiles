@@ -191,6 +191,7 @@ remap('n', '(', '<Cmd>BufferPrevious<CR>')
 remap('n', ')', '<Cmd>BufferNext<CR>')
 -- remap('n', '<C-c>', '<Cmd>bdelete<CR>') -- when closing with bdelete, it also closes current window
 remap('n', '<C-c>', '<Cmd>BufferClose<CR>') -- preserves windows structure
+remap('n', '<C-d>', '<C-w>c', { desc = 'Close (Delete) window' }) -- preserves windows structure
 remap('n', '{', '<Cmd>BufferMovePrevious<CR>')
 remap('n', '}', '<Cmd>BufferMoveNext<CR>')
 remap('n', '<Leader>b', '<Cmd>BufferPick<CR>', { desc = 'Jump to buffer' })
@@ -218,8 +219,9 @@ remap('v', 'p', 'p:let @v=@+|let @+=@0<CR>', { desc = 'Pasting in visual stores 
 
 remap('n', '<C-h>', '<C-e>', { desc = 'Scroll down 1 line' })
 remap('n', '<C-l>', '<C-y>', { desc = 'Scroll up 1 line' })
-remap('i', '<C-j>', '<C-o><C-e>', { desc = 'Scroll down 1 line' })
-remap('i', '<C-k>', '<C-o><C-y>', { desc = 'Scroll up 1 line' })
+-- remap('i', '<C-j>', '<C-o><C-e>', { desc = 'Scroll down 1 line' })
+-- remap('i', '<C-k>', '<C-o><C-y>', { desc = 'Scroll up 1 line' })
+
 remap('n', '<C-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' })
 remap('n', '<C-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
 -- remap('n', '<A-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' }) -- same as above, but with Alt, alacritty re-exposes (in flashes) the mouse if its inside terminal
@@ -239,8 +241,8 @@ remap('n', '<C-F7>', '<Cmd>setlocal foldlevel=7<CR>', { desc = 'Fold all text at
 remap('n', '<C-F10>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Unfold all' })
 
 -- now C-p and C-n autocomplete the beginning of the command and search.
-remap('c', '<C-p>', '<Up>', { desc = 'Autocomplete in command mode' })
-remap('c', '<C-n>', '<Down>', { desc = 'Autocomplete in command mode' })
+remap('c', '<C-k>', '<Up>', { desc = 'Autocomplete in command mode' })
+remap('c', '<C-j>', '<Down>', { desc = 'Autocomplete in command mode' })
 
 -- <C-f> / # in visual search the selection, <Leader>f in normal/visual highlights word under cursor, but does not jump to it
 -- currently, nvim has a remap, but cases that have e.g. backslash are not handled properly,
@@ -718,16 +720,22 @@ require('lazy').setup({
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+      local telescope = require('telescope')
+      local actions = require('telescope.actions')
+      local my_opts = { nowait = true, silent = false }
       require('telescope').setup({
-        -- You can put your default mappings / updates / etc. in here
-        --  All the info you're looking for is in `:help telescope.setup()`
-        --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
-        -- pickers = {}
+        defaults = {
+          mappings = {
+            i = {
+              ['<c-j>'] = { actions.move_selection_next, type = 'action', opts = my_opts },
+              ['<c-k>'] = { actions.move_selection_previous, type = 'action', opts = my_opts },
+              ['<c-n>'] = false, -- disable to get used to c-j / c-k everywhere
+              ['<c-p>'] = false,
+              -- ['<c-n>'] = { actions.cycle_history_next, type = 'action', opts = my_opts },
+              -- ['<c-p>'] = { actions.cycle_history_prev, type = 'action', opts = my_opts },
+            },
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -739,9 +747,9 @@ require('lazy').setup({
       })
 
       -- Enable Telescope extensions if they are installed
-      pcall(require('telescope').load_extension, 'fzf')
-      pcall(require('telescope').load_extension, 'ui-select')
-      pcall(require('telescope').load_extension('persisted'))
+      pcall(telescope.load_extension, 'fzf')
+      pcall(telescope.load_extension, 'ui-select')
+      pcall(telescope.load_extension('persisted'))
 
       -- See `:help telescope.builtin`
       local builtin = require('telescope.builtin')
@@ -987,6 +995,7 @@ require('lazy').setup({
   {
     'hrsh7th/nvim-cmp',
     dependencies = {
+      'm4xshen/autoclose.nvim', -- prevent their <c-h> mapping from overriding ours
       { 'hrsh7th/cmp-buffer' }, -- apparently not needed, text suggestions show anyway, also messes up results, showing text on top
       { 'hrsh7th/cmp-path' },
       { 'hrsh7th/cmp-nvim-lsp' },
@@ -1007,19 +1016,76 @@ require('lazy').setup({
           documentation = cmp.config.window.bordered(),
         },
         mapping = cmp.mapping.preset.insert({
-          ['<C-l>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-h>'] = cmp.mapping.scroll_docs(4),
-          ['<C-d>'] = cmp.mapping.complete(),
-          ['<C-e>'] = cmp.mapping.abort(),
+          ['<C-n>'] = cmp.mapping.complete(), -- mapped here, not below, since the plugin locks the mapping and will not allow remap
           ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
         }),
         sources = cmp.config.sources({
-          { name = 'nvim_lsp' },
+          { name = 'nvim_lsp' }, -- higher priority
+        }, {
+          { name = 'snippy' },
           { name = 'buffer' },
           { name = 'path' },
-          { name = 'snippy' },
         }),
+
+        ---@diagnostic disable-next-line: missing-fields
+        sorting = {
+          -- from https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/after/plugin/completion.lua
+          comparators = {
+            cmp.config.compare.offset,
+            cmp.config.compare.exact,
+            cmp.config.compare.score,
+
+            function(entry1, entry2)
+              local _, entry1_under = entry1.completion_item.label:find('^_+')
+              local _, entry2_under = entry2.completion_item.label:find('^_+')
+              entry1_under = entry1_under or 0
+              entry2_under = entry2_under or 0
+              if entry1_under > entry2_under then
+                return false
+              elseif entry1_under < entry2_under then
+                return true
+              end
+            end,
+
+            cmp.config.compare.kind,
+            cmp.config.compare.sort_text,
+            cmp.config.compare.length,
+            cmp.config.compare.order,
+          },
+        },
       })
+
+      remap('i', '<C-j>', function()
+        -- vim.fn.pumvisible() could also work here
+        if cmp.visible() then
+          cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+        else
+          cmp.complete()
+        end
+      end, { desc = 'Autocomplete next' })
+
+      remap('i', '<C-k>', function()
+        -- vim.fn.pumvisible() could also work here
+        if cmp.visible() then
+          cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+        else
+          cmp.complete()
+        end
+      end, { desc = 'Autocomplete prev' })
+
+      -- remap('i', '<C-n>', cmp.complete, { desc = 'Autocomplete force' }) -- does not work here
+
+      remap('i', '<C-l>', function()
+        if cmp.visible_docs() then
+          cmp.scroll_docs(-4)
+        end
+      end, { desc = 'Autocomplete scroll docs up' })
+
+      remap('i', '<C-h>', function()
+        if cmp.visible_docs() then
+          cmp.scroll_docs(4)
+        end
+      end, { desc = 'Autocomplete scroll docs down' })
     end,
   },
 
