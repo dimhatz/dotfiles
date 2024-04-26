@@ -137,6 +137,7 @@ local function apply_colors()
   -- telescope
   hi('TelescopeMatching', { fg = c.yellow_brightest })
   hi('TelescopeSelection', { bg = c.base02, fg = c.blackest, bold = true })
+  hi('TelescopePreviewLine', { bg = c.blackest, bold = true })
 
   -- gitsigns
   hi('DiffAdd', { fg = c.green })
