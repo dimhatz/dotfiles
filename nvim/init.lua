@@ -298,27 +298,20 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
-vim.api.nvim_create_autocmd({ 'FileType' }, {
-  desc = 'My: my helpfiles split only vertically',
+-- Not using FileType, since it's assigned once (and trigger command), but not the following times when
+-- the help buffer becomes hidden and revealed again. BufWinEnter is NOT triggered when nvim starts, which is exactly what we want in case we manually resized help window. NOTE: it will still resize the help window when opening another help file.
+vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
+  desc = 'My: helpfiles split only vertically',
   group = vim.api.nvim_create_augroup('my-helpfile-splits-vertically', { clear = true }),
-  pattern = { 'help' },
-  callback = function()
-    -- If a help buffer is already open and another help buffer is about to be opened, return.
-    -- This means the existing help buffer will be replaced with the new help.
-    -- If we dont do the above check, then current help buffer will still be replaced,
-    -- but if we have resized our help window, then wincmd('L') will cause the split to be re-adjusted
-    -- to an equal split.
-    for _, win_num in ipairs(vim.api.nvim_list_wins()) do
-      if win_num then
-        local buf_num = vim.api.nvim_win_get_buf(win_num)
-        local ft = vim.api.nvim_buf_get_option(buf_num, 'filetype')
-        if ft == 'help' then
-          -- vim.print('got help')
-          return
-        end
-      end
+  callback = function(arg)
+    -- vim.print(arg)
+    local buf_num = arg.buf
+    local ft = vim.api.nvim_buf_get_option(buf_num, 'filetype')
+    -- vim.print(ft)
+    if ft == 'help' then
+      vim.cmd.wincmd('L')
+      vim.cmd('vertical resize 90')
     end
-    vim.cmd.wincmd('L')
   end,
 })
 
