@@ -9,6 +9,8 @@ if vim.g.neovide then
   -- TODO: set options for subpixel rendering
 end
 
+vim.opt.syntax = 'off' -- treesitter
+
 vim.o.guifont = 'Source Code Pro:h10.5'
 
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -217,7 +219,17 @@ remap('i', '<C-v>', '<C-r>+', { desc = '<C-v> is paste in insert' })
 remap('n', '<Leader>v', '`[V`]', { desc = 'Reselect pasted text linewise' })
 
 remap('n', 'm', 'z', { desc = 'm is the new z (folds)' })
-remap('n', 'mm', 'za', { desc = 'toggle fold (za)' })
+
+-- Just mapping to za is not enough, since the inner folds remain closed when toggling to open.
+-- This happens because we use indent folding and when forcing foldlevel, the inner folds become closed too.
+remap('n', 'mm', function()
+  local line_nr = vim.fn.line('.')
+  local is_fold_open = vim.fn.foldclosed(line_nr) == -1
+  if is_fold_open then
+    return 'zc' -- not zC, which closes everything possible at cursor
+  end
+  return 'zO'
+end, { expr = true, desc = 'toggle fold recursively' })
 
 -- remap('v', 'p', 'p:let @+=@0<CR>', { desc = 'Pasting in visual does not override the + register', silent = true }) -- original from my vimrc
 remap('v', 'p', 'p:let @v=@+|let @+=@0<CR>', { desc = 'Pasting in visual stores the overwritten text in "v register', silent = true })
