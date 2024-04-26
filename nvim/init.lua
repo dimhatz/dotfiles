@@ -133,7 +133,13 @@ local onEsc = function()
   closeHoveringWindows() -- close the lsp hover windows
 end
 
-local remap = vim.keymap.set
+-- mark all my remappings with (My) to be able to tell which mappings are mine, which are by plugins
+local function remap(mode, lhs, rhs, opts)
+  local final_opts = opts or {}
+  local desc = final_opts.desc or ''
+  final_opts.desc = desc .. ' (My)'
+  vim.keymap.set(mode, lhs, rhs, final_opts)
+end
 
 remap('n', '<C-q>', '<Cmd>qa<CR>')
 -- remap('n', '<Esc>', '<Cmd>nohlsearch<CR>')
@@ -860,7 +866,7 @@ require('lazy').setup({
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
           local map = function(keys, func, desc)
-            vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+            remap('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
           -- Jump to the definition of the word under your cursor.
