@@ -182,6 +182,7 @@ end
 remap('o', 'w', my_w, { expr = true })
 remap('o', 'z', my_z, { expr = true })
 
+remap('n', 'c', '"_c')
 remap('n', 'C', '"_C')
 remap('v', 'c', '"_c')
 remap('n', 'x', '"_x', { desc = 'delete char into black hole' })
@@ -1021,7 +1022,56 @@ require('lazy').setup({
     },
     config = function()
       local cmp = require('cmp')
+
+      local cmp_kinds = {
+        Text = ' ',
+        Method = ' ', --  ---  --- 
+        Function = 'ƒ ',
+        Constructor = ' ', -- 
+        Field = ' ',
+        Variable = ' ',
+        Class = ' ',
+        Interface = ' ',
+        Module = ' ', --  --  --  --
+        Property = ' ',
+        Unit = ' ',
+        Value = ' ',
+        Enum = ' ',
+        Keyword = ' ',
+        Snippet = ' ',
+        Color = ' ',
+        File = ' ',
+        Reference = ' ',
+        Folder = ' ',
+        EnumMember = ' ',
+        Constant = ' ',
+        Struct = ' ',
+        Event = ' ',
+        Operator = ' ',
+        TypeParameter = ' ',
+      }
+
+      local cmp_sources = {
+        buffer = '[B]',
+        nvim_lsp = '[L]',
+        nvim_lua = '[Lua]',
+      }
+
       cmp.setup({
+        -- weird setting: more useful presentation when cursor is near bottom, but c-j now selects upwards!
+        -- view = {
+        --   entries = { name = 'custom', selection_order = 'near_cursor' },
+        -- },
+
+        ---@diagnostic disable-next-line: missing-fields
+        formatting = {
+          format = function(entry, vim_item)
+            vim_item.kind = cmp_kinds[vim_item.kind] or vim_item.kind
+            local name = entry.source.name
+            vim_item.menu = cmp_sources[name] or name
+            return vim_item
+          end,
+        },
         snippet = {
           -- REQUIRED - you must specify a snippet engine
           expand = function(args)

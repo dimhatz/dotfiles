@@ -112,11 +112,21 @@ local function apply_colors()
   hi('LspReferenceRead', { link = 'LspReferenceText' })
   hi('LspReferenceWrite', { link = 'LspReferenceText' })
   hi('TSTypeBuiltin', { link = 'TSType' }) -- do not show global types as italics
+  hi('TSPunctDelimiter', { fg = c.yellow })
 
   -- cmp
   hi('CmpItemAbbr', { bg = c.base00bg })
-  hi('CmpItemAbbrMatch', { fg = c.peach })
-  hi('CmpItemAbbrMatchFuzzy', { fg = c.peach })
+  hi('CmpItemAbbrMatch', { fg = c.blue })
+  hi('CmpItemAbbrMatchFuzzy', { link = 'CmpItemAbbrMatch' })
+  hi('CmpItemAbbrDeprecated', { strikethrough = true })
+  hi('CmpItemKindVariable', { fg = c.blue })
+  hi('CmpItemKindInterface', { link = 'CmpItemKindVariable' })
+  hi('CmpItemKindText', { link = 'CmpItemKindVariable' })
+  hi('CmpItemKindFunction', { fg = c.yellow })
+  hi('CmpItemKindMethod', { link = 'CmpItemKindFunction' })
+  hi('CmpItemKindKeyword', {})
+  hi('CmpItemKindProperty', { link = 'CmpItemKindKeyword' })
+  hi('CmpItemKindUnit', { link = 'CmpItemKindKeyword' })
 
   -- rainbow delimiters
   hi('RainbowDelimiterYellow', { fg = c.yellow_brightest, bold = true })
@@ -137,7 +147,9 @@ local function apply_colors()
   -- telescope
   hi('TelescopeMatching', { fg = c.yellow_brightest })
   hi('TelescopeSelection', { bg = c.base02, fg = c.blackest, bold = true })
-  hi('TelescopePreviewLine', { bg = c.blackest, bold = true })
+  -- hi('TelescopePreviewLine', { bg = c.base02, bold = true })
+  hi('TelescopePreviewLine', { reverse = true })
+  -- hi('TelescopePreviewLine', { standout = true })
 
   -- gitsigns
   hi('DiffAdd', { fg = c.green })
