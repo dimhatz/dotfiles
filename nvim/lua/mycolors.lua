@@ -98,10 +98,18 @@ local function apply_colors()
   hi('ErrorMsg', { link = 'Error' })
   hi('WarningMsg', { fg = c.yellow })
 
+  -- diagnostics
   hi('DiagnosticError', { fg = c.peach_less_dark })
   hi('DiagnosticWarn', { fg = c.yellow_less_dark })
   hi('DiagnosticHint', { fg = c.green_less_dark })
   hi('DiagnosticInfo', { fg = c.blue_less_dark })
+  hi('DiagnosticOk', { fg = c.green })
+
+  hi('DiagnosticUnderlineError', { link = 'DiagnosticError' })
+  hi('DiagnosticUnderlineWarn', { link = 'DiagnosticWarn' })
+  hi('DiagnosticUnderlineInfo', { link = 'DiagnosticInfo' })
+  hi('DiagnosticUnderlineHint', { link = 'DiagnosticHint' })
+  hi('DiagnosticUnderlineOk', { link = 'DiagnosticOk' })
 
   hi('TSComment', { link = 'Comment' })
   hi('MatchParen', { bg = c.base02, fg = c.whitest, bold = true }) -- bold standout reverse
