@@ -75,7 +75,8 @@ vim.opt.scrolloff = 10
 vim.opt.wildmode = 'list:longest,full'
 
 -- do not open scratch buffer
-vim.opt.completeopt = 'menu,menuone,noselect' -- as suggested by cmp plugin, removing noselect does not seem to make a difference
+-- vim.opt.completeopt = 'menuone,noselect' -- suggested by cmp plugin
+vim.opt.completeopt = 'menu,menuone,noselect' -- removing noselect does not seem to make a difference
 
 vim.opt.foldmethod = 'indent'
 vim.opt.foldlevel = 999
@@ -778,6 +779,7 @@ require('lazy').setup({
       remap('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       remap('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       remap('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      -- also for pure lsp diagnostic keybindings, e.g. open diag popup etc :h lspconfig-keybindings
       remap('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       remap('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       remap('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
@@ -828,6 +830,7 @@ require('lazy').setup({
     'neovim/nvim-lspconfig',
     enabled = true,
     dependencies = {
+      -- 'hrsh7th/nvim-cmp',
       -- versioning of lsp servers here: run once
       -- MasonInstall lua-language-server@3.7.4 stylua@v0.20.0 eslint_d@13.1.2
       -- versions can be found here: https://github.com/mason-org/mason-registry/blob/main/packages/
@@ -843,28 +846,28 @@ require('lazy').setup({
       require('lspconfig.ui.windows').default_options.border = 'single' -- border around LspInfo window
       -- local border = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' } -- from telescope help
 
-      local border = {
-        { '╭', 'FloatBorder' },
-        { '─', 'FloatBorder' },
-        { '╮', 'FloatBorder' },
-        { '│', 'FloatBorder' },
-        { '╯', 'FloatBorder' },
-        { '─', 'FloatBorder' },
-        { '╰', 'FloatBorder' },
-        { '│', 'FloatBorder' },
-      }
+      -- this is 'rounded'
+      -- local border = { { '╭', 'FloatBorder' }, { '─', 'FloatBorder' }, { '╮', 'FloatBorder' }, { '│', 'FloatBorder' }, { '╯', 'FloatBorder' }, { '─', 'FloatBorder' }, { '╰', 'FloatBorder' }, { '│', 'FloatBorder' },
+      -- }
 
+      -- taken from here: https://github.com/neovim/nvim-lspconfig/wiki/UI-Customization#borders
+      -- override floating preview popup's borders, if not provided
+      -- tested to work with open diagnosic popup, likely to affect
       local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
       ---@diagnostic disable-next-line: duplicate-set-field
       function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
         opts = opts or {}
-        opts.border = opts.border or border
+        -- for options see :h nvim_open_win()
+        opts.border = opts.border or 'rounded'
         return orig_util_open_floating_preview(contents, syntax, opts, ...)
       end
 
       -------------------------- server configs -------------------------
+      -- local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
       -- example to setup lua_ls and enable call snippets
       lspconfig.lua_ls.setup({
+        -- capabilities = capabilities,
         settings = {
           Lua = {
             completion = {
@@ -1012,10 +1015,16 @@ require('lazy').setup({
 
   -- hrsh7th/nvim-cmp, Autocompletion
   {
+    -- disabling, problem: when completion is non-automatic, type:
+    -- vim.api<c-j>.nbufs --> there will be no nvim_list_bufs() result
+    -- press <c-n> again to re-trigger completion -> now there is!
+    -- even more strange: when usng autocompletion, and doing the above sequence,
+    -- when typing <c-n> the results are less than before!
+    enabled = true,
     'hrsh7th/nvim-cmp',
     dependencies = {
-      'm4xshen/autoclose.nvim', -- prevent their <c-h> mapping from overriding ours
-      { 'hrsh7th/cmp-buffer' }, -- apparently not needed, text suggestions show anyway, also messes up results, showing text on top
+      'm4xshen/autoclose.nvim', -- prevent their <c-h>, <CR> mapping from overriding ours
+      { 'hrsh7th/cmp-buffer' }, -- apparently not needed, text suggestions show anyway
       { 'hrsh7th/cmp-path' },
       { 'hrsh7th/cmp-nvim-lsp' },
       { 'dcampos/cmp-snippy', dependencies = { 'dcampos/nvim-snippy' } },
@@ -1078,6 +1087,11 @@ require('lazy').setup({
             require('snippy').expand_snippet(args.body) -- For `snippy` users.
           end,
         },
+
+        -- to be used with { autocomplete = true }, but has the same behavior as { autocomplete = false },
+        -- enabled = function()
+        --   return cmp.visible() and true or false
+        -- end,
         completion = { autocomplete = false },
         window = {
           completion = cmp.config.window.bordered(),
@@ -1086,9 +1100,10 @@ require('lazy').setup({
         mapping = cmp.mapping.preset.insert({
           ['<C-n>'] = cmp.mapping.complete(), -- mapped here, not below, since the plugin locks the mapping and will not allow remap
           ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+          ['<C-m>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items. <c-m> in terminal and gui vim is the same as <CR>
         }),
         sources = cmp.config.sources({
-          { name = 'nvim_lsp' }, -- higher priority
+          { name = 'nvim_lsp' }, -- higher priority, when there is lsp, other sources will be ignored
         }, {
           { name = 'snippy' },
           { name = 'buffer' },
@@ -1096,31 +1111,31 @@ require('lazy').setup({
         }),
 
         ---@diagnostic disable-next-line: missing-fields
-        sorting = {
-          -- from https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/after/plugin/completion.lua
-          comparators = {
-            cmp.config.compare.offset,
-            cmp.config.compare.exact,
-            cmp.config.compare.score,
-
-            function(entry1, entry2)
-              local _, entry1_under = entry1.completion_item.label:find('^_+')
-              local _, entry2_under = entry2.completion_item.label:find('^_+')
-              entry1_under = entry1_under or 0
-              entry2_under = entry2_under or 0
-              if entry1_under > entry2_under then
-                return false
-              elseif entry1_under < entry2_under then
-                return true
-              end
-            end,
-
-            cmp.config.compare.kind,
-            cmp.config.compare.sort_text,
-            cmp.config.compare.length,
-            cmp.config.compare.order,
-          },
-        },
+        -- sorting = {
+        --   -- from https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/after/plugin/completion.lua
+        --   comparators = {
+        --     cmp.config.compare.offset,
+        --     cmp.config.compare.exact,
+        --     cmp.config.compare.score,
+        --
+        --     function(entry1, entry2)
+        --       local _, entry1_under = entry1.completion_item.label:find('^_+')
+        --       local _, entry2_under = entry2.completion_item.label:find('^_+')
+        --       entry1_under = entry1_under or 0
+        --       entry2_under = entry2_under or 0
+        --       if entry1_under > entry2_under then
+        --         return false
+        --       elseif entry1_under < entry2_under then
+        --         return true
+        --       end
+        --     end,
+        --
+        --     cmp.config.compare.kind,
+        --     cmp.config.compare.sort_text,
+        --     cmp.config.compare.length,
+        --     cmp.config.compare.order,
+        --   },
+        -- },
       })
 
       remap('i', '<C-j>', function()
@@ -1154,6 +1169,8 @@ require('lazy').setup({
           cmp.scroll_docs(4)
         end
       end, { desc = 'Autocomplete scroll docs down' })
+
+      remap('i', '<C-n>', cmp.complete, { desc = 'Cmp manually mapped' })
     end,
   },
 
