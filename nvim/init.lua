@@ -732,6 +732,8 @@ require('lazy').setup({
             i = {
               ['<c-j>'] = { actions.move_selection_next, type = 'action', opts = my_opts },
               ['<c-k>'] = { actions.move_selection_previous, type = 'action', opts = my_opts },
+              ['<c-h>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
+              ['<c-l>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
               ['<c-n>'] = false, -- disable to get used to c-j / c-k everywhere
               ['<c-p>'] = false,
               -- ['<c-n>'] = { actions.cycle_history_next, type = 'action', opts = my_opts },
