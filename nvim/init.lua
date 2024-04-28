@@ -264,6 +264,9 @@ remap('n', '<C-F10>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Unfold all' }
 remap('c', '<C-k>', '<Up>', { desc = 'Autocomplete in command mode' })
 remap('c', '<C-j>', '<Down>', { desc = 'Autocomplete in command mode' })
 
+remap('n', 'gt', '<Nop>', { desc = 'Not used, which-key still does not pick it up, or the following remaps' })
+remap('n', 'gT', '<Nop>', { desc = 'Not used, which-key still does not pick it up, or the following remaps' })
+
 -- <C-f> / # in visual search the selection, <Leader>f in normal/visual highlights word under cursor, but does not jump to it
 -- currently, nvim has a remap, but cases that have e.g. backslash are not handled properly,
 -- e.g. when selecting "\V" and pressing *, nvim will highlight the whole page
@@ -686,11 +689,7 @@ require('lazy').setup({
 
       -- Document existing key chains
       require('which-key').register({
-        ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-        ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-        ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
         ['<leader>g'] = { name = '[G]itsigns', _ = 'which_key_ignore' },
       })
     end,
@@ -714,32 +713,16 @@ require('lazy').setup({
         end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
+      -- frecency caused e517 error when restoring session with persisted, likely messes up persisted / barbar autcmd interaction
+      -- also, my 'my-helpfile-splits-vertically' autocmd stopped working when opening help with telescope
+      -- seeing the github issues regarding files on windows, this is likely happening only on windows
+      --
+      -- { 'nvim-telescope/telescope-frecency.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { 'nvim-tree/nvim-web-devicons' },
     },
     config = function()
-      -- Telescope is a fuzzy finder that comes with a lot of different things that
-      -- it can fuzzy find! It's more than just a "file finder", it can search
-      -- many different aspects of Neovim, your workspace, LSP, and more!
-      --
-      -- The easiest way to use Telescope, is to start by doing something like:
-      --  :Telescope help_tags
-      --
-      -- After running this command, a window will open up and you're able to
-      -- type in the prompt window. You'll see a list of `help_tags` options and
-      -- a corresponding preview of the help.
-      --
-      -- Two important keymaps to use while in Telescope are:
-      --  - Insert mode: <c-/>
-      --  - Normal mode: ?
-      --
-      -- This opens a window that shows you all of the keymaps for the current
-      -- Telescope picker. This is really useful to discover what Telescope can
-      -- do as well as how to actually do it!
-
-      -- [[ Configure Telescope ]]
-      -- See `:help telescope` and `:help telescope.setup()`
       local telescope = require('telescope')
       local actions = require('telescope.actions')
       local my_opts = { nowait = true, silent = false }
@@ -769,31 +752,38 @@ require('lazy').setup({
       -- Enable Telescope extensions if they are installed
       pcall(telescope.load_extension, 'fzf')
       pcall(telescope.load_extension, 'ui-select')
-      pcall(telescope.load_extension('persisted'))
+      pcall(telescope.load_extension, 'persisted')
+      -- pcall(telescope.load_extension, 'frecency')
 
       -- See `:help telescope.builtin`
       local builtin = require('telescope.builtin')
+      remap('n', '<leader>gl', builtin.git_commits, { desc = 'Git Log (Tele)' })
+      remap('n', '<leader>gf', builtin.git_bcommits, { desc = 'Git Log of File (Tele)' })
       remap('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       remap('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      remap('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      remap('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      remap('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      remap('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      remap('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect choose Telescope builtin' })
+      remap('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep in cwd' })
+      remap('n', '<leader>sa', builtin.autocommands, { desc = '[S]earch [A]utocmds' })
+      remap('n', '<leader>sc', builtin.highlights, { desc = '[S]earch [C]olors' })
+
+      remap('n', '<leader>sf', function()
+        builtin.find_files({ hidden = true })
+      end, { desc = '[S]earch [F]iles (respecting .gitignore, shows hidden)' })
+
       -- also for pure lsp diagnostic keybindings, e.g. open diag popup etc :h lspconfig-keybindings
       remap('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      remap('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      remap('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       remap('n', '<leader>sp', '<Cmd>Telescope persisted<CR>', { desc = '[S]earch [P]ersisted session' })
-      -- remap('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
-      -- Slightly advanced example of overriding default behavior and theme
-      remap('n', '<leader>/', function()
-        -- You can pass additional configuration to Telescope to change the theme, layout, etc.
-        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown({
-          winblend = 10,
-          previewer = false,
-        }))
-      end, { desc = '[/] Fuzzily search in current buffer' })
+      remap('n', '<leader>/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
+
+      -- -- Slightly advanced example of overriding default behavior and theme
+      -- remap('n', '<leader>/', function()
+      --   -- You can pass additional configuration to Telescope to change the theme, layout, etc.
+      --   builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown({
+      --     winblend = 10,
+      --     previewer = false,
+      --   }))
+      -- end, { desc = '[/] Fuzzily search in current buffer' })
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
@@ -808,6 +798,17 @@ require('lazy').setup({
       remap('n', '<leader>sn', function()
         builtin.find_files({ cwd = vim.fn.stdpath('config') })
       end, { desc = '[S]earch [N]eovim files' })
+
+      remap('n', '<C-p>', function()
+        builtin.find_files(require('telescope.themes').get_dropdown({
+          previewer = false,
+        }))
+      end, { desc = 'Pick a file to open' })
+
+      -- remap('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+      -- remap('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      -- remap('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+      -- remap('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
     end,
   },
 
@@ -894,20 +895,10 @@ require('lazy').setup({
 
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
-          --  To jump back, press <C-t>.
           map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-
-          -- Find references for the word under your cursor.
           map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-
-          -- -- Jump to the implementation of the word under your cursor.
-          -- --  Useful when your language has ways of declaring types without an actual implementation.
-          -- map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-          --
-          -- Jump to the type of the word under your cursor.
-          --  Useful when you're not sure what type a variable is and you want to see
-          --  the definition of its *type*, not where it was *defined*.
-          map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          map('gt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
           --
           -- -- Fuzzy find all the symbols in your current document.
           -- --  Symbols are things like variables, functions, types, etc.
@@ -924,15 +915,11 @@ require('lazy').setup({
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+          map('<leader>c', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
-
-          -- WARN: This is not Goto Definition, this is Goto Declaration.
-          --  For example, in C this would take you to the header.
-          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
