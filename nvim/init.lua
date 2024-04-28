@@ -1015,13 +1015,13 @@ require('lazy').setup({
 
   -- hrsh7th/nvim-cmp, Autocompletion
   {
-    -- disabling, problem: when completion is non-automatic, type:
+    'hrsh7th/nvim-cmp',
+    -- problem: when completion is non-automatic, type:
     -- vim.api<c-j>.nbufs --> there will be no nvim_list_bufs() result
     -- press <c-n> again to re-trigger completion -> now there is!
     -- even more strange: when usng autocompletion, and doing the above sequence,
     -- when typing <c-n> the results are less than before!
     enabled = true,
-    'hrsh7th/nvim-cmp',
     dependencies = {
       'm4xshen/autoclose.nvim', -- prevent their <c-h>, <CR> mapping from overriding ours
       { 'hrsh7th/cmp-buffer' }, -- apparently not needed, text suggestions show anyway
@@ -1110,7 +1110,7 @@ require('lazy').setup({
           { name = 'path' },
         }),
 
-        ---@diagnostic disable-next-line: missing-fields
+        -- ---@diagnostic disable-next-line: missing-fields
         -- sorting = {
         --   -- from https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/after/plugin/completion.lua
         --   comparators = {
