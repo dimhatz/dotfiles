@@ -817,12 +817,18 @@ require('lazy').setup({
     -- typescript completion, calls nvim-lspconfig, spawns an additional tsserver instance for diagnostics
     -- another one if this one does not work: yioneko/vtsls
     enabled = true,
-    dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
-    opts = {
-      -- settings = {
-      --   separate_diagnostic_server = true,
-      -- }
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'neovim/nvim-lspconfig',
+      -- 'hrsh7th/cmp-nvim-lsp',
     },
+    config = function()
+      -- adding capabilites does not seems to make a difference
+      -- local capabilities = require('cmp_nvim_lsp').default_capabilities()
+      require('typescript-tools').setup({
+        -- capabilities = capabilities,
+      })
+    end,
   },
 
   -- neovim/nvim-lspconfig
@@ -831,6 +837,7 @@ require('lazy').setup({
     enabled = true,
     dependencies = {
       -- 'hrsh7th/nvim-cmp',
+      'hrsh7th/cmp-nvim-lsp',
       -- versioning of lsp servers here: run once
       -- MasonInstall lua-language-server@3.7.4 stylua@v0.20.0 eslint_d@13.1.2
       -- versions can be found here: https://github.com/mason-org/mason-registry/blob/main/packages/
@@ -863,11 +870,11 @@ require('lazy').setup({
       end
 
       -------------------------- server configs -------------------------
-      -- local capabilities = require('cmp_nvim_lsp').default_capabilities()
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
       -- example to setup lua_ls and enable call snippets
       lspconfig.lua_ls.setup({
-        -- capabilities = capabilities,
+        capabilities = capabilities, -- snippets seem to be sent to lsp client even without capabilities
         settings = {
           Lua = {
             completion = {
