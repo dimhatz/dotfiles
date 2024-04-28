@@ -59,7 +59,7 @@ local c = {
   peach_less_dark = '#bb635a',
   -- yellow_saturated = '#d9bc4a', -- orig color at 80%
   yellow_brightest = '#eaea00',
-  -- yellow_brightest = '#ffff00',
+  -- yellow_brightest_max = '#ffff00',
   -- yellow_brightest = '#ffc707',
   yellow = '#dec97c', -- 0.1 + 83.5%
   yellow_dark = '#695700', -- (fallb)
@@ -121,7 +121,7 @@ local function apply_colors()
   hi('LspReferenceRead', { link = 'LspReferenceText' })
   hi('LspReferenceWrite', { link = 'LspReferenceText' })
   hi('TSTypeBuiltin', { link = 'TSType' }) -- do not show global types as italics
-  hi('TSPunctDelimiter', { fg = c.yellow })
+  hi('TSPunctDelimiter', { fg = c.yellow_brightest })
 
   -- cmp
   hi('CmpItemAbbr', { bg = c.base00bg })
