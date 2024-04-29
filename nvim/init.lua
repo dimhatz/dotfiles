@@ -498,7 +498,7 @@ require('lazy').setup({
   { 'numToStr/Comment.nvim', opts = {} },
 
   -- autoclose parens, quotes etc
-  { 'm4xshen/autoclose.nvim', opts = { options = { disable_command_mode = true } } },
+  { 'm4xshen/autoclose.nvim', lazy = false, opts = { options = { disable_command_mode = true } } },
 
   -- HiPhish/rainbow-delimiters.nvim
   {
@@ -931,11 +931,13 @@ require('lazy').setup({
           local client = vim.lsp.get_client_by_id(event.data.client_id)
           if client and client.server_capabilities.documentHighlightProvider then
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+              group = vim.api.nvim_create_augroup('my-lsp-highlight', { clear = true }),
               buffer = event.buf,
               callback = vim.lsp.buf.document_highlight,
             })
 
             vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+              group = vim.api.nvim_create_augroup('my-lsp-clear-highlight', { clear = true }),
               buffer = event.buf,
               callback = vim.lsp.buf.clear_references,
             })
@@ -1020,7 +1022,7 @@ require('lazy').setup({
     enabled = true,
     dependencies = {
       'm4xshen/autoclose.nvim', -- prevent their <c-h>, <CR> mapping from overriding ours
-      { 'hrsh7th/cmp-buffer' }, -- apparently not needed, text suggestions show anyway
+      -- { 'hrsh7th/cmp-buffer' }, -- apparently not needed, text suggestions show anyway, there was a report of this being slow
       { 'hrsh7th/cmp-path' },
       { 'hrsh7th/cmp-nvim-lsp' },
       { 'dcampos/cmp-snippy', dependencies = { 'dcampos/nvim-snippy' } },
@@ -1062,6 +1064,20 @@ require('lazy').setup({
         nvim_lua = '[Lua]',
       }
 
+      local my_cmp_disabled = true
+
+      -- -- to be triggered by cmp, but cmp almost always fails to trigger it
+      -- -- leving it here to document how to detect an active selection
+      -- local function my_cmp_cr(fallback)
+      --   local compl_info = vim.fn.complete_info()
+      --   vim.print('Item selected index: ', compl_info.selected)
+      --   if vim.fn.pumvisible() and compl_info.selected ~= -1 then
+      --     cmp.confirm()
+      --   else
+      --     fallback() -- will trigger autoclose.nvim's special indentation adjustment
+      --   end
+      -- end
+
       cmp.setup({
         -- weird setting: more useful presentation when cursor is near bottom, but c-j now selects upwards!
         -- view = {
@@ -1084,20 +1100,25 @@ require('lazy').setup({
           end,
         },
 
-        -- to be used with { autocomplete = true }, but has the same behavior as { autocomplete = false },
-        -- enabled = function()
-        --   return cmp.visible() and true or false
-        -- end,
-        completion = { autocomplete = false },
+        -- hack to conditionally trigger autocompletion and keep it going until <Esc>
+        enabled = function()
+          -- copied from cmp/config/default
+          -- local default_enable = require('cmp.config.default')().enabled
+          local disabled = my_cmp_disabled
+          disabled = disabled or (vim.api.nvim_buf_get_option(0, 'buftype') == 'prompt')
+          disabled = disabled or (vim.fn.reg_recording() ~= '')
+          disabled = disabled or (vim.fn.reg_executing() ~= '')
+          return not disabled
+        end,
+        completion = { autocomplete = { 'TextChanged' } },
+        -- completion = { autocomplete = { 'InsertEnter', 'TextChanged' } },
         window = {
           completion = cmp.config.window.bordered(),
           documentation = cmp.config.window.bordered(),
         },
-        mapping = cmp.mapping.preset.insert({
-          ['<C-n>'] = cmp.mapping.complete(), -- mapped here, not below, since the plugin locks the mapping and will not allow remap
-          ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-          ['<C-m>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items. <c-m> in terminal and gui vim is the same as <CR>
-        }),
+        mapping = {
+          -- does not always get triggered by cmp.nvim -> prefer manual mappings below
+        },
         sources = cmp.config.sources({
           { name = 'nvim_lsp' }, -- higher priority, when there is lsp, other sources will be ignored
         }, {
@@ -1139,6 +1160,8 @@ require('lazy').setup({
         if cmp.visible() then
           cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
         else
+          -- vim.print('enabling')
+          my_cmp_disabled = false
           cmp.complete()
         end
       end, { desc = 'Autocomplete next' })
@@ -1148,11 +1171,11 @@ require('lazy').setup({
         if cmp.visible() then
           cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
         else
+          -- vim.print('enabling')
+          my_cmp_disabled = false
           cmp.complete()
         end
       end, { desc = 'Autocomplete prev' })
-
-      -- remap('i', '<C-n>', cmp.complete, { desc = 'Autocomplete force' }) -- does not work here
 
       remap('i', '<C-l>', function()
         if cmp.visible_docs() then
@@ -1166,7 +1189,38 @@ require('lazy').setup({
         end
       end, { desc = 'Autocomplete scroll docs down' })
 
-      remap('i', '<C-n>', cmp.complete, { desc = 'Cmp manually mapped' })
+      remap('i', '<C-n>', function()
+        if not cmp.visible() then
+          vim.print('Popup not visible, type <C-j> to complete')
+          return
+        end
+        vim.print('Forcing completion')
+        cmp.complete()
+      end, { desc = 'Cmp manually mapped' })
+
+      remap('i', '<Esc>', function()
+        -- vim.print('disabling')
+        my_cmp_disabled = true
+        -- vim.fn.feedkeys('\\<Esc>', 'n') -- does not work
+        vim.cmd([[call feedkeys("\<Esc>", 'n')]])
+      end, { desc = 'Completion special escape' })
+
+      -- -- not remapping <CR> to select completion choice, to avoid losing autoclose indentation adjustment
+      -- remap('i', '<CR>', function()
+      --   if cmp.visible() then
+      --     cmp.confirm({ select = true })
+      --   else
+      --     vim.cmd([[call feedkeys("\<CR>", 'n')]])
+      --   end
+      -- end, { desc = 'Select completion when popup is open' })
+      -- -- c-m is c-r in vim
+      -- remap('i', '<C-m>', function()
+      --   if cmp.visible() then
+      --     cmp.confirm({ select = true })
+      --   else
+      --     vim.cmd([[call feedkeys("\<CR>", 'n')]])
+      --   end
+      -- end, { desc = 'Select completion when popup is open' })
     end,
   },
 
