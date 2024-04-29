@@ -1,6 +1,5 @@
 -- for binaries on windows:
 -- choco install -y ripgrep wget fd unzip gzip mingw make
--- TODO: map <c-m> to <c-p>
 -- NOTE: use :lua vim.diagnostic.setqflist() to all diagnostics into a quickfix list
 if vim.g.neovide then
   vim.g.neovide_refresh_rate = 60
@@ -246,7 +245,7 @@ remap('n', '<C-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' }
 remap('n', '<C-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
 -- remap('n', '<A-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' }) -- same as above, but with Alt, alacritty re-exposes (in flashes) the mouse if its inside terminal
 -- remap('n', '<A-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
-remap('n', '<C-m>', 'M', { desc = 'Put cursor in the center of the screen' })
+remap('n', '<C-m>', 'M', { desc = 'Put cursor in the center of the screen, <CR> triggers <C-m> it too' })
 remap('n', 'M', 'zz', { desc = 'Center the screen on the cursor' })
 
 remap('n', '<C-z>', ':e!<CR>', { desc = 'Undo all changes since file last saved' })
@@ -497,8 +496,8 @@ require('lazy').setup({
   -- gc to comment
   { 'numToStr/Comment.nvim', opts = {} },
 
-  -- autoclose parens, quotes etc
-  { 'm4xshen/autoclose.nvim', lazy = false, opts = { options = { disable_command_mode = true } } },
+  -- autoclose parens, quotes etc - does not expose its <CR> function that we need in our custom completion mapping, disabling
+  { 'm4xshen/autoclose.nvim', enabled = false, lazy = false, opts = { options = { disable_command_mode = true } } },
 
   -- HiPhish/rainbow-delimiters.nvim
   {
@@ -840,7 +839,7 @@ require('lazy').setup({
     enabled = true,
     dependencies = {
       -- 'hrsh7th/nvim-cmp',
-      'hrsh7th/cmp-nvim-lsp',
+      -- 'hrsh7th/cmp-nvim-lsp',
       -- versioning of lsp servers here: run once
       -- MasonInstall lua-language-server@3.7.4 stylua@v0.20.0 eslint_d@13.1.2
       -- versions can be found here: https://github.com/mason-org/mason-registry/blob/main/packages/
@@ -1021,8 +1020,7 @@ require('lazy').setup({
     -- when typing <c-n> the results are less than before!
     enabled = true,
     dependencies = {
-      'm4xshen/autoclose.nvim', -- prevent their <c-h>, <CR> mapping from overriding ours
-      -- { 'hrsh7th/cmp-buffer' }, -- apparently not needed, text suggestions show anyway, there was a report of this being slow
+      'echasnovski/mini.nvim', -- make sure mini.pairs is loaded, do not use autoclose.nvim (does not expose its <CR> function)
       { 'hrsh7th/cmp-path' },
       { 'hrsh7th/cmp-nvim-lsp' },
       { 'dcampos/cmp-snippy', dependencies = { 'dcampos/nvim-snippy' } },
@@ -1075,7 +1073,7 @@ require('lazy').setup({
       -- local function my_cmp_cr(fallback)
       --   local compl_info = vim.fn.complete_info()
       --   vim.print('Item selected index: ', compl_info.selected)
-      --   if vim.fn.pumvisible() and compl_info.selected ~= -1 then
+      --   if vim.fn.pumvisible() ~= 0 and compl_info.selected ~= -1 then
       --     cmp.confirm()
       --   else
       --     fallback() -- will trigger autoclose.nvim's special indentation adjustment
@@ -1160,7 +1158,6 @@ require('lazy').setup({
       })
 
       remap('i', '<C-j>', function()
-        -- vim.fn.pumvisible() could also work here
         if cmp.visible() then
           cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
         else
@@ -1171,7 +1168,6 @@ require('lazy').setup({
       end, { desc = 'Autocomplete next' })
 
       remap('i', '<C-k>', function()
-        -- vim.fn.pumvisible() could also work here
         if cmp.visible() then
           cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
         else
@@ -1202,29 +1198,33 @@ require('lazy').setup({
         cmp.complete()
       end, { desc = 'Cmp manually mapped' })
 
-      remap('i', '<Esc>', function()
+      -- also in select mode, when choosing snippet-like entries
+      remap({ 'i', 's' }, '<Esc>', function()
         -- vim.print('disabling')
         my_cmp_disabled = true
         -- vim.fn.feedkeys('\\<Esc>', 'n') -- does not work
         vim.cmd([[call feedkeys("\<Esc>", 'n')]])
-      end, { desc = 'Completion special escape' })
+      end, { desc = '<Esc> also disables autocompletion (hack)' })
 
-      -- -- not remapping <CR> to select completion choice, to avoid losing autoclose indentation adjustment
-      -- remap('i', '<CR>', function()
-      --   if cmp.visible() then
-      --     cmp.confirm({ select = true })
-      --   else
-      --     vim.cmd([[call feedkeys("\<CR>", 'n')]])
-      --   end
-      -- end, { desc = 'Select completion when popup is open' })
-      -- -- c-m is c-r in vim
-      -- remap('i', '<C-m>', function()
-      --   if cmp.visible() then
-      --     cmp.confirm({ select = true })
-      --   else
-      --     vim.cmd([[call feedkeys("\<CR>", 'n')]])
-      --   end
-      -- end, { desc = 'Select completion when popup is open' })
+      -- mapping <CR> to complete when appropriate, otherwise use mini.pairs' cr() to adjust indentation
+      local function my_cr()
+        local cr_termcodes = require('mini.pairs').cr()
+        vim.api.nvim_feedkeys(cr_termcodes, 'n', false)
+      end
+      remap('i', '<CR>', function()
+        -- vim.fn.pumvisible() ~= 0, also vim.fn.complete_info() fails here, (maybe cmp uses custom
+        -- window?) -> using cmp's visible()
+        if cmp.visible() then
+          if cmp.get_active_entry() then
+            cmp.confirm({ select = false, behavior = cmp.ConfirmBehavior.Insert })
+          else
+            cmp.close()
+            my_cr()
+          end
+        else
+          my_cr()
+        end
+      end, { desc = 'Select completion when popup is open' })
     end,
   },
 
@@ -1320,6 +1320,8 @@ require('lazy').setup({
       statusline.section_location = function()
         return '%-3v'
       end
+
+      require('mini.pairs').setup({})
     end,
   },
 
