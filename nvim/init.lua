@@ -1064,6 +1064,10 @@ require('lazy').setup({
         nvim_lua = '[Lua]',
       }
 
+      -- NOTE: to be able to test that our hack is working, type:
+      -- vim.api.<c-j>n.b.u.f.s (without ., written like this to not save full string inside text)
+      -- then `n.v.i.m._.l.i.s.t._.b.u.f.s` should be available in the completion list
+      -- if it is missing and only shown with forcing completion (<c-n>), then the hack does not work
       local my_cmp_disabled = true
 
       -- -- to be triggered by cmp, but cmp almost always fails to trigger it
