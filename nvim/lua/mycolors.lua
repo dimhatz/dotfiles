@@ -87,7 +87,8 @@ local function apply_colors()
     base0F = c.violet, -- Deprecated, Opening/Closing Embedded Language Tags
   })
 
-  hi('Visual', { bg = c.base03, fg = c.blackest })
+  -- bg=base2 to be able to tell where the cursor is in visual inside comments
+  hi('Visual', { bg = c.base02, fg = c.blackest, bold = true })
   hi('Search', { bg = c.peach_dark, fg = c.whitest })
   hi('IncSearch', { bg = c.peach_dark, fg = c.whitest })
   hi('CursorLine', { bg = c.blackest })
