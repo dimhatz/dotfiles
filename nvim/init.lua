@@ -135,6 +135,14 @@ local onEsc = function()
   closeHoveringWindows() -- close the lsp hover windows
 end
 
+-- returns a wrapper function that calls callback with the provided params
+local function make_wrapper_fn(callback, ...)
+  local args = { ... }
+  return function()
+    callback(unpack(args))
+  end
+end
+
 -- mark all my remappings with (My) to be able to tell which mappings are mine, which are by plugins
 local function remap(mode, lhs, rhs, opts)
   local final_opts = opts or {}
@@ -738,6 +746,15 @@ require('lazy').setup({
               -- ['<c-n>'] = { actions.cycle_history_next, type = 'action', opts = my_opts },
               -- ['<c-p>'] = { actions.cycle_history_prev, type = 'action', opts = my_opts },
             },
+            n = {
+              ['<c-j>'] = { actions.move_selection_next, type = 'action', opts = my_opts },
+              ['<c-k>'] = { actions.move_selection_previous, type = 'action', opts = my_opts },
+              ['<c-h>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
+              ['<c-l>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
+            },
+          },
+          layout_config = {
+            scroll_speed = 1, -- scroll by 1 line at a time, not half page
           },
         },
         extensions = {
@@ -758,8 +775,9 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require('telescope.builtin')
-      remap('n', '<leader>gl', builtin.git_commits, { desc = 'Git Log (Tele)' })
-      remap('n', '<leader>gf', builtin.git_bcommits, { desc = 'Git Log of File (Tele)' })
+      -- do not use these, they checkout the selected commit when pressing <CR>, putting git in detached head mode
+      -- remap('n', '<leader>gl', builtin.git_commits, { desc = 'Git Log (Tele)' })
+      -- remap('n', '<leader>gf', builtin.git_bcommits, { desc = 'Git Log of File (Tele)' })
       remap('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       remap('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       remap('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect choose Telescope builtin' })
@@ -772,7 +790,7 @@ require('lazy').setup({
       end, { desc = '[S]earch [F]iles (respecting .gitignore, shows hidden)' })
 
       -- also for pure lsp diagnostic keybindings, e.g. open diag popup etc :h lspconfig-keybindings
-      remap('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+      remap('n', '<leader>d', make_wrapper_fn(builtin.diagnostics, { initial_mode = 'normal' }), { desc = 'Search [D]iagnostics' })
       remap('n', '<leader>sp', '<Cmd>Telescope persisted<CR>', { desc = '[S]earch [P]ersisted session' })
 
       remap('n', '<leader>/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
@@ -896,10 +914,11 @@ require('lazy').setup({
 
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
-          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-          map('gt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
+          local t_builtin = require('telescope.builtin')
+          map('gd', make_wrapper_fn(t_builtin.lsp_definitions, { initial_mode = 'normal' }), '[G]oto [D]efinition')
+          map('gr', make_wrapper_fn(t_builtin.lsp_references, { initial_mode = 'normal' }), '[G]oto [R]eferences')
+          map('gD', make_wrapper_fn(vim.lsp.buf.declaration, { initial_mode = 'normal' }), '[G]oto [D]eclaration')
+          map('gt', make_wrapper_fn(t_builtin.lsp_type_definitions, { initial_mode = 'normal' }), '[G]oto [T]ype Definition')
           --
           -- -- Fuzzy find all the symbols in your current document.
           -- --  Symbols are things like variables, functions, types, etc.
