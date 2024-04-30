@@ -182,6 +182,8 @@ local function apply_colors()
   hi('GitSignsDeleteInline', { bg = c.peach_dark, fg = c.whitest })
   hi('GitSignsChangeInline', { bg = c.blue_dark, fg = c.whitest })
 
+  hi('MiniMapNormal', { blend = 100 })
+
   vim.g.colors_name = 'mycolors'
 end
 
@@ -209,6 +211,7 @@ local function apply_colors_barbar()
 end
 
 local M = {}
+M.hi = hi
 M.colors = c
 M.apply_colors = apply_colors
 M.apply_colors_barbar = apply_colors_barbar

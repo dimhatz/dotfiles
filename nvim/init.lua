@@ -132,6 +132,8 @@ end
 
 local onEsc = function()
   vim.cmd('nohlsearch')
+  -- vim.api.nvim_exec2(':noh', {}) -- does not trigger mini.nvim's scrollbar highlight removal
+  vim.api.nvim_exec2('set nohlsearch', {}) -- triggers correctly
   closeHoveringWindows() -- close the lsp hover windows
 end
 
@@ -151,8 +153,10 @@ local function remap(mode, lhs, rhs, opts)
   vim.keymap.set(mode, lhs, rhs, final_opts)
 end
 
+remap('n', 'n', '<Cmd>set hlsearch<CR>n') -- trigger mini.nvim's scrollbar highlight
+remap('n', 'N', '<Cmd>set hlsearch<CR>N')
+
 remap('n', '<C-q>', '<Cmd>qa<CR>')
--- remap('n', '<Esc>', '<Cmd>nohlsearch<CR>')
 remap('n', '<Esc>', onEsc)
 
 remap('n', ';', ':')
@@ -326,7 +330,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'My: Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('my-highlight-yank', { clear = true }),
   callback = function()
-    vim.highlight.on_yank()
+    vim.highlight.on_yank({ timeout = 300 })
   end,
 })
 
@@ -935,7 +939,7 @@ require('lazy').setup({
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map('<leader>c', vim.lsp.buf.code_action, '[C]ode [A]ction')
+          map('<leader>c', make_wrapper_fn(vim.lsp.buf.code_action, { initial_mode = 'normal' }), '[C]ode [A]ction')
 
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
@@ -1340,7 +1344,49 @@ require('lazy').setup({
         return '%-3v'
       end
 
+      -- autoclose brackets
       require('mini.pairs').setup({})
+
+      local mini_map = require('mini.map')
+      mini_map.setup({
+        symbols = {
+          -- left aligned (from indent-blankline's help) -- ▏-- ▎ -- ▍ -- ▌ --  ▋ --
+          scroll_line = '',
+          scroll_view = '▋',
+        },
+        window = {
+          width = 3,
+          winblend = 0,
+          show_integration_count = true,
+        },
+        integrations = {
+          mini_map.gen_integration.builtin_search({ search = 'MyMiniMapSearch' }),
+          -- map.gen_integration.diff(),
+          mini_map.gen_integration.diagnostic({
+            error = 'DiagnosticFloatingError',
+            warn = 'DiagnosticFloatingWarn',
+            info = 'DiagnosticFloatingInfo',
+            hint = 'DiagnosticFloatingHint',
+          }),
+        },
+      })
+      -- local f = 1 -- for testing
+      -- x = 3 -- for testing
+      ---@diagnostic disable-next-line: duplicate-set-field
+      mini_map.encode_strings = function(strings)
+        -- return dummy table of empty strings, of equal length as the argument
+        local res = {}
+        local empty = '▐' -- ▐ --- │ --- █ -- 
+        for _ = 1, #strings do
+          table.insert(res, empty)
+        end
+        return res
+      end
+
+      local m = require('mycolors')
+      local c = m.colors
+      m.hi('MiniMapNormal', { fg = c.base00light, bg = c.base00light })
+      m.hi('MyMiniMapSearch', { fg = 'orange', bg = c.base00light })
     end,
   },
 
