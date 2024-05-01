@@ -635,12 +635,13 @@ require('lazy').setup({
   {
     'lewis6991/gitsigns.nvim',
     opts = {
-      signs = {
-        add = { text = '▒' },
-        change = { text = '▒' },
-        delete = { text = '▒' },
-        topdelete = { text = '▒' },
-        changedelete = { text = '▒' },
+      signs = { -- faded -- ▒
+        -- left aligned (from indent-blankline's help) -- ▏-- ▎ -- ▍ -- ▌ --  ▋ --
+        add = { text = '▎' },
+        change = { text = '▎' },
+        delete = { text = '▎' },
+        topdelete = { text = '▎' },
+        changedelete = { text = '▎' },
       },
       on_attach = function()
         local gitsigns = require('gitsigns')
@@ -1351,42 +1352,54 @@ require('lazy').setup({
       mini_map.setup({
         symbols = {
           -- left aligned (from indent-blankline's help) -- ▏-- ▎ -- ▍ -- ▌ --  ▋ --
-          scroll_line = '',
+          scroll_line = '►', --  -- ▶ -- ▸ -- ◆ -- ►
           scroll_view = '▋',
         },
         window = {
-          width = 3,
+          width = 2,
           winblend = 0,
-          show_integration_count = true,
+          -- show_integration_count=true shows count 2+ even if there is just git add + git change
+          -- not a reliable way to signify that there is also an error
+          show_integration_count = false,
         },
         integrations = {
           mini_map.gen_integration.builtin_search({ search = 'MyMiniMapSearch' }),
-          -- map.gen_integration.diff(),
           mini_map.gen_integration.diagnostic({
-            error = 'DiagnosticFloatingError',
-            warn = 'DiagnosticFloatingWarn',
-            info = 'DiagnosticFloatingInfo',
-            hint = 'DiagnosticFloatingHint',
+            error = 'MyMiniMapDiagError',
+            warn = 'MyMiniMapDiagWarn',
+            info = 'MyMiniMapDiagWarn',
+            hint = 'MyMiniMapDiagWarn',
+          }),
+          mini_map.gen_integration.gitsigns({
+            add = 'MyMiniMapAdded',
+            change = 'MyMiniMapChanged',
+            delete = 'MyMiniMapDeleted',
           }),
         },
       })
+
       -- local f = 1 -- for testing
       -- x = 3 -- for testing
       ---@diagnostic disable-next-line: duplicate-set-field
       mini_map.encode_strings = function(strings)
         -- return dummy table of empty strings, of equal length as the argument
         local res = {}
-        local empty = '▐' -- ▐ --- │ --- █ -- 
+        local placeholder = '▐' -- ▐ --- │ --- █ -- 
         for _ = 1, #strings do
-          table.insert(res, empty)
+          table.insert(res, placeholder)
         end
         return res
       end
 
-      local m = require('mycolors')
-      local c = m.colors
-      m.hi('MiniMapNormal', { fg = c.base00light, bg = c.base00light })
-      m.hi('MyMiniMapSearch', { fg = 'orange', bg = c.base00light })
+      vim.api.nvim_create_autocmd('UIEnter', {
+        group = vim.api.nvim_create_augroup('my-minimap-run', {}),
+        desc = 'Run mini.map on startup',
+        callback = function()
+          mini_map.open()
+        end,
+      })
+
+      require('mycolors').apply_colors_minimap()
     end,
   },
 

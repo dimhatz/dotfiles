@@ -51,6 +51,7 @@ local c = {
   violet_brightest_magenta = '#ffa7ff', -- same as above, maxed blue channel (rbg)
   violet_dark = '#6e3e90',
   violet_less_dark = '#9867bc',
+  violet_saturated_magenta = '#ff00ff',
   green = '#72d794', -- Classes, Markup Bold, Search Text Background
   green_dark = '#006a36',
   green_less_dark = '#2c9758',
@@ -162,10 +163,10 @@ local function apply_colors()
   -- hi('TelescopePreviewLine', { standout = true })
 
   -- gitsigns
-  hi('DiffAdd', { fg = c.green })
-  hi('DiffChange', { fg = c.blue })
-  hi('DiffDelete', { fg = c.peach })
-  hi('DiffText', { fg = c.yellow })
+  hi('DiffAdd', { fg = c.green_dark })
+  hi('DiffChange', { fg = c.blue_dark })
+  hi('DiffDelete', { fg = c.peach_dark })
+  hi('DiffText', { fg = c.yellow_dark })
 
   hi('GitGutterAdd', { link = 'DiffAdd' })
   hi('GitGutterChange', { link = 'DiffChange' })
@@ -181,8 +182,6 @@ local function apply_colors()
   hi('GitSignsAddInline', { bg = c.green_dark, fg = c.whitest })
   hi('GitSignsDeleteInline', { bg = c.peach_dark, fg = c.whitest })
   hi('GitSignsChangeInline', { bg = c.blue_dark, fg = c.whitest })
-
-  hi('MiniMapNormal', { blend = 100 })
 
   vim.g.colors_name = 'mycolors'
 end
@@ -210,9 +209,23 @@ local function apply_colors_barbar()
   hi('BufferDefaultVisibleTarget', { link = 'BufferDefaultCurrentTarget' })
 end
 
+local function apply_colors_minimap()
+  hi('MiniMapNormal', { fg = c.base00light, bg = c.base00light })
+  hi('MiniMapSymbolView', { fg = c.base05fg, bg = c.base00light })
+  hi('MyMiniMapSearch', { fg = 'orange', bg = c.base00light })
+  -- hi('MyMiniMapDiagError', { fg = c.violet_brightest_magenta, bg = c.base00light })
+  -- hi('MyMiniMapDiagWarn', { fg = c.yellow_brightest, bg = c.base00light })
+  hi('MyMiniMapDiagError', { fg = c.violet_saturated_magenta, bg = c.violet_saturated_magenta })
+  hi('MyMiniMapDiagWarn', { fg = c.yellow_brightest, bg = c.yellow_brightest })
+  hi('MyMiniMapAdded', { fg = c.green_dark, bg = c.base00light })
+  hi('MyMiniMapDeleted', { fg = c.peach_dark, bg = c.base00light })
+  hi('MyMiniMapChanged', { fg = c.blue_dark, bg = c.base00light })
+end
+
 local M = {}
 M.hi = hi
 M.colors = c
 M.apply_colors = apply_colors
 M.apply_colors_barbar = apply_colors_barbar
+M.apply_colors_minimap = apply_colors_minimap
 return M
