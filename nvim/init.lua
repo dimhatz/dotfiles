@@ -1354,6 +1354,8 @@ require('lazy').setup({
           -- left aligned (from indent-blankline's help) -- ▏-- ▎ -- ▍ -- ▌ --  ▋ --
           scroll_line = '►', --  -- ▶ -- ▸ -- ◆ -- ►
           scroll_view = '▋',
+          -- if encode_strings() hack below stops working:
+          -- encode = { '▐', '▐', resolution = { row = 1, col = 1 } },
         },
         window = {
           width = 2,
@@ -1380,6 +1382,8 @@ require('lazy').setup({
 
       -- local f = 1 -- for testing
       -- x = 3 -- for testing
+      -- if this ever breaks: set symbols.encode = { '▐', '▐', resolution = { row = 1, col = 1 } },
+      -- otherwise, it should be slightly more performant (not sure if in practice makes any difference)
       ---@diagnostic disable-next-line: duplicate-set-field
       mini_map.encode_strings = function(strings)
         -- return dummy table of empty strings, of equal length as the argument
