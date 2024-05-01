@@ -131,7 +131,7 @@ local closeHoveringWindows = function()
 end
 
 local onEsc = function()
-  vim.cmd('nohlsearch')
+  -- vim.cmd('nohlsearch') -- does not trigger mini.nvim's scrollbar highlight removal
   -- vim.api.nvim_exec2(':noh', {}) -- does not trigger mini.nvim's scrollbar highlight removal
   vim.api.nvim_exec2('set nohlsearch', {}) -- triggers correctly
   closeHoveringWindows() -- close the lsp hover windows
@@ -223,8 +223,9 @@ remap('n', 'V', '<C-v>')
 remap('n', '<C-u>', 'gUiw') -- Uppercase word in norm/insert
 remap('i', '<C-u>', '<Esc>gUiwea') -- FIXME: does not repeat
 
-remap('n', '<C-f>', '*', { desc = '<C-f> is the new *' })
+remap('n', '<C-f>', '*<Cmd>set hlsearch<CR>', { desc = '<C-f> is the new *' })
 remap('n', '*', '<cmd>echo "<C-f> is the new *"<CR>', { desc = '<C-f> is the new *' })
+remap('n', '#', '#<Cmd>set hlsearch<CR>', { desc = '<C-f> is the new *' })
 
 remap('i', '<C-v>', '<C-r>+', { desc = '<C-v> is paste in insert' })
 
@@ -290,8 +291,8 @@ vim.api.nvim_exec2(
       let @s = temp
     endfunction
 
-    xnoremap <C-f> :<C-u>call g:MyVSetSearch('/')<CR>/<C-R>=@/<CR><CR>
-    xnoremap # :<C-u>call g:MyVSetSearch('?')<CR>?<C-R>=@/<CR><CR>
+    xnoremap <C-f> :<C-u>call g:MyVSetSearch('/')<CR>/<C-R>=@/<CR><CR>:<C-u>set hlsearch<CR>
+    xnoremap # :<C-u>call g:MyVSetSearch('?')<CR>?<C-R>=@/<CR><CR>:<C-u>set hlsearch<CR>
     nnoremap <Leader>f viw:<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
     xnoremap <Leader>f :<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
   ]],
