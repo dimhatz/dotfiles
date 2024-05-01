@@ -251,11 +251,17 @@ remap('v', 'p', 'p:let @v=@+|let @+=@0<CR>', { desc = 'Pasting in visual stores 
 
 remap('n', '<C-h>', '<C-e>', { desc = 'Scroll down 1 line' })
 remap('n', '<C-l>', '<C-y>', { desc = 'Scroll up 1 line' })
+-- using c-j / c-k to autocomplete in insert
 -- remap('i', '<C-j>', '<C-o><C-e>', { desc = 'Scroll down 1 line' })
 -- remap('i', '<C-k>', '<C-o><C-y>', { desc = 'Scroll up 1 line' })
 
-remap('n', '<C-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' })
-remap('n', '<C-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
+-- sticks on folds, the cursor does not stay in the same spot
+-- remap('n', '<C-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' })
+-- remap('n', '<C-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
+
+remap('n', '<C-j>', 'gj<C-e>', { desc = 'Scroll down 1 line with cursor steady' })
+remap('n', '<C-k>', 'gk<C-y>', { desc = 'Scroll up 1 line with cursor steady' })
+
 -- remap('n', '<A-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' }) -- same as above, but with Alt, alacritty re-exposes (in flashes) the mouse if its inside terminal
 -- remap('n', '<A-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
 remap('n', '<C-m>', 'M', { desc = 'Put cursor in the center of the screen, <CR> triggers <C-m> it too' })
