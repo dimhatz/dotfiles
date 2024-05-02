@@ -217,15 +217,8 @@ remap('v', 'z', '"_d')
 remap('n', 'j', 'gj') -- navigate wrapped lines
 remap('n', 'k', 'gk')
 
--- using barbar's commands instead of bprev / bnext, to make sure it stays in sync
-remap('n', '(', '<Cmd>BufferPrevious<CR>')
-remap('n', ')', '<Cmd>BufferNext<CR>')
--- remap('n', '<C-c>', '<Cmd>bdelete<CR>') -- when closing with bdelete, it also closes current window
-remap('n', '<C-c>', '<Cmd>BufferClose<CR>') -- preserves windows structure
-remap('n', '<C-d>', '<C-w>c', { desc = 'Close (Delete) window' }) -- preserves windows structure
-remap('n', '{', '<Cmd>BufferMovePrevious<CR>')
-remap('n', '}', '<Cmd>BufferMoveNext<CR>')
-remap('n', '<Leader>b', '<Cmd>BufferPick<CR>', { desc = 'Jump to buffer' })
+remap('n', '<C-d>', '<C-w>c', { desc = 'Close (Delete) window' })
+remap('n', '<C-c>', '<Cmd>bdelete<CR>', { desc = 'Fallback bdel (mini-bufremove should override)' }) -- will be overridden by mini-bufremove
 
 remap('n', '<C-v>', 'V')
 remap('n', 'V', '<C-v>')
@@ -359,7 +352,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- Not using FileType, since it's assigned once (and trigger command), but not the following times when
--- the help buffer becomes hidden and revealed again. BufWinEnter is NOT triggered when nvim starts, which is exactly what we want in case we manually resized help window. NOTE: it will still resize the help window when opening another help file.
+-- the help buffer becomes hidden and revealed again. BufWinEnter is NOT triggered when nvim starts,
+-- which is exactly what we want in case we manually resized help window. NOTE: it will still resize
+-- the help window when opening another help file.
 vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
   desc = 'My: helpfiles split only vertically',
   group = vim.api.nvim_create_augroup('my-helpfile-splits-vertically', { clear = true }),
@@ -1306,8 +1301,29 @@ require('lazy').setup({
     lazy = false,
     priority = 1000,
     config = function()
-      -- vim.o.background = 'dark'
-      -- vim.cmd.colorscheme('mycolors')
+      ---------------------------------------------------------------------------------------
+      -- sessions plugin first, so that its autocmds have priority over the next mini.* plugins, like minimap
+      local session_file = '.nvim_session'
+      require('mini.sessions').setup({
+        autoread = true,
+        autowrite = true,
+        file = session_file, -- local session file
+        directory = '', -- directory for global sessions, we disable it
+      })
+
+      vim.api.nvim_create_autocmd('UIEnter', {
+        group = vim.api.nvim_create_augroup('my-session-init', {}),
+        desc = 'write session file in cwd if not exists',
+        callback = function()
+          if vim.fn.filereadable(session_file) ~= 0 then
+            vim.print('My: Session found.')
+            return
+          end
+          require('mini.sessions').write(session_file, { force = false, verbose = true })
+        end,
+      })
+
+      ---------------------------------------------------------------------------------------
 
       -- Better Around/Inside textobjects
       -- Auto-jumps to next text object: to jump+visual inside next parens: vi)
@@ -1430,46 +1446,90 @@ require('lazy').setup({
 
       -- vim.api.nvim_create_autocmd('UIEnter', { -- works
       -- vim.api.nvim_create_autocmd('SessionLoadPost', { -- works
-      vim.api.nvim_create_autocmd('UIEnter', {
+      vim.api.nvim_create_autocmd('VimEnter', {
         group = vim.api.nvim_create_augroup('my-minimap-run', {}),
         desc = 'Run mini.map on startup',
         callback = function()
           -- TODO: when restoring session with a resized split,
           -- this causes it to take half the screen, instead of having width = 90
+          -- nvim bug: TODO: check if exists and report to neovim repo
+          -- https://github.com/echasnovski/mini.nvim/issues/851
           mini_map.open()
         end,
       })
 
       require('mycolors').apply_colors_minimap()
 
-      ---------------------------------------------------------------------------------------
-
-      local session_file = '.nvim_session'
-      require('mini.sessions').setup({
-        autoread = true,
-        autowrite = true,
-        file = session_file, -- local session file
-        directory = '', -- directory for global sessions, we disable it
-      })
-
-      vim.api.nvim_create_autocmd('UIEnter', {
-        group = vim.api.nvim_create_augroup('my-session-init', {}),
-        desc = 'write session file in cwd if not exists',
-        callback = function()
-          if vim.fn.filereadable(session_file) ~= 0 then
-            vim.print('My: Session found.')
-            return
-          end
-          require('mini.sessions').write(session_file, { force = false, verbose = true })
-        end,
-      })
+      local mini_bufremove = require('mini.bufremove')
+      mini_bufremove.setup({})
+      -- when closing with bdelete, with this plugin, the current window remains open
+      remap('n', '<C-c>', mini_bufremove.delete, { desc = 'Close buffer' })
 
       ---------------------------------------------------------------------------------------
     end,
   },
 
-  -- romgrk/barbar.nvim, tab line
   {
+    'willothy/nvim-cokeline',
+    dependencies = {
+      'nvim-lua/plenary.nvim', -- Required for v0.4.0+
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      local count = 0
+      local cokeline = require('cokeline')
+      local is_picking_focus = require('cokeline.mappings').is_picking_focus
+      local c = require('mycolors').colors
+      cokeline.setup({
+        show_if_buffers_are_at_least = 0,
+        buffers = {
+          new_buffers_position = 'next',
+        },
+        pick = {
+          letters = 'fdjklsaghnmxcvbziowerutyqpASDFJKLGHNMXCVBZIOWERTYQP',
+        },
+        default_hl = {
+          fg = function(buffer)
+            if buffer.is_focused then
+              return c.whitest
+            else
+              return buffer.is_modified and c.peach or c.base05fg
+            end
+          end,
+          bg = function(buffer)
+            -- count = count + 1
+            -- vim.print(count)
+            if buffer.is_focused then
+              return buffer.is_modified and c.peach_dark or c.blue_dark
+            else
+              return c.base01
+            end
+          end,
+          fill_hl = 'TabLineFill',
+        },
+        components = {
+          {
+            text = function(buffer)
+              local pick_letter = is_picking_focus() and buffer.pick_letter or ' '
+              pick_letter = string.upper(pick_letter)
+              local icon = buffer.is_modified and ' ●▕' or '  ▕'
+              return ' ' .. pick_letter .. ' ' .. buffer.filename .. icon
+            end,
+          },
+        },
+      })
+
+      remap('n', '<Leader>b', '<Plug>(cokeline-pick-focus)', { desc = 'Jump to buffer' })
+      remap('n', '(', '<Plug>(cokeline-focus-prev)', { desc = 'Go to previous buffer' })
+      remap('n', ')', '<Plug>(cokeline-focus-next)', { desc = 'Go to next buffer' })
+      remap('n', '{', '<Plug>(cokeline-switch-prev)', { desc = 'Move buffer left' })
+      remap('n', '}', '<Plug>(cokeline-switch-next)', { desc = 'Move buffer right' })
+    end,
+  },
+
+  -- romgrk/barbar.nvim, tab line -- replacing with cokeline, disabling
+  {
+    enabled = false,
     'romgrk/barbar.nvim',
     lazy = false,
     dependencies = {

@@ -96,6 +96,7 @@ local function apply_colors()
   hi('CursorLineNr', { bg = c.blackest, fg = c.base03 })
   hi('LineNr', { fg = c.base02 })
   hi('Comment', { fg = c.base03 })
+  hi('TabLineFill', { bg = c.base00light })
 
   hi('Error', { fg = c.peach })
   hi('ErrorMsg', { link = 'Error' })
