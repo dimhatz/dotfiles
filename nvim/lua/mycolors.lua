@@ -212,7 +212,7 @@ end
 
 local function apply_colors_minimap()
   hi('MiniMapNormal', { fg = c.base00light, bg = c.base00light })
-  hi('MiniMapSymbolView', { fg = c.base05fg, bg = c.base00light })
+  hi('MiniMapSymbolView', { fg = c.base04, bg = c.base00light })
   hi('MyMiniMapSearch', { fg = 'orange', bg = c.base00light })
   -- hi('MyMiniMapDiagError', { fg = c.violet_brightest_magenta, bg = c.base00light })
   -- hi('MyMiniMapDiagWarn', { fg = c.yellow_brightest, bg = c.base00light })

@@ -1476,7 +1476,7 @@ require('lazy').setup({
       'nvim-tree/nvim-web-devicons',
     },
     config = function()
-      local count = 0
+      -- local count = 0
       local cokeline = require('cokeline')
       local is_picking_focus = require('cokeline.mappings').is_picking_focus
       local c = require('mycolors').colors
@@ -1487,7 +1487,12 @@ require('lazy').setup({
         },
         pick = {
           letters = 'fdjklsaghnmxcvbziowerutyqpASDFJKLGHNMXCVBZIOWERTYQP',
+          use_filename = false,
         },
+        -- tabs = { -- no tabs for now
+        --   placement = 'right',
+        --   components = {},
+        -- },
         default_hl = {
           fg = function(buffer)
             if buffer.is_focused then
@@ -1524,6 +1529,7 @@ require('lazy').setup({
       remap('n', ')', '<Plug>(cokeline-focus-next)', { desc = 'Go to next buffer' })
       remap('n', '{', '<Plug>(cokeline-switch-prev)', { desc = 'Move buffer left' })
       remap('n', '}', '<Plug>(cokeline-switch-next)', { desc = 'Move buffer right' })
+      -- TODO: figure out how to save buffer order (see cokeline's code for recession)
     end,
   },
 
