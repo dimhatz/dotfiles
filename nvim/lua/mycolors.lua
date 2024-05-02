@@ -163,15 +163,15 @@ local function apply_colors()
   -- hi('TelescopePreviewLine', { standout = true })
 
   -- gitsigns
-  hi('DiffAdd', { fg = c.green_dark })
-  hi('DiffChange', { fg = c.blue_dark })
-  hi('DiffDelete', { fg = c.peach_dark })
-  hi('DiffText', { fg = c.yellow_dark })
+  hi('DiffAdd', { fg = c.green })
+  hi('DiffChange', { fg = c.blue })
+  hi('DiffDelete', { fg = c.peach })
+  hi('DiffText', { fg = c.yellow })
 
-  hi('GitGutterAdd', { link = 'DiffAdd' })
-  hi('GitGutterChange', { link = 'DiffChange' })
-  hi('GitGutterDelete', { link = 'DiffDelete' })
-  hi('GitGutterChangeDelete', { link = 'DiffChange' })
+  hi('GitGutterAdd', { fg = c.green_dark })
+  hi('GitGutterChange', { fg = c.blue_dark })
+  hi('GitGutterDelete', { fg = c.peach_dark })
+  hi('GitGutterChangeDelete', { fg = c.blue_dark })
 
   hi('DiffAdded', { link = 'DiffAdd' })
   hi('DiffFile', { link = 'DiffText' })
