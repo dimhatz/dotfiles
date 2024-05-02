@@ -563,8 +563,9 @@ require('lazy').setup({
     end,
   },
 
-  -- olimorris/persisted.nvim
+  -- olimorris/persisted.nvim -- not used in favor of mini.sessions
   {
+    enabled = false,
     'olimorris/persisted.nvim',
     lazy = false, -- make sure the plugin is always loaded at startup
     opts = {
@@ -1300,6 +1301,8 @@ require('lazy').setup({
       -- For larger scrope, press i) again
       require('mini.ai').setup({ n_lines = 500 }) -- 50 default, 500 suggested by kickstart
 
+      ---------------------------------------------------------------------------------------
+
       require('mini.surround').setup({
         mappings = {
           add = 's', -- Add surrounding in Normal and Visual modes
@@ -1315,6 +1318,8 @@ require('lazy').setup({
       })
 
       remap('n', 'sw', 'siw', { remap = true }) -- be consistent with cw -> ciw
+
+      ---------------------------------------------------------------------------------------
 
       -- TODO: replace with something fully customizable, e.g. feline (that also has tabline), rebelot/heirline.nvim (even
       -- more customizable? manually set update triggers), tamton-aquib/staline.nvim also seems good
@@ -1356,8 +1361,12 @@ require('lazy').setup({
         return '%-3v'
       end
 
+      ---------------------------------------------------------------------------------------
+
       -- autoclose brackets
       require('mini.pairs').setup({})
+
+      ---------------------------------------------------------------------------------------
 
       local mini_map = require('mini.map')
       mini_map.setup({
@@ -1406,15 +1415,43 @@ require('lazy').setup({
         return res
       end
 
+      -- vim.api.nvim_create_autocmd('UIEnter', { -- works
+      -- vim.api.nvim_create_autocmd('SessionLoadPost', { -- works
       vim.api.nvim_create_autocmd('UIEnter', {
         group = vim.api.nvim_create_augroup('my-minimap-run', {}),
         desc = 'Run mini.map on startup',
         callback = function()
+          -- TODO: when restoring session with a resized split,
+          -- this causes it to take half the screen, instead of having width = 90
           mini_map.open()
         end,
       })
 
       require('mycolors').apply_colors_minimap()
+
+      ---------------------------------------------------------------------------------------
+
+      local session_file = '.nvim_session'
+      require('mini.sessions').setup({
+        autoread = true,
+        autowrite = true,
+        file = session_file, -- local session file
+        directory = '', -- directory for global sessions, we disable it
+      })
+
+      vim.api.nvim_create_autocmd('UIEnter', {
+        group = vim.api.nvim_create_augroup('my-session-init', {}),
+        desc = 'write session file in cwd if not exists',
+        callback = function()
+          if vim.fn.filereadable(session_file) ~= 0 then
+            vim.print('My: Session found.')
+            return
+          end
+          require('mini.sessions').write(session_file, { force = false, verbose = true })
+        end,
+      })
+
+      ---------------------------------------------------------------------------------------
     end,
   },
 
