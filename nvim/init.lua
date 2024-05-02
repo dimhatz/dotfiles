@@ -158,6 +158,16 @@ remap('n', 'N', '<Cmd>set hlsearch<CR>N')
 
 remap('n', '<C-q>', '<Cmd>qa<CR>')
 remap('n', '<Esc>', onEsc)
+-- '/' is considered command mode
+remap('c', '<Esc>', function()
+  -- vim.cmd([[call feedkeys("\<Esc>", 'n')]]) -- jumps to next highlight, so we delete text manually
+  -- <c-e><c-u> to delete all the text (:h c_CTRL-U), the following <bs> will auto-exit command mode
+  vim.cmd([[call feedkeys("\<C-e>\<C-u>\<BS>", 'n')]]) -- works
+  local cmd_type = vim.fn.getcmdtype()
+  if cmd_type == '/' or cmd_type == '?' then
+    vim.api.nvim_exec2('set nohlsearch', {})
+  end
+end)
 
 remap('n', ';', ':')
 remap('n', ':', ';')
@@ -223,9 +233,12 @@ remap('n', 'V', '<C-v>')
 remap('n', '<C-u>', 'gUiw') -- Uppercase word in norm/insert
 remap('i', '<C-u>', '<Esc>gUiwea') -- FIXME: does not repeat
 
+-- adjust hlsearch to work correctly with our manual flipping of it
 remap('n', '<C-f>', '*<Cmd>set hlsearch<CR>', { desc = '<C-f> is the new *' })
 remap('n', '*', '<cmd>echo "<C-f> is the new *"<CR>', { desc = '<C-f> is the new *' })
 remap('n', '#', '#<Cmd>set hlsearch<CR>', { desc = '<C-f> is the new *' })
+remap('n', '/', '<Cmd>set hlsearch<CR>/')
+remap('n', '?', '<Cmd>set hlsearch<CR>?')
 
 remap('i', '<C-v>', '<C-r>+', { desc = '<C-v> is paste in insert' })
 
