@@ -1486,6 +1486,11 @@ require('lazy').setup({
       'nvim-tree/nvim-web-devicons',
     },
     config = function()
+      -- TODO: to prevent constant refreshes of tabline, we can use the following hack:
+      -- evaluate (with vim.cmd?) `v:lua.cokeline.tabline()` and set the value to
+      -- vim.opt.tabline using autocmds (after buffer open / close / modified, same for window etc)
+      -- First, use os.clock() to profile the evaluation over 10000 iterations
+      --
       -- local count = 0
       local cokeline = require('cokeline')
       local is_picking_focus = require('cokeline.mappings').is_picking_focus
