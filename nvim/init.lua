@@ -90,7 +90,8 @@ vim.opt.shortmess:append('S')
 vim.o.termguicolors = true
 vim.o.background = 'dark'
 
-vim.o.sessionoptions = 'buffers,curdir,folds,tabpages,winpos,winsize,help,globals' -- globals needed by barbar to restore tab positions (with autocmds)
+-- 'globals' needed by barbar to restore tab positions, skipping to avoid accidentally storing another plugin's global
+vim.o.sessionoptions = 'buffers,curdir,folds,tabpages,winpos,winsize,help'
 
 -- TODO: always show gutter (signs)
 
@@ -1450,11 +1451,19 @@ require('lazy').setup({
         group = vim.api.nvim_create_augroup('my-minimap-run', {}),
         desc = 'Run mini.map on startup',
         callback = function()
-          -- TODO: when restoring session with a resized split,
-          -- this causes it to take half the screen, instead of having width = 90
-          -- nvim bug: TODO: check if exists and report to neovim repo
-          -- https://github.com/echasnovski/mini.nvim/issues/851
           mini_map.open()
+        end,
+      })
+
+      vim.api.nvim_create_autocmd('ExitPre', {
+        group = vim.api.nvim_create_augroup('my-minimap-exit-before-session-save', {}),
+        desc = 'Exit minimap before session save, otherwise resized splits are not preserved',
+        callback = function()
+          -- TODO: when restoring session with a resized split, if we dont quit minimap
+          -- before saving session, the restored windows will take half the screen,
+          -- instead of having width = 90
+          -- NOTE: minisessions triggers on VimLeavePre, which is after this autocmd
+          mini_map.close()
         end,
       })
 
@@ -1469,6 +1478,7 @@ require('lazy').setup({
     end,
   },
 
+  -- 'willothy/nvim-cokeline',
   {
     'willothy/nvim-cokeline',
     dependencies = {
