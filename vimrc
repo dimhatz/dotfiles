@@ -149,14 +149,14 @@ let g:loaded_netrwPlugin = 1
 " as of Jul 2017 nvim always returns 0 for has("gui_running")
 if has("gui_running")
 	if has("gui_gtk2") " TODO add gtk3 too
-		set guifont=Source\ Code\ Pro\ Semibold\ 10
+		set guifont=Source\ Code\ Pro\ 10
 		" no extra spacing - not checked on gtk vim linux
 		set linespace=0
 	elseif has("gui_win32")
 		" set guifont=Terminus:h12:cGREEK:qNONANTIALIASED
 		" zev peep 8x16 is same size as terminus:h12 ``.,;
 
-		set guifont=Source_Code_Pro_Semibold:h10:cANSI:qDRAFT
+		set guifont=Source_Code_Pro:h10:cANSI:qDRAFT
 		" workaround for windows sucky scaling, when there is scaling at 125%
 		" or 150%, the font becomes thicker and harder to read, look at
 		" lowercase 'e', it almost like greek theta! At 175% seems ok again.
