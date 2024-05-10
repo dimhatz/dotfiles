@@ -5,12 +5,17 @@ if vim.g.neovide then
   vim.g.neovide_refresh_rate = 60
   vim.g.neovide_cursor_animate_in_insert_mode = false
   -- vim.g.neovide_no_idle = true
-  -- TODO: set options for subpixel rendering
+  -- TODO: check there can be more rendering options. letters looking too thin
+  -- with Source Code Pro h11: 'd', 'u'. In comparison . In comparison 'i', 'l' look thicker, fuzzier.
+  -- Also, antialiasing is stronger in alacritty
+  -- vim.o.guifont = 'Source Code Pro:h10.5:#e-subpixelantialias:#h-none' -- when skia implements bgr and neovide adds option (if not autodeteced by skia) https://issues.chromium.org/issues/337905340
+  vim.o.guifont = 'Source Code Pro:h10.5:#e-antialias:#h-none'
+else
+  vim.o.guifont = 'Source Code Pro:h10.5'
+  -- vim.o.guifont = 'SauceCodePro NF:h10.5'
 end
 
 vim.opt.syntax = 'off' -- treesitter
-
-vim.o.guifont = 'Source Code Pro:h10.5'
 
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
@@ -1492,10 +1497,12 @@ require('lazy').setup({
       -- First, use os.clock() to profile the evaluation over 10000 iterations
       --
       -- local count = 0
-      local cokeline = require('cokeline')
-      local is_picking_focus = require('cokeline.mappings').is_picking_focus
+
+      local local_cokeline = require('cokeline') -- to differentiate from global, which we use too
+      local mappings = require('cokeline.mappings')
+      local is_picking_focus = mappings.is_picking_focus
       local c = require('mycolors').colors
-      cokeline.setup({
+      local_cokeline.setup({
         show_if_buffers_are_at_least = 0,
         buffers = {
           new_buffers_position = 'next',
@@ -1539,12 +1546,69 @@ require('lazy').setup({
         },
       })
 
-      remap('n', '<Leader>b', '<Plug>(cokeline-pick-focus)', { desc = 'Jump to buffer' })
-      remap('n', '(', '<Plug>(cokeline-focus-prev)', { desc = 'Go to previous buffer' })
-      remap('n', ')', '<Plug>(cokeline-focus-next)', { desc = 'Go to next buffer' })
-      remap('n', '{', '<Plug>(cokeline-switch-prev)', { desc = 'Move buffer left' })
-      remap('n', '}', '<Plug>(cokeline-switch-next)', { desc = 'Move buffer right' })
+      local function my_update_tabline()
+        local function my_redraw()
+          vim.opt.tabline = cokeline.tabline()
+        end
+        -- without wrapping with timer, when closing the buffer, its 'tab' is still visible
+        vim.fn.timer_start(0, my_redraw)
+      end
+
+      -- NOTE: the way we do mappings below is better than overriding the 'cokeline.mappings' functions directly,
+      -- since its likely that other things expect to get the references to the original functions
+      remap('n', '<Leader>b', function()
+        -- temporarity restore the original function, since the code inside calls :redrawtabline
+        vim.opt.tabline = '%!v:lua.cokeline.tabline()'
+        mappings.pick('focus')
+        my_update_tabline()
+      end, { desc = 'Jump to buffer' })
+
+      remap('n', '(', function()
+        mappings.by_step('focus', -1)
+        my_update_tabline()
+      end, { desc = 'Go to previous buffer' })
+
+      remap('n', ')', function()
+        mappings.by_step('focus', 1)
+        my_update_tabline()
+      end, { desc = 'Go to next buffer' })
+
+      remap('n', '{', function()
+        mappings.by_step('switch', -1)
+        my_update_tabline()
+      end, { desc = 'Move buffer left' })
+
+      remap('n', '}', function()
+        mappings.by_step('switch', 1)
+        my_update_tabline()
+      end, { desc = 'Move buffer right' })
+
       -- TODO: figure out how to save buffer order (see cokeline's code for recession)
+
+      vim.api.nvim_create_autocmd({
+        'BufAdd',
+        'BufDelete',
+        'BufEnter',
+        'BufFilePost',
+        'BufLeave',
+        'BufModifiedSet',
+        'BufModifiedSet',
+        'BufNew',
+        'BufNewFile',
+        'BufReadPost',
+        'BufWipeout',
+        'DirChanged',
+        'TabClosed',
+        'TabEnter',
+        'TabNew',
+        'UIEnter',
+        'VimResized',
+        'WinEnter',
+      }, {
+        desc = 'My: manually update tabline',
+        group = vim.api.nvim_create_augroup('my-update-tabline', {}),
+        callback = my_update_tabline,
+      })
     end,
   },
 
