@@ -24,14 +24,23 @@
 # bold = { family = "FiraCode Nerd Font", style = "Medium" }
 # # no italics for Fira, they will be auto-derived by neovide
 
-# Monaspace Krypton, not bad, 'm' could be better, 't' could be taller
+# # Monaspace Krypton, not bad, 'm' could be better, 't' could be taller
+# size = 15
+# hinting = "full"
+# edging = "antialias"
+# normal = { family = "Monaspace Krypton", style = "Light" }
+# bold = { family = "Monaspace Krypton", style = "Medium"}
+# italic = { family = "Monaspace Krypton", style = "Light Italic"}
+# bold_italic = { family = "Monaspace Krypton", style = "Medium Italic"}
+
+# Cascadia - also should be configurable with direct weights (have not tried)
 size = 15
 hinting = "full"
 edging = "antialias"
-normal = { family = "Monaspace Krypton", style = "Light" }
-bold = { family = "Monaspace Krypton", style = "Medium"}
-italic = { family = "Monaspace Krypton", style = "Light Italic"}
-bold_italic = { family = "Monaspace Krypton", style = "Medium Italic"}
+normal = { family = "Cascadia Code NF", style = "Light" }
+bold = { family = "Cascadia Code NF", style = "Regular"}
+italic = { family = "Cascadia Code NF", style = "Light Italic"}
+bold_italic = { family = "Cascadia Code NF", style = "Italic"}
 
 [font.features]
 # MonoLisa = [ "+ss01", "+ss07", "+ss11", "-calt", "+ss09", "+ss02", "+ss14", "+ss16", "+ss17" ]
