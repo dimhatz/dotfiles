@@ -33,14 +33,23 @@
 # italic = { family = "Monaspace Krypton", style = "Light Italic"}
 # bold_italic = { family = "Monaspace Krypton", style = "Medium Italic"}
 
-# Cascadia - also should be configurable with direct weights (have not tried)
+# # Cascadia - also should be configurable with direct weights (have not tried)
+# size = 15
+# hinting = "full"
+# edging = "antialias"
+# normal = { family = "Cascadia Mono NF", style = "Light" }
+# bold = { family = "Cascadia Mono NF", style = "Regular"}
+# italic = { family = "Cascadia Mono NF", style = "Light Italic"}
+# bold_italic = { family = "Cascadia Mono NF", style = "Italic"}
+
+# JetBrains NL (no ligatures) - stretched vertically, not as clear as cascadia
 size = 15
 hinting = "full"
 edging = "antialias"
-normal = { family = "Cascadia Mono NF", style = "Light" }
-bold = { family = "Cascadia Mono NF", style = "Regular"}
-italic = { family = "Cascadia Mono NF", style = "Light Italic"}
-bold_italic = { family = "Cascadia Mono NF", style = "Italic"}
+normal = { family = "JetBrainsMonoNL NF", style = "Light" }
+bold = { family = "JetBrainsMonoNL NF", style = "Light Italic"}
+italic = { family = "JetBrainsMonoNL NF", style = "SemiBold Italic"}
+bold_italic = { family = "JetBrainsMonoNL NF", style = "SemiBold Italic"}
 
 [font.features]
 # MonoLisa = [ "+ss01", "+ss07", "+ss11", "-calt", "+ss09", "+ss02", "+ss14", "+ss16", "+ss17" ]
