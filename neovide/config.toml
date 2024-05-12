@@ -42,14 +42,20 @@
 # italic = { family = "Cascadia Mono NF", style = "Light Italic"}
 # bold_italic = { family = "Cascadia Mono NF", style = "Italic"}
 
-# JetBrains NL (no ligatures) - stretched vertically, not as clear as cascadia
-size = 15
-hinting = "full"
-edging = "antialias"
-normal = { family = "JetBrainsMonoNL NF", style = "Light" }
-bold = { family = "JetBrainsMonoNL NF", style = "Light Italic"}
-italic = { family = "JetBrainsMonoNL NF", style = "SemiBold Italic"}
-bold_italic = { family = "JetBrainsMonoNL NF", style = "SemiBold Italic"}
+# # JetBrains NL (no ligatures) - stretched vertically, not as clear as cascadia
+# size = 15
+# hinting = "full"
+# edging = "antialias"
+# normal = { family = "JetBrainsMonoNL NF", style = "Light" }
+# bold = { family = "JetBrainsMonoNL NF", style = "Light Italic"}
+# italic = { family = "JetBrainsMonoNL NF", style = "SemiBold Italic"}
+# bold_italic = { family = "JetBrainsMonoNL NF", style = "SemiBold Italic"}
+
+# Gohu 14 bitmap
+size = 14
+hinting = "none"
+edging = "alias"
+normal = { family = "GohuFont 14 Nerd Font", style = "Regular" }
 
 [font.features]
 # MonoLisa = [ "+ss01", "+ss07", "+ss11", "-calt", "+ss09", "+ss02", "+ss14", "+ss16", "+ss17" ]
