@@ -51,11 +51,17 @@
 # italic = { family = "JetBrainsMonoNL NF", style = "SemiBold Italic"}
 # bold_italic = { family = "JetBrainsMonoNL NF", style = "SemiBold Italic"}
 
-# Gohu 14 bitmap
-size = 14
-hinting = "none"
+# # Gohu 14 bitmap, small size
+# size = 14
+# hinting = "none"
+# edging = "alias"
+# normal = { family = "GohuFont 14 Nerd Font", style = "Regular" }
+
+# terminus nerd font, bitmap, bad braces
+size = 16
+hinting = "full"
 edging = "alias"
-normal = { family = "GohuFont 14 Nerd Font", style = "Regular" }
+normal = { family = "Terminess Nerd Font", style = "Regular" }
 
 [font.features]
 # MonoLisa = [ "+ss01", "+ss07", "+ss11", "-calt", "+ss09", "+ss02", "+ss14", "+ss16", "+ss17" ]
