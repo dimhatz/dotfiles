@@ -63,14 +63,23 @@
 # edging = "alias"
 # normal = { family = "Terminess Nerd Font", style = "Regular" }
 
-# Ubuntu sans mono, stretched vertically, smaller
+# Intel one mono, to be used with: vim.opt.linespace = -3 - GOOD
 size = 15
 hinting = "full"
 edging = "antialias"
-normal = { family = "UbuntuSansMono NF", style = "Regular" }
-bold = { family = "UbuntuSansMono NF", style = "Medium"}
-italic = { family = "UbuntuSansMono NF", style = "Italic"}
-bold_italic = { family = "UbuntuSansMono NF", style = "Medium Italic"}
+normal = { family = "IntoneMono Nerd Font", style = "Regular" }
+bold = { family = "IntoneMono Nerd Font", style = "Medium" }
+italic = { family = "IntoneMono Nerd Font", style = "Italic" }
+bold_italic = { family = "IntoneMono Nerd Font", style = "Medium Italic" }
+
+# # Iosevka
+# size = 15
+# hinting = "full"
+# edging = "antialias"
+# normal = { family = "Iosevka" }
+# # bold = { family = "Iosevka", style = "Medium"}
+# # italic = { family = "Iosevka", style = "Italic"}
+# # bold_italic = { family = "Iosevka", style = "Medium Italic"}
 
 [font.features]
 # MonoLisa = [ "+ss01", "+ss07", "+ss11", "-calt", "+ss09", "+ss02", "+ss14", "+ss16", "+ss17" ]
