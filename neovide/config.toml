@@ -1,0 +1,30 @@
+[font]
+# values for hinting: "full", "normal", "slight", "none" (default)
+# values for edging: "antialias" (default), "subpixelantialias", "alias"
+
+#normal = { family = "SauceCodePro NF", style = "Regular" }
+#bold = { family = "SauceCodePro NF", style = "Medium" }
+#italic = { family = "SauceCodePro NF", style = "Italic" }
+#bold_italic = { family = "SauceCodePro NF", style = "Medium Italic" }
+
+# # For Source/Sauce, use size = 15 with vim.opt.linespace = -1 in init.lua
+# size = 15
+# hinting = "full"
+# edging = "antialias"
+# normal = { family = "Source Code Pro", style = "Regular" }
+# bold = { family = "Source Code Pro", style = "Medium"}
+# italic = { family = "Source Code Pro", style = "Italic"}
+# bold_italic = { family = "Source Code Pro", style = "Medium Italic"}
+
+# For Fira, use size = 15
+size = 15
+hinting = "full"
+edging = "antialias"
+normal = { family = "FiraCode Nerd Font", style = "Regular" }
+bold = { family = "FiraCode Nerd Font", style = "Medium" }
+# no italics for Fira, they will be auto-derived by neovide
+
+[font.features]
+# MonoLisa = [ "+ss01", "+ss07", "+ss11", "-calt", "+ss09", "+ss02", "+ss14", "+ss16", "+ss17" ]
+# For Fira Code, disabling the "calt" feature will turn off ligatures.
+"FiraCode Nerd Font" = [ "-calt" ]

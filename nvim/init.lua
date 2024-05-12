@@ -7,6 +7,8 @@ if vim.g.neovide then
   vim.g.neovide_scroll_animation_length = 0.1 -- only minimal scrolling animation, more smooth scrolling than 0
   -- vim.g.neovide_cursor_animate_command_line = false
   vim.g.neovide_cursor_animation_length = 0 -- no cursor animation
+  -- WARN: do not set fonts for neovide here, but in {FOLDERID_RoamingAppData}/neovide/config.toml
+  -- the below values are only for live testing fonts (not all configs are accessible from here)
 
   -- vim.g.neovide_no_idle = true
   -- TODO: check there can be more rendering options. letters looking too thin
@@ -20,14 +22,13 @@ if vim.g.neovide then
   -- vim.o.guifont = 'Source Code Pro:h10.5:#e-subpixelantialias:#h-none'
   -- vim.o.guifont = 'Source Code Pro:h11:#e-antialias:#h-none'
 
-  vim.o.guifont = 'Source Code Pro:h11:#e-antialias:#h-full' -- GOOD2
-  vim.opt.linespace = -1 -- for Source Code h11 only
+  -- vim.o.guifont = 'Source Code Pro:h11:#e-antialias:#h-full' -- GOOD2
+  -- vim.opt.linespace = -1 -- for Source Code h11 only
 
   -- vim.o.guifont = 'Terminess Nerd Font:h12:#e-alias:#h-full'
   -- vim.o.guifont = 'Monaspace Krypton:h10.3:#e-alias:#h-full' -- kinda works too
   -- vim.o.guifont = 'Monaspace Krypton:h11:#e-antialias:#h-full'
 
-  -- TODO: fira is good, but need a way to disable ligatures
   -- vim.o.guifont = 'FiraCode Nerd Font Mono:h11:#e-antialias:#h-full' -- GOOD, with h-none, 'i' gets the dot higher with no hinting, but with h-full, =, _ is clearer
 
   -- vim.o.guifont = 'FiraCode Nerd Font:h10.3:#e-antialias:#h-full' -- --> same size as Source Code Pro 10.5 h-full is cleaner for h10.3
