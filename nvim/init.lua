@@ -12,7 +12,12 @@ if vim.g.neovide then
   -- TODO: check there can be more rendering options. letters looking too thin
   -- with Source Code Pro h10.5: 'd', 'u'. In comparison . In comparison 'i', 'l' look thicker, fuzzier.
   -- Also, antialiasing is stronger in alacritty
-  -- vim.o.guifont = 'Source Code Pro:h10.5:#e-subpixelantialias:#h-none' -- when skia implements bgr and neovide adds option (if not autodeteced by skia) https://issues.chromium.org/issues/337905340
+  -- skia's Graphite gpu backend does not yet support bgr: https://issues.chromium.org/issues/337905340
+  -- in libreoffice they also use skia (maybe with older Ganesh gpu backend?)
+  -- We could make a patch for neovide doing what libreoffice does.
+  -- https://bugs.documentfoundation.org/show_bug.cgi?id=134275
+  -- https://git.libreoffice.org/core/+/1171d609c52fc1f7cd58787e9ebc1ecca32fe450%5E%21
+  -- vim.o.guifont = 'Source Code Pro:h10.5:#e-subpixelantialias:#h-none'
   -- vim.o.guifont = 'Source Code Pro:h11:#e-antialias:#h-none'
 
   vim.o.guifont = 'Source Code Pro:h11:#e-antialias:#h-full' -- GOOD2
