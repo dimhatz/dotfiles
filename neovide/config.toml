@@ -37,10 +37,10 @@
 size = 15
 hinting = "full"
 edging = "antialias"
-normal = { family = "Cascadia Code NF", style = "Light" }
-bold = { family = "Cascadia Code NF", style = "Regular"}
-italic = { family = "Cascadia Code NF", style = "Light Italic"}
-bold_italic = { family = "Cascadia Code NF", style = "Italic"}
+normal = { family = "Cascadia Mono NF", style = "Light" }
+bold = { family = "Cascadia Mono NF", style = "Regular"}
+italic = { family = "Cascadia Mono NF", style = "Light Italic"}
+bold_italic = { family = "Cascadia Mono NF", style = "Italic"}
 
 [font.features]
 # MonoLisa = [ "+ss01", "+ss07", "+ss11", "-calt", "+ss09", "+ss02", "+ss14", "+ss16", "+ss17" ]
