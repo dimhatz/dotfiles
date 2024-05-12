@@ -63,7 +63,7 @@
 # edging = "alias"
 # normal = { family = "Terminess Nerd Font", style = "Regular" }
 
-# Ubuntu sans mono
+# Ubuntu sans mono, stretched vertically, smaller
 size = 15
 hinting = "full"
 edging = "antialias"
