@@ -47,8 +47,8 @@
 # hinting = "full"
 # edging = "antialias"
 # normal = { family = "JetBrainsMonoNL NF", style = "Light" }
-# bold = { family = "JetBrainsMonoNL NF", style = "Light Italic"}
-# italic = { family = "JetBrainsMonoNL NF", style = "SemiBold Italic"}
+# bold = { family = "JetBrainsMonoNL NF", style = "SemiBold"}
+# italic = { family = "JetBrainsMonoNL NF", style = "Light Italic"}
 # bold_italic = { family = "JetBrainsMonoNL NF", style = "SemiBold Italic"}
 
 # # Gohu 14 bitmap, small size
@@ -57,11 +57,20 @@
 # edging = "alias"
 # normal = { family = "GohuFont 14 Nerd Font", style = "Regular" }
 
-# terminus nerd font, bitmap, bad braces
-size = 16
+# # terminus nerd font, bitmap, bad braces
+# size = 16
+# hinting = "full"
+# edging = "alias"
+# normal = { family = "Terminess Nerd Font", style = "Regular" }
+
+# Ubuntu sans mono
+size = 15
 hinting = "full"
-edging = "alias"
-normal = { family = "Terminess Nerd Font", style = "Regular" }
+edging = "antialias"
+normal = { family = "UbuntuSansMono NF", style = "Regular" }
+bold = { family = "UbuntuSansMono NF", style = "Medium"}
+italic = { family = "UbuntuSansMono NF", style = "Italic"}
+bold_italic = { family = "UbuntuSansMono NF", style = "Medium Italic"}
 
 [font.features]
 # MonoLisa = [ "+ss01", "+ss07", "+ss11", "-calt", "+ss09", "+ss02", "+ss14", "+ss16", "+ss17" ]
