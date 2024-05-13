@@ -1,0 +1,73 @@
+# clone iosevka, v30.0.1 current commit 9c93c8203fbcda6db937beaada6881bc03225ded
+# install ttfautohint (currently v1.8.4)
+# npm i
+# copy this file to git repo root
+# run:
+# npm run build -- ttf::IosevkaCustom --jCmd=2
+# `--jCmd=2` is to use only 2 cores, not tested, but last time cpu hit 82 deg C, due to using all cores
+[buildPlans.IosevkaCustom]
+family = "Iosevka Custom"
+spacing = "normal"
+serifs = "sans"
+noCvSs = true
+exportGlyphNames = false
+noLigation = true
+
+  [buildPlans.IosevkaCustom.variants]
+  inherits = "ss20"
+
+    [buildPlans.IosevkaCustom.variants.design]
+    capital-a = "curly-serifless"
+    capital-d = "standard-unilateral-serifed"
+    capital-g = "toothless-corner-serifless-hooked"
+    capital-k = "curly-serifless"
+    capital-m = "hanging-serifless"
+    capital-n = "standard-serifless"
+    capital-q = "curly-tailed"
+    capital-r = "straight-serifless"
+    capital-u = "toothless-corner-serifless"
+    capital-v = "curly-serifless"
+    capital-w = "curly-serifless"
+    capital-x = "curly-serifless"
+    capital-y = "curly-serifless"
+    capital-z = "straight-serifless"
+    a = "double-storey-tailed"
+    b = "toothless-rounded-serifless"
+    d = "toothed-serifless"
+    e = "rounded"
+    f = "flat-hook-serifless"
+    g = "double-storey-open"
+    h = "straight-serifless"
+    i = "serifed"
+    j = "serifed"
+    k = "symmetric-connected-serifless"
+    l = "serifed-semi-tailed"
+    m = "earless-corner-double-arch-short-leg-serifless"
+    n = "earless-corner-straight-serifless"
+    r = "corner-hooked-serifed"
+    s = "serifless"
+    t = "flat-hook"
+    u = "toothed-serifless"
+    v = "curly-serifless"
+    w = "cursive-serifless"
+    x = "curly-serifless"
+    y = "curly-turn-serifless"
+    zero = "long-dotted"
+    one = "no-base-long-top-serif"
+    three = "flat-top-serifless"
+    four = "semi-open-serifless"
+    five = "upright-arched-serifless"
+    six = "open-contour"
+    seven = "curly-serifed"
+    eight = "crossing"
+    nine = "open-contour"
+    punctuation-dot = "square"
+    tilde = "low"
+    asterisk = "penta-low"
+    underscore = "high"
+    paren = "large-contour"
+    brace = "curly"
+    ampersand = "upper-open"
+    at = "threefold-tall"
+    dollar = "through"
+    percent = "dots"
