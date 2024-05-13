@@ -42,7 +42,7 @@ noLigation = true
     i = "serifed"
     j = "serifed"
     k = "curly-serifless"
-    l = "serifed-semi-tailed"
+    l = "tailed-serifed"
     m = "earless-corner-double-arch-short-leg-serifless"
     n = "earless-corner-straight-serifless"
     r = "corner-hooked-serifed"
@@ -79,7 +79,7 @@ shape = 300
 menu = 300
 css = 300
 
-[buildPlans.IosevkaCustom.weights.Light2]
+[buildPlans.IosevkaCustom.weights.SemiLight]
 shape = 350
 menu = 350
 css = 350
@@ -89,7 +89,7 @@ shape = 400
 menu = 400
 css = 400
 
-[buildPlans.IosevkaCustom.weights.Regular2]
+[buildPlans.IosevkaCustom.weights.Book]
 shape = 450
 menu = 450
 css = 450
