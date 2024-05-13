@@ -72,23 +72,20 @@
 # italic = { family = "IntoneMono Nerd Font", style = "Italic" }
 # bold_italic = { family = "IntoneMono Nerd Font", style = "Medium Italic" }
 
-# # Iosevka original, install only the Extended Regular / Italic, Extended Medium / Italic
+# # Iosevka original, install only the separate Extended ttf fonts
 # # use with vim.opt.linespace=-1
-# # 'Medium' is not picked up for some reason, we need to use 'Bold'
 # size = 15
 # hinting = "full"
 # edging = "antialias"
-# normal = { family = "Iosevka", style = "Regular" }
+# normal = { family = "Iosevka", style = "Light" }
 # bold = { family = "Iosevka", style = "Bold" }
-# italic = { family = "Iosevka", style = "Italic" }
+# italic = { family = "Iosevka", style = "Light Italic" }
 # bold_italic = { family = "Iosevka", style = "Bold Italic" }
 
-# Iosevka custom, we build Extended SemiLight (weight 350) + Extended Book (weight 350)
+# Iosevka custom
 # use with vim.opt.linespace=-1
-# 'Medium' is not picked up for some reason, we need to use 'Bold'
 # see our iosevka custom config for weights. Currently Light = 300, SemiLight = 350 (not picked up by neovide), Regular = 400 (neovide accepts Normal only?)
 # Book = 450 (not picked up), SemiBold = 500, Bold = 600
-# Bug: bold / bold italic are not picked up, it must be using auto-generated bolds, since those do not seem to have any effects
 size = 15
 hinting = "full"
 edging = "antialias"
