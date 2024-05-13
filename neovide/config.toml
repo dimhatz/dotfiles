@@ -83,18 +83,26 @@
 # italic = { family = "Iosevka", style = "Italic" }
 # bold_italic = { family = "Iosevka", style = "Bold Italic" }
 
-# Iosevka custom, install only the Extended Regular / Italic, Extended Medium / Italic
+# Iosevka custom, we build Extended SemiLight (weight 350) + Extended Book (weight 350)
 # use with vim.opt.linespace=-1
 # 'Medium' is not picked up for some reason, we need to use 'Bold'
+# see our iosevka custom config for weights. Currently Light = 300, SemiLight = 350 (not picked up by neovide), Regular = 400 (neovide accepts Normal only?)
+# Book = 450 (not picked up), SemiBold = 500, Bold = 600
+# Bug: bold / bold italic are not picked up, it must be using auto-generated bolds, since those do not seem to have any effects
 size = 15
 hinting = "full"
 edging = "antialias"
-normal = { family = "Iosevka Custom", style = "Regular" }
-bold = { family = "Iosevka Custom", style = "Bold" }
-italic = { family = "Iosevka Custom", style = "Italic" }
-bold_italic = { family = "Iosevka Custom", style = "Bold Italic" }
+normal = { family = "Iosevka Custom", style = "W350" } # Light picks up SemiLight
+bold = { family = "Iosevka Custom", style = "W600" }
+italic = { family = "Iosevka Custom", style = "W350 Italic" }
+bold_italic = { family = "Iosevka Custom", style = "W600 Italic" }
+
+# # TODO  <-- this should be normal
+# # TODO: <-- this should be bold
 
 [font.features]
 # MonoLisa = [ "+ss01", "+ss07", "+ss11", "-calt", "+ss09", "+ss02", "+ss14", "+ss16", "+ss17" ]
 # For Fira Code, disabling the "calt" feature will turn off ligatures.
 "FiraCode Nerd Font" = [ "-calt" ]
+"Iosevka" = [ "-calt" ]
+

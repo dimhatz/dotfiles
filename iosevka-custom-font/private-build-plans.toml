@@ -2,9 +2,11 @@
 # install ttfautohint (currently v1.8.4)
 # npm i
 # copy this file to git repo root
-# run:
+# run for separate ttfs:
 # npm run build -- ttf::IosevkaCustom --jCmd=2
-# `--jCmd=2` is to use only 2 cores, not tested, but last time cpu hit 82 deg C, due to using all cores
+# for all-in-one ttc:
+# npm run build -- super-ttc::IosevkaCustom --jCmd=2
+# `--jCmd=2` is to use only 2 cores, last time cpu hit 82 deg C, due to using all cores
 [buildPlans.IosevkaCustom]
 family = "Iosevka Custom"
 spacing = "normal"
@@ -99,6 +101,11 @@ shape = 500
 menu = 500
 css = 500
 
+[buildPlans.IosevkaCustom.weights.Bold]
+shape = 600
+menu = 600
+css = 600
+
 [buildPlans.IosevkaCustom.widths.Normal]
 shape = 600
 menu = 5
@@ -115,3 +122,6 @@ angle = 9.4
 shape = "italic"
 menu = "italic"
 css = "italic"
+
+[collectPlans.IosevkaCustom]
+from = ["IosevkaCustom"]
