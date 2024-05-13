@@ -63,14 +63,25 @@
 # edging = "alias"
 # normal = { family = "Terminess Nerd Font", style = "Regular" }
 
-# Intel one mono, thicker, but shorter. Equal sign '=' bad with full hinting. To be used with: vim.opt.linespace = -3. GOOD
+# # Intel one mono, thicker, but shorter. Equal sign '=' bad with full hinting. To be used with: vim.opt.linespace = -3. GOOD &&
+# size = 15
+# hinting = "none"
+# edging = "antialias"
+# normal = { family = "IntoneMono Nerd Font", style = "Regular" }
+# bold = { family = "IntoneMono Nerd Font", style = "Medium" }
+# italic = { family = "IntoneMono Nerd Font", style = "Italic" }
+# bold_italic = { family = "IntoneMono Nerd Font", style = "Medium Italic" }
+
+# Iosevka original, install only the Extended Regular / Italic, Extended Medium / Italic
+# 'Medium' is not picked up for some reason, we need to use 'Bold'
 size = 15
-hinting = "none"
+hinting = "full"
 edging = "antialias"
-normal = { family = "IntoneMono Nerd Font", style = "Regular" }
-bold = { family = "IntoneMono Nerd Font", style = "Medium" }
-italic = { family = "IntoneMono Nerd Font", style = "Italic" }
-bold_italic = { family = "IntoneMono Nerd Font", style = "Medium Italic" }
+normal = { family = "Iosevka", style = "Regular" }
+bold = { family = "Iosevka", style = "Bold" }
+italic = { family = "Iosevka", style = "Italic" }
+bold_italic = { family = "Iosevka", style = "Bold Italic" }
+
 
 # # Iosevka
 # size = 15
