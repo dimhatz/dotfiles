@@ -72,25 +72,27 @@
 # italic = { family = "IntoneMono Nerd Font", style = "Italic" }
 # bold_italic = { family = "IntoneMono Nerd Font", style = "Medium Italic" }
 
-# Iosevka original, install only the Extended Regular / Italic, Extended Medium / Italic
+# # Iosevka original, install only the Extended Regular / Italic, Extended Medium / Italic
+# # use with vim.opt.linespace=-1
+# # 'Medium' is not picked up for some reason, we need to use 'Bold'
+# size = 15
+# hinting = "full"
+# edging = "antialias"
+# normal = { family = "Iosevka", style = "Regular" }
+# bold = { family = "Iosevka", style = "Bold" }
+# italic = { family = "Iosevka", style = "Italic" }
+# bold_italic = { family = "Iosevka", style = "Bold Italic" }
+
+# Iosevka custom, install only the Extended Regular / Italic, Extended Medium / Italic
+# use with vim.opt.linespace=-1
 # 'Medium' is not picked up for some reason, we need to use 'Bold'
 size = 15
 hinting = "full"
 edging = "antialias"
-normal = { family = "Iosevka", style = "Regular" }
-bold = { family = "Iosevka", style = "Bold" }
-italic = { family = "Iosevka", style = "Italic" }
-bold_italic = { family = "Iosevka", style = "Bold Italic" }
-
-
-# # Iosevka
-# size = 15
-# hinting = "full"
-# edging = "antialias"
-# normal = { family = "Iosevka" }
-# # bold = { family = "Iosevka", style = "Medium"}
-# # italic = { family = "Iosevka", style = "Italic"}
-# # bold_italic = { family = "Iosevka", style = "Medium Italic"}
+normal = { family = "Iosevka Custom", style = "Regular" }
+bold = { family = "Iosevka Custom", style = "Bold" }
+italic = { family = "Iosevka Custom", style = "Italic" }
+bold_italic = { family = "Iosevka Custom", style = "Bold Italic" }
 
 [font.features]
 # MonoLisa = [ "+ss01", "+ss07", "+ss11", "-calt", "+ss09", "+ss02", "+ss14", "+ss16", "+ss17" ]
