@@ -9,6 +9,7 @@ if vim.g.neovide then
   vim.g.neovide_cursor_animation_length = 0 -- no cursor animation
   -- WARN: do not set fonts for neovide here, but in {FOLDERID_RoamingAppData}/neovide/config.toml
   -- the below values are only for live testing fonts (not all configs are accessible from here)
+  vim.opt.linespace = -1 -- for iosevka custom
 
   -- vim.g.neovide_no_idle = true
   -- TODO: check there can be more rendering options. letters looking too thin
