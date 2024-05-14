@@ -86,11 +86,12 @@
 # use with vim.opt.linespace=-1
 # see our iosevka custom config for weights. Currently Light = 300, SemiLight = 350 (not picked up by neovide), Regular = 400 (neovide accepts Normal only?)
 # Book = 450 (not picked up), SemiBold = 500, Bold = 600
+# NOTE: IIRC there were some issues with neovide not picking up bold fonts, but with an all-in-one custom .ttc they now work ok.
 size = 15
 hinting = "full"
 edging = "antialias"
-normal = { family = "Iosevka Custom", style = "W350" } # Light picks up SemiLight
-bold = { family = "Iosevka Custom", style = "W600" }
+normal = { family = "Iosevka Custom", style = "W350" } # 350 = SemiLight
+bold = { family = "Iosevka Custom", style = "W600" } # 600 = Bold
 italic = { family = "Iosevka Custom", style = "W350 Italic" }
 bold_italic = { family = "Iosevka Custom", style = "W600 Italic" }
 
