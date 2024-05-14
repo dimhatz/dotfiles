@@ -178,13 +178,7 @@ local function make_wrapper_fn(callback, ...)
   end
 end
 
--- mark all my remappings with (My) to be able to tell which mappings are mine, which are by plugins
-local function remap(mode, lhs, rhs, opts)
-  local final_opts = opts or {}
-  local desc = final_opts.desc or ''
-  final_opts.desc = desc .. ' (My)'
-  vim.keymap.set(mode, lhs, rhs, final_opts)
-end
+local remap = require('my-helpers').remap
 
 remap('n', 'n', '<Cmd>set hlsearch<CR>n') -- trigger mini.nvim's scrollbar highlight
 remap('n', 'N', '<Cmd>set hlsearch<CR>N')
@@ -487,127 +481,11 @@ require('lazy').setup({
   -- autoclose parens, quotes etc - does not expose its <CR> function that we need in our custom completion mapping, disabling
   { 'm4xshen/autoclose.nvim', enabled = false, lazy = false, opts = { options = { disable_command_mode = true } } },
 
-  -- HiPhish/rainbow-delimiters.nvim
-  {
-    'HiPhish/rainbow-delimiters.nvim',
-    init = function()
-      require('rainbow-delimiters.setup').setup({
-        -- strategy = {},
-        -- query = {},
-        highlight = {
-          'RainbowDelimiterBlue',
-          'RainbowDelimiterViolet',
-          'RainbowDelimiterYellow',
-        },
-      })
-    end,
-  },
+  require('my-rainbow-delimiters'),
 
-  -- lukas-reineke/indent-blankline.nvim
-  {
-    'lukas-reineke/indent-blankline.nvim',
-    main = 'ibl',
-    opts = {},
-    config = function()
-      require('ibl').overwrite({
-        indent = {
-          char = '│', -- center(│), left (▏)
-        },
-        scope = {
-          enabled = true, -- the brighter highlighting of the current scope's guide
-          show_start = false,
-        },
-        whitespace = {
-          remove_blankline_trail = false,
-        },
-      })
+  require('my-indent-blankline'),
 
-      -- Replaces the first indentation guide for space indentation with a normal (from docs)
-      -- local hooks = require('ibl.hooks')
-      -- hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_space_indent_level)
-    end,
-  },
-
-  -- olimorris/persisted.nvim -- not used in favor of mini.sessions
-  {
-    enabled = false,
-    'olimorris/persisted.nvim',
-    lazy = false, -- make sure the plugin is always loaded at startup
-    opts = {
-      autosave = true, -- automatically save session files when exiting Neovim
-      autoload = true, -- automatically load the session for the cwd on Neovim startup
-      on_autoload_no_session = function() -- function to run when `autoload = true` but there is no session to load
-        vim.notify('No existing session to load.')
-      end,
-      follow_cwd = false, -- change session file name to match current working directory if it changes
-      use_git_branch = false, -- create session files based on the branch of a git enabled repository
-      -- ignored_dirs = { vim.fn.expand('$HOME') }, -- trying to ignore home dir also leads to ignoring all the subdirs
-      telescope = {
-        reset_prompt = true, -- Reset the Telescope prompt after an action?
-        mappings = { -- table of mappings for the Telescope extension
-          delete_session = '<c-d>',
-        },
-      },
-    },
-  },
-
-  -- smoka7/hop.nvim
-  {
-    'smoka7/hop.nvim',
-    -- alternative: mini.jump2d in case this does not work well, this one does not support visual
-    version = '*',
-    config = function()
-      local hop = require('hop')
-      hop.setup({
-        jump_on_sole_occurrence = false,
-        uppercase_labels = true,
-        multi_windows = false,
-        create_hl_autocmd = true,
-        -- keys = 'ASDGHKLQWERTYUIOPZXCVBNMFJ;',
-      })
-      local hint = require('hop.hint')
-
-      -- remap('n', '<Leader>w', '<Cmd>HopWordAC<CR>') -- old mapping
-      remap('n', 'f', function()
-        hop.hint_words({ direction = hint.HintDirection.AFTER_CURSOR })
-      end, { desc = 'Hop to [F]ollowing words' })
-      remap('v', 'f', function()
-        hop.hint_words({ direction = hint.HintDirection.AFTER_CURSOR })
-      end, { desc = 'Hop to [F]ollowing words' })
-
-      -- remap('n', '<Leader>b', '<Cmd>HopWordBC<CR>') -- old mapping
-      remap('n', 't', function()
-        hop.hint_words({ direction = hint.HintDirection.BEFORE_CURSOR })
-      end, { desc = 'Hop to words before (torwards top)' })
-      remap('v', 't', function()
-        hop.hint_words({ direction = hint.HintDirection.BEFORE_CURSOR })
-      end, { desc = 'Hop to words before (torwards top)' })
-
-      -- WARN: do not remap to "composite" keys that start with <Leader>e, e.g.
-      -- remap('n', '<Leader>ef' ...) <-- this will cause a timeout before our "more direct" remap is triggered
-      remap('n', '<Leader>e', function()
-        hop.hint_words({ direction = hint.HintDirection.AFTER_CURSOR, hint_position = hint.HintPosition.END })
-      end, { desc = 'Hop to following words [E]nds' })
-      remap('v', '<Leader>e', function()
-        hop.hint_words({ direction = hint.HintDirection.AFTER_CURSOR, hint_position = hint.HintPosition.END })
-      end, { desc = 'Hop to following words [E]nds' })
-
-      remap('n', '<Leader>k', function()
-        hop.hint_lines_skip_whitespace({ direction = hint.HintDirection.BEFORE_CURSOR })
-      end, { desc = 'Hop to lines up - [K] motion' })
-      remap('v', '<Leader>k', function()
-        hop.hint_lines_skip_whitespace({ direction = hint.HintDirection.BEFORE_CURSOR })
-      end, { desc = 'Hop to lines up - [K] motion' })
-
-      remap('n', '<Leader>j', function()
-        hop.hint_lines_skip_whitespace({ direction = hint.HintDirection.AFTER_CURSOR })
-      end, { desc = 'Hop to lines down - [J] motion' })
-      remap('v', '<Leader>j', function()
-        hop.hint_lines_skip_whitespace({ direction = hint.HintDirection.AFTER_CURSOR })
-      end, { desc = 'Hop to lines down - [J] motion' })
-    end,
-  },
-
+  require('my-hop'),
   -- lewis6991/gitsigns.nvim, Adds git related signs to the gutter, as well as utilities for managing changes
   {
     'lewis6991/gitsigns.nvim',
