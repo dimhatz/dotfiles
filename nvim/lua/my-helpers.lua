@@ -8,4 +8,12 @@ function M.remap(mode, lhs, rhs, opts)
   vim.keymap.set(mode, lhs, rhs, final_opts)
 end
 
+-- returns a wrapper function that calls callback with the provided params
+function M.make_wrapper_fn(callback, ...)
+  local args = { ... }
+  return function()
+    callback(unpack(args))
+  end
+end
+
 return M
