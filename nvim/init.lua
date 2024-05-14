@@ -452,90 +452,13 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   --------------------------------------------- COLORS -------------------------------------------------------------------------------------
 
-  -- BranimirE/fix-auto-scroll.nvim, prevent scrolling (centering the cursorline) when changing buffers
-  {
-    'BranimirE/fix-auto-scroll.nvim',
-    -- lua port of https://vim.fandom.com/wiki/Avoid_scrolling_when_switch_buffers
-    -- TODO: find workaround for viewport being positioned in the center,:h getwininfo(), :h line(), :h winsaveview(), -> vim.fn
-    -- post workaround: https://github.com/neovim/neovim/issues/9179
-    config = true,
-    event = 'VeryLazy',
-  },
+  require('my-fix-auto-scroll'),
 
-  -- RRethy/base16-nvim
-  {
-    'RRethy/base16-nvim',
-    lazy = false,
-    priority = math.huge,
-    -- config instead of init, to execute after the plugin was loaded
-    config = function()
-      require('base16-colorscheme').with_config({
-        telescope = false,
-        indentblankline = false,
-        cmp = false,
-        notify = false,
-        ts_rainbow = false,
-        illuminate = false,
-        dapui = false,
-      })
-
-      -- no need to setup, since we are calling this anyway from our colors
-      -- require('base16-colorscheme').setup()
-
-      -- initializing here, to ensure base16 was added to path by Lazy, since we need it in mycolors.lua
-      require('mycolors').apply_colors()
-    end,
-  },
-
-  -- rockyzhang24/arctic.nvim
-  {
-    'rockyzhang24/arctic.nvim',
-    dependencies = { 'rktjmp/lush.nvim' },
-    name = 'arctic',
-    branch = 'main',
-    config = function()
-      -- vim.cmd('colorscheme arctic')
-      -- vim.cmd.hi('Comment gui=none')
-    end,
-  },
+  require('my-base16'),
 
   { 'lunarvim/darkplus.nvim' },
 
   { 'folke/tokyonight.nvim' },
-
-  -- loctvl842/monokai-pro.nvim
-  {
-    'loctvl842/monokai-pro.nvim',
-    config = function()
-      require('monokai-pro').setup({
-        devicons = vim.g.have_nerd_font, -- highlight the icons of `nvim-web-devicons`
-        filter = 'pro',
-      })
-    end,
-  },
-
-  -- navarasu/onedark.nvim
-  {
-    'navarasu/onedark.nvim',
-    config = function()
-      require('onedark').setup({
-        style = 'warmer',
-        colors = {
-          -- https://www.w3schools.com/colors/colors_picker.asp
-          -- TODO: add better search within document '/' highlights (black cursor is not very distinct)
-          -- TODO: matchparen highlight not distinct
-          cyan = '#56c2a7',
-          blue = '#819ae4',
-          grey = '#818998',
-          fg = '#b6bdc8',
-        },
-        code_style = {
-          comments = 'none',
-        },
-      })
-      -- vim.cmd('colorscheme onedark')
-    end,
-  },
 
   { 'rebelot/kanagawa.nvim' },
 
