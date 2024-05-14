@@ -450,22 +450,7 @@ require('lazy').setup({
 
   { 'rebelot/kanagawa.nvim' },
 
-  -- NvChad/nvim-colorizer.lua
-  {
-    'NvChad/nvim-colorizer.lua',
-    opts = {
-      filetypes = { 'lua', 'text' },
-      user_default_options = {
-        mode = 'virtualtext',
-        virtualtext = '',
-        names = false,
-        RGB = true,
-        RRGGBB = true,
-        RRGGBBAA = true,
-        always_update = false,
-      },
-    },
-  },
+  require('my-colorizer'),
 
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -487,26 +472,7 @@ require('lazy').setup({
 
   require('my-telescope'),
 
-  -- pmizio/typescript-tools.nvim
-  {
-    'pmizio/typescript-tools.nvim',
-    -- typescript completion, calls nvim-lspconfig, spawns an additional tsserver instance for diagnostics
-    -- another one if this one does not work: yioneko/vtsls
-    enabled = true,
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'neovim/nvim-lspconfig',
-      -- 'hrsh7th/cmp-nvim-lsp',
-    },
-    config = function()
-      -- adding capabilites does not seems to make a difference
-      -- local capabilities = require('cmp_nvim_lsp').default_capabilities()
-      require('typescript-tools').setup({
-        -- capabilities = capabilities,
-      })
-    end,
-  },
-
+  require('my-typescript-tools'),
   -- neovim/nvim-lspconfig
   {
     'neovim/nvim-lspconfig',
