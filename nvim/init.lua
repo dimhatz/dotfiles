@@ -474,7 +474,7 @@ require('lazy').setup({
 
   require('my-typescript-tools'),
 
-  require('my-lspconfig'),
+  require('my-lspconfig'), -- see inside for MasonInstall command
 
   require('my-none-ls'),
 
