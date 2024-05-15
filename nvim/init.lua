@@ -170,8 +170,6 @@ local onEsc = function()
   closeHoveringWindows() -- close the lsp hover windows
 end
 
-local make_wrapper_fn = require('my-helpers').make_wrapper_fn
-
 local remap = require('my-helpers').remap
 
 remap('n', 'n', '<Cmd>set hlsearch<CR>n') -- trigger mini.nvim's scrollbar highlight
@@ -181,6 +179,7 @@ remap('n', '<C-q>', '<Cmd>qa<CR>')
 remap('n', '<Esc>', onEsc)
 -- '/' is considered command mode
 remap('c', '<Esc>', function()
+  -- workaround to remove highlight from scrollbar, see onEsc()
   -- vim.cmd([[call feedkeys("\<Esc>", 'n')]]) -- jumps to next highlight, so we delete text manually
   -- <c-e><c-u> to delete all the text (:h c_CTRL-U), the following <bs> will auto-exit command mode
   vim.cmd([[call feedkeys("\<C-e>\<C-u>\<BS>", 'n')]]) -- works
@@ -383,7 +382,8 @@ vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
   callback = function(arg)
     -- vim.print(arg)
     local buf_num = arg.buf
-    local ft = vim.api.nvim_buf_get_option(buf_num, 'filetype')
+    -- local ft = vim.api.nvim_buf_get_option(buf_num, 'filetype') -- before v0.10
+    local ft = vim.api.nvim_get_option_value('filetype', { buf = buf_num }) -- when fully switched to v0.10
     -- vim.print(ft)
     if ft == 'help' then
       vim.cmd.wincmd('L')
