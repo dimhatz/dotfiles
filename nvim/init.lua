@@ -77,8 +77,8 @@ vim.opt.signcolumn = 'yes'
 vim.opt.updatetime = 4000
 
 -- Decrease mapped sequence wait time
--- Displays which-key popup sooner
-vim.opt.timeoutlen = 500
+-- Also controls which-key popup delay
+vim.opt.timeoutlen = 1000
 
 -- Configure how new splits should be opened
 vim.opt.splitright = true
@@ -337,10 +337,10 @@ vim.api.nvim_exec2(
 )
 
 -- TODO: check these out, adjust setup
--- -- Diagnostic keymps
+-- -- Diagnostic keymaps
+remap('n', 'ge', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror popup' })
 -- remap('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 -- remap('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
--- remap('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 -- remap('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- vim.diagnostic.config({
@@ -382,8 +382,8 @@ vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
   callback = function(arg)
     -- vim.print(arg)
     local buf_num = arg.buf
-    -- local ft = vim.api.nvim_buf_get_option(buf_num, 'filetype') -- before v0.10
-    local ft = vim.api.nvim_get_option_value('filetype', { buf = buf_num }) -- when fully switched to v0.10
+    local ft = vim.api.nvim_buf_get_option(buf_num, 'filetype') -- before v0.10
+    -- local ft = vim.api.nvim_get_option_value('filetype', { buf = buf_num }) -- when fully switched to v0.10
     -- vim.print(ft)
     if ft == 'help' then
       vim.cmd.wincmd('L')
