@@ -52,6 +52,9 @@ return {
     else
       lspconfig.lua_ls.setup({
         -- snippets seem to be sent to lsp client even without passing capabilities
+        -- NOTE: with luals there is the following bug: when editing a file from dotfiles, using a
+        -- softlinked path (e.g. ~/AppData/Local/nvim...), then highlighting of diagnostics is removed
+        -- when the file is saved (with or without neodev).
         capabilities = cmp_nvim_lsp.default_capabilities(),
         settings = {
           Lua = {
