@@ -16,4 +16,10 @@ function M.make_wrapper_fn(callback, ...)
   end
 end
 
+function M.log_my_error(str, overwrite)
+  local delimiter = vim.fn.has('win32') and '\\' or '/'
+  local path = vim.fn.stdpath('log') .. delimiter .. 'my.log'
+  vim.fn.writefile({ os.date() .. '   ' .. str }, path, overwrite and '' or 'a')
+end
+
 return M

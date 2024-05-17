@@ -55,7 +55,7 @@ return {
           text = function(buffer)
             local pick_letter = is_picking_focus() and buffer.pick_letter or ' '
             pick_letter = string.upper(pick_letter)
-            local icon = buffer.is_modified and ' ●▕' or '  ▕'
+            local icon = buffer.is_modified and ' •▕' or '  ▕' -- • -- ● -- big cirlcle not centered correctly on neovide + iosevka custom
             return ' ' .. pick_letter .. ' ' .. buffer.filename .. icon
           end,
         },
@@ -64,7 +64,7 @@ return {
 
     local function my_update_tabline()
       local function my_redraw()
-        vim.opt.tabline = cokeline.tabline()
+        vim.opt.tabline = cokeline.tabline() -- this is global cokeline
       end
       -- without wrapping with timer, when closing the buffer, its 'tab' is still visible
       vim.fn.timer_start(0, my_redraw)
@@ -98,8 +98,6 @@ return {
       mappings.by_step('switch', 1)
       my_update_tabline()
     end, { desc = 'Move buffer right' })
-
-    -- TODO: figure out how to save buffer order (see cokeline's code for recession)
 
     vim.api.nvim_create_autocmd({
       'BufAdd',
