@@ -11,11 +11,16 @@ return {
     -- MasonInstall lua-language-server@3.7.4 stylua@v0.20.0 eslint_d@13.1.2
     -- versions can be found here: https://github.com/mason-org/mason-registry/blob/main/packages/
     { 'williamboman/mason.nvim', opts = {} }, -- just for installation and adding to nvim path, all the config of language servers is manual
-    { 'folke/neodev.nvim', opts = {} }, -- this should take care of the lua paths, nvim libraries to be present in completions etc
+    { 'folke/neodev.nvim' }, -- this should take care of the lua paths, nvim libraries to be present in completions etc, do not use opts here, since we will call its setup() manually
     -- { 'j-hui/fidget.nvim', opts = {} }, -- shows lsp messages, not sure how useful this is --> lags when only lspconfig is used (no treesitter for better speed)
   },
 
   config = function()
+    -- IMPORTANT: make sure to setup neodev BEFORE lspconfig
+    require('neodev').setup({
+      -- add any options here, or leave empty to use the default settings
+    })
+
     local lspconfig = require('lspconfig')
 
     -- taken from here: https://github.com/neovim/nvim-lspconfig/wiki/UI-Customization#borders
