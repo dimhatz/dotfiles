@@ -1,6 +1,6 @@
 local remap = require('my-helpers').remap
 local make_wrapper_fn = require('my-helpers').make_wrapper_fn
--- nvim-telescope/telescope.nvim, Fuzzy Finder (files, lsp, etc)
+
 return {
   'nvim-telescope/telescope.nvim',
   event = 'VimEnter',
@@ -18,7 +18,7 @@ return {
       end,
     },
     { 'nvim-telescope/telescope-ui-select.nvim' },
-    -- frecency caused e517 error when restoring session with persisted, likely messes up persisted / barbar autcmd interaction
+    -- frecency caused e517 error when restoring session with 'persisted', likely messes up persisted / barbar autcmd interaction
     -- also, my 'my-helpfile-splits-vertically' autocmd stopped working when opening help with telescope
     -- seeing the github issues regarding files on windows, this is likely happening only on windows
     --
@@ -59,16 +59,12 @@ return {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),
         },
-        persisted = {
-          layout_config = { width = 0.55, height = 0.55 },
-        },
       },
     })
 
     -- Enable Telescope extensions if they are installed
     pcall(telescope.load_extension, 'fzf')
     pcall(telescope.load_extension, 'ui-select')
-    pcall(telescope.load_extension, 'persisted')
     -- pcall(telescope.load_extension, 'frecency')
 
     -- See `:help telescope.builtin`
@@ -89,7 +85,6 @@ return {
 
     -- also for pure lsp diagnostic keybindings, e.g. open diag popup etc :h lspconfig-keybindings
     remap('n', '<leader>d', make_wrapper_fn(builtin.diagnostics, { initial_mode = 'normal' }), { desc = 'Search [D]iagnostics' })
-    remap('n', '<leader>sp', '<Cmd>Telescope persisted<CR>', { desc = '[S]earch [P]ersisted session' })
 
     remap('n', '<leader>/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
 

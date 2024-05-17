@@ -444,51 +444,41 @@ require('lazy').setup({
 
   require('my-base16'),
 
-  { 'lunarvim/darkplus.nvim' },
-
-  { 'folke/tokyonight.nvim' },
-
-  { 'rebelot/kanagawa.nvim' },
-
   require('my-colorizer'),
 
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
-  -- gc to comment
   { 'numToStr/Comment.nvim', opts = {} },
 
-  -- autoclose parens, quotes etc - does not expose its <CR> function that we need in our custom completion mapping, disabling
-  { 'm4xshen/autoclose.nvim', enabled = false, lazy = false, opts = { options = { disable_command_mode = true } } },
-
-  require('my-rainbow-delimiters'),
-
-  require('my-indent-blankline'),
+  require('my-cokeline'),
 
   require('my-hop'),
 
-  require('my-gitsigns'),
-
   require('my-whichkey'),
 
-  require('my-telescope'),
+  require('my-indent-blankline'),
 
-  require('my-typescript-tools'),
+  require('my-rainbow-delimiters'),
 
-  require('my-lspconfig'), -- see inside for MasonInstall command
-
-  require('my-none-ls'),
-
-  require('my-conform'),
-
-  require('my-cmp'),
+  require('my-gitsigns'),
 
   require('my-todo-comments'),
 
   require('my-mini'),
 
+  require('my-telescope'),
+
   require('my-treesitter'),
 
-  require('my-cokeline'),
+  require('my-conform'),
+
+  require('my-lspconfig'), -- see inside for MasonInstall command
+
+  require('my-none-ls'),
+
+  require('my-typescript-tools'),
+
+  require('my-cmp'),
 
   -- nvim-treesitter/nvim-treesitter-context, sticks surrounding function's signature to the top line
   {
@@ -518,5 +508,16 @@ require('lazy').setup({
   },
 })
 
--- The line beneath this is called `modeline`. See `:help modeline`
+----------------  NOT USED ----------------------------------------------------------------
+-- autoclose parens, quotes etc - does not expose its <CR> function that we need in our custom completion mapping, disabling
+-- { 'm4xshen/autoclose.nvim', enabled = false, lazy = false, opts = { options = { disable_command_mode = true } } },
+
+-- { 'lunarvim/darkplus.nvim' },
+
+-- { 'folke/tokyonight.nvim' },
+
+-- { 'rebelot/kanagawa.nvim' },
+
+-------------------------------------------------------------------------------------------
+
 -- vim: ts=2 sts=2 sw=2 et

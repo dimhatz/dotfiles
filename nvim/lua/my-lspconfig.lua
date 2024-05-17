@@ -39,19 +39,24 @@ return {
     end
 
     -------------------------- server configs -------------------------
-    local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
-    -- example to setup lua_ls and enable call snippets
-    lspconfig.lua_ls.setup({
-      capabilities = capabilities, -- snippets seem to be sent to lsp client even without capabilities
-      settings = {
-        Lua = {
-          completion = {
-            callSnippet = 'Replace',
+    local ok_cmp_nvim_lsp, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+    if not ok_cmp_nvim_lsp then
+      -- for debugging, if we disable cmp, this module should not crash
+      vim.notify('My: cmp_nvim_lsp not found. Setting up LuaLS with defaults.', vim.log.levels.WARN)
+      lspconfig.lua_ls.setup({})
+    else
+      lspconfig.lua_ls.setup({
+        -- snippets seem to be sent to lsp client even without passing capabilities
+        capabilities = cmp_nvim_lsp.default_capabilities(),
+        settings = {
+          Lua = {
+            completion = {
+              callSnippet = 'Replace',
+            },
           },
         },
-      },
-    })
+      })
+    end
 
     -------------------------- autocmds ---------------------------------
     vim.api.nvim_create_autocmd('LspAttach', {
@@ -63,7 +68,12 @@ return {
 
         -- Jump to the definition of the word under your cursor.
         --  This is where a variable was first declared, or where a function is defined, etc.
-        local t_builtin = require('telescope.builtin')
+        local ok_t_builtin, t_builtin = pcall(require, 'telescope.builtin')
+        if not ok_t_builtin then
+          -- for debugging, if we disable telescope, this module should not crash
+          vim.notify('My: Telescope builtin not found. Mappings like gd will not be set.', vim.log.levels.WARN)
+          return
+        end
         map('gd', make_wrapper_fn(t_builtin.lsp_definitions, { initial_mode = 'normal' }), '[G]oto [D]efinition')
         map('gr', make_wrapper_fn(t_builtin.lsp_references, { initial_mode = 'normal' }), '[G]oto [R]eferences')
         map('gD', make_wrapper_fn(vim.lsp.buf.declaration, { initial_mode = 'normal' }), '[G]oto [D]eclaration')
