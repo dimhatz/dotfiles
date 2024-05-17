@@ -108,7 +108,10 @@ return {
 
     -- Shortcut for searching your Neovim configuration files
     remap('n', '<leader>sn', function()
-      builtin.find_files({ cwd = vim.fn.stdpath('config') })
+      -- do not use vim.fn.stdpath('config'), since luals will be
+      -- buggy when opening files from ~AppData/local/nvim (links to dotfiles/nvim):
+      -- when saving a file, diagnostics disappear
+      builtin.find_files({ cwd = vim.fn.expand('~/dotfiles/nvim') })
     end, { desc = '[S]earch [N]eovim files' })
 
     remap('n', '<C-p>', function()
