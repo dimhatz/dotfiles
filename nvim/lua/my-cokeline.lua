@@ -55,6 +55,7 @@ return {
           text = function(buffer)
             local pick_letter = is_picking_focus() and buffer.pick_letter or ' '
             pick_letter = string.upper(pick_letter)
+            -- properly centered with iosevka + neovide: • -- ∎
             local icon = buffer.is_modified and ' •▕' or '  ▕' -- • -- ● -- big cirlcle not centered correctly on neovide + iosevka custom
             return ' ' .. pick_letter .. ' ' .. buffer.filename .. icon
           end,

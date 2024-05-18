@@ -43,6 +43,18 @@ return {
       return orig_util_open_floating_preview(contents, syntax, opts, ...)
     end
 
+    -------------------------- diagnostics config ---------------------
+    vim.diagnostic.config({
+      signs = {
+        text = {
+          -- ● -- ⏺ -- ⏹ -- ● -- ◆  --  -- 
+          [vim.diagnostic.severity.ERROR] = '',
+          [vim.diagnostic.severity.WARN] = '',
+          [vim.diagnostic.severity.HINT] = '',
+          [vim.diagnostic.severity.INFO] = '',
+        },
+      },
+    })
     -------------------------- server configs -------------------------
     local ok_cmp_nvim_lsp, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
     if not ok_cmp_nvim_lsp then
