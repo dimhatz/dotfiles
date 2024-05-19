@@ -82,6 +82,19 @@
 # italic = { family = "Iosevka", style = "Light Italic" }
 # bold_italic = { family = "Iosevka", style = "Bold Italic" }
 
+# # Iosevka custom
+# # use with vim.opt.linespace=-1
+# # see our iosevka custom config for weights. Currently Light = 300, SemiLight = 350 (not picked up by neovide), Regular = 400 (neovide accepts Normal only?)
+# # Book = 450 (not picked up), SemiBold = 500, Bold = 600
+# # NOTE: IIRC there were some issues with neovide not picking up bold fonts, but with an all-in-one custom .ttc they now work ok.
+# size = 15
+# hinting = "full"
+# edging = "antialias"
+# normal = { family = "Iosevka Custom", style = "W350" } # 350 = SemiLight
+# bold = { family = "Iosevka Custom", style = "W600" } # 600 = Bold
+# italic = { family = "Iosevka Custom", style = "W350 Italic" }
+# bold_italic = { family = "Iosevka Custom", style = "W600 Italic" }
+
 # Iosevka custom
 # use with vim.opt.linespace=-1
 # see our iosevka custom config for weights. Currently Light = 300, SemiLight = 350 (not picked up by neovide), Regular = 400 (neovide accepts Normal only?)
@@ -90,10 +103,10 @@
 size = 15
 hinting = "full"
 edging = "antialias"
-normal = { family = "Iosevka Custom", style = "W350" } # 350 = SemiLight
-bold = { family = "Iosevka Custom", style = "W600" } # 600 = Bold
-italic = { family = "Iosevka Custom", style = "W350 Italic" }
-bold_italic = { family = "Iosevka Custom", style = "W600 Italic" }
+normal = { family = "IosevkaCustom NF", style = "W350" } # 350 = SemiLight
+bold = { family = "IosevkaCustom NF", style = "W600" } # 600 = Bold
+italic = { family = "IosevkaCustom NF", style = "W350 Italic" }
+bold_italic = { family = "IosevkaCustom NF", style = "W600 Italic" }
 
 # # TODO  <-- this should be normal
 # # TODO: <-- this should be bold
