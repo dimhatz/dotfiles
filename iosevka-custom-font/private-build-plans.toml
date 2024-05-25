@@ -7,6 +7,16 @@
 # for all-in-one ttc:
 # npm run build -- super-ttc::IosevkaCustom --jCmd=2
 # `--jCmd=2` is to use only 2 cores, last time cpu hit 82 deg C, due to using all cores
+# Font patcher from Nerd fonts crash on windows native, use this docker command (on linux):
+# docker run --rm -v /home/pel/Downloads/ios/orig:/in:Z -v /home/pel/Downloads/ios/patched:/out:Z -e "PN=1" nerdfonts/patcher --careful --complete --makegroups 4
+# font patcher produces 3 types of fonts:
+# - the default (glyphs are 2-char wide, but overflow / overshadow the next glyph without breaking the grid)
+# - mono (glyphs are small 1-char wide, always fit, never overflow)
+# - propo (glyphs are 2-char wide, never overflow, effectively pushing the next glyph further - breaks the grid, should be used with non-monospaced font or when being aligned does not matter --> avoid this one)
+# see: https://github.com/ryanoasis/nerd-fonts/discussions/1103
+# --makegroups 4 shortens the produced font names, so there are no fonforge warnings
+# NOTE: for some reason the width 450->Book in the patched font has the same name as 400->Regular, when patching .ttc
+# Maybe patch and use only the separate .ttf's
 [buildPlans.IosevkaCustom]
 family = "Iosevka Custom"
 spacing = "normal"
@@ -55,10 +65,11 @@ noLigation = true
     w = "cursive-serifless"
     x = "curly-serifless"
     y = "curly-turn-serifless"
+    cyrl-che = "tailed"
     zero = "long-dotted"
     one = "no-base-long-top-serif"
     three = "flat-top-serifless"
-    four = "semi-open-serifless"
+    four = "open-non-crossing-serifed"
     five = "upright-arched-serifless"
     six = "open-contour"
     seven = "curly-serifed"
