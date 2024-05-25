@@ -78,6 +78,7 @@ return {
     remap('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep in cwd' })
     remap('n', '<leader>sa', builtin.autocommands, { desc = '[S]earch [A]utocmds' })
     remap('n', '<leader>sc', builtin.highlights, { desc = '[S]earch [C]olors' })
+    remap('n', '<leader>sr', make_wrapper_fn(builtin.resume, { initial_mode = 'normal' }), { desc = 'Search [R]esume previous' })
 
     remap('n', '<leader>sf', function()
       builtin.find_files({ hidden = true })

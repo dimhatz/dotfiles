@@ -1,6 +1,7 @@
 local remap = require('my-helpers').remap
 local log_my_error = require('my-helpers').log_my_error
-
+-- # # TODO  <-- this should be normal
+-- # # TODO: <-- this should be bold
 return {
   'echasnovski/mini.nvim',
   lazy = false,

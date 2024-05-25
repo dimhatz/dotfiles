@@ -42,6 +42,10 @@ else
   -- vim.o.guifont = 'SauceCodePro NF:h10.5'
 end
 
+-- disable netrw, as required by nvim-tree
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 vim.opt.syntax = 'off' -- treesitter
 
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -437,6 +441,7 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+-- NOTE: lazy runs init() during startup, before loading the plugin itself (after which config() runs).
 require('lazy').setup({
   --------------------------------------------- COLORS -------------------------------------------------------------------------------------
 
@@ -449,6 +454,8 @@ require('lazy').setup({
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   { 'numToStr/Comment.nvim', opts = {} },
+
+  require('my-nvim-tree'),
 
   require('my-cokeline'),
 
