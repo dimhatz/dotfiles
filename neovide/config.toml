@@ -100,6 +100,7 @@
 # see our iosevka custom config for weights. Currently Light = 300, SemiLight = 350 (not picked up by neovide), Regular = 400 (neovide accepts Normal only?)
 # Book = 450 (not picked up), SemiBold = 500, Bold = 600
 # NOTE: IIRC there were some issues with neovide not picking up bold fonts, but with an all-in-one custom .ttc they now work ok.
+# NOTE: patched iosevka custom Book == W450 has the same name as Regular == 400
 size = 15
 hinting = "full"
 edging = "antialias"

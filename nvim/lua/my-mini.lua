@@ -1,7 +1,5 @@
 local remap = require('my-helpers').remap
-local log_my_error = require('my-helpers').log_my_error
--- # # TODO  <-- this should be normal
--- # # TODO: <-- this should be bold
+
 return {
   'echasnovski/mini.nvim',
   lazy = false,
@@ -10,93 +8,9 @@ return {
     'willothy/nvim-cokeline', -- to manually restore buffer order
   },
   config = function()
-    local session_file = '.nvim_session'
-
-    local function save_cokeline_buffer_order()
-      local ok_cokeline_buffers, buffers_lib = pcall(require, 'cokeline.buffers')
-      if not ok_cokeline_buffers then
-        log_my_error('My: cokeline.buffers not found. Not saving buffer order.')
-        return
-      end
-      local valid_buffers = buffers_lib.get_valid_buffers()
-      local file_paths = {}
-      for _, buf in ipairs(valid_buffers) do
-        table.insert(file_paths, buf.path)
-      end
-      local file_paths_json = vim.json.encode(file_paths)
-
-      if string.find(file_paths_json, "'") then
-        -- we will be appending a line like: let g:my_buf_order = '["path1", "path2"]'
-        log_my_error("My: Found filename containing quote ('). Not saving buffer order.")
-        return
-      end
-
-      if vim.fn.filewritable(session_file) ~= 1 then
-        vim.print('My: No session file found. Not saving buffer order.')
-        return
-      end
-
-      vim.fn.writefile({ '', "let g:my_buf_order = '" .. file_paths_json .. "'" }, session_file, 'a')
-    end
-
-    local function restore_cokeline_buffer_order()
-      local ok_cokeline_buffers, buffers_lib = pcall(require, 'cokeline.buffers')
-      if not ok_cokeline_buffers then
-        vim.notify('My: cokeline.buffers not found. Not restoring buffer order.', vim.log.levels.WARN)
-        return
-      end
-      local json = vim.g.my_buf_order
-      if not json then
-        vim.notify('My: cokeline.buffers global not found. Not restoring buffer order.', vim.log.levels.WARN)
-        return
-      end
-      local file_paths = vim.json.decode(json)
-      -- vim.print(file_paths)
-      for i, file_path in ipairs(file_paths) do
-        local buffers = buffers_lib.get_valid_buffers() -- get the fresh list every time
-        for _, buffer in ipairs(buffers) do
-          if i <= #buffers and buffer.path == file_path then
-            -- vim.print('moving ' .. file_path .. ' from ' .. buffer._valid_index .. ' to ' .. i)
-            buffers_lib.move_buffer(buffer, i)
-          end
-        end
-      end
-      vim.opt.tabline = cokeline.tabline() -- force refresh, this is global cokeline
-      vim.print('My: buffer order restored.')
-    end
-
     ---------------------------------------------------------------------------------------
     -- sessions plugin first, so that its autocmds have priority over the next mini.* plugins, like minimap
-    require('mini.sessions').setup({
-      autoread = true,
-      autowrite = true,
-      file = session_file, -- local session file
-      directory = '', -- directory for global sessions, we disable it
-      hooks = {
-        post = {
-          write = save_cokeline_buffer_order,
-          read = function()
-            log_my_error('start logging', true)
-          end,
-        },
-      },
-    })
-
-    vim.api.nvim_create_autocmd('UIEnter', {
-      group = vim.api.nvim_create_augroup('my-session-init', {}),
-      desc = 'write session file in cwd if not exists',
-      callback = function()
-        -- triggers after the post-read hook of mini.sessions, but still needs timer, otherwise cokeline is not fully initialized and produces an error
-        vim.fn.timer_start(0, restore_cokeline_buffer_order)
-        -- restore_cokeline_buffer_order()
-        if vim.fn.filereadable(session_file) ~= 0 then
-          vim.print('My: Session found.')
-          return
-        end
-        require('mini.sessions').write(session_file, { force = false, verbose = true })
-      end,
-    })
-
+    require('my-mini-sessions')
     ---------------------------------------------------------------------------------------
 
     -- Better Around/Inside textobjects

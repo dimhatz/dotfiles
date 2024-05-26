@@ -16,10 +16,14 @@ function M.make_wrapper_fn(callback, ...)
   end
 end
 
+M.path_delimiter = vim.fn.has('win32') and '\\' or '/'
+
 function M.log_my_error(str, overwrite)
-  local delimiter = vim.fn.has('win32') and '\\' or '/'
-  local path = vim.fn.stdpath('log') .. delimiter .. 'my.log'
-  vim.fn.writefile({ os.date() .. '   ' .. str }, path, overwrite and '' or 'a')
+  local path = vim.fn.stdpath('log') .. M.path_delimiter .. 'my.log'
+  -- -- do not escape, not sure if needed, some funcs like filereadable() require unescaped paths,
+  -- -- other things like :mksession require escaped paths
+  -- path = vim.fn.fnameescape(path)
+  vim.fn.writefile({ os.date() .. '   ' .. str }, path, overwrite and 's' or 'as')
 end
 
 return M
