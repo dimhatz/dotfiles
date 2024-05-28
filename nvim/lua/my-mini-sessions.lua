@@ -99,8 +99,11 @@ vim.api.nvim_create_autocmd('UIEnter', {
     local cwd_after_session_load = vim.fn.getcwd()
     if cwd_before_session_load ~= cwd_after_session_load then
       -- this should occur only if there is a 'cd' in the session file
-      vim.notify('My: cwd changed after session load: ' .. cwd_before_session_load .. ' -> ' .. cwd_after_session_load, vim.log.levels.WARN)
-      vim.notify('The starting directory will still be used to store this session, not the current cwd.', vim.log.levels.WARN)
+      local msg = 'My: cwd changed after session load: ' .. cwd_before_session_load
+      msg = msg .. ' -> ' .. cwd_after_session_load
+      msg = msg .. '\nDid you :cd and forgot to :cd - to return? (before quitting previous session)'
+      msg = msg .. '\nThe starting directory will still be used to store this session, not the current cwd'
+      vim.notify(msg, vim.log.levels.ERROR)
     end
 
     local expected_session_path = session_file_path:gsub('\\', '/'):gsub('/+', '/')
