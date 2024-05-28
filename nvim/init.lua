@@ -464,8 +464,6 @@ require('lazy').setup({
 
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
-  { 'numToStr/Comment.nvim', opts = {} },
-
   require('my-nvim-tree'),
 
   require('my-cokeline'),
