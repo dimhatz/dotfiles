@@ -1,3 +1,6 @@
+no-multigrid = false # better input latency with buffer full of text 33ms vs 37ms, but not as smooth scrolling
+vsync = true # when false, will use vim.g.neovide_refresh_rate to set refresh rate, no difference in latency
+
 [font]
 # values for hinting: "full", "normal", "slight", "none" (default)
 # values for edging: "antialias" (default), "subpixelantialias", "alias"

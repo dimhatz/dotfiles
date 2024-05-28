@@ -2,11 +2,22 @@
 -- choco install -y ripgrep wget fd unzip gzip mingw make
 -- NOTE: use :lua vim.diagnostic.setqflist() to all diagnostics into a quickfix list
 if vim.g.neovide then
-  vim.g.neovide_refresh_rate = 60
+  -- -- from here: https://github.com/neovide/neovide/issues/2565
+  -- keeps animations at minimum, while keeping smooth scrolling
+  vim.g.neovide_position_animation_length = 0.0
+  vim.g.neovide_cursor_animation_length = 0.00
+  vim.g.neovide_cursor_trail_size = 0
+  vim.g.neovide_cursor_animate_in_insert_mode = false
+  vim.g.neovide_cursor_animate_command_line = false
+  vim.g.neovide_scroll_animation_far_lines = 0.0
+  vim.g.neovide_scroll_animation_length = 0.1 -- with 0 there are small jerks when scrolling, using 0.1
+
+  -- vim.g.neovide_refresh_rate = 240 -- use when vsync = false in neovide, with 240 the scrolling is better than 60, gpu usage is x2, no latency reduction
   -- vim.g.neovide_cursor_animate_in_insert_mode = false -- not using, our cursor animations are at 0
-  vim.g.neovide_scroll_animation_length = 0.1 -- only minimal scrolling animation, more smooth scrolling than 0
+  -- vim.g.neovide_scroll_animation_length = 0.1 -- only minimal scrolling animation, more smooth scrolling than 0
   -- vim.g.neovide_cursor_animate_command_line = false
-  vim.g.neovide_cursor_animation_length = 0 -- no cursor animation
+  -- vim.g.neovide_cursor_animation_length = 0.00 -- no cursor animation
+
   -- WARN: do not set fonts for neovide here, but in {FOLDERID_RoamingAppData}/neovide/config.toml
   -- the below values are only for live testing fonts (not all configs are accessible from here)
   vim.opt.linespace = -1 -- for iosevka custom
