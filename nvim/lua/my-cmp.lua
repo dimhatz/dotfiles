@@ -69,6 +69,14 @@ return {
     --   end
     -- end
 
+    local default_enabled_fn = require('cmp.config.default')().enabled
+    if type(default_enabled_fn) ~= 'function' then
+      local msg = 'My: req(cmp.config.default).enabled has unexpected type: ' .. type(default_enabled_fn)
+      vim.notify(msg, vim.log.levels.ERROR)
+      vim.notify('My: Will not init cmp', vim.log.levels.ERROR)
+      return
+    end
+
     cmp.setup({
       -- weird setting: more useful presentation when cursor is near bottom, but c-j now selects upwards!
       -- view = {
@@ -93,12 +101,8 @@ return {
 
       -- hack to conditionally trigger autocompletion and keep it going until <Esc>
       enabled = function()
-        -- copied from cmp/config/default
-        -- local default_enable = require('cmp.config.default')().enabled
         local disabled = my_cmp_disabled
-        disabled = disabled or (vim.api.nvim_buf_get_option(0, 'buftype') == 'prompt')
-        disabled = disabled or (vim.fn.reg_recording() ~= '')
-        disabled = disabled or (vim.fn.reg_executing() ~= '')
+        disabled = disabled or (not default_enabled_fn())
         return not disabled
       end,
       completion = { autocomplete = { 'TextChanged' } },
