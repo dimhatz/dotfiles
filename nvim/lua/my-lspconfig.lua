@@ -114,6 +114,7 @@ return {
 
         -- Execute a code action, usually your cursor needs to be on top of an error
         -- or a suggestion from your LSP for this to activate.
+        -- BUG: triggers in inserr mode
         map('<leader>c', make_wrapper_fn(vim.lsp.buf.code_action, { initial_mode = 'normal' }), '[C]ode [A]ction')
 
         -- Opens a popup that displays documentation about the word under your cursor
@@ -126,17 +127,32 @@ return {
         --
         -- When you move your cursor, the highlights will be cleared (the second autocommand).
         local client = vim.lsp.get_client_by_id(event.data.client_id)
+        local buffer = event.buf
         if client and client.server_capabilities.documentHighlightProvider then
           vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-            group = vim.api.nvim_create_augroup('my-lsp-highlight', { clear = true }),
-            buffer = event.buf,
+            -- should be auto-cleared when buffer is deleted, or manually on LspDetach
+            group = vim.api.nvim_create_augroup('my-lsp-highlight', { clear = false }),
+            buffer = buffer,
             callback = vim.lsp.buf.document_highlight,
           })
 
           vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-            group = vim.api.nvim_create_augroup('my-lsp-clear-highlight', { clear = true }),
-            buffer = event.buf,
+            -- should be auto-cleared when buffer is deleted, or manually on LspDetach
+            group = vim.api.nvim_create_augroup('my-lsp-clear-highlight', { clear = false }),
+            buffer = buffer,
             callback = vim.lsp.buf.clear_references,
+          })
+
+          vim.api.nvim_create_autocmd({ 'LspDetach' }, {
+            -- not bound to buffer! (from kickstart)
+            group = vim.api.nvim_create_augroup('my-lsp-detach', { clear = true }),
+            callback = function(ev_detach)
+              local detached_buf = ev_detach.buf
+              vim.print('My: lsp detached from buffer ' .. detached_buf)
+              vim.lsp.util.buf_clear_references(detached_buf)
+              vim.api.nvim_clear_autocmds({ group = 'my-lsp-highlight', buffer = detached_buf })
+              vim.api.nvim_clear_autocmds({ group = 'my-lsp-clear-highlight', buffer = detached_buf })
+            end,
           })
         end
       end,
