@@ -156,6 +156,9 @@ return {
 
     require('mycolors').apply_colors_minimap()
 
+    ---------------------------------------------------------------------------------------
+
+    require('my-undo-delete-buffer')
     local mini_bufremove = require('mini.bufremove')
     mini_bufremove.setup({})
     -- when closing with bdelete, with this plugin, the current window remains open
