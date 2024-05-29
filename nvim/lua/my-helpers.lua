@@ -26,4 +26,26 @@ function M.log_my_error(str, overwrite)
   vim.fn.writefile({ os.date() .. '   ' .. str }, path, overwrite and 's' or 'as')
 end
 
+---If possible, returns the first key of dict that has value == needle.
+---Returns nil otherwise.
+function M.find_key(dict, needle)
+  for key, value in pairs(dict) do
+    if value == needle then
+      return key
+    end
+  end
+  return nil
+end
+
+---If possible, returns the first key of dict that has pred(value) == true
+---Returns nil otherwise.
+function M.find_key_pred(dict, pred)
+  for key, value in pairs(dict) do
+    if pred(value) == true then
+      return key
+    end
+  end
+  return nil
+end
+
 return M
