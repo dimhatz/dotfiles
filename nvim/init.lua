@@ -88,8 +88,10 @@ vim.opt.smartcase = true
 -- Keep signcolumn on by default
 vim.opt.signcolumn = 'yes'
 
--- How often swap is written to disk (ms after nothing is typed)
-vim.opt.updatetime = 4000
+-- How often swap is written to disk (ms after nothing is typed),
+-- also affects CursorHold, CursorHoldI, which we have mapped to
+-- lsp-highlight word under cursor.
+vim.opt.updatetime = 2000
 
 -- Decrease mapped sequence wait time
 -- Also controls which-key popup delay
