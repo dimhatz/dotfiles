@@ -107,7 +107,6 @@ return {
       'BufFilePost',
       'BufLeave',
       'BufModifiedSet',
-      'BufModifiedSet',
       'BufNew',
       'BufNewFile',
       'BufReadPost',

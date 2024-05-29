@@ -329,8 +329,11 @@ remap('n', '<C-F10>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Unfold all' }
 remap('c', '<C-k>', '<Up>', { desc = 'Autocomplete in command mode' })
 remap('c', '<C-j>', '<Down>', { desc = 'Autocomplete in command mode' })
 
-remap('n', 'gt', '<Nop>', { desc = 'Not used, which-key still does not pick it up, or the following remaps' })
-remap('n', 'gT', '<Nop>', { desc = 'Not used, which-key still does not pick it up, or the following remaps' })
+-- <Esc>A, <C-o>A -> required 1 undo
+-- <C-o>$, <End>,  also work, requires 2 undos
+-- Dot (.) does not repeat both edits in all cases, not sure whether triggers mode change
+remap('i', '<C-e>', '<Esc>A', { desc = 'Jump to EOL' })
+remap({ 'n', 'v' }, '<C-e>', '$', { desc = 'Jump to EOL' })
 
 -- <C-f> / # in visual search the selection, <Leader>f in normal/visual highlights word under cursor, but does not jump to it
 -- currently, nvim has a remap, but cases that have e.g. backslash are not handled properly,
