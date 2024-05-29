@@ -50,10 +50,12 @@ local function restore_cokeline_buffer_order()
       if i <= #buffers and buffer.path == file_path then
         -- vim.print('moving ' .. file_path .. ' from ' .. buffer._valid_index .. ' to ' .. i)
         buffer_found = true
+        -- BUG: move_buffer() does not always end up restoring correctly, not sure why
         buffers_lib.move_buffer(buffer, i - offset)
       end
     end
     if not buffer_found then
+      vim.print('My: buffer not present: ' .. file_path .. ' not restoring its order')
       offset = offset + 1
     end
   end
