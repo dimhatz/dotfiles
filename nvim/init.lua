@@ -137,8 +137,7 @@ vim.opt.shortmess:append('S')
 vim.o.termguicolors = true
 vim.o.background = 'dark'
 
--- 'globals' needed by barbar to restore tab positions, skipping to avoid accidentally storing another plugin's global
-vim.o.sessionoptions = 'buffers,curdir,folds,tabpages,winpos,winsize,help'
+vim.o.sessionoptions = 'buffers,folds,tabpages,winpos,winsize,help'
 
 -- TODO: always show gutter (signs)
 
