@@ -51,13 +51,21 @@ return {
             ['<c-l>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
           },
         },
+        -- layout_strategy = 'horizontal',
         layout_config = {
           scroll_speed = 1, -- scroll by 1 line at a time, not half page
+          horizontal = {
+            -- specific to horizontal layout
+            height = 0.8,
+            width = 0.99,
+            preview_width = 0.66,
+          },
         },
       },
       extensions = {
         ['ui-select'] = {
-          require('telescope.themes').get_dropdown(),
+          -- this is what makes code actions (and other nvim actions) go through telescope
+          require('telescope.themes').get_dropdown({ initial_mode = 'normal' }),
         },
       },
     })
