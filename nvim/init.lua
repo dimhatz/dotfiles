@@ -10,7 +10,11 @@ if vim.g.neovide then
   vim.g.neovide_cursor_animate_in_insert_mode = false
   vim.g.neovide_cursor_animate_command_line = false
   vim.g.neovide_scroll_animation_far_lines = 0.0
-  vim.g.neovide_scroll_animation_length = 0.1 -- with 0 there are small jerks when scrolling, using 0.1
+  -- with 0 there are small jerks when scrolling
+  -- with 0.1 scrolling is smooth buf when switching between buffers
+  -- but there is a scroll animation when the buffer is full of text
+  -- TODO: maybe try other options?
+  vim.g.neovide_scroll_animation_length = 0.1
 
   -- vim.g.neovide_refresh_rate = 240 -- use when vsync = false in neovide, with 240 the scrolling is better than 60, gpu usage is x2, no latency reduction
   -- vim.g.neovide_cursor_animate_in_insert_mode = false -- not using, our cursor animations are at 0
@@ -527,7 +531,6 @@ require('lazy').setup({
     },
   },
 })
-
 ----------------  NOT USED ----------------------------------------------------------------
 -- autoclose parens, quotes etc - does not expose its <CR> function that we need in our custom completion mapping, disabling
 -- { 'm4xshen/autoclose.nvim', enabled = false, lazy = false, opts = { options = { disable_command_mode = true } } },
