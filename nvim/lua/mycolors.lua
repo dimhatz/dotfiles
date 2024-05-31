@@ -61,7 +61,7 @@ local c = {
   -- yellow_saturated = '#d9bc4a', -- orig color at 80%
   yellow_brightest = '#eaea00',
   -- yellow_brightest_max = '#ffff00',
-  -- yellow_brightest = '#ffc707',
+  yellow_saturated = '#ffc707',
   yellow = '#dec97c', -- 0.1 + 83.5%
   yellow_dark = '#695700', -- (fallb)
   yellow_less_dark = '#9f7b00',
@@ -185,6 +185,14 @@ local function apply_colors()
   hi('GitSignsAddInline', { bg = c.green_dark, fg = c.whitest })
   hi('GitSignsDeleteInline', { bg = c.peach_dark, fg = c.whitest })
   hi('GitSignsChangeInline', { bg = c.blue_dark, fg = c.whitest })
+
+  -- statusline
+  hi('MyStatusLineSec1', { bg = c.blue_dark, fg = c.base05fg })
+  hi('MyStatusLineSec2', { bg = c.base01, fg = c.base05fg })
+  hi('MyStatusLineLspWarning', { bg = c.yellow_dark, fg = c.whitest })
+  hi('MyStatusLineLspError', { bg = c.peach_dark, fg = c.whitest })
+  hi('MyStatusLineFileWarning', { bg = c.base01, fg = c.violet_brightest_magenta })
+  hi('MyStatusLineModified', { bg = c.base01, fg = c.yellow_saturated })
 
   vim.g.colors_name = 'mycolors'
 end

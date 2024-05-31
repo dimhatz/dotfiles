@@ -48,4 +48,35 @@ function M.find_key_pred(dict, pred)
   return nil
 end
 
+---Safely concat any amounts of arguments. Those that are not strings or numbers
+---are ignored.
+function M.safe_concat(...)
+  local args = { ... }
+  args = vim.tbl_filter(function(v)
+    return type(v) == 'string' or type(v) == 'number'
+  end, args)
+  return table.concat(args)
+end
+
+local pad_left = true
+
+---pad spaces on both sized, starting with left, until the length of resulting string is == num
+function M.pad_spaces(str, num)
+  if #str >= num then
+    return str
+  end
+
+  local res = str
+  repeat
+    if pad_left then
+      res = ' ' .. res
+    else
+      res = res .. ' '
+    end
+    pad_left = not pad_left
+  until #res >= num
+  pad_left = true -- reset
+  return res
+end
+
 return M
