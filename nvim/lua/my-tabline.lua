@@ -1,0 +1,221 @@
+local normalize_filename = require('my-helpers').normalize_filename
+local find_key_pred = require('my-helpers').find_key_pred
+local concat = require('my-helpers').safe_concat
+
+local M = {}
+-- will also be set when restoring order from session
+-- not using string[] with file paths, since there can be multiple
+-- valid buffers with path = ''
+---@type integer[]
+My_buf_order = {}
+
+-- using this to prevent tabline twitching when switching between unlisted
+-- (e.g. help) buffer and normal buffer
+-- TODO: update this before entering another buffer
+---@type integer
+My_last_active_listed_buf = nil
+
+local function is_listed(bufnr)
+  -- buftype 'quickfix' is listed, we filter out any non-normal buffers
+  return vim.bo[bufnr].buflisted and vim.bo[bufnr].buftype == ''
+end
+
+local function draw_buf_obj(buf_obj)
+  local cur_buf = vim.api.nvim_get_current_buf()
+  local str = ''
+  local hi = ''
+  if buf_obj.bufnr == cur_buf then
+    if buf_obj.modified then
+      hi = '%#MyTablineCurrentMod#'
+    else
+      hi = '%#MyTablineCurrent#'
+    end
+  else
+    if buf_obj.modified then
+      hi = '%#MyTablineHiddenMod#'
+    else
+      hi = '%#MyTablineHidden#'
+    end
+  end
+  str = concat(str, hi, '   ', buf_obj.displayed_name, buf_obj.modified and ' •▕' or '  ▕')
+  return str, #buf_obj.displayed_name + 6 -- 3 leading spaces, 3 following chars as above
+end
+
+local function render_tabline(objs)
+  -- vim.print('objs')
+  -- vim.print(objs)
+  local win_columns = vim.api.nvim_get_option_value('columns', { scope = 'global' })
+  -- 3 spaces for 'T' annotation if there is a second tab,
+  -- ' <▕' for left indicator, ' > ' for right indicator: 3 spaces both
+  -- Total: 9 additional spaces reserved
+  local available_width = win_columns - 9
+
+  local center_index = find_key_pred(objs, function(obj)
+    return obj.bufnr == vim.api.nvim_get_current_buf()
+  end)
+
+  -- vim.print('center_index')
+  -- vim.print(center_index)
+
+  center_index = center_index or find_key_pred(objs, function(obj)
+    return obj.bufnr == My_last_active_listed_buf
+  end)
+
+  if not center_index and #objs > 0 then
+    center_index = 1
+  elseif #objs < 1 then
+    vim.o.tabline = 'My: Error in tabline'
+    return
+  end
+
+  local res, center_width = draw_buf_obj(objs[center_index])
+  available_width = available_width - center_width
+
+  local left_index = center_index - 1
+  local right_index = center_index + 1
+  local left_el = objs[left_index]
+  local right_el = objs[right_index]
+  local nothing_else_fits = false
+
+  -- Start with the center buf, the add left / right buffer, one at a time,
+  -- alternating between left / right, until full. Always try to fit the whole
+  -- left buffer.
+  while (not nothing_else_fits) and available_width > 0 and (left_el ~= nil or right_el ~= nil) do
+    -- calculating here potential indicators, even if not used in all the below cases
+    local left_icon = '%#TabLineFill# <▕'
+    local right_icon = '%#TabLineFill# > '
+    local maybe_left_icon = left_index > 1 and left_icon or ''
+    local maybe_right_icon = right_index < #objs and right_icon or ''
+    if left_el ~= nil and right_el ~= nil then
+      -- both left and right want to be added
+      local left_str, left_width = draw_buf_obj(left_el)
+      local right_str, right_width = draw_buf_obj(right_el)
+      if available_width >= left_width + right_width then
+        -- both fit
+        res = concat(left_str, res, right_str)
+        available_width = available_width - (left_width + right_width)
+      else
+        -- cannot fit both, no more iterations
+        nothing_else_fits = true
+        -- can at least one fit fully?
+        if available_width >= left_width then
+          -- left can fit, but not right
+          res = concat(maybe_left_icon, left_str, res, right_icon)
+        elseif available_width >= right_width then
+          -- right can fit, but not left
+          res = concat(left_icon, res, right_str, maybe_right_icon)
+        else
+          -- neither can fit
+          res = concat(left_icon, res, right_icon)
+        end
+      end
+    elseif left_el ~= nil then
+      -- only left buffer wants to be added
+      local left_str, left_width = draw_buf_obj(left_el)
+      if available_width >= left_width then
+        -- it fits
+        res = concat(left_str, res)
+        available_width = available_width - left_width
+      else
+        -- it does not fit
+        nothing_else_fits = true
+        res = concat(left_icon, res)
+      end
+    elseif right_el ~= nil then
+      -- only right buffer wants to be added
+      local right_str, right_width = draw_buf_obj(right_el)
+      if available_width >= right_width then
+        -- it fits
+        res = concat(res, right_str)
+        available_width = available_width - right_width
+      else
+        -- it does not fit
+        nothing_else_fits = true
+        res = concat(res, right_icon)
+      end
+    end
+
+    left_index = left_index - 1
+    right_index = right_index + 1
+    left_el = objs[left_index]
+    right_el = objs[right_index]
+  end
+
+  -- separator
+  res = concat(res, '%#TabLineFill#%=')
+  res = concat(res, #vim.api.nvim_list_tabpages() > 1 and '%#MyStatusLineLspError# T ' or '')
+
+  vim.o.tabline = res
+end
+
+function M.map_current_bufs()
+  local all_buf_nrs = vim.api.nvim_list_bufs()
+  -- local cur_buf = vim.api.nvim_get_current_buf()
+  local listed_bufs = vim.tbl_filter(function(bufnr)
+    return is_listed(bufnr)
+  end, all_buf_nrs)
+
+  -- if #My_buf_order == 0 then
+  --   -- should be set only when initializing, listed bufs should never be empty
+  --   My_buf_order = listed_bufs
+  -- end
+
+  return vim.tbl_map(function(b)
+    local buf_obj = {
+      bufnr = b,
+      normalized_path = '',
+      displayed_name = '',
+      modified = false,
+    }
+    buf_obj.normalized_path = normalize_filename(vim.api.nvim_buf_get_name(b))
+    buf_obj.displayed_name = vim.fn.fnamemodify(buf_obj.normalized_path, ':t')
+    if buf_obj.displayed_name == '' then
+      buf_obj.displayed_name = '[No name]'
+    end
+    buf_obj.modified = vim.bo[b].modified
+    return buf_obj
+  end, listed_bufs)
+end
+
+function M.update_tabline()
+  local all_buf_objs = M.map_current_bufs()
+  local ordered_buf_objs = {}
+  local not_ordered_buf_objs = {}
+
+  -- copy buf objs whose bufnrs are in My_buf_order into `ordered` list
+  for _, bufnr in pairs(My_buf_order) do
+    local index = find_key_pred(all_buf_objs, function(b)
+      return b.bufnr == bufnr
+    end)
+    if index then
+      table.insert(ordered_buf_objs, all_buf_objs[index])
+    end
+  end
+
+  -- copy the rest into ordered list
+  for _, b in pairs(all_buf_objs) do
+    local index = find_key_pred(My_buf_order, function(bufnr)
+      return b.bufnr == bufnr
+    end)
+    if not index then
+      table.insert(not_ordered_buf_objs, b)
+    end
+  end
+
+  -- append not_ordered_buf_objs on ordered_buf_objs (by mutating it)
+  vim.list_extend(ordered_buf_objs, not_ordered_buf_objs)
+
+  -- update My_buf_order
+  My_buf_order = vim.tbl_map(function(b)
+    return b.bufnr
+  end, ordered_buf_objs)
+
+  render_tabline(ordered_buf_objs)
+end
+
+-- reorder
+-- update order, in case it didnt include any of the current files
+
+-- TODO: add on vim resize cmd to update tabline
+--
+return M

@@ -96,7 +96,6 @@ local function apply_colors()
   hi('CursorLineNr', { bg = c.blackest, fg = c.base03 })
   hi('LineNr', { fg = c.base02 })
   hi('Comment', { fg = c.base03 })
-  hi('TabLineFill', { bg = c.base00light })
 
   hi('Error', { fg = c.peach })
   hi('ErrorMsg', { link = 'Error' })
@@ -193,6 +192,13 @@ local function apply_colors()
   hi('MyStatusLineLspError', { bg = c.peach_dark, fg = c.whitest })
   hi('MyStatusLineFileWarning', { bg = c.base01, fg = c.violet_brightest_magenta })
   hi('MyStatusLineModified', { bg = c.base01, fg = c.yellow_saturated })
+
+  --tabline
+  hi('TabLineFill', { bg = c.base00light })
+  hi('MyTablineCurrent', { bg = c.blue_dark, fg = c.whitest })
+  hi('MyTablineCurrentMod', { bg = c.peach_dark, fg = c.whitest })
+  hi('MyTablineHidden', { bg = c.base01, fg = c.base05fg })
+  hi('MyTablineHiddenMod', { bg = c.base01, fg = c.peach })
 
   vim.g.colors_name = 'mycolors'
 end

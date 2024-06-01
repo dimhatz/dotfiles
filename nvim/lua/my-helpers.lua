@@ -79,4 +79,17 @@ function M.pad_spaces(str, num)
   return res
 end
 
+-- On windows paths are messed up, forward/backward slashes are often intermixed,
+-- Sometimes drive letter (e.g. C:) is capitalized, sometimes not. In session files,
+-- '\' are converted to '/', but drive name can be either upper/lower.
+---like vim.fs.normalize() but always capitalizes "c:" on windows
+function M.normalize_filename(fname)
+  local res = vim.fs.normalize(fname)
+  local sub23 = res:sub(2, 3)
+  if vim.fn.has('win32') and (sub23 == ':' or sub23 == ':\\' or sub23 == ':/') then
+    return ('%s%s'):format(res:sub(1, 1):upper(), res:sub(2, -1))
+  end
+  return res
+end
+
 return M
