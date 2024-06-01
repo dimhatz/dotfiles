@@ -55,13 +55,16 @@ function My_update_statusline_active()
 
   -- filename
   local fname = vim.fn.expand('%:.')
-  if vim.startswith(fname, 'C:') or vim.startswith(fname, '/') then
+  if vim.startswith(fname:lower(), 'c:') or vim.startswith(fname, '/') then
     -- when not inside current dir, try to show as relative to ~
     fname = vim.fn.fnamemodify(fname, ':~')
   end
 
   if fname == '' then
     fname = '[No Name]'
+    if vim.bo.buftype ~= '' then
+      fname = ('%s%s%s'):format('[', vim.bo.buftype, ']')
+    end
   end
 
   local modified = vim.bo.modified
