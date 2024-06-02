@@ -1,67 +1,67 @@
 local log_my_error = require('my-helpers').log_my_error
 local path_delimiter = require('my-helpers').path_delimiter
 
-local function save_cokeline_buffer_order()
-  local ok_cokeline_buffers, buffers_lib = pcall(require, 'cokeline.buffers')
-  if not ok_cokeline_buffers then
-    log_my_error('My: cokeline.buffers not found. Not saving buffer order.')
-    return
-  end
-  local valid_buffers = buffers_lib.get_valid_buffers()
-  local file_paths = {}
-  for _, buf in ipairs(valid_buffers) do
-    table.insert(file_paths, buf.path)
-  end
-  local file_paths_json = vim.json.encode(file_paths)
-
-  if string.find(file_paths_json, "'") then
-    -- we will be appending a line like: let g:my_buf_order = '["path1", "path2"]'
-    log_my_error("My: Found filename containing quote ('). Not saving buffer order.")
-    return
-  end
-
-  local session_file = vim.v.this_session
-  if vim.fn.filewritable(session_file) ~= 1 then
-    log_my_error('My: No session file found. Not saving buffer order.')
-    return
-  end
-
-  vim.fn.writefile({ '', "let g:my_buf_order = '" .. file_paths_json .. "'" }, session_file, 'as')
-end
-
-local function restore_cokeline_buffer_order()
-  local ok_cokeline_buffers, buffers_lib = pcall(require, 'cokeline.buffers')
-  if not ok_cokeline_buffers then
-    vim.notify('My: cokeline.buffers not found. Not restoring buffer order.', vim.log.levels.WARN)
-    return
-  end
-  local json = vim.g.my_buf_order
-  if not json then
-    vim.notify('My: my_buf_order global not found. Not restoring buffer order.', vim.log.levels.WARN)
-    return
-  end
-  local file_paths = vim.json.decode(json)
-  -- vim.print(file_paths)
-  local offset = 0 -- if a buffer with a matching filename is not present, we move the subsequent buffers to a smaller target index
-  for i, file_path in ipairs(file_paths) do
-    local buffers = buffers_lib.get_valid_buffers() -- get the fresh list every time
-    local buffer_found = false
-    for _, buffer in ipairs(buffers) do
-      if i <= #buffers and buffer.path == file_path then
-        -- vim.print('moving ' .. file_path .. ' from ' .. buffer._valid_index .. ' to ' .. i)
-        buffer_found = true
-        -- BUG: move_buffer() does not always end up restoring correctly, not sure why
-        buffers_lib.move_buffer(buffer, i - offset)
-      end
-    end
-    if not buffer_found then
-      vim.print('My: buffer not present: ' .. file_path .. ' not restoring its order')
-      offset = offset + 1
-    end
-  end
-  vim.opt.tabline = cokeline.tabline() -- force refresh, this is global cokeline
-  vim.print('My: buffer order restored.')
-end
+-- local function save_cokeline_buffer_order()
+--   local ok_cokeline_buffers, buffers_lib = pcall(require, 'cokeline.buffers')
+--   if not ok_cokeline_buffers then
+--     log_my_error('My: cokeline.buffers not found. Not saving buffer order.')
+--     return
+--   end
+--   local valid_buffers = buffers_lib.get_valid_buffers()
+--   local file_paths = {}
+--   for _, buf in ipairs(valid_buffers) do
+--     table.insert(file_paths, buf.path)
+--   end
+--   local file_paths_json = vim.json.encode(file_paths)
+--
+--   if string.find(file_paths_json, "'") then
+--     -- we will be appending a line like: let g:my_buf_order = '["path1", "path2"]'
+--     log_my_error("My: Found filename containing quote ('). Not saving buffer order.")
+--     return
+--   end
+--
+--   local session_file = vim.v.this_session
+--   if vim.fn.filewritable(session_file) ~= 1 then
+--     log_my_error('My: No session file found. Not saving buffer order.')
+--     return
+--   end
+--
+--   vim.fn.writefile({ '', "let g:my_buf_order = '" .. file_paths_json .. "'" }, session_file, 'as')
+-- end
+--
+-- local function restore_cokeline_buffer_order()
+--   local ok_cokeline_buffers, buffers_lib = pcall(require, 'cokeline.buffers')
+--   if not ok_cokeline_buffers then
+--     vim.notify('My: cokeline.buffers not found. Not restoring buffer order.', vim.log.levels.WARN)
+--     return
+--   end
+--   local json = vim.g.my_buf_order
+--   if not json then
+--     vim.notify('My: my_buf_order global not found. Not restoring buffer order.', vim.log.levels.WARN)
+--     return
+--   end
+--   local file_paths = vim.json.decode(json)
+--   -- vim.print(file_paths)
+--   local offset = 0 -- if a buffer with a matching filename is not present, we move the subsequent buffers to a smaller target index
+--   for i, file_path in ipairs(file_paths) do
+--     local buffers = buffers_lib.get_valid_buffers() -- get the fresh list every time
+--     local buffer_found = false
+--     for _, buffer in ipairs(buffers) do
+--       if i <= #buffers and buffer.path == file_path then
+--         -- vim.print('moving ' .. file_path .. ' from ' .. buffer._valid_index .. ' to ' .. i)
+--         buffer_found = true
+--         -- BUG: move_buffer() does not always end up restoring correctly, not sure why
+--         buffers_lib.move_buffer(buffer, i - offset)
+--       end
+--     end
+--     if not buffer_found then
+--       vim.print('My: buffer not present: ' .. file_path .. ' not restoring its order')
+--       offset = offset + 1
+--     end
+--   end
+--   vim.opt.tabline = cokeline.tabline() -- force refresh, this is global cokeline
+--   vim.print('My: buffer order restored.')
+-- end
 
 local session_file = '.nvim_session'
 local cwd_before_session_load = vim.fn.getcwd()
@@ -83,7 +83,7 @@ require('mini.sessions').setup({
   directory = '',
   hooks = {
     post = {
-      write = save_cokeline_buffer_order,
+      -- write = save_cokeline_buffer_order,
       read = function()
         log_my_error('start logging', true)
       end,
@@ -96,7 +96,8 @@ vim.api.nvim_create_autocmd('UIEnter', {
   desc = 'write session file in cwd if not exists, restore cokeline buffer order',
   callback = function()
     -- triggers after VimEnter, but still needs timer, otherwise cokeline is not fully initialized and produces an error
-    vim.fn.timer_start(0, restore_cokeline_buffer_order)
+    -- TODO: maybe use vim.schedule() ?
+    -- vim.fn.timer_start(0, restore_cokeline_buffer_order)
 
     local cwd_after_session_load = vim.fn.getcwd()
     if cwd_before_session_load ~= cwd_after_session_load then

@@ -405,8 +405,8 @@ vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
   callback = function(arg)
     -- vim.print(arg)
     local buf_num = arg.buf
-    local ft = vim.api.nvim_buf_get_option(buf_num, 'filetype') -- before v0.10
-    -- local ft = vim.api.nvim_get_option_value('filetype', { buf = buf_num }) -- when fully switched to v0.10
+    -- local ft = vim.api.nvim_buf_get_option(buf_num, 'filetype') -- before v0.10
+    local ft = vim.api.nvim_get_option_value('filetype', { buf = buf_num }) -- when fully switched to v0.10
     -- vim.print(ft)
     if ft == 'help' then
       vim.cmd.wincmd('L')
@@ -473,8 +473,6 @@ require('lazy').setup({
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   require('my-nvim-tree'),
-
-  require('my-cokeline'),
 
   require('my-hop'),
 

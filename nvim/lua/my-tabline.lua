@@ -1,19 +1,23 @@
 local normalize_filename = require('my-helpers').normalize_filename
 local find_key_pred = require('my-helpers').find_key_pred
+local find_key = require('my-helpers').find_key
 local concat = require('my-helpers').safe_concat
+-- local log_my_error = require('my-helpers').log_my_error
+
+vim.opt.showtabline = 2
 
 local M = {}
 -- will also be set when restoring order from session
 -- not using string[] with file paths, since there can be multiple
 -- valid buffers with path = ''
 ---@type integer[]
-My_buf_order = {}
+local bufnr_order = {}
 
 -- using this to prevent tabline twitching when switching between unlisted
 -- (e.g. help) buffer and normal buffer
 -- TODO: update this before entering another buffer
 ---@type integer
-My_last_active_listed_buf = nil
+local last_active_listed_buf = nil
 
 local function is_listed(bufnr)
   -- buftype 'quickfix' is listed, we filter out any non-normal buffers
@@ -44,6 +48,7 @@ end
 local function render_tabline(objs)
   -- vim.print('objs')
   -- vim.print(objs)
+  -- vim.print(My_buf_order)
   local win_columns = vim.api.nvim_get_option_value('columns', { scope = 'global' })
   -- 3 spaces for 'T' annotation if there is a second tab,
   -- ' <▕' for left indicator, ' > ' for right indicator: 3 spaces both
@@ -57,14 +62,16 @@ local function render_tabline(objs)
   -- vim.print('center_index')
   -- vim.print(center_index)
 
+  -- when we have switched to an unlisted buffer, the last active buffer
+  -- may have been deleted, e.g. by a plugin (unlikely, but still)
   center_index = center_index or find_key_pred(objs, function(obj)
-    return obj.bufnr == My_last_active_listed_buf
+    return obj.bufnr == last_active_listed_buf
   end)
 
   if not center_index and #objs > 0 then
     center_index = 1
   elseif #objs < 1 then
-    vim.o.tabline = 'My: Error in tabline'
+    vim.o.tabline = 'My tabline: no buffer found!'
     return
   end
 
@@ -150,7 +157,6 @@ end
 
 function M.map_current_bufs()
   local all_buf_nrs = vim.api.nvim_list_bufs()
-  -- local cur_buf = vim.api.nvim_get_current_buf()
   local listed_bufs = vim.tbl_filter(function(bufnr)
     return is_listed(bufnr)
   end, all_buf_nrs)
@@ -178,12 +184,53 @@ function M.map_current_bufs()
 end
 
 function M.update_tabline()
+  -- determine last_active_listed_buf, update order
+  local cur_bufnr = vim.api.nvim_get_current_buf()
+
+  local cur_is_listed = is_listed(cur_bufnr)
+  -- log_my_error('cur_bufnr ' .. cur_bufnr)
+  -- log_my_error('My_buf_order1')
+  -- log_my_error(My_buf_order)
+  -- log_my_error('cur_is_listed ' .. (cur_is_listed and 'yes' or 'no'))
+  --
+
+  if cur_is_listed then
+    local existing_index = find_key(bufnr_order, cur_bufnr)
+    -- log_my_error({ 'index in our order ', existing_index })
+    if not existing_index then
+      -- new buffer, we determine its position in My_buf_order
+      local last_active_listed_pos = find_key(bufnr_order, last_active_listed_buf)
+      if last_active_listed_pos then
+        -- add to the right (shifts up existing elements to make space,
+        -- ok if its the last element in the list too, the list remains contiguous)
+        table.insert(bufnr_order, last_active_listed_pos + 1, cur_bufnr)
+      else
+        -- just append
+        -- NOTE: if there are restored buffers from session, but not our
+        -- buffer order, then current tab will be the leftmost item in tabline.
+        -- The following tabs will be the same order as in :ls.
+        -- If for some reason we want the :ls order, call the following insert()
+        -- only when #My_buf_order > 0
+        table.insert(bufnr_order, cur_bufnr)
+      end
+    end
+    -- finally update last active
+    -- log_my_error('setting last active to: ' .. cur_bufnr)
+    last_active_listed_buf = cur_bufnr
+  end
+
+  -- log_my_error('My_buf_order2')
+  -- log_my_error(My_buf_order)
+
+  --------------------------
+
+  -- determine order
   local all_buf_objs = M.map_current_bufs()
   local ordered_buf_objs = {}
   local not_ordered_buf_objs = {}
 
   -- copy buf objs whose bufnrs are in My_buf_order into `ordered` list
-  for _, bufnr in pairs(My_buf_order) do
+  for _, bufnr in pairs(bufnr_order) do
     local index = find_key_pred(all_buf_objs, function(b)
       return b.bufnr == bufnr
     end)
@@ -194,7 +241,7 @@ function M.update_tabline()
 
   -- copy the rest into ordered list
   for _, b in pairs(all_buf_objs) do
-    local index = find_key_pred(My_buf_order, function(bufnr)
+    local index = find_key_pred(bufnr_order, function(bufnr)
       return b.bufnr == bufnr
     end)
     if not index then
@@ -206,16 +253,43 @@ function M.update_tabline()
   vim.list_extend(ordered_buf_objs, not_ordered_buf_objs)
 
   -- update My_buf_order
-  My_buf_order = vim.tbl_map(function(b)
+  bufnr_order = vim.tbl_map(function(b)
     return b.bufnr
   end, ordered_buf_objs)
+
+  -- log_my_error('My_buf_order3')
+  -- log_my_error(My_buf_order)
 
   render_tabline(ordered_buf_objs)
 end
 
--- reorder
--- update order, in case it didnt include any of the current files
-
--- TODO: add on vim resize cmd to update tabline
---
-return M
+vim.api.nvim_create_autocmd({
+  -- 'BufAdd', -- covered by BufEnter
+  -- 'BufDelete', -- triggers before
+  'BufEnter', -- already have a separate autocmd for this one
+  'BufFilePost',
+  -- 'BufLeave', -- triggers before
+  'BufModifiedSet',
+  'BufNew',
+  -- 'BufNewFile', -- docs dont say whether it triggers before, anyway should be covered by BufNew
+  -- 'BufReadPost', -- covered by BufEneter
+  -- 'BufWipeout', -- triggers before
+  'DirChanged',
+  'TabClosed',
+  'TabEnter',
+  -- 'TabNew', -- docs dont say whether it triggers before, anyway should be covered by TabEnter
+  'UIEnter',
+  'VimResized',
+  'WinEnter',
+}, {
+  desc = 'My tabline: manually update',
+  group = vim.api.nvim_create_augroup('my-update-tabline', {}),
+  -- NOTE: wrapping here is necessary, otherwise nvim_get_current_buf() does not give
+  -- use the actual current bufnr that we have switching to, but the previous bufnr.
+  -- We need this to correctly set the last active listed bufnr.
+  -- The wrapping is the simplest solution, we could also move the code for setting
+  -- last active listed buffer to a separate function, then call it on BufEnter
+  -- and remove the wrap. It's not worth the effort, also its better to have a single
+  -- function called on every autocmd, to ensure the same logic is followed.
+  callback = vim.schedule_wrap(M.update_tabline),
+})

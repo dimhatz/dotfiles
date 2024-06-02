@@ -38,6 +38,7 @@ return {
 
     ---------------------------------------------------------------------------------------
     require('my-statusline')
+    require('my-tabline')
 
     -- -- TODO: replace with something fully customizable, e.g. feline (that also has tabline), rebelot/heirline.nvim (even
     -- -- more customizable? manually set update triggers), tamton-aquib/staline.nvim also seems good
