@@ -18,12 +18,12 @@ end
 
 M.path_delimiter = vim.fn.has('win32') and '\\' or '/'
 
-function M.log_my_error(str, overwrite)
+function M.log_my_error(err, overwrite)
   local path = vim.fn.stdpath('log') .. M.path_delimiter .. 'my.log'
   -- -- do not escape, not sure if needed, some funcs like filereadable() require unescaped paths,
   -- -- other things like :mksession require escaped paths
   -- path = vim.fn.fnameescape(path)
-  vim.fn.writefile({ os.date() .. '   ' .. str }, path, overwrite and 's' or 'as')
+  vim.fn.writefile({ os.date() .. '   ' .. vim.inspect(err) }, path, overwrite and 's' or 'as')
 end
 
 ---If possible, returns the first key of dict that has value == needle.
