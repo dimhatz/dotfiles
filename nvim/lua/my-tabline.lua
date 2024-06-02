@@ -2,11 +2,11 @@ local normalize_filename = require('my-helpers').normalize_filename
 local find_key_pred = require('my-helpers').find_key_pred
 local find_key = require('my-helpers').find_key
 local concat = require('my-helpers').safe_concat
+local remap = require('my-helpers').remap
 -- local log_my_error = require('my-helpers').log_my_error
 
 vim.opt.showtabline = 2
 
-local M = {}
 -- will also be set when restoring order from session
 -- not using string[] with file paths, since there can be multiple
 -- valid buffers with path = ''
@@ -155,7 +155,7 @@ local function render_tabline(objs)
   vim.o.tabline = res
 end
 
-function M.map_current_bufs()
+local function map_current_bufs()
   local all_buf_nrs = vim.api.nvim_list_bufs()
   local listed_bufs = vim.tbl_filter(function(bufnr)
     return is_listed(bufnr)
@@ -183,7 +183,7 @@ function M.map_current_bufs()
   end, listed_bufs)
 end
 
-function M.update_tabline()
+local function update_tabline()
   -- determine last_active_listed_buf, update order
   local cur_bufnr = vim.api.nvim_get_current_buf()
 
@@ -225,7 +225,7 @@ function M.update_tabline()
   --------------------------
 
   -- determine order
-  local all_buf_objs = M.map_current_bufs()
+  local all_buf_objs = map_current_bufs()
   local ordered_buf_objs = {}
   local not_ordered_buf_objs = {}
 
@@ -291,5 +291,86 @@ vim.api.nvim_create_autocmd({
   -- last active listed buffer to a separate function, then call it on BufEnter
   -- and remove the wrap. It's not worth the effort, also its better to have a single
   -- function called on every autocmd, to ensure the same logic is followed.
-  callback = vim.schedule_wrap(M.update_tabline),
+  callback = vim.schedule_wrap(update_tabline),
 })
+
+---Direction should be 'left' or 'right'
+local function switch_to_buffer(direction)
+  local cur_index = find_key(bufnr_order, vim.api.nvim_get_current_buf())
+  cur_index = cur_index or find_key(bufnr_order, last_active_listed_buf)
+  cur_index = cur_index or 1
+
+  local target_bufnr = nil
+  if direction == 'left' then
+    if cur_index == 1 then
+      -- go to the rightmost
+      target_bufnr = bufnr_order[#bufnr_order]
+    else
+      target_bufnr = bufnr_order[cur_index - 1]
+    end
+  else
+    -- direction is right
+    if cur_index == #bufnr_order then
+      target_bufnr = bufnr_order[1]
+    else
+      target_bufnr = bufnr_order[cur_index + 1]
+    end
+  end
+
+  if not target_bufnr then
+    local msg = 'My tabline: could not determine current buffer place in buffers order'
+    vim.notify(msg, vim.log.levels.ERROR)
+    return
+  end
+
+  vim.api.nvim_set_current_buf(target_bufnr)
+end
+
+---Direction should be 'left' or 'right'
+local function move_buffer(direction)
+  local cur_index = find_key(bufnr_order, vim.api.nvim_get_current_buf())
+  if not cur_index or #bufnr_order == 1 then
+    return
+  end
+  vim.print(cur_index)
+  vim.print(bufnr_order)
+
+  if direction == 'left' then
+    local removed_bufnr = table.remove(bufnr_order, cur_index)
+    if cur_index == 1 then
+      table.insert(bufnr_order, removed_bufnr)
+    else
+      table.insert(bufnr_order, cur_index - 1, removed_bufnr)
+    end
+  else
+    -- direction is right
+    -- do not remove beforehand, it will change list length
+    if cur_index == #bufnr_order then
+      local removed_bufnr = table.remove(bufnr_order, cur_index)
+      table.insert(bufnr_order, 1, removed_bufnr)
+    else
+      local removed_bufnr = table.remove(bufnr_order, cur_index)
+      table.insert(bufnr_order, cur_index + 1, removed_bufnr)
+    end
+  end
+  vim.print(bufnr_order)
+
+  update_tabline()
+end
+
+remap('n', '(', function()
+  switch_to_buffer('left')
+end, { desc = 'Go to previous buffer' })
+remap('n', ')', function()
+  switch_to_buffer('right')
+end, { desc = 'Go to next buffer' })
+
+remap('n', '{', function()
+  move_buffer('left')
+end, { desc = 'Go to previous buffer' })
+remap('n', '}', function()
+  move_buffer('right')
+end, { desc = 'Go to next buffer' })
+
+-- TODO: for jump with labels, use "temporary" remapping of <esc> local to window (buffer?), then unmap it
+-- on entering another buffer, auto quit jump mode
