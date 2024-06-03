@@ -4,9 +4,6 @@ return {
   'echasnovski/mini.nvim',
   lazy = false,
   priority = 1000,
-  dependencies = {
-    'willothy/nvim-cokeline', -- to manually restore buffer order
-  },
   config = function()
     ---------------------------------------------------------------------------------------
     -- sessions plugin first, so that its autocmds have priority over the next mini.* plugins, like minimap
@@ -37,48 +34,6 @@ return {
     remap('n', 'sw', 'siw', { remap = true }) -- be consistent with cw -> ciw
 
     ---------------------------------------------------------------------------------------
-    require('my-statusline')
-    require('my-tabline')
-
-    -- -- TODO: replace with something fully customizable, e.g. feline (that also has tabline), rebelot/heirline.nvim (even
-    -- -- more customizable? manually set update triggers), tamton-aquib/staline.nvim also seems good
-    -- local statusline = require('mini.statusline')
-    -- statusline.setup({
-    --   use_icons = vim.g.have_nerd_font,
-    --
-    --   -- Whether to set Vim's settings for statusline (make it always shown with
-    --   -- 'laststatus' set to 2). To use global statusline in Neovim>=0.7.0, set
-    --   -- this to `false` and 'laststatus' to 3.
-    --   set_vim_settings = true,
-    --   content = {
-    --     -- default config copied from helpfile
-    --     active = function()
-    --       local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 9999 }) -- our change: always trunc
-    --       local git = MiniStatusline.section_git({ trunc_width = 75 })
-    --       local diagnostics = MiniStatusline.section_diagnostics({ trunc_width = 75 })
-    --       local filename = MiniStatusline.section_filename({ trunc_width = 140 })
-    --       local fileinfo = MiniStatusline.section_fileinfo({ trunc_width = 120 })
-    --       local location = MiniStatusline.section_location({ trunc_width = 75 })
-    --       local search = MiniStatusline.section_searchcount({ trunc_width = 75 })
-    --
-    --       return MiniStatusline.combine_groups({
-    --         { hl = mode_hl, strings = { mode } },
-    --         { hl = 'MiniStatuslineDevinfo', strings = { git, diagnostics } },
-    --         '%<', -- Mark general truncate point
-    --         { hl = 'MiniStatuslineFilename', strings = { filename } },
-    --         '%=', -- End left alignment
-    --         { hl = 'MiniStatuslineFileinfo', strings = { fileinfo } },
-    --         { hl = mode_hl, strings = { search, location } },
-    --       })
-    --     end,
-    --     inactive = nil,
-    --   },
-    -- })
-    --
-    -- ---@diagnostic disable-next-line: duplicate-set-field
-    -- statusline.section_location = function()
-    --   return '%-3v'
-    -- end
 
     ---------------------------------------------------------------------------------------
 

@@ -463,9 +463,9 @@ function M.restore_order_from_session()
   -- the rest will be appended by our update_tabline func
   bufnr_order = new_bufnr_order
   update_tabline()
+  vim.print('My: buffer order restored correctly')
 end
 
-return M
 -- -- calls:
 -- -- 85 when starting
 -- -- 2 when switching to another window
@@ -496,3 +496,5 @@ return M
 --   local t_end = os.clock()
 --   vim.print('Dummy string (ms) :', (t_end - t_beg) / iterations * 1000) -- ms
 -- end)
+
+return M

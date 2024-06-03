@@ -529,6 +529,9 @@ require('lazy').setup({
     },
   },
 })
+
+require('my-statusline')
+require('my-tabline')
 ----------------  NOT USED ----------------------------------------------------------------
 -- autoclose parens, quotes etc - does not expose its <CR> function that we need in our custom completion mapping, disabling
 -- { 'm4xshen/autoclose.nvim', enabled = false, lazy = false, opts = { options = { disable_command_mode = true } } },
