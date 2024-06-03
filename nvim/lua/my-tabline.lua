@@ -19,6 +19,10 @@ local bufnr_order = {}
 ---@type integer
 local last_active_listed_buf = nil
 
+-- each letter's position corresponds to buffer position in bufnr_order
+local jump_labels = 'FDSJKLGHALVCMBNZREUIWOTYQP'
+local jumping = false
+
 local function is_listed(bufnr)
   -- buftype 'quickfix' is listed, we filter out any non-normal buffers
   return vim.bo[bufnr].buflisted and vim.bo[bufnr].buftype == ''
@@ -26,9 +30,9 @@ end
 
 local function draw_buf_obj(buf_obj)
   local cur_buf = vim.api.nvim_get_current_buf()
-  local str = ''
+  local is_cur = buf_obj.bufnr == cur_buf
   local hi = ''
-  if buf_obj.bufnr == cur_buf then
+  if is_cur then
     if buf_obj.modified then
       hi = '%#MyTablineCurrentMod#'
     else
@@ -41,7 +45,9 @@ local function draw_buf_obj(buf_obj)
       hi = '%#MyTablineHidden#'
     end
   end
-  str = concat(str, hi, '   ', buf_obj.displayed_name, buf_obj.modified and ' •▕' or '  ▕')
+  local jump_label = jumping and not is_cur and buf_obj.jump_label or ' '
+  local str = concat(hi, ' ', jump_label, ' ', buf_obj.displayed_name)
+  str = concat(str, buf_obj.modified and ' •▕' or '  ▕')
   return str, #buf_obj.displayed_name + 6 -- 3 leading spaces, 3 following chars as above
 end
 
@@ -172,6 +178,7 @@ local function map_current_bufs()
       normalized_path = '',
       displayed_name = '',
       modified = false,
+      jump_label = '-', -- only shown when having >26 buffers and jumping to one of the last
     }
     buf_obj.normalized_path = normalize_filename(vim.api.nvim_buf_get_name(b))
     buf_obj.displayed_name = vim.fn.fnamemodify(buf_obj.normalized_path, ':t')
@@ -251,6 +258,14 @@ local function update_tabline()
 
   -- append not_ordered_buf_objs on ordered_buf_objs (by mutating it)
   vim.list_extend(ordered_buf_objs, not_ordered_buf_objs)
+
+  -- assign jump labels
+  for i, bufobj in pairs(ordered_buf_objs) do
+    local jump_label = jump_labels:sub(i, i)
+    if jump_label then
+      bufobj.jump_label = jump_label
+    end
+  end
 
   -- update My_buf_order
   bufnr_order = vim.tbl_map(function(b)
@@ -332,8 +347,6 @@ local function move_buffer(direction)
   if not cur_index or #bufnr_order == 1 then
     return
   end
-  vim.print(cur_index)
-  vim.print(bufnr_order)
 
   if direction == 'left' then
     local removed_bufnr = table.remove(bufnr_order, cur_index)
@@ -353,9 +366,25 @@ local function move_buffer(direction)
       table.insert(bufnr_order, cur_index + 1, removed_bufnr)
     end
   end
-  vim.print(bufnr_order)
 
   update_tabline()
+end
+
+local function jump()
+  vim.print('jump to buffer label: ')
+  jumping = true
+  update_tabline()
+  vim.cmd.redrawtabline() -- needed, otherwise tabline is not updated
+  -- from testing getcharstr() returns string, even for mouse clicks
+  local char = vim.fn.getcharstr():upper()
+  jumping = false
+  vim.print('') -- clear
+  update_tabline()
+  local char_index = jump_labels:find(char, 1, true)
+  local target_bufnr = bufnr_order[char_index]
+  if target_bufnr then
+    vim.api.nvim_set_current_buf(bufnr_order[char_index])
+  end
 end
 
 remap('n', '(', function()
@@ -371,6 +400,8 @@ end, { desc = 'Go to previous buffer' })
 remap('n', '}', function()
   move_buffer('right')
 end, { desc = 'Go to next buffer' })
+
+remap('n', '<Leader>b', jump, { desc = 'Jump to a buffer label' })
 
 -- TODO: for jump with labels, use "temporary" remapping of <esc> local to window (buffer?), then unmap it
 -- on entering another buffer, auto quit jump mode
