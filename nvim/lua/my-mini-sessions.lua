@@ -1,5 +1,7 @@
 local log_my_error = require('my-helpers').log_my_error
 local path_delimiter = require('my-helpers').path_delimiter
+local save_order_to_session = require('my-tabline').save_order_to_session
+local restore_order_from_session = require('my-tabline').restore_order_from_session
 
 -- local function save_cokeline_buffer_order()
 --   local ok_cokeline_buffers, buffers_lib = pcall(require, 'cokeline.buffers')
@@ -64,8 +66,7 @@ local path_delimiter = require('my-helpers').path_delimiter
 -- end
 
 local session_file = '.nvim_session'
-local cwd_before_session_load = vim.fn.getcwd()
-local session_file_path = cwd_before_session_load .. path_delimiter .. session_file
+local session_file_path = vim.fn.getcwd() .. path_delimiter .. session_file
 
 -- NOTE: we want to force the creation / writing of the session file to the directory where
 -- nvim was started. On every start we create a dummy empty session file (if it does
@@ -83,7 +84,7 @@ require('mini.sessions').setup({
   directory = '',
   hooks = {
     post = {
-      -- write = save_cokeline_buffer_order,
+      write = save_order_to_session,
       read = function()
         log_my_error('start logging', true)
       end,
@@ -93,21 +94,12 @@ require('mini.sessions').setup({
 
 vim.api.nvim_create_autocmd('UIEnter', {
   group = vim.api.nvim_create_augroup('my-session-init', {}),
-  desc = 'write session file in cwd if not exists, restore cokeline buffer order',
+  desc = 'write session file in cwd if not exists, restore tabline buffer order',
   callback = function()
     -- triggers after VimEnter, but still needs timer, otherwise cokeline is not fully initialized and produces an error
     -- TODO: maybe use vim.schedule() ?
     -- vim.fn.timer_start(0, restore_cokeline_buffer_order)
-
-    local cwd_after_session_load = vim.fn.getcwd()
-    if cwd_before_session_load ~= cwd_after_session_load then
-      -- this should occur only if there is a 'cd' in the session file
-      local msg = 'My: cwd changed after session load: ' .. cwd_before_session_load
-      msg = msg .. ' -> ' .. cwd_after_session_load
-      msg = msg .. '\nDid you :cd and forgot to :cd - to return? (before quitting previous session)'
-      msg = msg .. '\nThe starting directory will still be used to store this session, not the current cwd'
-      vim.notify(msg, vim.log.levels.ERROR)
-    end
+    vim.schedule(restore_order_from_session)
 
     local expected_session_path = session_file_path:gsub('\\', '/'):gsub('/+', '/')
     if expected_session_path ~= vim.v.this_session then

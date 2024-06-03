@@ -3,9 +3,11 @@ local find_key_pred = require('my-helpers').find_key_pred
 local find_key = require('my-helpers').find_key
 local concat = require('my-helpers').safe_concat
 local remap = require('my-helpers').remap
--- local log_my_error = require('my-helpers').log_my_error
+local log_my_error = require('my-helpers').log_my_error
 
 vim.opt.showtabline = 2
+
+local M = {}
 
 -- will also be set when restoring order from session
 -- not using string[] with file paths, since there can be multiple
@@ -239,7 +241,6 @@ local function update_tabline()
   -- determine order
   local all_buf_objs = map_current_bufs()
   local ordered_buf_objs = {}
-  local not_ordered_buf_objs = {}
 
   -- copy buf objs whose bufnrs are in My_buf_order into `ordered` list
   for _, bufnr in pairs(bufnr_order) do
@@ -251,18 +252,15 @@ local function update_tabline()
     end
   end
 
-  -- copy the rest into ordered list
+  -- second pass, append the rest
   for _, b in pairs(all_buf_objs) do
     local index = find_key_pred(bufnr_order, function(bufnr)
       return b.bufnr == bufnr
     end)
     if not index then
-      table.insert(not_ordered_buf_objs, b)
+      table.insert(ordered_buf_objs, b)
     end
   end
-
-  -- append not_ordered_buf_objs on ordered_buf_objs (by mutating it)
-  vim.list_extend(ordered_buf_objs, not_ordered_buf_objs)
 
   -- assign jump labels
   for i, bufobj in pairs(ordered_buf_objs) do
@@ -298,7 +296,7 @@ vim.api.nvim_create_autocmd({
   'TabClosed',
   'TabEnter',
   -- 'TabNew', -- docs dont say whether it triggers before, anyway should be covered by TabEnter
-  'UIEnter',
+  -- 'UIEnter', -- will update during restore_order_from_session(), which always runs on UIEnter
   'VimResized',
   'WinEnter',
 }, {
@@ -408,6 +406,62 @@ end, { desc = 'Go to next buffer' })
 
 remap('n', '<Leader>b', jump, { desc = 'Jump to a buffer label' })
 
+function M.save_order_to_session()
+  local file_paths = vim.tbl_map(function(bufnr)
+    return normalize_filename(vim.api.nvim_buf_get_name(bufnr))
+  end, bufnr_order)
+
+  local file_paths_json = vim.json.encode(file_paths)
+
+  if string.find(file_paths_json, "'") then
+    -- we will be appending a line like: let g:my_buf_order = '["path1", "path2"]'
+    log_my_error("My: Found filename containing quote ('). Not saving buffer order.")
+    return
+  end
+
+  local session_file = vim.v.this_session
+  if vim.fn.filewritable(session_file) ~= 1 then
+    log_my_error('My: No session file found. Not saving buffer order.')
+    return
+  end
+
+  vim.fn.writefile({ '', "let g:my_buf_order = '" .. file_paths_json .. "'" }, session_file, 'as')
+end
+
+-- NOTE: always call update_tabline() before returning, to be consistent
+-- this func should only be called on UIEnter, in my-mini-sessions.lua
+function M.restore_order_from_session()
+  local json = vim.g.my_buf_order
+  if not json then
+    vim.notify('My: my_buf_order global not found. Not restoring buffer order.', vim.log.levels.WARN)
+    update_tabline()
+    return
+  end
+  local decode_ok, file_paths_order = pcall(vim.json.decode, json)
+  if not decode_ok then
+    local msg = 'My: my_buf_order global was found, but could not be decoded. Not restoring buffer order.'
+    vim.notify(msg, vim.log.levels.WARN)
+    update_tabline()
+    return
+  end
+
+  local new_bufnr_order = {}
+  local all_buf_objs = map_current_bufs()
+  -- append filepaths' corresponding bufnrs (if exist)
+  for _, file_path in pairs(file_paths_order) do
+    local index = find_key_pred(all_buf_objs, function(bufobj)
+      return bufobj.normalized_path == file_path
+    end)
+    if index then
+      table.insert(new_bufnr_order, all_buf_objs[index].bufnr)
+    end
+  end
+  -- the rest will be appended by our update_tabline func
+  bufnr_order = new_bufnr_order
+  update_tabline()
+end
+
+return M
 -- -- calls:
 -- -- 85 when starting
 -- -- 2 when switching to another window
