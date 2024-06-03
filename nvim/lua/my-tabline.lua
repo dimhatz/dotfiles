@@ -23,6 +23,8 @@ local last_active_listed_buf = nil
 local jump_labels = 'FDSJKLGHALVCMBNZREUIWOTYQP'
 local jumping = false
 
+-- local called = 0 -- for benchmarks
+
 local function is_listed(bufnr)
   -- buftype 'quickfix' is listed, we filter out any non-normal buffers
   return vim.bo[bufnr].buflisted and vim.bo[bufnr].buftype == ''
@@ -158,6 +160,9 @@ local function render_tabline(objs)
   res = concat(res, '%#TabLineFill#%=')
   res = concat(res, #vim.api.nvim_list_tabpages() > 1 and '%#MyStatusLineLspError# T ' or '')
 
+  -- called = called + 1 -- for benchmarks
+  -- res = concat(res, called)
+
   vim.o.tabline = res
 end
 
@@ -279,7 +284,7 @@ local function update_tabline()
 end
 
 vim.api.nvim_create_autocmd({
-  -- 'BufAdd', -- covered by BufEnter
+  'BufAdd', -- in case a plugin opens a non-active, but listed buffer
   -- 'BufDelete', -- triggers before
   'BufEnter', -- already have a separate autocmd for this one
   'BufFilePost',
@@ -403,5 +408,33 @@ end, { desc = 'Go to next buffer' })
 
 remap('n', '<Leader>b', jump, { desc = 'Jump to a buffer label' })
 
--- TODO: for jump with labels, use "temporary" remapping of <esc> local to window (buffer?), then unmap it
--- on entering another buffer, auto quit jump mode
+-- -- calls:
+-- -- 85 when starting
+-- -- 2 when switching to another window
+-- -- 3 for :enew
+-- -- 11 when opening telescope with <leader-s>h
+--
+-- -- benchmarks:
+-- -- with 32 listed buffers
+-- --0.4ms per draw --> there is room for improvement
+-- vim.keymap.set('n', '<C-F11>', function()
+--   local t_beg = os.clock()
+--   local iterations = 10000 -- 10k better
+--   -- local iterations = 100000
+--   for _ = 1, iterations do
+--     update_tabline()
+--   end
+--   local t_end = os.clock()
+--   vim.print('Draw tabline (ms): ' .. (t_end - t_beg) / iterations * 1000) -- ms
+-- end)
+--
+-- -- 0.0032ms per draw
+-- vim.keymap.set('n', '<C-F9>', function()
+--   local t_beg = os.clock()
+--   local iterations = 100000
+--   for _ = 1, iterations do
+--     vim.o.tabline = 'test123'
+--   end
+--   local t_end = os.clock()
+--   vim.print('Dummy string (ms) :', (t_end - t_beg) / iterations * 1000) -- ms
+-- end)
