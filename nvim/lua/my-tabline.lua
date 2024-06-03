@@ -96,8 +96,12 @@ local function render_tabline(objs)
 
   -- Start with the center buf, the add left / right buffer, one at a time,
   -- alternating between left / right, until full. Always try to fit the whole
-  -- left buffer.
-  while (not nothing_else_fits) and available_width > 0 and (left_el ~= nil or right_el ~= nil) do
+  -- left buffer first.
+  -- NOTE: not using (available_width > 0) in while-condition, due to edge case:
+  -- if we just managed to fit an element and the new available_width is exactly 0,
+  -- then another iteration is needed, in order to just add the <> icons, in case
+  -- there are more items. Using (available_width > 0) would prevent it.
+  while (not nothing_else_fits) and (left_el ~= nil or right_el ~= nil) do
     -- calculating here potential indicators, even if not used in all the below cases
     local left_icon = '%#TabLineFill# <▕'
     local right_icon = '%#TabLineFill# > '
