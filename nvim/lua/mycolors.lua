@@ -126,6 +126,8 @@ local function apply_colors()
   hi('LspReferenceWrite', { link = 'LspReferenceText' })
   hi('TSTypeBuiltin', { link = 'TSType' }) -- do not show global types as italics
   hi('TSPunctDelimiter', { fg = c.yellow_brightest })
+  hi('TSInclude', { fg = c.violet })
+  hi('Include', { fg = c.violet })
 
   -- cmp
   hi('CmpItemAbbr', { bg = c.base00bg })

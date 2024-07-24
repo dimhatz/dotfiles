@@ -107,7 +107,7 @@ vsync = true # when false, will use vim.g.neovide_refresh_rate to set refresh ra
 
 # for neovide v0.13+, size 11.25 maps to size 15px previously. to confirm:
 # from neovide's log: INFO [neovide::renderer::fonts::font_options] point_to_pixels 11.25 -> 15
-size = 15
+size = 11.25
 hinting = "full"
 edging = "antialias"
 normal = { family = "IosevkaCustom NF", style = "W350" } # 350 = SemiLight

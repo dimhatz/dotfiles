@@ -211,6 +211,8 @@ vim.api.nvim_create_autocmd({
   callback = My_update_statusline_inactive, -- do not schedule_wrap
 })
 
+-- TODO: when searching with /, does show results immediately, only after 'n'
+
 -- -- benchmarks:
 -- -- 0.02ms per active statusline render
 -- -- 0.0035ms per inactive statusline render

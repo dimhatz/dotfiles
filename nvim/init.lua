@@ -320,14 +320,15 @@ remap('n', 'M', 'zz', { desc = 'Center the screen on the cursor' })
 
 remap('n', '<C-z>', ':e!<CR>', { desc = 'Undo all changes since file last saved' })
 
-remap('n', '<C-F1>', '<Cmd>setlocal foldlevel=1<CR>', { desc = 'Fold all text at level 1' })
-remap('n', '<C-F2>', '<Cmd>setlocal foldlevel=2<CR>', { desc = 'Fold all text at level 2' })
-remap('n', '<C-F3>', '<Cmd>setlocal foldlevel=3<CR>', { desc = 'Fold all text at level 3' })
-remap('n', '<C-F4>', '<Cmd>setlocal foldlevel=4<CR>', { desc = 'Fold all text at level 4' })
-remap('n', '<C-F5>', '<Cmd>setlocal foldlevel=5<CR>', { desc = 'Fold all text at level 5' })
-remap('n', '<C-F6>', '<Cmd>setlocal foldlevel=6<CR>', { desc = 'Fold all text at level 6' })
-remap('n', '<C-F7>', '<Cmd>setlocal foldlevel=7<CR>', { desc = 'Fold all text at level 7' })
-remap('n', '<C-F10>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Unfold all' })
+remap('n', '<F1>', '<Cmd>setlocal foldlevel=1<CR>', { desc = 'Fold all text at level 1' })
+remap('n', '<F2>', '<Cmd>setlocal foldlevel=2<CR>', { desc = 'Fold all text at level 2' })
+remap('n', '<F3>', '<Cmd>setlocal foldlevel=3<CR>', { desc = 'Fold all text at level 3' })
+remap('n', '<F4>', '<Cmd>setlocal foldlevel=4<CR>', { desc = 'Fold all text at level 4' })
+remap('n', '<F5>', '<Cmd>setlocal foldlevel=5<CR>', { desc = 'Fold all text at level 5' })
+remap('n', '<F6>', '<Cmd>setlocal foldlevel=6<CR>', { desc = 'Fold all text at level 6' })
+remap('n', '<F7>', '<Cmd>setlocal foldlevel=7<CR>', { desc = 'Fold all text at level 7' })
+remap('n', '<F10>', '<Cmd>setlocal foldlevel=0<CR>', { desc = 'Unfold all' })
+remap('n', '<F11>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Unfold all' })
 
 -- now C-p and C-n autocomplete the beginning of the command and search.
 remap('c', '<C-k>', '<Up>', { desc = 'Autocomplete in command mode' })
@@ -344,18 +345,18 @@ remap({ 'n', 'v' }, '<C-e>', '$', { desc = 'Jump to EOL' })
 -- e.g. when selecting "\V" and pressing *, nvim will highlight the whole page
 vim.api.nvim_exec2(
   [[
-    function! g:MyVSetSearch(cmdtype)
-      let temp = @s
-      norm! gv"sy
-      let @/ = '\V' . substitute(escape(@s, a:cmdtype.'\'), '\n', '\\n', 'g')
-      let @s = temp
-    endfunction
+     function! g:MyVSetSearch(cmdtype)
+       let temp = @s
+       norm! gv"sy
+       let @/ = '\V' . substitute(escape(@s, a:cmdtype.'\'), '\n', '\\n', 'g')
+       let @s = temp
+     endfunction
 
-    xnoremap <silent><C-f> :<C-u>call g:MyVSetSearch('/')<CR>/<C-R>=@/<CR><CR>:<C-u>set hlsearch<CR>
-    xnoremap <silent># :<C-u>call g:MyVSetSearch('?')<CR>?<C-R>=@/<CR><CR>:<C-u>set hlsearch<CR>
-    nnoremap <silent><Leader>f viw:<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
-    xnoremap <silent><Leader>f :<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
-  ]],
+     xnoremap <silent><C-f> :<C-u>call g:MyVSetSearch('/')<CR>/<C-R>=@/<CR><CR>:<C-u>set hlsearch<CR>
+     xnoremap <silent># :<C-u>call g:MyVSetSearch('?')<CR>?<C-R>=@/<CR><CR>:<C-u>set hlsearch<CR>
+     nnoremap <silent><Leader>f viw:<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
+     xnoremap <silent><Leader>f :<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
+   ]],
   {}
 )
 
@@ -440,13 +441,13 @@ vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
 -- TODO: white this in lua
 vim.api.nvim_exec2(
   [[
-    set viewoptions-=options
-    augroup my_remember_folds
-      autocmd!
-      autocmd BufWinLeave *.* if &ft !=# 'help' | mkview | endif
-      autocmd BufWinEnter *.* if &ft !=# 'help' | silent! loadview | endif
-    augroup END
-  ]],
+     set viewoptions-=options
+     augroup my_remember_folds
+       autocmd!
+       autocmd BufWinLeave *.* if &ft !=# 'help' | mkview | endif
+       autocmd BufWinEnter *.* if &ft !=# 'help' | silent! loadview | endif
+     augroup END
+   ]],
   {}
 )
 
@@ -463,6 +464,7 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: lazy runs init() during startup, before loading the plugin itself (after which config() runs).
 require('lazy').setup({
   --------------------------------------------- COLORS -------------------------------------------------------------------------------------
+  -- require('my-profile'),
 
   require('my-fix-auto-scroll'),
 
@@ -478,7 +480,7 @@ require('lazy').setup({
 
   require('my-whichkey'),
 
-  require('my-indent-blankline'),
+  -- require('my-indent-blankline'),
 
   require('my-rainbow-delimiters'),
 
@@ -490,7 +492,7 @@ require('lazy').setup({
 
   require('my-telescope'),
 
-  require('my-treesitter'),
+  -- require('my-treesitter'),
 
   require('my-conform'),
 
@@ -503,11 +505,11 @@ require('lazy').setup({
   require('my-cmp'),
 
   -- nvim-treesitter/nvim-treesitter-context, sticks surrounding function's signature to the top line
-  {
-    enabled = false,
-    -- shows the surrounding function's signature (line) at the top line (if it was scrolled above), disabled for now until treesitter becomes fast
-    'nvim-treesitter/nvim-treesitter-context',
-  },
+  -- {
+  --   enabled = false,
+  --   -- shows the surrounding function's signature (line) at the top line (if it was scrolled above), disabled for now until treesitter becomes fast
+  --   'nvim-treesitter/nvim-treesitter-context',
+  -- },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
