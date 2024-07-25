@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, unstable, ... }:
 
 {
   imports = [ <nixpkgs/nixos/modules/installer/virtualbox-demo.nix> ];
@@ -32,7 +32,7 @@
 # \$ nix search wget
 environment.systemPackages = with pkgs; [
   alacritty
-  neovim
+  unstable.neovim
 ];
 
 nix.settings.experimental-features = ["nix-command" "flakes"];
