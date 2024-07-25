@@ -1,35 +1,89 @@
 { config, pkgs, unstable, ... }:
 
 {
-  imports = [ <nixpkgs/nixos/modules/installer/virtualbox-demo.nix> ];
+  system.stateVersion = "24.05";
 
-  # Let demo build as a trusted user.
-# nix.settings.trusted-users = [ "demo" ];
+  imports =
+    [ # Include the results of the hardware scan.
+      ./hardware-configuration.nix
+    ];
 
-# Mount a VirtualBox shared folder.
-# This is configurable in the VirtualBox menu at
-# Machine / Settings / Shared Folders.
-# fileSystems."/mnt" = {
-#   fsType = "vboxsf";
-#   device = "nameofdevicetomount";
-#   options = [ "rw" ];
-# };
+  # Bootloader - change this after efi install
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "/dev/sda";
+  boot.loader.grub.useOSProber = true;
 
-# By default, the NixOS VirtualBox demo image includes SDDM and Plasma.
-# If you prefer another desktop manager or display manager, you may want
-# to disable the default.
-# services.xserver.desktopManager.plasma5.enable = lib.mkForce false;
-# services.displayManager.sddm.enable = lib.mkForce false;
+  networking.hostName = "mypc"; # Define your hostname.
+  #networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-# Enable GDM/GNOME by uncommenting above two lines and two lines below.
-# services.xserver.displayManager.gdm.enable = true;
-# services.xserver.desktopManager.gnome.enable = true;
+  # Enable networking
+  networking.networkmanager.enable = true;
 
-# Set your time zone.
-# time.timeZone = "Europe/Amsterdam";
+  # Set your time zone.
+  time.timeZone = "Europe/Athens";
 
-# List packages installed in system profile. To search, run:
-# \$ nix search wget
+  # Select internationalisation properties.
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "en_IE.UTF-8";
+    LC_IDENTIFICATION = "en_IE.UTF-8";
+    LC_MEASUREMENT = "en_IE.UTF-8";
+    LC_MONETARY = "en_IE.UTF-8";
+    LC_NAME = "en_IE.UTF-8";
+    LC_NUMERIC = "en_IE.UTF-8";
+    LC_PAPER = "en_IE.UTF-8";
+    LC_TELEPHONE = "en_IE.UTF-8";
+    LC_TIME = "en_IE.UTF-8";
+  };
+
+  # Enable the X11 windowing system.
+  # You can disable this if you're only using the Wayland session.
+  services.xserver.enable = true;
+
+  # Enable the KDE Plasma Desktop Environment.
+  services.displayManager.sddm.enable = true;
+  services.desktopManager.plasma6.enable = true;
+
+  # Configure keymap in X11
+  services.xserver = {
+    layout = "us";
+    xkbVariant = "";
+  };
+
+  # Enable sound with pipewire.
+  hardware.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    # If you want to use JACK applications, uncomment this
+    #jack.enable = true;
+
+    # use the example session manager (no others are packaged yet so this is enabled by default,
+    # no need to redefine it in your config for now)
+    #media-session.enable = true;
+  };
+
+  # Enable touchpad support (enabled default in most desktopManager).
+  services.xserver.libinput.enable = true;
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users.dim = {
+    isNormalUser = true;
+    description = "dim";
+    extraGroups = [ "networkmanager" "wheel" "vboxsf" ];
+    packages = with pkgs; [
+      kdePackages.kate
+    #  thunderbird
+    ];
+  };
+
+  # Install firefox.
+  programs.firefox.enable = true;
+
 environment.systemPackages = with pkgs; [
   alacritty
   google-chrome #unfree
@@ -39,8 +93,4 @@ environment.systemPackages = with pkgs; [
 nix.settings.experimental-features = ["nix-command" "flakes"];
 
 # system.copySystemConfiguration = true;
-
-# Enable the OpenSSH daemon.
-# services.openssh.enable = true;
-
 }
