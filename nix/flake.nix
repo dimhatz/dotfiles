@@ -19,6 +19,10 @@
             inherit system;
 	    config.allowUnfree = true;
 	  };
+	  pkgs = import nixpkgs {
+            inherit system;
+	    config.allowUnfree = true;
+	  };
 	};
         modules = [ ./configuration.nix ];
       };

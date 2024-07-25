@@ -32,6 +32,7 @@
 # \$ nix search wget
 environment.systemPackages = with pkgs; [
   alacritty
+  google-chrome #unfree
   unstable.neovim
 ];
 
