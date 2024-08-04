@@ -34,6 +34,13 @@ return {
     remap('n', 'sw', 'siw', { remap = true }) -- be consistent with cw -> ciw
 
     ---------------------------------------------------------------------------------------
+    require('mini.indentscope').setup({
+      symbol = '│', -- center(│), left (▏)
+      draw = {
+        delay = 20,
+        animation = require('mini.indentscope').gen_animation.none(),
+      },
+    })
 
     ---------------------------------------------------------------------------------------
 

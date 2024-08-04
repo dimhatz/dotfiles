@@ -148,11 +148,14 @@ local function apply_colors()
   hi('RainbowDelimiterBlue', { fg = c.blue_brightest_cyan, bold = true })
   hi('RainbowDelimiterViolet', { fg = c.violet_brightest_magenta, bold = true })
 
-  -- links IblWhitespace -> Whitespace -> NonText
-  -- not sure where IblWhitespace is shown
-  -- hi('NonText', { fg = c.base01 })
-  hi('IblScope', { fg = c.base02 })
-  hi('IblIndent', { fg = c.base01 })
+  -- -- indent-blankline
+  -- -- links IblWhitespace -> Whitespace -> NonText
+  -- -- not sure where IblWhitespace is shown
+  -- -- hi('NonText', { fg = c.base01 })
+  -- hi('IblScope', { fg = c.base02 })
+  -- hi('IblIndent', { fg = c.base01 })
+
+  hi('MiniIndentscopeSymbol', { fg = c.base02 })
 
   -- hop
   hi('HopNextKey', { fg = c.yellow_brightest })
