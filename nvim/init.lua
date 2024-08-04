@@ -480,8 +480,15 @@ require('lazy').setup({
 
   require('my-whichkey'),
 
+  -- adds input lag, not using this
   -- require('my-indent-blankline'),
 
+  -- TODO: try disabling treesitter (and rainbow-delimiters?) on .ts files, measure input lag,
+  -- also, try opening a few .ts files (lage ones), after switching between them,
+  -- there seem to be some spikes. Commands: TSDisable highlight, syntax on
+
+  -- for non-treesitter rainbow (vimscript): luochen1990/rainbow, but does not work out of the
+  -- box with neovim, see their github issues
   require('my-rainbow-delimiters'),
 
   require('my-gitsigns'),
@@ -492,7 +499,7 @@ require('lazy').setup({
 
   require('my-telescope'),
 
-  -- require('my-treesitter'),
+  require('my-treesitter'),
 
   require('my-conform'),
 
@@ -515,19 +522,28 @@ require('lazy').setup({
     -- If you are using a Nerd Font: set icons to an empty table which will use the
     -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
     icons = vim.g.have_nerd_font and {} or {
-      cmd = '⌘',
-      config = '🛠',
-      event = '📅',
-      ft = '📂',
-      init = '⚙',
-      keys = '🗝',
-      plugin = '🔌',
-      runtime = '💻',
-      require = '🌙',
-      source = '📄',
-      start = '🚀',
-      task = '📌',
-      lazy = '💤 ',
+      cmd = '[cmd]',
+      config = '[conf]',
+      event = '[ev]',
+      ft = '[ft]',
+      init = '[init]',
+      import = '[import]',
+      keys = '[keys]',
+      lazy = '[lazy]',
+      loaded = '[loaded]',
+      not_loaded = '[not_loaded]',
+      plugin = '[plugin]',
+      runtime = '[runtime]',
+      require = '[require]',
+      source = '[source]',
+      start = '[start]',
+      task = '[task]',
+      list = {
+        '-',
+        '->',
+        '-->',
+        '--->',
+      },
     },
   },
 })
