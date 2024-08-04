@@ -20,6 +20,6 @@ return {
         prof.start('*')
       end
     end
-    remap('', '<C-F1>', toggle_profile, { desc = 'Start / stop profiler' })
+    remap({ 'n', 'i' }, '<C-End>', toggle_profile, { desc = 'Start / stop profiler' })
   end,
 }
