@@ -1,6 +1,14 @@
 local remap = require('my-helpers').remap
 local make_wrapper_fn = require('my-helpers').make_wrapper_fn
 
+-- wrap lines in previewer
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'TelescopePreviewerLoaded',
+  callback = function()
+    vim.wo.wrap = true
+  end,
+})
+
 return {
   'nvim-telescope/telescope.nvim',
   event = 'VimEnter',
