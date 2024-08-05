@@ -25,9 +25,6 @@ return {
         g = true, -- bindings for prefixed with g
       },
     },
-    triggers_blacklist = {
-      n = { 'd' },
-    },
     icons = {
       -- disable additional icons (after the arrows), since half are missing anyway
       mappings = false,
