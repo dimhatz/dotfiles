@@ -29,6 +29,7 @@ return {
         suffix_last = 'l', -- Suffix to search with "prev" method
         suffix_next = 'n', -- Suffix to search with "next" method
       },
+      n_lines = 100,
     })
 
     remap('n', 'sw', 'siw', { remap = true }) -- be consistent with cw -> ciw

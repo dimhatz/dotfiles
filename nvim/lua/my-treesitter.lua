@@ -36,7 +36,8 @@ return {
       additional_vim_regex_highlighting = { 'ruby' },
     },
     -- disable indent, since we use mini-indentscope, == operator is not that useful too, since
-    -- we use autoformatters anyway
+    -- we use autoformatters anyway. rainbow-delimiters that requires treesitter seems to not be
+    -- affected by this, continues to work.
     indent = { enable = false, disable = { 'ruby' } },
     incremental_selection = { enable = false },
   },
