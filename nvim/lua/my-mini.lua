@@ -12,9 +12,31 @@ return {
 
     -- Better Around/Inside textobjects
     -- Auto-jumps to next text object: to jump+visual inside next parens: vi)
-    -- For larger scrope, press i) again
+    -- For larger scope, press i) again
     require('mini.ai').setup({ n_lines = 500 }) -- 50 default, 500 suggested by kickstart
 
+    ---------------------------------------------------------------------------------------
+    --- TODO: set global my_exchange_in_progress to make <esc> send <c-c> to cancel
+    --- vim.fn.maparg(lhs, 'n', false, true)
+    require('mini.operators').setup({
+      exchange = {
+        -- the only one we use, the rest are disabled through empty mappings
+        prefix = '<C-x>',
+        reindent_linewise = false,
+      },
+      evaluate = {
+        prefix = '',
+      },
+      multiply = {
+        prefix = '',
+      },
+      replace = {
+        prefix = '',
+      },
+      sort = {
+        prefix = '',
+      },
+    })
     ---------------------------------------------------------------------------------------
 
     require('mini.surround').setup({

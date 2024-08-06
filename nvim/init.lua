@@ -183,6 +183,15 @@ local closeHoveringWindows = function()
 end
 
 local onEsc = function()
+  -- if we are in the middle of exchange, manually trigger
+  -- the cancel exchange func, which is temporarily bound to <c-c> by
+  -- mini.operators (currently no way to rebind)
+  local exchangeMapArgs = vim.fn.maparg('<C-c>', 'n', false, true)
+  if exchangeMapArgs.desc == 'Stop exchange' then
+    exchangeMapArgs.callback()
+    return
+  end
+
   -- vim.cmd('nohlsearch') -- does not trigger mini.nvim's scrollbar highlight removal
   -- vim.api.nvim_exec2(':noh', {}) -- does not trigger mini.nvim's scrollbar highlight removal
   vim.api.nvim_exec2('set nohlsearch', {}) -- triggers correctly
@@ -487,7 +496,7 @@ require('lazy').setup({
   -- there seem to be some spikes. Commands: TSDisable highlight, syntax on
 
   -- for non-treesitter rainbow (vimscript): luochen1990/rainbow, but does not work out of the
-  -- box with neovim, see their github issues
+  -- box with neovim, see their github issue: https://github.com/luochen1990/rainbow/issues/163
   require('my-rainbow-delimiters'),
 
   require('my-gitsigns'),
