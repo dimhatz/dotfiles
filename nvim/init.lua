@@ -144,8 +144,6 @@ vim.o.background = 'dark'
 
 vim.o.sessionoptions = 'buffers,folds,tabpages,winpos,winsize,help'
 
--- TODO: always show gutter (signs)
-
 -- -- another snippet (not tested)
 -- local function close_floating()
 --   for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -497,6 +495,8 @@ require('lazy').setup({
 
   -- for non-treesitter rainbow (vimscript): luochen1990/rainbow, but does not work out of the
   -- box with neovim, see their github issue: https://github.com/luochen1990/rainbow/issues/163
+  -- NOTE: rainbow-delimiters works without treesitter highlighting (with TS just being enabled)
+  -- likely with less lag than with TS highlighting
   require('my-rainbow-delimiters'),
 
   require('my-gitsigns'),
