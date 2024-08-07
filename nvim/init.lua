@@ -1,5 +1,4 @@
 local remap = require('my-helpers').remap
-local simulate_keys = require('my-helpers').simulate_keys
 
 -- for binaries on windows:
 -- choco install -y ripgrep wget fd unzip gzip mingw make
@@ -183,7 +182,8 @@ local closeHoveringWindows = function()
   end
 end
 
-local onEsc = function()
+-- global, to be available from vimscript
+MyOnEsc = function()
   -- if we are in the middle of exchange, manually trigger
   -- the cancel exchange func, which is temporarily bound to <c-c> by
   -- mini.operators (currently no way to rebind)
@@ -193,34 +193,37 @@ local onEsc = function()
     return
   end
 
+  closeHoveringWindows() -- close the lsp hover windows
+
+  -- NOT triggering :noh here!
   -- vim.cmd('nohlsearch') -- does not trigger mini.nvim's scrollbar highlight removal
   -- vim.api.nvim_exec2(':noh', {}) -- does not trigger mini.nvim's scrollbar highlight removal
   -- the following triggers removal, but when switching to another buffer, hlsearch is enabled again
   -- highlighting the word in other buffers
   -- vim.api.nvim_exec2('set nohlsearch', {})
-  simulate_keys(':noh<CR>') -- works
-  closeHoveringWindows() -- close the lsp hover windows
+  -- simulate_keys(':noh<CR>') -- works, but will leave ":noh" sign in command line, no way to silence it
+  -- The best way is to use :noh within the <Esc> mapping itself, with { silent = true }
 end
+remap('n', '<Esc>', ':noh<CR>:lua MyOnEsc()<CR>', { silent = true })
 
-remap('n', 'n', '<Cmd>set hlsearch<CR>n') -- trigger mini.nvim's scrollbar highlight
-remap('n', 'N', '<Cmd>set hlsearch<CR>N')
-
-remap('n', '<C-q>', '<Cmd>qa<CR>')
-remap('n', '<Esc>', onEsc)
 -- '/' is considered command mode
 remap('c', '<Esc>', function()
-  -- workaround to remove highlight from scrollbar, see onEsc()
+  -- -- workaround to remove highlight from scrollbar, see onEsc()
   local cmd_type = vim.fn.getcmdtype()
   local is_search_mode = cmd_type == '/' or cmd_type == '?'
-  simulate_keys('<Esc>')
   if is_search_mode then
-    simulate_keys(':noh<CR>')
+    -- there is a bug(?) in vim: when <Esc> is mapped in command mode, e.g.
+    -- cnoremap <Esc> <Esc>
+    -- when we search with / and then press <Esc>, the cursor stays on the first search result
+    -- location instead of jumping back to the original location.
+    -- Workaround:
+    -- <c-e><c-u> deletes all the text (:h c_CTRL-U), the following <bs>
+    -- will auto-exit command mode, the cursor will be at the original location
+    return '<C-e><C-u><BS>:noh<CR>'
+  else
+    return '<C-e><C-u><BS>'
   end
-  -- Alternaltively:
-  -- <c-e><c-u> to delete all the text (:h c_CTRL-U), the following <bs> will auto-exit command mode
-  -- simulate_keys('<C-e><C-u><BS>')
-  -- then perform :noh
-end)
+end, { expr = true, silent = true, desc = 'Remove highlight on esc when searching with /' })
 
 remap('n', ';', ':')
 remap('n', ':', ';')
@@ -279,12 +282,16 @@ remap('n', 'V', '<C-v>')
 remap('n', '<C-u>', 'gUiw') -- Uppercase word in norm/insert
 remap('i', '<C-u>', '<Esc>gUiwea') -- FIXME: does not repeat
 
--- adjust hlsearch to work correctly with our manual flipping of it
+-- adjust hlsearch to work correctly with mini.nvim's scrollbar highlight
 remap('n', '<C-f>', '*<Cmd>set hlsearch<CR>', { desc = '<C-f> is the new *' })
 remap('n', '*', '<cmd>echo "<C-f> is the new *"<CR>', { desc = '<C-f> is the new *' })
 remap('n', '#', '#<Cmd>set hlsearch<CR>', { desc = '<C-f> is the new *' })
 remap('n', '/', '<Cmd>set hlsearch<CR>/')
 remap('n', '?', '<Cmd>set hlsearch<CR>?')
+remap('n', 'n', '<Cmd>set hlsearch<CR>n')
+remap('n', 'N', '<Cmd>set hlsearch<CR>N')
+
+remap('n', '<C-q>', '<Cmd>qa<CR>')
 
 remap('i', '<C-v>', '<C-r>+', { desc = '<C-v> pastes in insert' })
 remap('c', '<C-v>', '<C-r>+', { desc = '<C-v> pastes in command' })
