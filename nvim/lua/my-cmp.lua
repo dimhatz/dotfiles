@@ -1,4 +1,5 @@
 local remap = require('my-helpers').remap
+local simulate_keys = require('my-helpers').simulate_keys
 
 return {
   'hrsh7th/nvim-cmp',
@@ -195,8 +196,7 @@ return {
     remap({ 'i', 's' }, '<Esc>', function()
       -- vim.print('disabling')
       my_cmp_disabled = true
-      -- vim.fn.feedkeys('\\<Esc>', 'n') -- does not work
-      vim.cmd([[call feedkeys("\<Esc>", 'n')]])
+      simulate_keys('<Esc>')
     end, { desc = '<Esc> also disables autocompletion (hack)' })
 
     -- mapping <CR> to complete when appropriate, otherwise use mini.pairs' cr() to adjust indentation

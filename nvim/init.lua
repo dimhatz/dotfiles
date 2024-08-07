@@ -1,3 +1,6 @@
+local remap = require('my-helpers').remap
+local simulate_keys = require('my-helpers').simulate_keys
+
 -- for binaries on windows:
 -- choco install -y ripgrep wget fd unzip gzip mingw make
 -- NOTE: use :lua vim.diagnostic.setqflist() to all diagnostics into a quickfix list
@@ -192,11 +195,12 @@ local onEsc = function()
 
   -- vim.cmd('nohlsearch') -- does not trigger mini.nvim's scrollbar highlight removal
   -- vim.api.nvim_exec2(':noh', {}) -- does not trigger mini.nvim's scrollbar highlight removal
-  vim.api.nvim_exec2('set nohlsearch', {}) -- triggers correctly
+  -- the following triggers removal, but when switching to another buffer, hlsearch is enabled again
+  -- highlighting the word in other buffers
+  -- vim.api.nvim_exec2('set nohlsearch', {})
+  simulate_keys(':noh<CR>') -- works
   closeHoveringWindows() -- close the lsp hover windows
 end
-
-local remap = require('my-helpers').remap
 
 remap('n', 'n', '<Cmd>set hlsearch<CR>n') -- trigger mini.nvim's scrollbar highlight
 remap('n', 'N', '<Cmd>set hlsearch<CR>N')
@@ -206,13 +210,16 @@ remap('n', '<Esc>', onEsc)
 -- '/' is considered command mode
 remap('c', '<Esc>', function()
   -- workaround to remove highlight from scrollbar, see onEsc()
-  -- vim.cmd([[call feedkeys("\<Esc>", 'n')]]) -- jumps to next highlight, so we delete text manually
-  -- <c-e><c-u> to delete all the text (:h c_CTRL-U), the following <bs> will auto-exit command mode
-  vim.cmd([[call feedkeys("\<C-e>\<C-u>\<BS>", 'n')]]) -- works
   local cmd_type = vim.fn.getcmdtype()
-  if cmd_type == '/' or cmd_type == '?' then
-    vim.api.nvim_exec2('set nohlsearch', {})
+  local is_search_mode = cmd_type == '/' or cmd_type == '?'
+  simulate_keys('<Esc>')
+  if is_search_mode then
+    simulate_keys(':noh<CR>')
   end
+  -- Alternaltively:
+  -- <c-e><c-u> to delete all the text (:h c_CTRL-U), the following <bs> will auto-exit command mode
+  -- simulate_keys('<C-e><C-u><BS>')
+  -- then perform :noh
 end)
 
 remap('n', ';', ':')

@@ -92,4 +92,15 @@ function M.normalize_filename(fname)
   return res
 end
 
+--- Simulates @param keys (string) interpreted as key presses,
+--- sequences like <Esc>, <CR>, <C-c> will have the same result as
+--- pressing the actual <Esc>, <CR>, <C-c>. No remapping is
+--- performed during execution.
+function M.simulate_keys(keys)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), 'n', false)
+  -- Notes from previous experiments
+  -- vim.fn.feedkeys('\\<Esc>', 'n') -- does not work to send <esc>
+  -- vim.cmd([[call feedkeys("\<Esc>", 'n')]]) -- works
+end
+
 return M
