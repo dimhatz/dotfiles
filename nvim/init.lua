@@ -533,6 +533,12 @@ require('lazy').setup({
 
   require('my-cmp'),
 
+  -- it is loaded, but earlier than the bundled syntax file
+  -- :filter syntax scriptnames
+  -- :scriptnames
+  -- most likely it works since the syntax file itself contains early exit when b:current_syntax is set
+  { 'HerringtonDarkholme/yats.vim' },
+
   -- nvim-treesitter/nvim-treesitter-context, sticks surrounding function's signature to the top line
   -- {
   --   enabled = false,
