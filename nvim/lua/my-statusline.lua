@@ -54,11 +54,12 @@ function My_update_statusline_active()
   s = concat(s, hi1, ' ', vim.fn.fnamemodify(vim.fn.getcwd(), ':~'), ' ')
 
   -- filename
-  local fname = vim.fn.expand('%:.')
-  if vim.startswith(fname:lower(), 'c:') or vim.startswith(fname, '/') then
-    -- when not inside current dir, try to show as relative to ~
-    fname = vim.fn.fnamemodify(fname, ':~')
-  end
+  local fname = vim.fn.fnamemodify(vim.fn.expand('%:.'), ':~:.')
+  -- local fname = vim.fn.expand('%:.')
+  -- if vim.startswith(fname:lower(), 'c:') or vim.startswith(fname, '/') then
+  --   -- when not inside current dir, try to show as relative to ~
+  --   fname = vim.fn.fnamemodify(fname, ':~')
+  -- end
 
   if fname == '' then
     fname = '[No Name]'
