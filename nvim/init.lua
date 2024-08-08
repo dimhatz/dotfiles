@@ -1,5 +1,4 @@
 local remap = require('my-helpers').remap
-
 -- for binaries on windows:
 -- choco install -y ripgrep wget fd unzip gzip mingw make
 -- NOTE: use :lua vim.diagnostic.setqflist() to all diagnostics into a quickfix list
@@ -519,6 +518,9 @@ require('lazy').setup({
 
   require('my-mini'),
 
+  require('my-trouble'),
+  -- TODO: learn how to use with quickfix list, e.g.
+  -- https://www.integralist.co.uk/posts/vim/#filtering-quickfix-and-location-list-results
   require('my-telescope'),
 
   require('my-treesitter'),

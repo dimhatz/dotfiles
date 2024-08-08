@@ -1,5 +1,6 @@
 local remap = require('my-helpers').remap
 local make_wrapper_fn = require('my-helpers').make_wrapper_fn
+local normalize_filename = require('my-helpers').normalize_filename
 
 -- wrap lines in previewer
 vim.api.nvim_create_autocmd('User', {
@@ -101,7 +102,31 @@ return {
     end, { desc = '[S]earch [F]iles (respecting .gitignore, shows hidden)' })
 
     -- also for pure lsp diagnostic keybindings, e.g. open diag popup etc :h lspconfig-keybindings
-    remap('n', '<leader>d', make_wrapper_fn(builtin.diagnostics, { initial_mode = 'normal' }), { desc = 'Search [D]iagnostics' })
+    remap(
+      'n',
+      '<leader>d',
+      make_wrapper_fn(builtin.diagnostics, {
+        initial_mode = 'normal',
+        layout_config = {
+          scroll_speed = 1, -- scroll by 1 line at a time, not half page
+          horizontal = {
+            -- specific to horizontal layout
+            height = 0.8,
+            width = 0.99,
+            preview_width = 0.5,
+          },
+        },
+        -- diagnostics-specific:
+        line_width = 50,
+        path_display = function(_, path)
+          -- show filename relative to current dir or ~ if possible
+          -- the builtin options do not handle windows paths correctly,
+          -- hence the workaround:
+          return vim.fn.fnamemodify(normalize_filename(path), ':~:.')
+        end,
+      }),
+      { desc = 'Search [D]iagnostics' }
+    )
 
     remap('n', '<leader>/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
 
