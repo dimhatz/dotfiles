@@ -16,8 +16,6 @@ return {
     require('mini.ai').setup({ n_lines = 500 }) -- 50 default, 500 suggested by kickstart
 
     ---------------------------------------------------------------------------------------
-    --- TODO: set global my_exchange_in_progress to make <esc> send <c-c> to cancel
-    --- vim.fn.maparg(lhs, 'n', false, true)
     require('mini.operators').setup({
       exchange = {
         -- the only one we use, the rest are disabled through empty mappings
@@ -37,6 +35,9 @@ return {
         prefix = '',
       },
     })
+
+    -- note the extra ">" in rhs
+    remap('n', '<C-x><C-x>', '<C-x>>', { remap = true, desc = 'Exchange line' })
     ---------------------------------------------------------------------------------------
 
     require('mini.surround').setup({
