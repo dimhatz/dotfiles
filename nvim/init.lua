@@ -205,7 +205,7 @@ MyOnEsc = function()
 end
 remap('n', '<Esc>', ':noh<CR>:lua MyOnEsc()<CR>', { silent = true })
 
--- '/' is considered command mode
+-- search mode '/' is considered command mode
 remap('c', '<Esc>', function()
   -- -- workaround to remove highlight from scrollbar, see onEsc()
   local cmd_type = vim.fn.getcmdtype()

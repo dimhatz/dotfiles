@@ -137,6 +137,8 @@ return {
         -- TODO: when restoring session with a resized split, if we dont quit minimap
         -- before saving session, the restored windows will take half the screen,
         -- instead of having width = 90
+        -- see: https://github.com/echasnovski/mini.nvim/issues/851, maybe open ticket
+        -- on neovim repo
         -- NOTE: minisessions triggers on VimLeavePre, which is after this autocmd
         mini_map.close()
       end,

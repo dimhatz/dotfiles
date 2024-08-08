@@ -1,5 +1,6 @@
 local concat = require('my-helpers').safe_concat
 local pad_spaces = require('my-helpers').pad_spaces
+local remap = require('my-helpers').remap
 
 local function get_search_count()
   -- search results in page
@@ -150,7 +151,6 @@ end
 -- assign the function to be evaluated in the statusline with '%{%v:lua.My()%}'
 -- and only invalidate cache with autocmds
 vim.api.nvim_create_autocmd({
-  -- TODO: diagnostic autocmds
   'BufAdd',
   -- 'BufDelete',
   'BufEnter',
@@ -212,7 +212,19 @@ vim.api.nvim_create_autocmd({
   callback = My_update_statusline_inactive, -- do not schedule_wrap
 })
 
--- TODO: when searching with /, does show results immediately, only after 'n'
+-- Without the following workaround, when searching with /, it does show results count immediately, only after 'n'
+-- search mode '/' is considered command mode
+-- Alternatively, we could try tracking an option (with separate autocmd) like 'hlsearch', not sure whether it could be a solution.
+remap('c', '<CR>', function()
+  -- -- workaround to remove highlight from scrollbar, see onEsc()
+  local cmd_type = vim.fn.getcmdtype()
+  local is_search_mode = cmd_type == '/' or cmd_type == '?'
+  if is_search_mode then
+    -- do not use this for regular cmd mode, it will prevent showing any output, e.g. from :mes
+    return '<CR><cmd>lua My_update_statusline_active()<CR>'
+  end
+  return '<CR>'
+end, { expr = true, desc = 'Statusline: Workaround to update search count after pressing <CR> in search mode (/)' })
 
 -- -- benchmarks:
 -- -- 0.02ms per active statusline render
