@@ -37,5 +37,8 @@ return {
       { '<auto>', mode = 'nixsotc' }, -- default
       -- { 'd', mode = {} }, -- does NOT disable popup on 'd', TODO: figure it out
     },
+    win = {
+      padding = { 1, 2 },
+    },
   },
 }
