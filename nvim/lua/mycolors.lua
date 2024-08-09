@@ -121,6 +121,10 @@ local function apply_colors()
   hi('Wildmenu', { link = 'Search' })
 
   -- lsp / treesitter
+  -- NOTE: use the following to see what highlight group is used for word under cursor:
+  -- :nnore <Del> :let s = synID(line('.'), col('.'), 1) <bar> echo synIDattr(s, 'name') . ' -> ' . synIDattr(synIDtrans(s), 'name')<CR>
+  -- :nnoremap <Home> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") ."> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+  -- to see what highlight group is under cursor and to what it is mapped
   hi('LspReferenceText', { bg = c.base01 })
   hi('LspReferenceRead', { link = 'LspReferenceText' })
   hi('LspReferenceWrite', { link = 'LspReferenceText' })
@@ -128,6 +132,7 @@ local function apply_colors()
   hi('TSPunctDelimiter', { fg = c.yellow_brightest })
   hi('TSInclude', { fg = c.violet })
   hi('Include', { fg = c.violet })
+  hi('Special', { fg = c.violet }) -- lots of typescript keywords are mapped to Special
 
   -- cmp
   hi('CmpItemAbbr', { bg = c.base00bg })
