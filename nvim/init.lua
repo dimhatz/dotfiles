@@ -203,7 +203,7 @@ MyOnEsc = function()
   -- simulate_keys(':noh<CR>') -- works, but will leave ":noh" sign in command line, no way to silence it
   -- The best way is to use :noh within the <Esc> mapping itself, with { silent = true }
 end
-remap('n', '<Esc>', ':noh<CR>:lua MyOnEsc()<CR>', { silent = true })
+remap('n', '<Esc>', '<Cmd>noh<CR>:lua MyOnEsc()<CR>', { silent = true })
 
 -- search mode '/' is considered command mode
 remap('c', '<Esc>', function()
@@ -224,11 +224,11 @@ remap('c', '<Esc>', function()
   end
 end, { expr = true, silent = true, desc = 'Remove highlight on esc when searching with /' })
 
-remap('n', ';', ':')
-remap('n', ':', ';')
+remap('n', ';', ':', { desc = 'Semicolon swapped with colon' })
+remap('n', ':', ';', { desc = 'Semicolon swapped with colon' })
 
-remap('n', '<C-s>', '<Cmd>write<CR>')
-remap('i', '<C-s>', '<Esc><Cmd>write<CR>')
+remap('n', '<C-s>', '<Cmd>write<CR>', { desc = 'Save file' })
+remap('i', '<C-s>', '<Esc><Cmd>write<CR>', { desc = 'Save file' })
 
 -- To avoid operator pending delay, and the possibility to actually perform e.g. dw,
 -- we perform operator remapping -> onore <expr>w v:operator == 'd' ? 'aw' : '<esc>'
@@ -275,11 +275,11 @@ remap('n', 'k', 'gk')
 remap('n', '<C-d>', '<C-w>c', { desc = 'Close (Delete) window' })
 remap('n', '<C-c>', '<Cmd>bdelete<CR>', { desc = 'Fallback bdel (mini-bufremove should override)' }) -- will be overridden by mini-bufremove
 
-remap('n', '<C-v>', 'V')
-remap('n', 'V', '<C-v>')
+remap('n', '<C-v>', 'V', { desc = 'Visual line' })
+remap('n', 'V', '<C-v>', { desc = 'Visual block' })
 
-remap('n', '<C-u>', 'gUiw') -- Uppercase word in norm/insert
-remap('i', '<C-u>', '<Esc>gUiwea') -- FIXME: does not repeat
+remap('n', '<C-u>', 'gUiw', { desc = 'Uppercase word under cursor' }) -- Uppercase word in norm/insert
+remap('i', '<C-u>', '<Esc>gUiwea', { desc = 'Uppercase word under cursor' }) -- FIXME: does not repeat
 
 -- adjust hlsearch to work correctly with mini.nvim's scrollbar highlight
 remap('n', '<C-f>', '*<Cmd>set hlsearch<CR>', { desc = '<C-f> is the new *' })
@@ -290,7 +290,7 @@ remap('n', '?', '<Cmd>set hlsearch<CR>?')
 remap('n', 'n', '<Cmd>set hlsearch<CR>n')
 remap('n', 'N', '<Cmd>set hlsearch<CR>N')
 
-remap('n', '<C-q>', '<Cmd>qa<CR>')
+remap('n', '<C-q>', '<Cmd>qa<CR>', { desc = 'Quit vim' })
 
 remap('i', '<C-v>', '<C-r>+', { desc = '<C-v> pastes in insert' })
 remap('c', '<C-v>', '<C-r>+', { desc = '<C-v> pastes in command' })
@@ -337,7 +337,7 @@ remap('v', '<C-k>', 'gk<C-y>', { desc = 'Scroll up 1 line with cursor steady' })
 remap('n', '<C-m>', 'M', { desc = 'Put cursor in the center of the screen, <CR> triggers <C-m> it too' })
 remap('n', 'M', 'zz', { desc = 'Center the screen on the cursor' })
 
-remap('n', '<C-z>', ':e!<CR>', { desc = 'Undo all changes since file last saved' })
+remap('n', '<C-z>', '<Cmd>e!<CR>', { desc = 'Undo all changes since file last saved' })
 
 remap('n', '<F1>', '<Cmd>setlocal foldlevel=1<CR>', { desc = 'Fold all text at level 1' })
 remap('n', '<F2>', '<Cmd>setlocal foldlevel=2<CR>', { desc = 'Fold all text at level 2' })
@@ -346,8 +346,9 @@ remap('n', '<F4>', '<Cmd>setlocal foldlevel=4<CR>', { desc = 'Fold all text at l
 remap('n', '<F5>', '<Cmd>setlocal foldlevel=5<CR>', { desc = 'Fold all text at level 5' })
 remap('n', '<F6>', '<Cmd>setlocal foldlevel=6<CR>', { desc = 'Fold all text at level 6' })
 remap('n', '<F7>', '<Cmd>setlocal foldlevel=7<CR>', { desc = 'Fold all text at level 7' })
-remap('n', '<F10>', '<Cmd>setlocal foldlevel=0<CR>', { desc = 'Unfold all' })
+remap('n', '<F10>', '<Cmd>setlocal foldlevel=0<CR>', { desc = 'Fold all text at level 0' })
 remap('n', '<F11>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Unfold all' })
+remap('n', '<F12>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Unfold all' })
 
 -- now C-p and C-n autocomplete the beginning of the command and search.
 remap('c', '<C-k>', '<Up>', { desc = 'Autocomplete in command mode' })
