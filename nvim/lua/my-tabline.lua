@@ -18,7 +18,7 @@ local bufnr_order = {}
 -- using this to prevent tabline twitching when switching between unlisted
 -- (e.g. help) buffer and normal buffer
 -- TODO: update this before entering another buffer
----@type integer
+---@type integer | nil
 local last_active_listed_buf = nil
 
 -- each letter's position corresponds to buffer position in bufnr_order
