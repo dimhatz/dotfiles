@@ -133,6 +133,10 @@ local function apply_colors()
   hi('TSInclude', { fg = c.violet })
   hi('Include', { fg = c.violet })
   hi('Special', { fg = c.violet }) -- lots of typescript keywords are mapped to Special
+  hi('Statement', { fg = c.violet }) -- for lua keywords local, return
+  hi('luaSymbolOperator', { fg = c.green }) -- for lua equal operator
+  hi('Operator', { fg = c.base05fg }) -- for ts comma in function definition args
+  hi('PreProc', { fg = c.base05fg }) -- for ts comma after 'as' (in function call args)
 
   -- cmp
   hi('CmpItemAbbr', { bg = c.base00bg })

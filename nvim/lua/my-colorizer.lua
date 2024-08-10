@@ -1,5 +1,6 @@
 return {
   'NvChad/nvim-colorizer.lua',
+  event = 'VeryLazy',
   opts = {
     filetypes = { 'lua', 'text' },
     user_default_options = {

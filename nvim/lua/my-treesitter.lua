@@ -1,3 +1,4 @@
+-- docs at :help nvim-treesitter
 return {
   'nvim-treesitter/nvim-treesitter',
   enabled = true,
@@ -42,10 +43,18 @@ return {
     incremental_selection = { enable = false },
   },
   config = function(_, opts)
-    -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-
-    ---@diagnostic disable-next-line: missing-fields
     require('nvim-treesitter.configs').setup(opts)
+
+    -- disable lua treesitter
+    vim.api.nvim_create_autocmd({ 'FileType' }, {
+      desc = 'My: disable treesitter in lua files',
+      group = vim.api.nvim_create_augroup('my-disable-treesitter-in-lua', { clear = true }),
+      pattern = { 'lua' },
+      callback = function(_)
+        -- local buffer = options.buf -- options -> from this func's the argument
+        vim.treesitter.stop()
+      end,
+    })
 
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:

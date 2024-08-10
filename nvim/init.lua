@@ -540,6 +540,8 @@ require('lazy').setup({
   -- :filter syntax scriptnames
   -- :scriptnames
   -- most likely it works since the syntax file itself contains early exit when b:current_syntax is set
+  -- if syntax highlighting becomes off (never seen so far):
+  -- :syn sync fromstart
   { 'HerringtonDarkholme/yats.vim' },
 
   -- nvim-treesitter/nvim-treesitter-context, sticks surrounding function's signature to the top line
