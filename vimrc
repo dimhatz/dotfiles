@@ -360,8 +360,8 @@ nnoremap \ ,
 xnoremap \ ,
 
 " now "C-p" and "C-n" autocomplete the beginning of the command and search.
-cnoremap <C-p> <Up>
-cnoremap <C-n> <Down>
+cnoremap <C-k> <Up>
+cnoremap <C-j> <Down>
 
 " Space is the new leader
 nnoremap <Space> <Nop>
