@@ -9,11 +9,17 @@ return {
     -- sessions plugin first, so that its autocmds have priority over the next mini.* plugins, like minimap
     require('my-mini-sessions')
     ---------------------------------------------------------------------------------------
-
+    require('mini.extra').setup({})
     -- Better Around/Inside textobjects
     -- Auto-jumps to next text object: to jump+visual inside next parens: vi)
     -- For larger scope, press i) again
-    require('mini.ai').setup({ n_lines = 500 }) -- 50 default, 500 suggested by kickstart
+    require('mini.ai').setup({
+      n_lines = 500, -- 50 default, 500 suggested by kickstart
+      custom_textobjects = {
+        -- e for entire
+        e = MiniExtra.gen_ai_spec.buffer(),
+      },
+    })
 
     ---------------------------------------------------------------------------------------
     require('mini.operators').setup({
