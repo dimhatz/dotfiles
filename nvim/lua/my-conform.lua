@@ -20,7 +20,6 @@ return {
     },
     formatters_by_ft = {
       lua = { 'stylua' },
-      -- Use a sub-list to run only the first available formatter, e.g. `{ { 'prettierd', 'prettier' } },`
       javascript = { 'prettierd', 'prettier' },
       typescript = { 'prettierd', 'prettier' },
       vue = { 'prettierd', 'prettier' },
