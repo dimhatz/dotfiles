@@ -407,12 +407,16 @@ vim.api.nvim_create_autocmd({ 'FileType' }, {
   end,
 })
 
+-- hack to prevent the cursor from jumping after a yank, also see below 'TextYankPost'
+remap({ 'n', 'v' }, 'y', 'myy', { desc = 'Set mark "y" before yanking' })
+
 --  See `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'My: Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('my-highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank({ timeout = 300 })
+    vim.cmd('norm! `y')
   end,
 })
 
