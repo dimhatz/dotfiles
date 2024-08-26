@@ -204,6 +204,10 @@ MyOnEsc = function()
   -- The best way is to use :noh within the <Esc> mapping itself, with { silent = true }
 end
 remap('n', '<Esc>', '<Cmd>noh<CR>:lua MyOnEsc()<CR>', { silent = true })
+-- see my TextYankPost autocmd, this one is to cleanup if then yank
+-- was interrupted by <esc> (operator pending mode)
+-- remap('o', '<Esc>', '<Cmd>delmarks y<CR><Esc>') -- also works, but will be applied for all operators
+remap('n', 'y<Esc>', '<Esc><Cmd>delmarks y<CR>', { desc = 'Workaround to keep cursor from moving when yanking' })
 
 -- search mode '/' is considered command mode
 remap('c', '<Esc>', function()
@@ -363,8 +367,7 @@ remap({ 'n', 'v' }, '<C-e>', '$', { desc = 'Jump to EOL' })
 -- <C-f> / # in visual search the selection, <Leader>f in normal/visual highlights word under cursor, but does not jump to it
 -- currently, nvim has a remap, but cases that have e.g. backslash are not handled properly,
 -- e.g. when selecting "\V" and pressing *, nvim will highlight the whole page
-vim.api.nvim_exec2(
-  [[
+vim.cmd([[
      function! g:MyVSetSearch(cmdtype)
        let temp = @s
        norm! gv"sy
@@ -376,9 +379,7 @@ vim.api.nvim_exec2(
      xnoremap <silent># :<C-u>call g:MyVSetSearch('?')<CR>?<C-R>=@/<CR><CR>:<C-u>set hlsearch<CR>
      nnoremap <silent><Leader>f viw:<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
      xnoremap <silent><Leader>f :<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
-   ]],
-  {}
-)
+   ]])
 
 -- TODO: check these out, adjust setup
 -- -- Diagnostic keymaps
@@ -409,14 +410,23 @@ vim.api.nvim_create_autocmd({ 'FileType' }, {
 
 -- hack to prevent the cursor from jumping after a yank, also see below 'TextYankPost'
 remap({ 'n', 'v' }, 'y', 'myy', { desc = 'Set mark "y" before yanking' })
+remap('n', 'Y', 'myy$', { desc = 'Set mark "y" before yanking (workaround to keep cursor from moving)' })
+remap('v', 'Y', '<Nop>', { desc = 'Not using visual Y anyway' })
 
 --  See `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'My: Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('my-highlight-yank', { clear = true }),
   callback = function()
+    -- avoid triggering on delete operator
+    -- no need to check for operator == 'Y', it already triggers
+    if vim.v.operator == 'y' then
+      -- local ymark = vim.api.nvim_buf_get_mark(0, 'y')
+      -- local is_invalid = ymark[1] == 0 and ymark[1] == 0 -- in case we need to check, otherwise error will be printed
+      vim.cmd('norm! `y') -- put the cursor back
+      vim.cmd.delmarks('y') -- cleanup
+    end
     vim.highlight.on_yank({ timeout = 300 })
-    vim.cmd('norm! `y')
   end,
 })
 
@@ -463,17 +473,14 @@ vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
 --   end,
 -- })
 -- TODO: white this in lua
-vim.api.nvim_exec2(
-  [[
+vim.cmd([[
      set viewoptions-=options
      augroup my_remember_folds
        autocmd!
        autocmd BufWinLeave *.* if &ft !=# 'help' | mkview | endif
        autocmd BufWinEnter *.* if &ft !=# 'help' | silent! loadview | endif
      augroup END
-   ]],
-  {}
-)
+   ]])
 
 ------------------------------------------------------- PLUGINS --------------------------------------------------------------------------------
 
