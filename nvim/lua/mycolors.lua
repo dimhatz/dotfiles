@@ -88,6 +88,9 @@ local function apply_colors()
     base0F = c.violet, -- Deprecated, Opening/Closing Embedded Language Tags
   })
 
+  -- TODO: make links for other colors too, then use them / refactor
+  hi('MyYellowFg', { fg = c.yellow })
+
   -- bg=base2 to be able to tell where the cursor is in visual inside comments
   hi('Visual', { bg = c.base02, fg = c.blackest, bold = true })
   hi('Search', { bg = c.peach_dark, fg = c.whitest })
@@ -122,6 +125,7 @@ local function apply_colors()
 
   -- lsp / treesitter
   -- NOTE: use the following to see what highlight group is used for word under cursor:
+  -- :nnore <Del> <Cmd>Inspect<CR>
   -- :nnore <Del> :let s = synID(line('.'), col('.'), 1) <bar> echo synIDattr(s, 'name') . ' -> ' . synIDattr(synIDtrans(s), 'name')<CR>
   -- :nnoremap <Home> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") ."> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
   -- to see what highlight group is under cursor and to what it is mapped
@@ -139,6 +143,69 @@ local function apply_colors()
   hi('Operator', { fg = c.base05fg }) -- for ts comma in function definition args
   hi('PreProc', { fg = c.base05fg }) -- for ts comma after 'as' (in function call args)
   hi('Identifier', { fg = c.violet }) -- in ts: const, let <- typescriptVariable
+
+  local ts_methods = {
+    -- obtained with:
+    -- :redir @a
+    -- silent filter /typescript.*Method/ hi
+    -- :redir END
+    -- "ap
+    'typescriptGlobalMethod',
+    'typescriptNumberStaticMethod',
+    'typescriptNumberMethod',
+    'typescriptStringStaticMethod',
+    'typescriptStringMethod',
+    'typescriptArrayStaticMethod',
+    'typescriptArrayMethod',
+    'typescriptObjectStaticMethod',
+    'typescriptObjectMethod',
+    'typescriptSymbolStaticMethod',
+    'typescriptFunctionMethod',
+    'typescriptMathStaticMethod',
+    'typescriptDateStaticMethod',
+    'typescriptDateMethod',
+    'typescriptJSONStaticMethod',
+    'typescriptRegExpMethod',
+    'typescriptES6MapMethod',
+    'typescriptES6SetMethod',
+    'typescriptPromiseStaticMethod',
+    'typescriptPromiseMethod',
+    'typescriptReflectMethod',
+    'typescriptIntlMethod',
+    'typescriptBOMWindowMethod',
+    'typescriptBOMNavigatorMethod',
+    'typescriptServiceWorkerMethod',
+    'typescriptBOMLocationMethod',
+    'typescriptBOMHistoryMethod',
+    'typescriptConsoleMethod',
+    'typescriptXHRMethod',
+    'typescriptURLStaticMethod',
+    'typescriptFileMethod',
+    'typescriptFileReaderMethod',
+    'typescriptFileListMethod',
+    'typescriptBlobMethod',
+    'typescriptSubtleCryptoMethod',
+    'typescriptCryptoMethod',
+    'typescriptHeadersMethod',
+    'typescriptRequestMethod',
+    'typescriptResponseMethod',
+    'typescriptCacheMethod',
+    'typescriptEncodingMethod',
+    'typescriptGeolocationMethod',
+    'typescriptPaymentMethod',
+    'typescriptPaymentResponseMethod',
+    'typescriptDOMNodeMethod',
+    'typescriptDOMDocMethod',
+    'typescriptDOMEventTargetMethod',
+    'typescriptDOMEventMethod',
+    'typescriptDOMStorageMethod',
+    'typescriptDOMFormMethod',
+    'typescriptMethodAccessor',
+  }
+
+  for _, ts_method in ipairs(ts_methods) do
+    hi(ts_method, { link = 'MyYellowFg' })
+  end
 
   -- cmp
   hi('CmpItemAbbr', { bg = c.base00bg })
