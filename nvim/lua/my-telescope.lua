@@ -42,6 +42,7 @@ return {
     local my_opts = { nowait = true, silent = false }
     require('telescope').setup({
       defaults = {
+        file_ignore_patterns = { '^.git/' },
         mappings = {
           i = {
             ['<c-j>'] = { actions.move_selection_next, type = 'action', opts = my_opts },
@@ -98,7 +99,10 @@ return {
     remap('n', '<leader>sr', make_wrapper_fn(builtin.resume, { initial_mode = 'normal' }), { desc = 'Search [R]esume previous' })
 
     remap('n', '<leader>sf', function()
-      builtin.find_files({ hidden = true })
+      -- just using { hidden = true } will also show garbage from .git folder
+      -- another way of doing this is using a global config for rg, or a top-level .gitignore file in home
+      -- directory, which would include .git as ignored dir
+      builtin.find_files({ find_command = { 'rg', '--files', '--hidden', '--glob=!.git/*', '--color=never' } })
     end, { desc = '[S]earch [F]iles (respecting .gitignore, shows hidden)' })
 
     -- also for pure lsp diagnostic keybindings, e.g. open diag popup etc :h lspconfig-keybindings
