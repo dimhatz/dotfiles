@@ -442,13 +442,15 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
   "git.enableSmartCommit": true,
   "files.eol": "\n",
   "eslint.run": "onSave",
-  "terminal.integrated.defaultProfile.windows": "Git Bash",
-  "terminal.integrated.profiles.windows": {
-    "C:\\Program Files\\Git\\bin\\bash.exe (migrated)": {
-      "path": "C:\\Program Files\\Git\\bin\\bash.exe",
-      "args": []
-    }
-  },
+  // // to avoid having garbage in git bash history, do not use git bash
+  // "terminal.integrated.defaultProfile.windows": "Git Bash",
+  // "terminal.integrated.profiles.windows": {
+  //   "C:\\Program Files\\Git\\bin\\bash.exe (migrated)": {
+  //     "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+  //     "args": []
+  //   }
+  // },
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
   "problems.decorations.enabled": false,
   "haskell.updateBehavior": "prompt",
   "haskell.plugin.ghcide-type-lenses.config.mode": "diagnostics",
@@ -479,6 +481,8 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
   "workbench.editor.tabActionCloseVisibility": false,
   "editor.minimap.enabled": false,
   "workbench.colorTheme": "Default Dark+",
-  "update.enableWindowsBackgroundUpdates": false
+  "update.enableWindowsBackgroundUpdates": false,
+  "debug.inlineValues": "on",
+  "debug.terminal.clearBeforeReusing": true
   // "workbench.editor.empty.hint": "hidden",
 }
