@@ -42,7 +42,7 @@ return {
     local my_opts = { nowait = true, silent = false }
     require('telescope').setup({
       defaults = {
-        file_ignore_patterns = { '^.git/' },
+        -- file_ignore_patterns = { '.git' .. require('my-helpers').path_delimiter },
         mappings = {
           i = {
             ['<c-j>'] = { actions.move_selection_next, type = 'action', opts = my_opts },
@@ -100,8 +100,12 @@ return {
 
     remap('n', '<leader>sf', function()
       -- just using { hidden = true } will also show garbage from .git folder
-      -- another way of doing this is using a global config for rg, or a top-level .gitignore file in home
+      -- file_ignore_patterns = { '^.git/', '%.git/.*' } in defaults does not fix this, nor other patterns
+      -- Alternatively: a global config for rg, or a top-level .gitignore file in home
       -- directory, which would include .git as ignored dir
+      -- Alternatively2: add to defaults:
+      -- file_ignore_patterns = { '.git' .. require('my-helpers').path_delimiter },
+      -- this will perform secondary filtering in lua after rg returns results
       builtin.find_files({ find_command = { 'rg', '--files', '--hidden', '--glob=!.git/*', '--color=never' } })
     end, { desc = '[S]earch [F]iles (respecting .gitignore, shows hidden)' })
 
