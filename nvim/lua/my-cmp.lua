@@ -197,6 +197,8 @@ return {
       -- vim.print('disabling')
       my_cmp_disabled = true
       simulate_keys('<Esc>')
+      -- workaround for rainbow-delimiters, see explanation in its file and in MyOnEsc()
+      vim.treesitter.get_parser():parse()
     end, { desc = '<Esc> also disables autocompletion (hack)' })
 
     -- mapping <CR> to complete when appropriate, otherwise use mini.pairs' cr() to adjust indentation

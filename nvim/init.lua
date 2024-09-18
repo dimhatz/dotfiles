@@ -202,6 +202,12 @@ MyOnEsc = function()
   -- vim.api.nvim_exec2('set nohlsearch', {})
   -- simulate_keys(':noh<CR>') -- works, but will leave ":noh" sign in command line, no way to silence it
   -- The best way is to use :noh within the <Esc> mapping itself, with { silent = true }
+
+  -- TODO: remove this if we are using treesitter for highlighting
+  -- This is a workaround for the rainbow-delimiters, which will only hightlight
+  -- the currently parsed tree's parens. When adding new code with parens they will
+  -- not be hightlighted.
+  vim.treesitter.get_parser():parse()
 end
 remap('n', '<Esc>', '<Cmd>noh<CR>:lua MyOnEsc()<CR>', { silent = true })
 -- see my TextYankPost autocmd, this one is to cleanup if then yank
