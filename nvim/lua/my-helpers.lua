@@ -103,4 +103,16 @@ function M.simulate_keys(keys)
   -- vim.cmd([[call feedkeys("\<Esc>", 'n')]]) -- works
 end
 
+function M.update_treesitter_tree()
+  -- TODO: remove this if we are using treesitter for highlighting
+  -- This is a workaround for the rainbow-delimiters, which will only hightlight
+  -- the currently parsed tree's parens. When adding new code with parens they will
+  -- not be hightlighted.
+  local ok_parser, parser = pcall(vim.treesitter.get_parser)
+  if not ok_parser then
+    return
+  end
+  parser:parse()
+end
+
 return M

@@ -1,5 +1,6 @@
 local remap = require('my-helpers').remap
 
+-- feed the produced file to https://ui.perfetto.dev/
 return {
   'stevearc/profile.nvim',
   config = function()

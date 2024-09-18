@@ -1,5 +1,6 @@
 local remap = require('my-helpers').remap
 local simulate_keys = require('my-helpers').simulate_keys
+local update_treesitter_tree = require('my-helpers').update_treesitter_tree
 
 return {
   'hrsh7th/nvim-cmp',
@@ -197,8 +198,8 @@ return {
       -- vim.print('disabling')
       my_cmp_disabled = true
       simulate_keys('<Esc>')
-      -- workaround for rainbow-delimiters, see explanation in its file and in MyOnEsc()
-      vim.treesitter.get_parser():parse()
+      -- workaround for rainbow-delimiters, see explanation inside definition
+      update_treesitter_tree()
     end, { desc = '<Esc> also disables autocompletion (hack)' })
 
     -- mapping <CR> to complete when appropriate, otherwise use mini.pairs' cr() to adjust indentation
