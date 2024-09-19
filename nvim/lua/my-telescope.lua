@@ -98,16 +98,24 @@ return {
     remap('n', '<leader>sc', builtin.highlights, { desc = '[S]earch [C]olors' })
     remap('n', '<leader>sr', make_wrapper_fn(builtin.resume, { initial_mode = 'normal' }), { desc = 'Search [R]esume previous' })
 
+    local find_command = { 'rg', '--files', '--hidden', '--glob=!.git/*', '--color=never' }
     remap('n', '<leader>sf', function()
       -- just using { hidden = true } will also show garbage from .git folder
-      -- file_ignore_patterns = { '^.git/', '%.git/.*' } in defaults does not fix this, nor other patterns
+      -- file_ignore_patterns = { '^.git/', '%.git/.*' } in defaults does not fix this on windows.
       -- Alternatively: a global config for rg, or a top-level .gitignore file in home
       -- directory, which would include .git as ignored dir
       -- Alternatively2: add to defaults:
       -- file_ignore_patterns = { '.git' .. require('my-helpers').path_delimiter },
       -- this will perform secondary filtering in lua after rg returns results
-      builtin.find_files({ find_command = { 'rg', '--files', '--hidden', '--glob=!.git/*', '--color=never' } })
+      builtin.find_files({ find_command = find_command })
     end, { desc = '[S]earch [F]iles (respecting .gitignore, shows hidden)' })
+
+    remap('n', '<C-p>', function()
+      builtin.find_files(require('telescope.themes').get_dropdown({
+        previewer = false,
+        find_command = find_command,
+      }))
+    end, { desc = 'Pick a file to open' })
 
     -- also for pure lsp diagnostic keybindings, e.g. open diag popup etc :h lspconfig-keybindings
     remap(
@@ -163,12 +171,6 @@ return {
       -- when saving a file, diagnostics disappear
       builtin.find_files({ cwd = vim.fn.expand('~/dotfiles/nvim') })
     end, { desc = '[S]earch [N]eovim files' })
-
-    remap('n', '<C-p>', function()
-      builtin.find_files(require('telescope.themes').get_dropdown({
-        previewer = false,
-      }))
-    end, { desc = 'Pick a file to open' })
 
     -- remap('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
     -- remap('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
