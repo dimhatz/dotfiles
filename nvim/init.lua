@@ -144,7 +144,7 @@ vim.opt.shortmess:append('S')
 vim.o.termguicolors = true
 vim.o.background = 'dark'
 
-vim.o.sessionoptions = 'buffers,folds,tabpages,winpos,winsize,help'
+vim.o.sessionoptions = 'buffers,folds,tabpages,winpos,winsize,help,sesdir'
 
 -- -- another snippet (not tested)
 -- local function close_floating()
