@@ -113,7 +113,7 @@ return {
           return
         end
         map('gd', make_wrapper_fn(t_builtin.lsp_definitions, { initial_mode = 'normal' }), '[G]oto [D]efinition')
-        map('gr', make_wrapper_fn(t_builtin.lsp_references, { initial_mode = 'normal' }), '[G]oto [R]eferences')
+        map('gr', make_wrapper_fn(t_builtin.lsp_references, { initial_mode = 'normal', show_line = false }), '[G]oto [R]eferences')
         map('gD', make_wrapper_fn(vim.lsp.buf.declaration, { initial_mode = 'normal' }), '[G]oto [D]eclaration')
         map('gt', make_wrapper_fn(t_builtin.lsp_type_definitions, { initial_mode = 'normal' }), '[G]oto [T]ype Definition')
         --
