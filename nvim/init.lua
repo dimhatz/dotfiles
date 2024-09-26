@@ -137,9 +137,10 @@ vim.opt.foldlevel = 999
 -- Set highlight on search, will be cleared on <Esc> in normal
 vim.opt.hlsearch = true
 
--- when searching, pressing n, will show "search hit BOTTOM, continuing at TOP"
+-- S: when searching, pressing n, will show "search hit BOTTOM, continuing at TOP"
 -- also, disables showing search hit count on top of command line (we still have it in our statusline)
-vim.opt.shortmess:append('S')
+-- I: do not show the startup greeting
+vim.opt.shortmess:append('SI')
 
 vim.o.termguicolors = true
 vim.o.background = 'dark'
