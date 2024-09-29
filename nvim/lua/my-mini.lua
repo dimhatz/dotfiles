@@ -126,29 +126,8 @@ return {
       return res
     end
 
-    -- vim.api.nvim_create_autocmd('UIEnter', { -- works
-    -- vim.api.nvim_create_autocmd('SessionLoadPost', { -- works
-    vim.api.nvim_create_autocmd('VimEnter', {
-      group = vim.api.nvim_create_augroup('my-minimap-run', {}),
-      desc = 'Run mini.map on startup',
-      callback = function()
-        mini_map.open()
-      end,
-    })
-
-    vim.api.nvim_create_autocmd('ExitPre', {
-      group = vim.api.nvim_create_augroup('my-minimap-exit-before-session-save', {}),
-      desc = 'Exit minimap before session save, otherwise resized splits are not preserved',
-      callback = function()
-        -- TODO: when restoring session with a resized split, if we dont quit minimap
-        -- before saving session, the restored windows will take half the screen,
-        -- instead of having width = 90
-        -- see: https://github.com/echasnovski/mini.nvim/issues/851, maybe open ticket
-        -- on neovim repo
-        -- NOTE: minisessions triggers on VimLeavePre, which is after this autocmd
-        mini_map.close()
-      end,
-    })
+    -- NOTE: mini.sessions autocmds are registered inside my-mini-sessions.lua to avoid
+    -- undesired behavior.
 
     require('mycolors').apply_colors_minimap()
 

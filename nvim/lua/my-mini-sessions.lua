@@ -15,6 +15,8 @@ if vim.fn.filereadable(session_file_path) == 0 then
   vim.fn.writefile({ '' }, session_file_path, 's')
 end
 
+local mini_map = require('mini.map')
+
 -- BUG: even though 'mini.sessions' uses the same autocmds, when we use the below without vim.schedule() or vim.fn.timer_start(),
 -- the lsp client is not attached to the first buffer that is restored (causing highlighting to be missing etc)
 -- nvim -S .nvim_session works correctly, but is inconvenient to use
@@ -39,6 +41,8 @@ vim.api.nvim_create_autocmd('UIEnter', {
         vim.print('Expected session file:', session_file_path)
         vim.print('Actual session file:', vim.v.this_session)
       end
+      -- open mini.map here, so that it does not removed by session restoration script
+      mini_map.open()
     end)
   end,
 })
@@ -47,6 +51,9 @@ vim.api.nvim_create_autocmd('VimLeavePre', {
   group = vim.api.nvim_create_augroup('my-autosave-session', {}),
   desc = 'autosave session to directory from which vim was started',
   callback = function()
+    -- closing mini.map here, to avoid nvim incorrectly saving the window sizes in session file
+    -- see: https://github.com/echasnovski/mini.nvim/issues/851
+    mini_map.close()
     vim.cmd('mksession! ' .. session_file_path)
     save_order_to_session()
   end,
