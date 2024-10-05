@@ -483,6 +483,8 @@ Note: in order to work, this extension needs VsCode title bar setting to be chan
   "workbench.colorTheme": "Default Dark+",
   "update.enableWindowsBackgroundUpdates": false,
   "debug.inlineValues": "on",
-  "debug.terminal.clearBeforeReusing": true
+  "debug.terminal.clearBeforeReusing": true,
+  "diffEditor.ignoreTrimWhitespace": true,
+  "diffEditor.hideUnchangedRegions.enabled": true
   // "workbench.editor.empty.hint": "hidden",
 }
