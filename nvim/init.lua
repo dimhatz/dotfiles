@@ -550,6 +550,8 @@ require('lazy').setup({
 
   require('my-typescript-tools'),
 
+  -- require('my-rustaceanvim'), -- only use after removing our lspconfig entry
+
   require('my-cmp'),
 
   -- it is loaded, but earlier than the bundled syntax file

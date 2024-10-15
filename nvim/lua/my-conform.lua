@@ -35,6 +35,7 @@ return {
       sass = { 'prettierd', 'prettier' },
       yaml = { 'prettierd', 'prettier' },
       markdown = { 'prettierd', 'prettier' },
+      rust = { 'rustfmt' }, -- make sure g:rustfmt_autosave is not 1
     },
     default_format_opts = {
       stop_after_first = true,

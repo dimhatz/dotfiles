@@ -80,6 +80,7 @@ return {
       vim.notify('My: cmp_nvim_lsp not found. Setting up LuaLS with defaults.', vim.log.levels.WARN)
       lspconfig.lua_ls.setup({})
     else
+      -- Lua
       lspconfig.lua_ls.setup({
         -- snippets seem to be sent to lsp client even without passing capabilities
         -- NOTE: with luals there is the following bug: when editing a file from dotfiles, using a
@@ -91,6 +92,37 @@ return {
             completion = {
               callSnippet = 'Replace',
             },
+          },
+        },
+      })
+
+      -- Rust, from https://rust-analyzer.github.io/manual.html
+      lspconfig.rust_analyzer.setup({
+        settings = {
+          ['rust-analyzer'] = {
+            imports = {
+              granularity = {
+                group = 'module',
+              },
+              prefix = 'self',
+            },
+            cargo = {
+              features = 'all', -- from reddit: to avoid error: file not included in crate hierarchy
+              buildScripts = {
+                enable = true,
+              },
+            },
+            procMacro = {
+              enable = true,
+            },
+            -- diagnostics = {
+            --   enable = true, -- true is default
+            -- -- additional diagnostics, source shown as rust-analyzer, not sure if all are the same
+            -- -- as those from rustc
+            --   enableExperimental = true, -- <-- causes additional diagnostics
+            -- },
+            checkOnSave = true,
+            check = { command = 'clippy', features = 'all' },
           },
         },
       })

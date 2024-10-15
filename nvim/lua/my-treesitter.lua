@@ -21,6 +21,7 @@ return {
       'json',
       'jsonc',
       'tsx',
+      'rust',
       -- do not have parsers:
       -- 'jsx',
       -- 'javascriptreact',
