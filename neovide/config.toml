@@ -110,10 +110,10 @@ vsync = true # when false, will use vim.g.neovide_refresh_rate to set refresh ra
 size = 11.25
 hinting = "full"
 edging = "antialias"
-normal = { family = "IosevkaCustom NF", style = "W350" } # 350 = SemiLight
-bold = { family = "IosevkaCustom NF", style = "W600" } # 600 = Bold
-italic = { family = "IosevkaCustom NF", style = "W350 Italic" }
-bold_italic = { family = "IosevkaCustom NF", style = "W600 Italic" }
+normal = { family = "IosevkaMy NF", style = "W350" } # 350 = SemiLight
+bold = { family = "IosevkaMy NF", style = "W600" } # 600 = Bold
+italic = { family = "IosevkaMy NF", style = "W350 Italic" }
+bold_italic = { family = "IosevkaMy NF", style = "W600 Italic" }
 
 # # TODO  <-- this should be normal
 # # TODO: <-- this should be bold
