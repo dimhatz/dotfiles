@@ -122,6 +122,7 @@ local function apply_colors()
   hi('TSComment', { link = 'Comment' })
   hi('MatchParen', { bg = c.base02, fg = c.whitest, bold = true }) -- bold standout reverse
   hi('Wildmenu', { link = 'Search' })
+  hi('Character', { link = 'Type' })
 
   -- lsp / treesitter
   -- NOTE: use the following to see what highlight group is used for word under cursor:
