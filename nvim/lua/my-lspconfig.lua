@@ -122,7 +122,20 @@ return {
             --   enableExperimental = true, -- <-- causes additional diagnostics
             -- },
             checkOnSave = true,
-            check = { command = 'clippy', features = 'all' },
+            check = {
+              command = 'clippy',
+              features = 'all',
+              extraArgs = {
+                -- from reddit. TODO: configure clippy in its file (or in cargo.toml?), remove the below args
+                '--',
+                '--no-deps',
+                '-Dclippy::all',
+                -- '-Dclippy::correctness', -- already 'deny'
+                -- '-Dclippy::complexity', -- already 'warn'
+                -- '-Wclippy::perf', -- already 'warn'
+                '-Wclippy::pedantic',
+              },
+            },
           },
         },
       })
