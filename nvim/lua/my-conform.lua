@@ -1,3 +1,5 @@
+vim.g.rustfmt_autosave = 1
+
 return {
   'stevearc/conform.nvim',
   lazy = false,
@@ -35,7 +37,8 @@ return {
       sass = { 'prettierd', 'prettier' },
       yaml = { 'prettierd', 'prettier' },
       markdown = { 'prettierd', 'prettier' },
-      rust = { 'rustfmt' }, -- make sure g:rustfmt_autosave is not 1
+      -- do NOT set rust formatting here, see vim.g.rustfmt_autosave = 1 at the top of this file
+      -- rust = { 'rustfmt' },
     },
     default_format_opts = {
       stop_after_first = true,
