@@ -80,6 +80,9 @@ return {
     end
 
     cmp.setup({
+      -- even when lsp suggests to preselect an item, do not do it (results in needing <c-j><c-k> to
+      -- insert selected text)
+      preselect = cmp.PreselectMode.None,
       -- weird setting: more useful presentation when cursor is near bottom, but c-j now selects upwards!
       -- view = {
       --   entries = { name = 'custom', selection_order = 'near_cursor' },
