@@ -418,6 +418,41 @@ remap({ 'n', 'v' }, 'y', 'myy', { desc = 'Set mark "y" before yanking' })
 remap('n', 'Y', 'myy$', { desc = 'Set mark "y" before yanking (workaround to keep cursor from moving)' })
 remap('v', 'Y', '<Nop>', { desc = 'Not using visual Y anyway' })
 
+remap('n', 'o', function()
+  -- Workaround: By default, when pressing "o" from an area that has comments,
+  -- the new line starts already commented, even if its the last commented line.
+  -- We want 'o' to produce auto-commented line only when deep inside comments.
+  -- Alternatively (will remove comment auto-prefixing):
+  -- vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+  --   desc = 'My: Do not autocomment new line with "o" / "O"',
+  --   group = vim.api.nvim_create_augroup('my-no-comments-on-o', { clear = true }),
+  --   callback = function()
+  --     vim.opt.formatoptions:remove('o')
+  --     vim.opt_local.formatoptions:remove('o')
+  --   end,
+  -- })
+  local line = vim.fn.line('.')
+  -- indent should be correct even if e.g. 3 spaces lead the line, if there are intermixed tabs etc
+  -- + 1 is needed since the columns start at 1, not 0
+  local first_non_blank_col = vim.fn.indent(line) + 1
+  -- check syntax group of the first non-blank char, following any links
+  local synID = vim.fn.synID(line, first_non_blank_col, 0)
+  local hl_name = vim.fn.synIDattr(synID, 'name')
+  local line_is_comment = hl_name == 'Comment' or hl_name:lower():find('comment') ~= nil
+
+  -- alternatively, we can follow hl links and check if the final hl is "comment"
+  -- local synID = vim.fn.synIDtrans(vim.fn.synID(line, first_non_blank_col, 0))
+  -- local line_is_comment = hl_name == 'Comment' or hl_name:lower():find('comment') ~= nil
+  -- vim.print(hl_name .. ' ' .. tostring(line_is_comment))
+
+  local line_is_last = vim.fn.line('.') == vim.fn.line('$')
+  if line_is_comment and not line_is_last then
+    return 'jO'
+  else
+    return 'o'
+  end
+end, { expr = true, desc = 'Make new line (after comment) start non-commented.' })
+
 --  See `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'My: Highlight when yanking (copying) text',
