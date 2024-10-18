@@ -144,7 +144,13 @@ local function apply_colors()
   hi('Operator', { fg = c.base05fg }) -- for ts comma in function definition args
   hi('PreProc', { fg = c.base05fg }) -- for ts comma after 'as' (in function call args)
   hi('Identifier', { fg = c.violet }) -- in ts: const, let <- typescriptVariable
+  hi('Macro', { link = 'Function' })
+  hi('TSFuncMacro', { link = 'Function' })
 
+  -- Rust
+  hi('rustSigil', { fg = c.base05fg })
+
+  -- Typescript
   local ts_methods = {
     -- obtained with:
     -- :redir @a
