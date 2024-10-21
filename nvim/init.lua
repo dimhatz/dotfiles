@@ -1,5 +1,6 @@
 local remap = require('my-helpers').remap
 local update_treesitter_tree = require('my-helpers').update_treesitter_tree
+local simulate_keys = require('my-helpers').simulate_keys
 -- for binaries on windows:
 -- choco install -y ripgrep wget fd unzip gzip mingw make
 -- NOTE: use :lua vim.diagnostic.setqflist() to all diagnostics into a quickfix list
@@ -236,12 +237,20 @@ end, { expr = true, silent = true, desc = 'Remove highlight on esc when searchin
 remap('n', ';', ':', { desc = 'Semicolon swapped with colon' })
 remap('n', ':', ';', { desc = 'Semicolon swapped with colon' })
 
-remap('n', '<C-s>', '<Cmd>write<CR>', { desc = 'Save file' })
-remap('i', '<C-s>', '<Esc><Cmd>write<CR>', { desc = 'Save file' })
+remap('n', '<C-s>', function()
+  vim.cmd.write()
+  update_treesitter_tree()
+end, { desc = 'Save file, update rainbow parens' })
+
+remap('i', '<C-s>', function()
+  simulate_keys('<Esc>')
+  vim.cmd.write()
+  update_treesitter_tree()
+end, { desc = 'Save file, esc to normal, update rainbow parens' })
 
 -- To avoid operator pending delay, and the possibility to actually perform e.g. dw,
 -- we perform operator remapping -> onore <expr>w v:operator == 'd' ? 'aw' : '<esc>'
--- NOTE: adding remap option { nowait = true } does not help, it is not what its puropose is.
+-- NOTE: adding remap option { nowait = true } does not help, it is not what its purpose is.
 -- NOTE2: this is not triggered by `v`
 -- NOTE3: our remap of z becomes instant too (and e.g. `ze` triggers this func correctly)
 local function my_w()

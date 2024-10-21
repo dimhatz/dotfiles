@@ -103,6 +103,8 @@ function M.simulate_keys(keys)
   -- vim.cmd([[call feedkeys("\<Esc>", 'n')]]) -- works
 end
 
+--- Workaround for rainbow-delimiters: calling this will update the color parens, even with
+--- treesitter highlight disabled.
 function M.update_treesitter_tree()
   -- TODO: remove this if we are using treesitter for highlighting
   -- This is a workaround for the rainbow-delimiters, which will only hightlight

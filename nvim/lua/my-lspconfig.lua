@@ -127,6 +127,12 @@ return {
               features = 'all',
               extraArgs = {
                 -- from reddit. TODO: configure clippy in its file (or in cargo.toml?), remove the below args
+                -- To test if clippy is enabled, add the following func signature: fn add_by_ref(v: &i32) {...}
+                -- This results in a warning:
+                -- │ │   └╴ this argument (4 byte) is passed by reference, but would be more efficient if passed by value (limit: 8 byte)
+                -- │ │       for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#trivially_copy_pass_by_ref
+                -- │ │       `-W clippy::trivially-copy-pass-by-ref` implied by `-W clippy::pedantic`
+                -- │ │       to override `-W clippy::pedantic` add `#[allow(clippy::trivially_copy_pass_by_ref)]` clippy (trivially_copy_pass_by_ref) [53, 18]
                 '--',
                 '--no-deps',
                 '-Dclippy::all',
