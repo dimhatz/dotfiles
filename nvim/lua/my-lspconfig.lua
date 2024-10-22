@@ -72,6 +72,8 @@ return {
           [vim.diagnostic.severity.INFO] = '',
         },
       },
+      -- severity_sort = true,
+      severity_sort = { reverse = true }, -- hints are now more on top of errors, to review compiler suggestions first
     })
     -------------------------- server configs -------------------------
     local ok_cmp_nvim_lsp, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
