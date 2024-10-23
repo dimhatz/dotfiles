@@ -378,6 +378,34 @@ remap('c', '<C-j>', '<Down>', { desc = 'Autocomplete in command mode' })
 remap('i', '<C-e>', '<Esc>A', { desc = 'Jump to EOL' })
 remap({ 'n', 'v' }, '<C-e>', '$', { desc = 'Jump to EOL' })
 
+-- Stop reaching too far with fingers for =, +, -, _
+remap({ 'i', 'c' }, '<C-f>', '=', { desc = '<C-f> is = in insert' })
+remap({ 'i', 'c' }, '<C-g>', '+', { desc = '<C-g> is + in insert' })
+remap({ 'i', 'c' }, '<C-d>', '_', { desc = '<C-d> is _ in insert' })
+remap({ 'i', 'c' }, '<C-a>', '-', { desc = '<C-a> is - in insert' })
+
+-- When doing: nnore r<C-f> r=
+-- and the timeout passes, the mapping will not activate. Workaround:
+remap('n', 'r', function()
+  -- change and restore cursor, otherwise it stays the same
+  local orig_cursor = vim.o.guicursor
+  vim.o.guicursor = 'n-v-c-sm:hor20,i-ci-ve:ver25,r-cr-o:hor20'
+  local c = vim.fn.getcharstr()
+  vim.o.guicursor = orig_cursor
+  -- NOTE: the below string literals need to be entered with <c-v> in insert (after :iunmap <c-v>)
+  -- since these are special vim's internal escape codes.
+  if c == '' then
+    return 'r='
+  elseif c == '' then
+    return 'r+'
+  elseif c == '' then
+    return 'r_'
+  elseif c == '' then
+    return 'r-'
+  end
+  return 'r' .. c
+end, { expr = true, desc = 'replace single char, supports our special insert keymaps (<C-d> etc)' })
+
 -- <C-f> / # in visual search the selection, <Leader>f in normal/visual highlights word under cursor, but does not jump to it
 -- currently, nvim has a remap, but cases that have e.g. backslash are not handled properly,
 -- e.g. when selecting "\V" and pressing *, nvim will highlight the whole page
