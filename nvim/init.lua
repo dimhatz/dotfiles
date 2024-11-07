@@ -355,7 +355,13 @@ remap('v', '<C-k>', 'gk<C-y>', { desc = 'Scroll up 1 line with cursor steady' })
 remap('n', '<C-m>', 'M', { desc = 'Put cursor in the center of the screen, <CR> triggers <C-m> it too' })
 remap('n', 'M', 'zz', { desc = 'Center the screen on the cursor' })
 
-remap('n', '<C-z>', '<Cmd>e!<CR>', { desc = 'Undo all changes since file last saved' })
+remap('n', '<C-z>', function()
+  -- WORKAROUND: if we don't save and restore window the cursor jumps to the location
+  -- where the cursor was on initial file open
+  local win_view = vim.fn.winsaveview()
+  vim.cmd('e!')
+  vim.fn.winrestview(win_view)
+end, { desc = 'Undo all changes since file last saved' })
 
 remap('n', '<F1>', '<Cmd>setlocal foldlevel=1<CR>', { desc = 'Fold all text at level 1' })
 remap('n', '<F2>', '<Cmd>setlocal foldlevel=2<CR>', { desc = 'Fold all text at level 2' })
@@ -569,12 +575,12 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+-- require('my-fix-auto-scroll') -- not needed anymore, see inside file
+
 -- NOTE: lazy runs init() during startup, before loading the plugin itself (after which config() runs).
 require('lazy').setup({
   --------------------------------------------- COLORS -------------------------------------------------------------------------------------
   -- require('my-profile'),
-
-  require('my-fix-auto-scroll'),
 
   require('my-base16'),
 
