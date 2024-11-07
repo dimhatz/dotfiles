@@ -416,6 +416,10 @@ function M.save_order_to_session()
   end, bufnr_order)
 
   local file_paths_json = vim.json.encode(file_paths)
+  if file_paths_json == nil then
+    log_my_error('My: Could not encode file paths as json.')
+    return
+  end
 
   if string.find(file_paths_json, "'") then
     -- we will be appending a line like: let g:my_buf_order = '["path1", "path2"]'
