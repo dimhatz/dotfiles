@@ -184,8 +184,10 @@ return {
     remap('i', '<C-h>', function()
       if cmp.visible_docs() then
         cmp.scroll_docs(4)
+      else
+        vim.lsp.buf.signature_help()
       end
-    end, { desc = 'Autocomplete scroll docs down' })
+    end, { desc = 'Autocomplete scroll docs down / Lsp signature help (when no popup)' })
 
     remap('i', '<C-n>', function()
       if not cmp.visible() then
