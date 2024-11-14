@@ -172,8 +172,35 @@ return {
       builtin.find_files({ cwd = vim.fn.expand('~/dotfiles/nvim') })
     end, { desc = '[S]earch [N]eovim files' })
 
+    remap('n', '<leader><leader>', function()
+      builtin.buffers({
+        initial_mode = 'normal',
+        sort_mru = true,
+        attach_mappings = function(_, map)
+          map('n', '<C-c>', function(prompt_bufnr)
+            -- TODO: refreshing results is currently not supported in telescope, see issue:
+            -- https://github.com/nvim-telescope/telescope.nvim/issues/2912
+            local action_state = require('telescope.actions.state')
+            -- local current_picker = action_state.get_current_picker(prompt_bufnr) -- picker state
+            local entry = action_state.get_selected_entry()
+            -- `:lua vim.cmd.bdelete(<buf>)` or vim.cmd.bwipeout does not work for some reason
+            -- neither :bdelete <buf>, or vim.api.nvim_buf_delete(<buf>, {})
+            -- when the window is open. The mini library works, but results are not updated
+            -- Another solution (results in reopening telescope):
+            -- require('telescope.actions').close(prompt_bufnr)
+            -- require('mini.bufremove').delete(entry.bufnr)
+            -- vim.schedule(search_open_buffers) -- where search_open_buffers is (current) remap()'ed function
+            require('mini.bufremove').delete(entry.bufnr)
+            -- so we manually update the entries
+            require('telescope.actions').delete_buffer(prompt_bufnr)
+          end)
+          -- returning true will also keep the default mappings for this picker
+          return true
+        end,
+      })
+    end, { desc = 'Find existing buffers, close selected with <C-c>' })
+
     -- remap('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-    -- remap('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
     -- remap('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     -- remap('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
   end,

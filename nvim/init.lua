@@ -390,6 +390,9 @@ remap({ 'i', 'c' }, '<C-g>', '+', { desc = '<C-g> is + in insert' })
 remap({ 'i', 'c' }, '<C-d>', '_', { desc = '<C-d> is _ in insert' })
 remap({ 'i', 'c' }, '<C-a>', '-', { desc = '<C-a> is - in insert' })
 
+-- see https://stackoverflow.com/questions/24983372/what-does-ctrlspace-do-in-vim
+remap({ 'i' }, '<C-Space>', '<Nop>', { desc = 'Workaround, <C-space> can be ambiguously interpreted as <C-@>' })
+
 -- When doing: nnore r<C-f> r=
 -- and the timeout passes, the mapping will not activate. Workaround:
 remap('n', 'r', function()
