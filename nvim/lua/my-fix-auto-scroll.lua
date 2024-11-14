@@ -1,7 +1,5 @@
--- NOTE: as of nvim 0.10.2, when switching between buffers, the window scroll position
--- (and cursor) stays the same, thus this workaround is not needed anymore.
--- TODO: remove this when we are sure this is not needed anymore.
-
+-- NOTE: this is already handled by our my_remember_folds (search configs globally for this augroup)
+--
 -- prevent scrolling (centering the cursorline) when changing buffers
 -- return {
 --   'BranimirE/fix-auto-scroll.nvim',
@@ -51,7 +49,6 @@ end
 local utils = M1
 local M = {}
 
----@diagnostic disable-next-line: unused-local
 function M.setup(opts)
   local AutoSaveViewGroup = vim.api.nvim_create_augroup('AutoSaveViewGroup', {})
   vim.api.nvim_create_autocmd('BufEnter', {
@@ -70,6 +67,6 @@ function M.setup(opts)
   })
 end
 
-M.setup()
+-- M.setup()
 
-return M
+-- return M

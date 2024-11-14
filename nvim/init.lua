@@ -391,7 +391,7 @@ remap({ 'i', 'c' }, '<C-d>', '_', { desc = '<C-d> is _ in insert' })
 remap({ 'i', 'c' }, '<C-a>', '-', { desc = '<C-a> is - in insert' })
 
 -- see https://stackoverflow.com/questions/24983372/what-does-ctrlspace-do-in-vim
-remap({ 'i' }, '<C-Space>', '<Nop>', { desc = 'Workaround, <C-space> can be ambiguously interpreted as <C-@>' })
+remap({ 'i' }, '<C-Space>', '<Space>', { desc = 'Workaround, <C-space> can be ambiguously interpreted as <C-@>' })
 
 -- When doing: nnore r<C-f> r=
 -- and the timeout passes, the mapping will not activate. Workaround:
@@ -558,7 +558,9 @@ vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
 --     vim.cmd.loadview()
 --   end,
 -- })
--- TODO: white this in lua
+
+-- TODO: write this in lua
+-- This also prevents scroll-to-center-cursor behavior of default vim, when switching between buffers
 vim.cmd([[
      set viewoptions-=options
      augroup my_remember_folds
@@ -577,8 +579,6 @@ if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({ 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath })
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
-
--- require('my-fix-auto-scroll') -- not needed anymore, see inside file
 
 -- NOTE: lazy runs init() during startup, before loading the plugin itself (after which config() runs).
 require('lazy').setup({
