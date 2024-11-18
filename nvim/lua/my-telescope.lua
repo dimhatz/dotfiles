@@ -172,7 +172,7 @@ return {
       builtin.find_files({ cwd = vim.fn.expand('~/dotfiles/nvim') })
     end, { desc = '[S]earch [N]eovim files' })
 
-    remap('n', '<leader><leader>', function()
+    local function search_open_buffers()
       builtin.buffers({
         initial_mode = 'normal',
         sort_mru = true,
@@ -186,19 +186,23 @@ return {
             -- `:lua vim.cmd.bdelete(<buf>)` or vim.cmd.bwipeout does not work for some reason
             -- neither :bdelete <buf>, or vim.api.nvim_buf_delete(<buf>, {})
             -- when the window is open. The mini library works, but results are not updated
-            -- Another solution (results in reopening telescope):
-            -- require('telescope.actions').close(prompt_bufnr)
-            -- require('mini.bufremove').delete(entry.bufnr)
-            -- vim.schedule(search_open_buffers) -- where search_open_buffers is (current) remap()'ed function
+            -- Workaround (re-opens telescope window)
+            require('telescope.actions').close(prompt_bufnr)
             require('mini.bufremove').delete(entry.bufnr)
-            -- so we manually update the entries
-            require('telescope.actions').delete_buffer(prompt_bufnr)
+            vim.schedule(search_open_buffers) -- search_open_buffers() is current, remap()'ed function
+
+            -- Another solution, without flickering, but results in broken highlight (some word parts have incorrect colors)
+            -- for .ts buffers that have not been focused / highlighted yet, like when restoring a session:
+            -- require('mini.bufremove').delete(entry.bufnr)
+            -- require('telescope.actions').delete_buffer(prompt_bufnr) -- we manually update the entries
           end)
           -- returning true will also keep the default mappings for this picker
           return true
         end,
       })
-    end, { desc = 'Find existing buffers, close selected with <C-c>' })
+    end
+
+    remap('n', '<leader><leader>', search_open_buffers, { desc = 'Find existing buffers, close selected with <C-c>' })
 
     -- remap('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
     -- remap('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
