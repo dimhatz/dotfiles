@@ -97,6 +97,8 @@ local function apply_colors()
   hi('IncSearch', { bg = c.peach_dark, fg = c.whitest })
   hi('CursorLine', { bg = c.blackest })
   hi('CursorLineNr', { bg = c.blackest, fg = c.base03 })
+  hi('nCursor', { bg = c.base05fg, fg = c.blackest }) -- make the letters darker
+  hi('iCursor', { bg = c.whitest, fg = c.base00bg }) -- make the bar brighter
   hi('LineNr', { fg = c.base02 })
   hi('Comment', { fg = c.base03 })
 

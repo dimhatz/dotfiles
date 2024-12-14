@@ -60,6 +60,9 @@ else
   -- vim.o.guifont = 'SauceCodePro NF:h10.5'
 end
 
+-- default values for cursor plus highlight group (neovide does not use)
+vim.o.guicursor = 'n-v-c-sm:block-nCursor/nCursor,i-ci-ve:ver25-iCursor/iCursor,r-cr-o:hor20-iCursor/iCursor'
+
 -- disable netrw, as required by nvim-tree
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
@@ -390,6 +393,8 @@ remap({ 'i', 'c' }, '<C-g>', '+', { desc = '<C-g> is + in insert' })
 remap({ 'i', 'c' }, '<C-d>', '_', { desc = '<C-d> is _ in insert' })
 remap({ 'i', 'c' }, '<C-a>', '-', { desc = '<C-a> is - in insert' })
 
+remap('c', '<C-c>', '<C-f>', { desc = 'Open window with all previous commands' })
+
 -- see https://stackoverflow.com/questions/24983372/what-does-ctrlspace-do-in-vim
 remap({ 'i' }, '<C-Space>', '<Space>', { desc = 'Workaround, <C-space> can be ambiguously interpreted as <C-@>' })
 
@@ -398,7 +403,7 @@ remap({ 'i' }, '<C-Space>', '<Space>', { desc = 'Workaround, <C-space> can be am
 remap('n', 'r', function()
   -- change and restore cursor, otherwise it stays the same
   local orig_cursor = vim.o.guicursor
-  vim.o.guicursor = 'n-v-c-sm:hor20,i-ci-ve:ver25,r-cr-o:hor20'
+  vim.o.guicursor = 'a:hor20-iCursor/iCursor'
   local c = vim.fn.getcharstr()
   vim.o.guicursor = orig_cursor
   -- NOTE: the below string literals need to be entered with <c-v> in insert (after :iunmap <c-v>)
