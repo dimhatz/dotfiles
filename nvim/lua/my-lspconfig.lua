@@ -1,5 +1,6 @@
 local remap = require('my-helpers').remap
 local make_wrapper_fn = require('my-helpers').make_wrapper_fn
+local simulate_keys = require('my-helpers').simulate_keys
 
 return {
   'neovim/nvim-lspconfig',
@@ -181,7 +182,16 @@ return {
         -- -- Rename the variable under your cursor.
         -- --  Most Language Servers support renaming across files, etc.
         -- map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-        map('<leader>r', vim.lsp.buf.rename, 'Rename under cursor')
+        map('<leader>r', function()
+          vim.lsp.buf.rename()
+          -- WORKAROUND: in neovide, when triggering rename(), the cursor in the prompt is not showing
+          -- until we type smth or move cursor with arrows
+          if vim.g.neovide then
+            vim.defer_fn(function()
+              simulate_keys('<Left><Right>')
+            end, 200)
+          end
+        end, 'Rename under cursor')
 
         -- Execute a code action, usually your cursor needs to be on top of an error
         -- or a suggestion from your LSP for this to activate.

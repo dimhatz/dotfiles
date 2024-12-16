@@ -220,7 +220,7 @@ remap('n', 'y<Esc>', '<Esc><Cmd>delmarks y<CR>', { desc = 'Workaround to keep cu
 
 -- search mode '/' is considered command mode
 remap('c', '<Esc>', function()
-  -- -- workaround to remove highlight from scrollbar, see onEsc()
+  -- -- workaround to remove highlight from scrollbar, see MyOnEsc()
   local cmd_type = vim.fn.getcmdtype()
   local is_search_mode = cmd_type == '/' or cmd_type == '?'
   if is_search_mode then
@@ -232,8 +232,16 @@ remap('c', '<Esc>', function()
     -- <c-e><c-u> deletes all the text (:h c_CTRL-U), the following <bs>
     -- will auto-exit command mode, the cursor will be at the original location
     return '<C-e><C-u><BS>:noh<CR>'
+  elseif cmd_type == '@' then
+    -- we are in vim.ui.input()
+    -- simulate_keys('<Esc>') + return '' -> commits the rename
+    -- (even if it's the same text), leaves buffer in a modified state
+    -- same for: return '<Esc>'
+    vim.print('') -- workaround to remove "New name: xyz" from command indicator
+    return '<C-e><C-u><BS><Esc>' -- works
   else
-    return '<C-e><C-u><BS>'
+    -- return '<Esc>' does not work (with asdf as input): E492: Not an editor command: asdf
+    return '<C-e><C-u><BS>' -- works
   end
 end, { expr = true, silent = true, desc = 'Remove highlight on esc when searching with /' })
 
