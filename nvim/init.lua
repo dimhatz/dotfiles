@@ -220,28 +220,23 @@ remap('n', 'y<Esc>', '<Esc><Cmd>delmarks y<CR>', { desc = 'Workaround to keep cu
 
 -- search mode '/' is considered command mode
 remap('c', '<Esc>', function()
-  -- -- workaround to remove highlight from scrollbar, see MyOnEsc()
+  -- workaround to remove highlight from scrollbar, on <Esc> when searching with /, see also MyOnEsc()
   local cmd_type = vim.fn.getcmdtype()
   local is_search_mode = cmd_type == '/' or cmd_type == '?'
+  -- NOTE: when we are in vim.ui.input(), e.g. in lsp rename, then: cmd_type == '@', in case we need it
   if is_search_mode then
-    -- there is a bug(?) in vim: when <Esc> is mapped in command mode, e.g.
-    -- cnoremap <Esc> <Esc>
-    -- when we search with / and then press <Esc>, the cursor stays on the first search result
+    -- When <Esc> is mapped in command mode, e.g. cnoremap <Esc> <Esc>, then <Esc> acts like
+    -- <CR>, see: https://github.com/neovim/neovim/issues/21585
+    -- Additionally, when searching with / and using :cnore <Esc> <Esc>:noh<CR>,
+    -- when pressing <Esc>, the cursor stays on the first search result
     -- location instead of jumping back to the original location.
-    -- Workaround:
-    -- <c-e><c-u> deletes all the text (:h c_CTRL-U), the following <bs>
-    -- will auto-exit command mode, the cursor will be at the original location
-    return '<C-e><C-u><BS>:noh<CR>'
-  elseif cmd_type == '@' then
-    -- we are in vim.ui.input()
-    -- simulate_keys('<Esc>') + return '' -> commits the rename
-    -- (even if it's the same text), leaves buffer in a modified state
-    -- same for: return '<Esc>'
-    vim.print('') -- workaround to remove "New name: xyz" from command indicator
-    return '<C-e><C-u><BS><Esc>' -- works
+    return '<C-c>:noh<CR>' -- works
+    -- alternatively: <c-e><c-u> deletes all the text (:h c_CTRL-U), the following <BS>
+    -- will auto-exit command mode. Side effect: the cmd text that we searched for will still be shown.
+    -- vim.print('') -- workaround to remove cmd text
+    -- return '<C-e><C-u><BS>:noh<CR>'
   else
-    -- return '<Esc>' does not work (with asdf as input): E492: Not an editor command: asdf
-    return '<C-e><C-u><BS>' -- works
+    return '<C-c>'
   end
 end, { expr = true, silent = true, desc = 'Remove highlight on esc when searching with /' })
 
@@ -401,7 +396,8 @@ remap({ 'i', 'c' }, '<C-g>', '+', { desc = '<C-g> is + in insert' })
 remap({ 'i', 'c' }, '<C-d>', '_', { desc = '<C-d> is _ in insert' })
 remap({ 'i', 'c' }, '<C-a>', '-', { desc = '<C-a> is - in insert' })
 
-remap('c', '<C-c>', '<C-f>', { desc = 'Open window with all previous commands' })
+-- avoid conflict with our <c-f> which is = in insert and cmd modes
+remap('c', '<C-z>', '<C-f>', { desc = 'Open window with all previous commands' })
 
 -- see https://stackoverflow.com/questions/24983372/what-does-ctrlspace-do-in-vim
 remap({ 'i' }, '<C-Space>', '<Space>', { desc = 'Workaround, <C-space> can be ambiguously interpreted as <C-@>' })
