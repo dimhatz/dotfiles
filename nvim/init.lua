@@ -240,8 +240,8 @@ remap('c', '<Esc>', function()
   end
 end, { expr = true, silent = true, desc = 'Remove highlight on esc when searching with /' })
 
-remap('n', ';', ':', { desc = 'Semicolon swapped with colon' })
-remap('n', ':', ';', { desc = 'Semicolon swapped with colon' })
+remap({ 'n', 'x' }, ';', ':', { desc = 'Semicolon swapped with colon' })
+remap({ 'n', 'x' }, ':', ';', { desc = 'Semicolon swapped with colon' })
 
 remap('n', '<C-s>', function()
   vim.cmd.write()
@@ -306,9 +306,8 @@ remap('n', '<C-u>', 'gUiw', { desc = 'Uppercase word under cursor' }) -- Upperca
 remap('i', '<C-u>', '<Esc>gUiwea', { desc = 'Uppercase word under cursor' }) -- FIXME: does not repeat
 
 -- adjust hlsearch to work correctly with mini.nvim's scrollbar highlight
-remap('n', '<C-f>', '*<Cmd>set hlsearch<CR>', { desc = '<C-f> is the new *' })
-remap('n', '*', '<cmd>echo "<C-f> is the new *"<CR>', { desc = '<C-f> is the new *' })
-remap('n', '#', '#<Cmd>set hlsearch<CR>', { desc = '<C-f> is the new *' })
+remap('n', '*', '*<Cmd>set hlsearch<CR>', { desc = 'vanilla *, with workaround for highlighting' })
+remap('n', '#', '#<Cmd>set hlsearch<CR>', { desc = 'vanilla #, with workaround for highlighting' })
 remap('n', '/', '<Cmd>set hlsearch<CR>/')
 remap('n', '?', '<Cmd>set hlsearch<CR>?')
 remap('n', 'n', '<Cmd>set hlsearch<CR>n')
@@ -402,7 +401,7 @@ remap('c', '<C-z>', '<C-f>', { desc = 'Open window with all previous commands' }
 -- see https://stackoverflow.com/questions/24983372/what-does-ctrlspace-do-in-vim
 remap({ 'i' }, '<C-Space>', '<Space>', { desc = 'Workaround, <C-space> can be ambiguously interpreted as <C-@>' })
 
--- When doing: nnore r<C-f> r=
+-- When doing :nnore r<C-f> r=
 -- and the timeout passes, the mapping will not activate. Workaround:
 remap('n', 'r', function()
   -- change and restore cursor, otherwise it stays the same
@@ -435,11 +434,13 @@ vim.cmd([[
        let @s = temp
      endfunction
 
-     xnoremap <silent><C-f> :<C-u>call g:MyVSetSearch('/')<CR>/<C-R>=@/<CR><CR>:<C-u>set hlsearch<CR>
+     xnoremap <silent>* :<C-u>call g:MyVSetSearch('/')<CR>/<C-R>=@/<CR><CR>:<C-u>set hlsearch<CR>
      xnoremap <silent># :<C-u>call g:MyVSetSearch('?')<CR>?<C-R>=@/<CR><CR>:<C-u>set hlsearch<CR>
-     nnoremap <silent><Leader>f viw:<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
-     xnoremap <silent><Leader>f :<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
+     nnoremap <silent><C-f> viw:<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
+     xnoremap <silent><C-f> :<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
    ]])
+
+remap({ 'n', 'x' }, '<Leader>f', '<Cmd>echo "use <C-f> (or * to search+jump)"<CR>', { desc = 'Use <C-f> (or * to search+jump)' })
 
 -- TODO: check these out, adjust setup
 -- -- Diagnostic keymaps
