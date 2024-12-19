@@ -211,6 +211,9 @@ MyOnEsc = function()
 
   -- workaround for rainbow-delimiters, see explanation inside definition
   update_treesitter_tree()
+
+  -- to remove the search count from statusline:
+  vim.schedule(My_update_statusline_active)
 end
 remap('n', '<Esc>', '<Cmd>noh<CR>:lua MyOnEsc()<CR>', { silent = true })
 -- see my TextYankPost autocmd, this one is to cleanup if then yank
@@ -220,6 +223,8 @@ remap('n', 'y<Esc>', '<Esc><Cmd>delmarks y<CR>', { desc = 'Workaround to keep cu
 
 -- search mode '/' is considered command mode
 remap('c', '<Esc>', function()
+  -- to remove the search count from statusline:
+  vim.schedule(My_update_statusline_active)
   -- workaround to remove highlight from scrollbar, on <Esc> when searching with /, see also MyOnEsc()
   local cmd_type = vim.fn.getcmdtype()
   local is_search_mode = cmd_type == '/' or cmd_type == '?'
