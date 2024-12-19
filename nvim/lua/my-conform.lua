@@ -38,6 +38,8 @@ return {
       yaml = { 'prettierd', 'prettier' },
       markdown = { 'prettierd', 'prettier' },
       -- do NOT set rust formatting here, see vim.g.rustfmt_autosave = 1 at the top of this file
+      -- TODO: check whether saving this way overwrites undo history, test same behavior with conform
+      -- is it to be expected anyway?
       -- rust = { 'rustfmt' },
     },
     default_format_opts = {
