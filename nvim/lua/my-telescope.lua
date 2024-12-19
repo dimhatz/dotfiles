@@ -51,6 +51,8 @@ return {
             ['<c-l>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
             ['<c-n>'] = false, -- disable to get used to c-j / c-k everywhere
             ['<c-p>'] = false,
+            ['<c-u>'] = false, -- <c-u> / <c-d> are mapped to scroll preview up / down
+            ['<c-d>'] = false, -- dont mess with our insert mode <c-d> which is _
             -- ['<c-n>'] = { actions.cycle_history_next, type = 'action', opts = my_opts },
             -- ['<c-p>'] = { actions.cycle_history_prev, type = 'action', opts = my_opts },
           },
@@ -59,6 +61,8 @@ return {
             ['<c-k>'] = { actions.move_selection_previous, type = 'action', opts = my_opts },
             ['<c-h>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
             ['<c-l>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
+            ['<c-u>'] = false, -- <c-u> / <c-d> are mapped to scroll preview up / down
+            ['<c-d>'] = false, -- dont mess with our insert mode <c-d> which is _
           },
         },
         -- layout_strategy = 'horizontal',
