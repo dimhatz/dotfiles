@@ -551,39 +551,41 @@ vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
   end,
 })
 
--- -- when restoring a session, correctly restore folds in inactive buffers
--- -- related: see above: vim.o.sessionoptions, vim.o.viewoptions
--- vim.api.nvim_create_autocmd('BufWinLeave', {
---   pattern = '.',
---   desc = 'My: Save window view to preserve folds in the buffer',
---   group = vim.api.nvim_create_augroup('my-save-window-view', { clear = true }),
---   callback = function()
---     vim.print('saving view')
---     -- for each buffer, a view file will be written in nvim-data/view
---     vim.cmd.mkview()
---   end,
--- })
---
--- vim.api.nvim_create_autocmd('BufWinEnter', {
---   pattern = '.',
---   desc = 'My: Restore window view to preserve folds in the buffer',
---   group = vim.api.nvim_create_augroup('my-restore-window-view', { clear = true }),
---   callback = function()
---     vim.print('restoring view')
---     vim.cmd.loadview()
---   end,
--- })
-
--- TODO: write this in lua
+-- TODO: delete this when the below lua version is confirmed to work
 -- This also prevents scroll-to-center-cursor behavior of default vim, when switching between buffers
-vim.cmd([[
-     set viewoptions-=options
-     augroup my_remember_folds
-       autocmd!
-       autocmd BufWinLeave *.* if &ft !=# 'help' | mkview | endif
-       autocmd BufWinEnter *.* if &ft !=# 'help' | silent! loadview | endif
-     augroup END
-   ]])
+-- vim.cmd([[
+--      set viewoptions-=options
+--      augroup my_remember_folds
+--        autocmd!
+--        autocmd BufWinLeave *.* if &ft !=# 'help' | mkview | endif
+--        autocmd BufWinEnter *.* if &ft !=# 'help' | silent! loadview | endif
+--      augroup END
+--    ]])
+
+-- This also prevents scroll-to-center-cursor behavior of default vim, when switching between buffers
+local save_load_view_group = vim.api.nvim_create_augroup('my-save-load-view', { clear = true })
+vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
+  desc = 'My: Restore file view (folds, also to avoid scroll to middle default behavior)',
+  group = save_load_view_group,
+  callback = function()
+    if vim.bo.filetype == 'help' and vim.bo.buftype ~= '' then
+      return
+    end
+    vim.cmd.loadview({ mods = { emsg_silent = true } }) -- do now show error messages
+  end,
+})
+
+vim.api.nvim_create_autocmd({ 'BufWinLeave' }, {
+  desc = 'My: Save file view (folds, also to restore and avoid scroll to middle default behavior)',
+  group = save_load_view_group,
+  callback = function()
+    if vim.bo.filetype == 'help' and vim.bo.buftype ~= '' then
+      return
+    end
+    -- for each buffer, a view file will be written in nvim-data/view
+    vim.cmd.mkview({ mods = { emsg_silent = true } }) -- do now show error messages
+  end,
+})
 
 ------------------------------------------------------- PLUGINS --------------------------------------------------------------------------------
 
