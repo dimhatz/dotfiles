@@ -111,10 +111,19 @@ function M.update_treesitter_tree()
   -- the currently parsed tree's parens. When adding new code with parens they will
   -- not be hightlighted.
   local ok_parser, parser = pcall(vim.treesitter.get_parser)
-  if not ok_parser then
+  if not ok_parser or not parser then
     return
   end
   parser:parse()
+end
+
+function M.reverse_in_place(arr)
+  local i, j = 1, #arr
+  while i < j do
+    arr[i], arr[j] = arr[j], arr[i]
+    i = i + 1
+    j = j - 1
+  end
 end
 
 return M
