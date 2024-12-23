@@ -9,7 +9,7 @@ return {
     -- 'hrsh7th/nvim-cmp',
     -- 'hrsh7th/cmp-nvim-lsp',
     -- versioning of lsp servers here: run once
-    -- MasonInstall lua-language-server@3.10.1 stylua@v0.20.0 eslint_d@14.0.3
+    -- MasonInstall lua-language-server@3.10.1 stylua@v2.0.2 eslint_d@14.0.3
     -- NOTE: when upgrading either run an empty nvim or stop all running lsp clients:
     -- vim.lsp.stop_client(vim.lsp.get_clients())
     -- NOTE: versions can be found here: https://github.com/mason-org/mason-registry/blob/main/packages/

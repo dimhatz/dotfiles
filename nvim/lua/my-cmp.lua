@@ -2,6 +2,9 @@ local remap = require('my-helpers').remap
 local simulate_keys = require('my-helpers').simulate_keys
 local update_treesitter_tree = require('my-helpers').update_treesitter_tree
 
+-- TODO: check out https://github.com/saghen/blink.cmp, see if it's mature enough
+-- has borders, disabling menu, fuzzying, documentation preview, snippets etc
+
 return {
   'hrsh7th/nvim-cmp',
   -- problem: when completion is non-automatic, type:
