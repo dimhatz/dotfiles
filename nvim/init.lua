@@ -5,7 +5,7 @@ local simulate_keys = require('my-helpers').simulate_keys
 -- choco install -y ripgrep wget fd unzip gzip mingw make
 -- NOTE: use :lua vim.diagnostic.setqflist() to all diagnostics into a quickfix list
 if vim.g.neovide then
-  -- -- from here: https://github.com/neovide/neovide/issues/2565
+  -- from here: https://neovide.dev/faq.html#how-to-turn-off-all-animations
   -- keeps animations at minimum, while keeping smooth scrolling
   vim.g.neovide_position_animation_length = 0.0
   vim.g.neovide_cursor_animation_length = 0.00
