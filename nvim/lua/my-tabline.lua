@@ -345,7 +345,20 @@ local function switch_to_buffer(direction)
     return
   end
 
-  vim.api.nvim_set_current_buf(target_bufnr)
+  if vim.g.neovide then
+    -- workaround for scrolling when switching between buffers.
+    -- Not always reproducible, but when having many (scrollable) buffers and switching between them,
+    -- sometimes there is a scrolling animation. Permanently having neovide_scroll_animation_length = 0.00
+    -- results in jerky animation on regular scrolling.
+    vim.g.neovide_scroll_animation_length = 0.00
+    vim.api.nvim_set_current_buf(target_bufnr)
+    vim.defer_fn(function()
+      -- not using vim.schedule, since sometimes (rarely) the animation would be observed
+      vim.g.neovide_scroll_animation_length = 0.1
+    end, 100)
+  else
+    vim.api.nvim_set_current_buf(target_bufnr)
+  end
 end
 
 ---Direction should be 'left' or 'right'
