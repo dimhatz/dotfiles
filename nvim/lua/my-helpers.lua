@@ -126,14 +126,17 @@ function M.reverse_in_place(arr)
   end
 end
 
+---@param fn fun()
+---@param timeout_ms integer
 ---Returns a runner (function) that schedules the provided @param fn using vim.defer_fn().
 ---The runner cancels any of its previous schedules.
--- Returning a closure so that this can be used with multiple contexts, otherwise
--- scheduling a different function will kill the execution of the original function.
 function M.create_defer_fn_exclusive(fn, timeout_ms)
+  -- Returning a closure so that this can be used with multiple contexts, otherwise
+  -- scheduling a different function will kill the execution of the original function.
   -- usage example: https://github.com/luvit/luv/blob/master/examples/timers.lua
   local current_timer = nil
   local function exec_on_timeout()
+    -- current timer's func is being executed
     current_timer = nil -- gc will clear the handle, see below
     fn()
   end
