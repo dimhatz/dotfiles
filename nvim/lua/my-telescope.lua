@@ -1,6 +1,7 @@
 local remap = require('my-helpers').remap
 local make_wrapper_fn = require('my-helpers').make_wrapper_fn
 local normalize_filename = require('my-helpers').normalize_filename
+local create_defer_fn_exclusive = require('my-helpers').create_defer_fn_exclusive
 
 -- wrap lines in previewer
 vim.api.nvim_create_autocmd('User', {
@@ -40,13 +41,42 @@ return {
     local telescope = require('telescope')
     local actions = require('telescope.actions')
     local my_opts = { nowait = true, silent = false }
+
+    local defer_enable_animation_after_moving_selection = create_defer_fn_exclusive(function()
+      -- not using just vim.schedule, since sometimes (rarely) the animation would be observed
+      vim.g.neovide_scroll_animation_length = 0.1
+      -- holding down `(` should only result in one run
+    end, 100)
+
+    local function my_move_selection_next(prompt_bufnr)
+      if vim.g.neovide then
+        -- workaround for scrolling when switching between buffers, see also my-tabline -> switch_to_buffer()
+        vim.g.neovide_scroll_animation_length = 0.00
+        actions.move_selection_next(prompt_bufnr)
+        defer_enable_animation_after_moving_selection()
+      else
+        actions.move_selection_next(prompt_bufnr)
+      end
+    end
+
+    local function my_move_selection_previous(prompt_bufnr)
+      if vim.g.neovide then
+        -- workaround for scrolling when switching between buffers, see also my-tabline -> switch_to_buffer()
+        vim.g.neovide_scroll_animation_length = 0.00
+        actions.move_selection_previous(prompt_bufnr)
+        defer_enable_animation_after_moving_selection()
+      else
+        actions.move_selection_previous(prompt_bufnr)
+      end
+    end
+
     require('telescope').setup({
       defaults = {
         -- file_ignore_patterns = { '.git' .. require('my-helpers').path_delimiter },
         mappings = {
           i = {
-            ['<c-j>'] = { actions.move_selection_next, type = 'action', opts = my_opts },
-            ['<c-k>'] = { actions.move_selection_previous, type = 'action', opts = my_opts },
+            ['<c-j>'] = { my_move_selection_next, type = 'action', opts = my_opts },
+            ['<c-k>'] = { my_move_selection_previous, type = 'action', opts = my_opts },
             ['<c-h>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
             ['<c-l>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
             ['<c-n>'] = false, -- disable to get used to c-j / c-k everywhere
@@ -57,8 +87,10 @@ return {
             -- ['<c-p>'] = { actions.cycle_history_prev, type = 'action', opts = my_opts },
           },
           n = {
-            ['<c-j>'] = { actions.move_selection_next, type = 'action', opts = my_opts },
-            ['<c-k>'] = { actions.move_selection_previous, type = 'action', opts = my_opts },
+            ['j'] = { my_move_selection_next, type = 'action', opts = my_opts },
+            ['k'] = { my_move_selection_previous, type = 'action', opts = my_opts },
+            ['<c-j>'] = { my_move_selection_next, type = 'action', opts = my_opts },
+            ['<c-k>'] = { my_move_selection_previous, type = 'action', opts = my_opts },
             ['<c-h>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
             ['<c-l>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
             ['<c-u>'] = false, -- <c-u> / <c-d> are mapped to scroll preview up / down

@@ -4,6 +4,7 @@ local find_key = require('my-helpers').find_key
 local concat = require('my-helpers').safe_concat
 local remap = require('my-helpers').remap
 local log_my_error = require('my-helpers').log_my_error
+local create_defer_fn_exclusive = require('my-helpers').create_defer_fn_exclusive
 
 vim.opt.showtabline = 2
 
@@ -316,6 +317,12 @@ vim.api.nvim_create_autocmd({
   callback = vim.schedule_wrap(update_tabline),
 })
 
+local defer_enable_animation_after_switching_buffer = create_defer_fn_exclusive(function()
+  -- not using just vim.schedule, since sometimes (rarely) the animation would be observed
+  vim.g.neovide_scroll_animation_length = 0.1
+  -- holding down `(` should only result in one run
+end, 100)
+
 ---Direction should be 'left' or 'right'
 local function switch_to_buffer(direction)
   local cur_index = find_key(bufnr_order, vim.api.nvim_get_current_buf())
@@ -352,10 +359,7 @@ local function switch_to_buffer(direction)
     -- results in jerky animation on regular scrolling.
     vim.g.neovide_scroll_animation_length = 0.00
     vim.api.nvim_set_current_buf(target_bufnr)
-    vim.defer_fn(function()
-      -- not using vim.schedule, since sometimes (rarely) the animation would be observed
-      vim.g.neovide_scroll_animation_length = 0.1
-    end, 100)
+    defer_enable_animation_after_switching_buffer()
   else
     vim.api.nvim_set_current_buf(target_bufnr)
   end
