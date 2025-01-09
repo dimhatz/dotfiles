@@ -245,6 +245,7 @@ local function apply_colors()
   hi('MiniIndentscopeSymbol', { fg = c.base02 })
 
   -- hop
+  hi('MyHop', { fg = c.yellow_brightest })
   hi('HopNextKey', { fg = c.yellow_brightest })
   hi('HopNextKey1', { fg = c.yellow_brightest })
   hi('HopNextKey2', { fg = c.yellow_brightest })
