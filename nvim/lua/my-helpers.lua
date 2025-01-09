@@ -151,4 +151,14 @@ function M.create_defer_fn_exclusive(fn, timeout_ms)
   return my_runner
 end
 
+---appends all the elements of arr2 on arr1 (by modifying it)
+---@param arr1 any[]
+---@param arr2 any[]
+function M.concat_arrays(arr1, arr2)
+  for i = 1, #arr2 do
+    arr1[#arr1 + 1] = arr2[i]
+  end
+  return arr1
+end
+
 return M

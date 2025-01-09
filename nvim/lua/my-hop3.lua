@@ -1,7 +1,9 @@
 local remap = require('my-helpers').remap
 local reverse_in_place = require('my-helpers').reverse_in_place
+local concat_arrays = require('my-helpers').concat_arrays
 
-local ns = vim.api.nvim_create_namespace('myjump')
+local ns_dimming = vim.api.nvim_create_namespace('myjump_dimming')
+local ns_spots = vim.api.nvim_create_namespace('myjump_spots')
 
 ---@enum Granularity
 local Granularity = {
@@ -21,7 +23,15 @@ local MatchSide = {
   word_end = 2,
 }
 
-local function get_spots_per_line(line_nr, granularity, direction, side, cursor_line, cursor_col)
+---@param line_nr integer
+---@param granularity Granularity
+---@param direction Direction
+---@param match_side MatchSide
+---@param cursor_line integer
+---@param cursor_col integer
+---@return [integer,integer][]
+---Returns an array of spots: [row, col], 1-based?, ordered always left-to-right, for a line
+local function get_spots_per_line(line_nr, granularity, direction, match_side, cursor_line, cursor_col)
   if vim.fn.foldclosed(line_nr) ~= -1 then
     -- skip lines in fold
     return {}
@@ -40,9 +50,7 @@ local function get_spots_per_line(line_nr, granularity, direction, side, cursor_
       break
     end
 
-    -- TODO: do not show indexes on the other side of the cursor in cursor line
-
-    if side == MatchSide.word_end then
+    if match_side == MatchSide.word_end then
       index = index + math.max(word:len() - 1, 0)
     end
 
@@ -55,10 +63,19 @@ local function get_spots_per_line(line_nr, granularity, direction, side, cursor_
     local utf_index = vim.str_utfindex(line_text, index) - 1
     index = vim.str_byteindex(line_text, utf_index) + 1
 
-    table.insert(spots_per_line, { line_nr, index })
-    if direction == Direction.back then
-      reverse_in_place(spots_per_line)
+    -- skip those spots that are on the same line as the cursor but on the opposite side
+    -- to the direction
+    if line_nr == cursor_line then
+      if direction == Direction.back and index >= cursor_col then
+        goto continue1
+      end
+      if direction == Direction.forward and index <= cursor_col then
+        goto continue1
+      end
     end
+
+    table.insert(spots_per_line, { line_nr, index })
+    ::continue1::
   end
 
   return spots_per_line
@@ -70,47 +87,76 @@ end
 local function jump(direction, granularity, side)
   local top_line = vim.fn.line('w0') -- 1-based
   local bot_line = vim.fn.line('w$') -- 1-based
-  local _, cursor_line, cursor_col = unpack(vim.fn.getcurpos()) -- 1-based
-
-  -- dimming
-  local dim_top_line = top_line - 1 -- 0 based, inclusive
-  local dim_bot_line = bot_line -- 0 based, exclusive
-  if direction == Direction.back then
-    dim_bot_line = cursor_line
-  else
-    dim_top_line = cursor_line - 1
-  end
-  -- mini.jump2d also sets `end_col = 0`, we just skip it
-  vim.api.nvim_buf_set_extmark(0, ns, dim_top_line, 0, { end_row = dim_bot_line, hl_group = 'Comment', priority = 999 })
+  local _, cursor_line, cursor_col = unpack(vim.fn.getcurpos()) -- 1-based, unlike vim.api.nvim_win_get_cursor()
 
   -- accumulate jump spots [line, col] by querying each line with regex
-  local start_line = 1
-  local end_line = 1
-  local step = 1
+  local start_line = top_line
+  local end_line = bot_line
   local spots = {} ---@type [integer, integer][]
-  if direction == Direction.back then
-    start_line = cursor_line
-    end_line = top_line
-    step = -1
-  else
-    start_line = cursor_line
-    end_line = bot_line
-    step = 1
+  if direction == Direction.forward then
+    if granularity == Granularity.line then
+      start_line = cursor_line + 1
+    else
+      start_line = cursor_line -- Granularity: word
+    end
+  else -- Direction: back
+    if granularity == Granularity.line then
+      end_line = cursor_line - 1
+    else
+      end_line = cursor_line -- Granularity: word
+    end
   end
 
-  for line_nr = start_line, end_line, step do
+  for line_nr = start_line, end_line do
     local spots_per_line = get_spots_per_line(line_nr, granularity, direction, side, cursor_line, cursor_col)
-    table.insert(spots, spots_per_line)
+    concat_arrays(spots, spots_per_line)
   end
+
+  if direction == Direction.back then
+    reverse_in_place(spots)
+  end
+
+  if #spots == 0 then
+    return
+  end
+
+  -- apply dimming extmarks
+  local extmark_start_line = start_line - 1 -- 0 based, inclusive
+  local extmark_end_line = end_line -- 0 based, exclusive
+  -- mini.jump2d also sets `end_col = 0`, we just skip it
+  vim.api.nvim_buf_set_extmark(0, ns_dimming, extmark_start_line, 0, { end_row = extmark_end_line, hl_group = 'Comment', priority = 999 })
+
+  -- apply spots extmarks
+  for _, spot in ipairs(spots) do
+    vim.api.nvim_buf_set_extmark(
+      0,
+      ns_spots,
+      spot[1] - 1,
+      spot[2] - 1,
+      -- , hl_group = 'MyHop'
+      { end_col = spot[2] - 1 + 2, priority = 1000, virt_text = { { 'ZX', 'MyHop' } }, hl_mode = 'combine', virt_text_pos = 'overlay' }
+    )
+  end
+
+  -- local ok, key = pcall(vim.fn.getcharstr)
 end
 
-local function remove_extmarks()
+---@param ns_id integer
+local function remove_extmarks(ns_id)
   -- pcall(vim.api.nvim_buf_clear_namespace, 0, ns, 0, -1)
-  vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-  vim.print('cleared')
+  vim.api.nvim_buf_clear_namespace(0, ns_id, 0, -1)
 end
 
-remap('n', '<Leader>z', function()
-  jump(Direction.forward, Granularity.line, MatchSide.word_start)
+-- remap('n', '<Leader>z', function()
+--   jump(Direction.forward, Granularity.line, MatchSide.word_start)
+-- end, { desc = 'New' })
+remap('n', '<Leader>x', function()
+  remove_extmarks(ns_dimming)
+  remove_extmarks(ns_spots)
 end, { desc = 'New' })
-remap('n', '<Leader>x', remove_extmarks, { desc = 'New' })
+remap('n', '<Leader>zz', function()
+  jump(Direction.forward, Granularity.word, MatchSide.word_end)
+end, { desc = 'Test' })
+remap('n', '<Leader>zx', function()
+  jump(Direction.back, Granularity.word, MatchSide.word_start)
+end, { desc = 'Test' })
