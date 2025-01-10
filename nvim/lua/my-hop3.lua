@@ -23,6 +23,43 @@ local MatchSide = {
   word_end = 2,
 }
 
+---@param spots [integer,integer][]
+---@param cursor_col integer
+---Filters out (in-place) the two closest spots to the cursor position, these are accessible by simple moves b,w,e
+local function filter_out_easy_spots(spots, cursor_col)
+  -- TODO: improve
+  if #spots < 2 then
+    return
+  end
+
+  local closest_left_index = 1
+  local closest_right_index = #spots
+
+  for i, spot in ipairs(spots) do
+    if spot[2] > cursor_col then
+      closest_right_index = i
+      break
+    end
+  end
+
+  -- closest_right_index could actually be to the left of the cursor
+  if closest_right_index > 1 and spots[closest_right_index][2] > cursor_col then
+    closest_left_index = closest_right_index - 1
+  else
+    closest_left_index = closest_right_index
+  end
+
+  -- we have a spot exactly on cursor pos, so we want to remove an additional spot, to its left
+  if spots[closest_left_index][2] == cursor_col and closest_left_index > 1 then
+    closest_left_index = closest_left_index - 1
+  end
+
+  for _ = closest_left_index, closest_right_index do
+    -- removing the same (closest_left_index), since the following elements will be shifted
+    table.remove(spots, closest_left_index)
+  end
+end
+
 ---@param line_nr integer
 ---@param granularity Granularity
 ---@param direction Direction
@@ -76,6 +113,18 @@ local function get_spots_per_line(line_nr, granularity, direction, match_side, c
 
     table.insert(spots_per_line, { line_nr, index })
     ::continue1::
+  end
+
+  -- Filter out the two closest spots to the cursor position, these are accessible by simple moves b,w,e
+  if
+    granularity == Granularity.word
+    and (
+      line_nr == cursor_line
+      or (direction == Direction.forward and line_nr == cursor_line + 1)
+      or (direction == Direction.back and line_nr == cursor_line - 1)
+    )
+  then
+    filter_out_easy_spots(spots_per_line, cursor_col)
   end
 
   return spots_per_line
@@ -155,7 +204,7 @@ remap('n', '<Leader>x', function()
   remove_extmarks(ns_spots)
 end, { desc = 'New' })
 remap('n', '<Leader>zz', function()
-  jump(Direction.forward, Granularity.word, MatchSide.word_end)
+  jump(Direction.forward, Granularity.word, MatchSide.word_start)
 end, { desc = 'Test' })
 remap('n', '<Leader>zx', function()
   jump(Direction.back, Granularity.word, MatchSide.word_start)
