@@ -103,6 +103,9 @@ local function get_spots_per_line(line_nr, granularity, direction, match_side, c
     -- skip those spots that are on the same line as the cursor but on the opposite side
     -- to the direction
     if line_nr == cursor_line then
+      if granularity == Granularity.line then
+        goto continue1
+      end
       if direction == Direction.back and index >= cursor_col then
         goto continue1
       end
