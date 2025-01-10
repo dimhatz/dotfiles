@@ -16,7 +16,8 @@ if vim.g.neovide then
   -- with 0 there are small jerks when scrolling
   -- with 0.1 scrolling is smooth buf when switching between buffers
   -- but there is a scroll animation when the buffer is full of text
-  -- TODO: maybe try other options?
+  -- also search neovide_scroll_animation_length in my-tabline and my-telescope
+  -- where we disable this to avoid scrolling when switching buffers and telescope-previewing
   vim.g.neovide_scroll_animation_length = 0.1
 
   -- vim.g.neovide_refresh_rate = 240 -- use when vsync = false in neovide, with 240 the scrolling is better than 60, gpu usage is x2, no latency reduction
