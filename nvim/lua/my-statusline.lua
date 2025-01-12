@@ -227,7 +227,8 @@ remap('c', '<CR>', function()
 end, { expr = true, desc = 'Statusline: Workaround to update search count after pressing <CR> in search mode (/)' })
 
 -- -- benchmarks:
--- -- 0.02ms per active statusline render
+-- -- 0.02ms per active statusline render in an empty / plain text buffer
+-- -- 0.16ms per active statusline render in a ts/lua project (due to querying language server?)
 -- -- 0.0035ms per inactive statusline render
 -- -- 0.0026ms per static-string statusline render (empty string renders the default, with about
 -- -- the same time)
