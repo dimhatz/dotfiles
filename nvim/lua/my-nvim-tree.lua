@@ -13,6 +13,7 @@ return {
       remap('n', '<Esc>', api.tree.close, { buffer = bufnr, desc = 'Close NvimTree' })
       remap('n', 'd', '<Nop>', { buffer = bufnr, desc = '<Nop>, Delete is only <Del>' })
       remap('n', 'D', '<Nop>', { buffer = bufnr, desc = '<Nop>, Delete is only <Del>' })
+      remap('n', '<Del>', api.fs.remove, { buffer = bufnr, desc = 'Delete file' })
     end
 
     local win_height = vim.api.nvim_get_option_value('lines', { scope = 'global' })
