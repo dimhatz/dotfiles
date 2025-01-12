@@ -25,7 +25,10 @@ local MatchSide = {
 }
 
 -- ------------------------------- Targets / labels / permutations
-local LETTERS_STR = 'ASDFGHJKLQWERTYUIOPZXCVBNM'
+-- Most difficult (ordered left to right): QPZXBNTYWO
+-- Least difficult (right-to-left, IEURMCVHALSKDJFG
+-- G above is special, will be used with 3-letter labels
+local LETTERS_STR = 'QPZXBNTYWOIEURMCVHALSKDJFG'
 local LETTERS = vim.split(LETTERS_STR, '')
 local LETTERS_NUM = #LETTERS
 local MIN_L1_LABELS = 10
@@ -38,6 +41,14 @@ end
 
 if #LETTERS ~= 26 then
   vim.notify('My hop: Assertion for number letters failed!', vim.log.levels.ERROR)
+end
+
+local uniqueness_assert_dict = {}
+for _, letter in ipairs(LETTERS) do
+  if uniqueness_assert_dict[letter] ~= nil then
+    vim.notify('My hop: Letters for jump labels are not unique', vim.log.levels.ERROR)
+  end
+  uniqueness_assert_dict[letter] = 1
 end
 
 ---@param spots_num  integer
@@ -224,7 +235,7 @@ local function perform_jump(node)
   remove_extmarks(ns_spots)
   apply_labels(node, '')
   vim.cmd.redraw()
-  -- vim.print(os.clock() - t_begin)
+  -- vim.print((os.clock() - t_begin) * 1000) -- ms
   local key = vim.fn.getcharstr():upper() -- hop and jump2d use pcall(vim.fn.getcharstr)
   local child_node = node[key]
   if child_node == nil then
@@ -359,8 +370,8 @@ end
 ---@param direction Direction
 ---@param granularity Granularity
 ---@param side MatchSide
-local function jump(direction, granularity, side)
-  -- t_begin = os.clock()
+---@return [integer,integer][], integer, integer
+local function calculate_positions(direction, granularity, side)
   local top_line = vim.fn.line('w0') -- 1-based
   local bot_line = vim.fn.line('w$') -- 1-based
   local _, cursor_line, cursor_col = unpack(vim.fn.getcurpos()) -- 1-based, unlike vim.api.nvim_win_get_cursor()
@@ -392,15 +403,24 @@ local function jump(direction, granularity, side)
     reverse_in_place(spots)
   end
 
-  if #spots == 0 then
-    return
-  end
-
   -- we don't display > 1076 spots
   if #spots > MAX_SPOTS then
     spots = slice_array(spots, 1, MAX_SPOTS + 1)
   end
 
+  return spots, start_line, end_line
+end
+
+---@param direction Direction
+---@param granularity Granularity
+---@param side MatchSide
+local function jump(direction, granularity, side)
+  -- benchmarked: worst case 100ms in ts/lua files with a lot of text, average around 50ms
+  -- t_begin = os.clock()
+  local spots, start_line, end_line = calculate_positions(direction, granularity, side)
+  if #spots == 0 then
+    return
+  end
   -- apply dimming extmarks
   local extmark_start_line = start_line - 1 -- 0 based, inclusive
   local extmark_end_line = end_line -- 0 based, exclusive
