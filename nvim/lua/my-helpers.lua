@@ -117,6 +117,7 @@ function M.update_treesitter_tree()
   parser:parse()
 end
 
+---@param arr any[]
 function M.reverse_in_place(arr)
   local i, j = 1, #arr
   while i < j do
@@ -159,6 +160,26 @@ function M.concat_arrays(arr1, arr2)
     arr1[#arr1 + 1] = arr2[i]
   end
   return arr1
+end
+
+---@generic T : any
+---@param arr T[]
+---@param first_incl integer
+---@param last_excl integer
+---@return T[]
+---Returns a new array with elements from @param arr shalowly copied,
+---starting at index first (inclusive), ending with index last (exclusive)
+function M.slice_array(arr, first_incl, last_excl)
+  last_excl = last_excl > #arr + 1 and #arr + 1 or last_excl
+  first_incl = first_incl < 1 and 1 or first_incl
+  if first_incl > #arr then
+    return {}
+  end
+  local new_arr = {} ---@type any[]
+  for i = first_incl, last_excl - 1 do -- last - 1 since last is exclusive
+    table.insert(new_arr, arr[i])
+  end
+  return new_arr
 end
 
 return M

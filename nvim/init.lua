@@ -611,8 +611,6 @@ require('lazy').setup({
 
   require('my-nvim-tree'),
 
-  require('my-hop'),
-
   require('my-whichkey'),
 
   -- adds input lag, not using this

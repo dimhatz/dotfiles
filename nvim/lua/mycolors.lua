@@ -246,9 +246,7 @@ local function apply_colors()
 
   -- hop
   hi('MyHop', { fg = c.yellow_brightest })
-  hi('HopNextKey', { fg = c.yellow_brightest })
-  hi('HopNextKey1', { fg = c.yellow_brightest })
-  hi('HopNextKey2', { fg = c.yellow_brightest })
+  hi('MyHopDimming', { fg = c.base02 })
 
   -- telescope
   hi('TelescopeMatching', { fg = c.yellow_brightest })
