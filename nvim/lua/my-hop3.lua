@@ -245,7 +245,7 @@ local function perform_jump(node)
   local spot = child_node.spot
   if spot ~= nil then
     -- input matches a spot
-    vim.cmd("normal! m'")
+    vim.cmd("normal! m'") -- set mark to be able to <c-o> back
     vim.api.nvim_win_set_cursor(0, { spot[1], spot[2] - 1 }) -- 1,0-based
     return
   end
