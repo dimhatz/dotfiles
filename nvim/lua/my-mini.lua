@@ -53,7 +53,7 @@ return {
         find = 'sf', -- Find surrounding (to the right)
         find_left = 'sF', -- Find surrounding (to the left)
         highlight = 'sh', -- Highlight surrounding
-        replace = 'sc', -- Replace surrounding
+        replace = 'sr', -- Replace surrounding
         update_n_lines = 'su', -- Update `n_lines` (how many lines are searched to perform surround actions)
         suffix_last = 'l', -- Suffix to search with "prev" method
         suffix_next = 'n', -- Suffix to search with "next" method
