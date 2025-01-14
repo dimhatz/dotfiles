@@ -289,6 +289,81 @@ end
 remap('o', 'w', my_w, { expr = true })
 remap('o', 'z', my_z, { expr = true })
 
+---@param vim_move string
+local function move_skipping_non_alphanum_chars(vim_move)
+  -- we use this hack instead of modifying iskeyword option, because we want
+  -- the original moves to be used with delete/yank/etc
+  -- We send more of the provided vim moves until we either reach eol or there is a
+  -- whitespace char on either left or right side of the cursor.
+  local old_cursor_line, old_cursor_col
+  local new_cursor_line, new_cursor_col
+  local command = 'norm! ' .. vim_move
+
+  while true do
+    _, old_cursor_line, old_cursor_col = unpack(vim.fn.getcurpos()) -- 1-based, unlike vim.api.nvim_win_get_cursor()
+    vim.cmd(command)
+    _, new_cursor_line, new_cursor_col = unpack(vim.fn.getcurpos())
+
+    -- in visual, cursor can get 1 char beyond line end
+    if (new_cursor_line == old_cursor_line and new_cursor_col == old_cursor_col) or new_cursor_col == 1 or new_cursor_col >= vim.fn.col('$') - 1 then
+      -- The cursor is on the same spot (very beginning or very end of buffer),
+      -- or it's on beginning / eol.
+      -- vim.fn.col('$') returns 1-based position of last char in current line + 1 (one beyond last char)
+      return
+    end
+
+    local line_text = vim.fn.getline(new_cursor_line)
+    local char_under_cursor = line_text:sub(new_cursor_col, new_cursor_col)
+
+    -- always wrap it in a set [] or complement of set [^], see also :h lua-patterns.
+    -- Not using %p for punctuation since we cannot exclude chars like _,&,!,$ from it (we
+    -- need to able to jump to word that/begins ends with _,&,! etc)
+    local punctuation_char_pattern = '%,%.%:%;%(%)%[%]%{%}%<%>%`%\'%"%|'
+
+    if #char_under_cursor ~= 1 or char_under_cursor:match('[^' .. punctuation_char_pattern .. ']') then
+      -- the cursor is beyond eol or on a non-punctuation char,
+      return
+    end
+
+    -- at this point our char is definitely a punctuation char
+    -- test (e) 'e' "z" |z| .z. ('z') '"(x)"' (((x))) ''x'' .. text
+
+    -- stop when encountering a cluster of punctuations, surrounded by whitespace
+    if (vim_move == 'w' or vim_move == 'b') and line_text:sub(new_cursor_col - 1):match('^%s[' .. punctuation_char_pattern .. ']*%s') then
+      return
+    end
+
+    if vim_move == 'e' and line_text:sub(1, new_cursor_col + 1):match('%s[' .. punctuation_char_pattern .. ']*%s$') then
+      return
+    end
+
+    -- if the remaining chars till eol are all whitespaces and punctuation, keep the default w,e behavior
+    if (vim_move == 'w' or vim_move == 'e') and line_text:sub(new_cursor_col):match('^[%s' .. punctuation_char_pattern .. ']*$') then
+      return
+    end
+
+    -- same for 'b' and the remaining previous chars
+    if vim_move == 'b' and line_text:sub(1, new_cursor_col):match('^[%s' .. punctuation_char_pattern .. ']*$') then
+      return
+    end
+  end
+end
+
+remap({ 'n', 'v' }, 'w', function()
+  -- Benchmarked: 0ms most of the time, some occasional 1ms time.
+  -- local t_begin = os.clock()
+  move_skipping_non_alphanum_chars('w')
+  -- vim.print((os.clock() - t_begin) * 1000) -- ms
+end, { desc = 'My w skips non-alphanum chars, when they are not surrounded by whitespace' })
+
+remap({ 'n', 'v' }, 'e', function()
+  move_skipping_non_alphanum_chars('e')
+end, { desc = 'My e skips non-alphanum chars, when they are not surrounded by whitespace' })
+
+remap({ 'n', 'v' }, 'b', function()
+  move_skipping_non_alphanum_chars('b')
+end, { desc = 'My b skips non-alphanum chars, when they are not surrounded by whitespace' })
+
 remap('n', 'c', '"_c')
 remap('n', 'C', '"_C')
 remap('v', 'c', '"_c')
