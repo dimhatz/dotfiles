@@ -265,7 +265,7 @@ end, { desc = 'Save file, esc to normal, update rainbow parens' })
 -- NOTE: adding remap option { nowait = true } does not help, it is not what its purpose is.
 -- NOTE2: this is not triggered by `v`
 -- NOTE3: our remap of z becomes instant too (and e.g. `ze` triggers this func correctly)
-local function my_w()
+local function my_operator_w()
   -- dw -> daw, cw -> ciw, yw -> yiw
   if vim.v.operator == 'd' then
     return 'aw'
@@ -278,7 +278,7 @@ local function my_w()
   return '<Esc>'
 end
 
-local function my_z()
+local function my_operator_z()
   -- dz -> dd, to make zz -> "_dd
   if vim.v.operator == 'd' then
     return 'd'
@@ -286,8 +286,29 @@ local function my_z()
   return '<Esc>'
 end
 
-remap('o', 'w', my_w, { expr = true })
-remap('o', 'z', my_z, { expr = true })
+remap('o', 'w', my_operator_w, { expr = true })
+remap('o', 'z', my_operator_z, { expr = true })
+
+_G.My_operator_d = function()
+  -- using this instead of mapping dd to avoid operator-pending cursor delay
+  -- also using operatorfunc to make it repeatable
+  -- vim.v.operator here will always be g@, due to the way we call this
+  local _, cursor_line = unpack(vim.fn.getcurpos())
+  local line_text = vim.fn.getline(cursor_line)
+  if line_text:match('^%s*$') then
+    vim.cmd('normal! "_dd')
+    return
+  end
+  vim.cmd('normal! dd')
+end
+remap('o', 'd', function()
+  if vim.v.operator ~= 'd' then
+    -- only respond after 'd' to avoid unexpected combinations like `cd` to delete lines
+    return
+  end
+  vim.o.operatorfunc = 'v:lua.My_operator_d'
+  vim.cmd('normal! g@l')
+end, { expr = false, desc = 'dd now acts like "_dd on whitespace-only lines' })
 
 ---@param vim_move string
 local function move_skipping_non_alphanum_chars(vim_move)
@@ -297,7 +318,7 @@ local function move_skipping_non_alphanum_chars(vim_move)
   -- whitespace char on either left or right side of the cursor.
   local old_cursor_line, old_cursor_col
   local new_cursor_line, new_cursor_col
-  local command = 'norm! ' .. vim_move
+  local command = 'normal! ' .. vim_move
 
   while true do
     _, old_cursor_line, old_cursor_col = unpack(vim.fn.getcurpos()) -- 1-based, unlike vim.api.nvim_win_get_cursor()
