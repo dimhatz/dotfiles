@@ -1,6 +1,6 @@
 local remap = require('my-helpers').remap
 local update_treesitter_tree = require('my-helpers').update_treesitter_tree
-local simulate_keys = require('my-helpers').simulate_keys
+
 -- for binaries on windows:
 -- choco install -y ripgrep wget fd unzip gzip mingw make
 -- NOTE: use :lua vim.diagnostic.setqflist() to all diagnostics into a quickfix list
@@ -216,7 +216,7 @@ MyOnEsc = function()
   -- to remove the search count from statusline:
   vim.schedule(My_update_statusline_active)
 end
-remap('n', '<Esc>', '<Cmd>noh<CR>:lua MyOnEsc()<CR>', { silent = true })
+remap('n', '<Esc>', '<Cmd>noh<CR><Cmd>lua MyOnEsc()<CR>', { silent = true })
 -- see my TextYankPost autocmd, this one is to cleanup if then yank
 -- was interrupted by <esc> (operator pending mode)
 -- remap('o', '<Esc>', '<Cmd>delmarks y<CR><Esc>') -- also works, but will be applied for all operators
@@ -254,11 +254,20 @@ remap('n', '<C-s>', function()
   update_treesitter_tree()
 end, { desc = 'Save file, update rainbow parens' })
 
-remap('i', '<C-s>', function()
-  simulate_keys('<Esc>')
-  vim.cmd.write()
-  update_treesitter_tree()
-end, { desc = 'Save file, esc to normal, update rainbow parens' })
+remap(
+  'i',
+  '<C-s>',
+  '<Esc><Cmd>write<CR><Cmd>lua require("my-helpers").update_treesitter_tree()<CR>',
+  -- esc after writing also works:
+  -- '<Cmd>write<CR><Esc><Cmd>lua require("my-helpers").update_treesitter_tree()<CR>',
+  { desc = 'Esc to normal, save file, update rainbow parens' }
+)
+
+-- remap('i', '<C-s>', function()
+--   vim.cmd([[ execute "normal i\<Esc>" ]])
+--   vim.cmd.write()
+--   update_treesitter_tree()
+-- end, { desc = 'Save file, esc to normal, update rainbow parens' })
 
 -- To avoid operator pending delay, and the possibility to actually perform e.g. dw,
 -- we perform operator remapping -> onore <expr>w v:operator == 'd' ? 'aw' : '<esc>'

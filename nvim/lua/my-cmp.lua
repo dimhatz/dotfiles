@@ -1,6 +1,4 @@
 local remap = require('my-helpers').remap
-local simulate_keys = require('my-helpers').simulate_keys
-local update_treesitter_tree = require('my-helpers').update_treesitter_tree
 
 -- TODO: check out https://github.com/saghen/blink.cmp, see if it's mature enough
 -- has borders, disabling menu, fuzzying, documentation preview, snippets etc
@@ -60,7 +58,7 @@ return {
     -- vim.api.<c-j>n.b.u.f.s (without ., written like this to not save full string inside text)
     -- then `n.v.i.m._.l.i.s.t._.b.u.f.s` should be available in the completion list
     -- if it is missing and only shown with forcing completion (<c-n>), then the hack does not work
-    local my_cmp_disabled = true
+    My_cmp_disabled = true
 
     -- -- to be triggered by cmp, but cmp almost always fails to trigger it
     -- -- leving it here to document how to detect an active selection
@@ -109,7 +107,7 @@ return {
 
       -- hack to conditionally trigger autocompletion and keep it going until <Esc>
       enabled = function()
-        local disabled = my_cmp_disabled
+        local disabled = My_cmp_disabled
         disabled = disabled or (not default_enabled_fn())
         return not disabled
       end,
@@ -163,7 +161,7 @@ return {
         cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
       else
         -- vim.print('enabling')
-        my_cmp_disabled = false
+        My_cmp_disabled = false
         cmp.complete()
       end
     end, { desc = 'Autocomplete next' })
@@ -173,7 +171,7 @@ return {
         cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
       else
         -- vim.print('enabling')
-        my_cmp_disabled = false
+        My_cmp_disabled = false
         cmp.complete()
       end
     end, { desc = 'Autocomplete prev' })
@@ -202,13 +200,12 @@ return {
     end, { desc = 'Cmp manually mapped' })
 
     -- also in select mode, when choosing snippet-like entries
-    remap({ 'i', 's' }, '<Esc>', function()
-      -- vim.print('disabling')
-      my_cmp_disabled = true
-      simulate_keys('<Esc>')
-      -- workaround for rainbow-delimiters, see explanation inside definition
-      update_treesitter_tree()
-    end, { desc = '<Esc> also disables autocompletion (hack)' })
+    remap(
+      { 'i', 's' },
+      '<Esc>',
+      '<Cmd>lua My_cmp_disabled=true<CR><Esc><Cmd>lua require("my-helpers").update_treesitter_tree()<CR>',
+      { desc = '<Esc> also disables autocompletion, updates rainbow parens (hack)' }
+    )
 
     -- mapping <CR> to complete when appropriate, otherwise use mini.pairs' cr() to adjust indentation
     local function my_cr()

@@ -95,7 +95,9 @@ end
 --- Simulates @param keys (string) interpreted as key presses,
 --- sequences like <Esc>, <CR>, <C-c> will have the same result as
 --- pressing the actual <Esc>, <CR>, <C-c>. No remapping is
---- performed during execution.
+--- performed during execution. WARNING: do not use this in functions
+--- that will be called in recorded macros - the keys will be ignored there.
+--- Do not use this unless absolutely needed.
 function M.simulate_keys(keys)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), 'n', false)
   -- Notes from previous experiments
@@ -104,7 +106,8 @@ function M.simulate_keys(keys)
 end
 
 --- Workaround for rainbow-delimiters: calling this will update the color parens, even with
---- treesitter highlight disabled.
+--- treesitter highlight disabled. Also called from <Cmd>lua require('my-helpers').update.. etc
+--- so do a global search if refactoring this.
 function M.update_treesitter_tree()
   -- TODO: remove this if we are using treesitter for highlighting
   -- This is a workaround for the rainbow-delimiters, which will only hightlight
