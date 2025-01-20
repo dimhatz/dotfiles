@@ -1,5 +1,6 @@
 local remap = require('my-helpers').remap
 local update_treesitter_tree = require('my-helpers').update_treesitter_tree
+local minimap_refresh_cmd = require('my-helpers').minimap_refresh_cmd
 
 -- for binaries on windows:
 -- choco install -y ripgrep wget fd unzip gzip mingw make
@@ -207,7 +208,8 @@ MyOnEsc = function()
   -- the following triggers removal, but when switching to another buffer, hlsearch is enabled again
   -- highlighting the word in other buffers
   -- vim.api.nvim_exec2('set nohlsearch', {})
-  -- simulate_keys(':noh<CR>') -- works, but will leave ":noh" sign in command line, no way to silence it
+  -- simulate_keys(':noh<CR>') -- works, but will leave ":noh" sign in command line, also bad practice
+  -- vim.o.hlsearch = false -- also fails when switching between buffers (see above)
   -- The best way is to use :noh within the <Esc> mapping itself, with { silent = true }
 
   -- workaround for rainbow-delimiters, see explanation inside definition
@@ -216,11 +218,7 @@ MyOnEsc = function()
   -- to remove the search count from statusline:
   vim.schedule(My_update_statusline_active)
 end
-remap('n', '<Esc>', '<Cmd>noh<CR><Cmd>lua MyOnEsc()<CR>', { silent = true })
--- see my TextYankPost autocmd, this one is to cleanup if then yank
--- was interrupted by <esc> (operator pending mode)
--- remap('o', '<Esc>', '<Cmd>delmarks y<CR><Esc>') -- also works, but will be applied for all operators
-remap('n', 'y<Esc>', '<Esc><Cmd>delmarks y<CR>', { desc = 'Workaround to keep cursor from moving when yanking' })
+remap('n', '<Esc>', '<Cmd>noh<CR><Cmd>lua MyOnEsc()<CR>' .. minimap_refresh_cmd, { silent = true })
 
 -- search mode '/' is considered command mode
 remap('c', '<Esc>', function()
@@ -258,16 +256,8 @@ remap(
   'i',
   '<C-s>',
   '<Esc><Cmd>write<CR><Cmd>lua require("my-helpers").update_treesitter_tree()<CR>',
-  -- esc after writing also works:
-  -- '<Cmd>write<CR><Esc><Cmd>lua require("my-helpers").update_treesitter_tree()<CR>',
   { desc = 'Esc to normal, save file, update rainbow parens' }
 )
-
--- remap('i', '<C-s>', function()
---   vim.cmd([[ execute "normal i\<Esc>" ]])
---   vim.cmd.write()
---   update_treesitter_tree()
--- end, { desc = 'Save file, esc to normal, update rainbow parens' })
 
 -- To avoid operator pending delay, and the possibility to actually perform e.g. dw,
 -- we perform operator remapping -> onore <expr>w v:operator == 'd' ? 'aw' : '<esc>'
@@ -295,29 +285,38 @@ local function my_operator_z()
   return '<Esc>'
 end
 
-remap('o', 'w', my_operator_w, { expr = true })
-remap('o', 'z', my_operator_z, { expr = true })
+remap('o', 'w', my_operator_w, { expr = true, desc = 'My special operator w' })
+remap('o', 'z', my_operator_z, { expr = true, desc = 'My special operator z' })
 
-_G.My_operator_d = function()
-  -- using this instead of mapping dd to avoid operator-pending cursor delay
-  -- also using operatorfunc to make it repeatable
+_G.My_noop = function()
+  -- Usage:
+  -- vim.go.operatorfunc = 'v:lua.My_noop'
+  -- vim.cmd('normal! g@l')
+  -- vim.go.operatorfunc = 'v:lua.My_original_op' -- <-- now ready to be repeated, instead of
+  -- repeating any 'normal! xyz' commands that may have been called in My_original_op
+end
+
+_G.My_dd = function()
   -- vim.v.operator here will always be g@, due to the way we call this
   local _, cursor_line = unpack(vim.fn.getcurpos())
   local line_text = vim.fn.getline(cursor_line)
   if line_text:match('^%s*$') then
     vim.cmd('normal! "_dd')
-    return
+  else
+    vim.cmd('normal! dd')
   end
-  vim.cmd('normal! dd')
-end
-remap('o', 'd', function()
-  if vim.v.operator ~= 'd' then
-    -- only respond after 'd' to avoid unexpected combinations like `cd` to delete lines
-    return
-  end
-  vim.o.operatorfunc = 'v:lua.My_operator_d'
+  vim.go.operatorfunc = 'v:lua.My_noop'
   vim.cmd('normal! g@l')
-end, { expr = false, desc = 'dd now acts like "_dd on whitespace-only lines' })
+  vim.go.operatorfunc = 'v:lua.My_dd'
+  -- vim.cmd.normal({ args = { 'dd' }, bang = true })
+end
+
+remap('n', 'dd', function()
+  -- not mapping operator pending mode (omap), it messes up our special visual repeat
+  -- (e.g. on `ved`). Also using operatorfunc to make it repeatable
+  vim.go.operatorfunc = 'v:lua.My_dd'
+  return 'g@l'
+end, { expr = true, desc = 'When dd-ing blank lines, do not overwrite the registers' })
 
 ---@param vim_move string
 local function move_skipping_non_alphanum_chars(vim_move)
@@ -394,9 +393,8 @@ remap({ 'n', 'v' }, 'b', function()
   move_skipping_non_alphanum_chars('b')
 end, { desc = 'My b skips non-alphanum chars, when they are not surrounded by whitespace' })
 
-remap('n', 'c', '"_c')
+remap({ 'n', 'v' }, 'c', '"_c')
 remap('n', 'C', '"_C')
-remap('v', 'c', '"_c')
 remap('n', 'x', '"_x', { desc = 'delete char into black hole' })
 remap('n', 'z', '"_d', { desc = 'delete into black hole' })
 remap('n', 'Z', '"_D', { desc = 'delete into black hole' })
@@ -409,9 +407,6 @@ remap('n', 'k', 'gk')
 
 remap('n', '<C-d>', '<C-w>c', { desc = 'Close (Delete) window' })
 remap('n', '<C-c>', '<Cmd>bdelete<CR>', { desc = 'Fallback bdel (mini-bufremove should override)' }) -- will be overridden by mini-bufremove
-
-remap('n', '<C-v>', 'V', { desc = 'Visual line' })
-remap('n', 'V', '<C-v>', { desc = 'Visual block' })
 
 remap('n', '<C-u>', 'gUiw', { desc = 'Uppercase word under cursor' }) -- Uppercase word in norm/insert
 remap('i', '<C-u>', '<Esc>gUiwea', { desc = 'Uppercase word under cursor' }) -- FIXME: does not repeat
@@ -445,9 +440,7 @@ remap('n', 'mm', function()
   return 'zO'
 end, { expr = true, desc = 'toggle fold recursively' })
 
--- remap('v', 'p', 'p:let @+=@0<CR>', { desc = 'Pasting in visual does not override the + register', silent = true }) -- original from my vimrc
-remap('v', 'p', 'p:let @v=@+|let @+=@0<CR>', { desc = 'Pasting in visual stores the overwritten text in "v register', silent = true })
--- remap('v', 'p', 'p:let @v=@+<Bar>let @+=@0<CR>', { desc = 'Pasting in visual stores the overwritten text in "v register', silent = true }) -- also works
+remap('v', 'p', 'p<Cmd>let @p=@+<Bar>let @+=@0<CR>', { desc = 'Pasting in visual stores the overwritten text in "p register', silent = true })
 
 remap('n', '<C-h>', '<C-e>', { desc = 'Scroll down 1 line' })
 remap('n', '<C-l>', '<C-y>', { desc = 'Scroll up 1 line' })
@@ -534,24 +527,34 @@ remap('n', 'r', function()
   return 'r' .. c
 end, { expr = true, desc = 'replace single char, supports our special insert keymaps (<C-d> etc)' })
 
--- <C-f> / # in visual search the selection, <Leader>f in normal/visual highlights word under cursor, but does not jump to it
--- currently, nvim has a remap, but cases that have e.g. backslash are not handled properly,
--- e.g. when selecting "\V" and pressing *, nvim will highlight the whole page
-vim.cmd([[
-     function! g:MyVSetSearch(cmdtype)
-       let temp = @s
-       norm! gv"sy
-       let @/ = '\V' . substitute(escape(@s, a:cmdtype.'\'), '\n', '\\n', 'g')
-       let @s = temp
-     endfunction
+local function my_set_search()
+  -- no type = 'v', since it will stop at the cursor
+  local selected_strings = vim.fn.getregion(vim.fn.getpos('v'), vim.fn.getpos('.'), { type = vim.fn.mode() })
+  if #selected_strings == 0 then
+    -- invalid selection
+    return false
+  end
+  selected_strings = vim.tbl_map(function(str)
+    -- not using '\/.*$^~[]' because we will be using verynomagic \V search
+    return vim.fn.escape(str, '/\\')
+  end, selected_strings)
+  local search_string = table.concat(selected_strings, '\\n')
+  vim.fn.setreg('/', '\\V' .. search_string)
+end
 
-     xnoremap <silent>* :<C-u>call g:MyVSetSearch('/')<CR>/<C-R>=@/<CR><CR>:<C-u>set hlsearch<CR>
-     xnoremap <silent># :<C-u>call g:MyVSetSearch('?')<CR>?<C-R>=@/<CR><CR>:<C-u>set hlsearch<CR>
-     nnoremap <silent><C-f> viw:<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
-     xnoremap <silent><C-f> :<C-u>call g:MyVSetSearch('/')<CR>:<C-u>set hlsearch<CR>
-   ]])
+remap('v', '<C-f>', function()
+  my_set_search()
+  return '<Esc><Cmd>set hlsearch<CR>'
+end, { expr = true, desc = 'Search for selection' })
 
-remap({ 'n', 'x' }, '<Leader>f', '<Cmd>echo "use <C-f> (or * to search+jump)"<CR>', { desc = 'Use <C-f> (or * to search+jump)' })
+remap('n', '<C-f>', function()
+  -- also use mark `v` to jump back, when search is set
+  vim.cmd('normal! mvviw')
+  my_set_search()
+  vim.cmd.execute([["normal! \<Esc>\<Cmd>set hlsearch\<CR>`v"]])
+end, { desc = 'Search for word under cursor' })
+
+remap({ 'n', 'v' }, '<Leader>f', '<Cmd>echo "use <C-f> (or * to search+jump)"<CR>', { desc = 'Use <C-f> (or * to search+jump)' })
 
 -- TODO: check these out, adjust setup
 -- -- Diagnostic keymaps
@@ -560,14 +563,6 @@ remap('n', 'ge', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror po
 -- remap('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 -- remap('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
--- vim.diagnostic.config({
---   virtual_text = false,
---   float = {
---     header = false,
---     border = 'rounded',
---     focusable = true,
---   },
--- })
 ------------------------------------------------------- AUTOCOMMANDS --------------------------------------------------------------------------
 
 --  See `:help lua-guide-autocommands`
@@ -579,11 +574,6 @@ vim.api.nvim_create_autocmd({ 'FileType' }, {
     remap('n', 'gd', '<C-]>', { silent = true, buffer = opts.buf, desc = 'Go to link inside helpfile' })
   end,
 })
-
--- hack to prevent the cursor from jumping after a yank, also see below 'TextYankPost'
-remap({ 'n', 'v' }, 'y', 'myy', { desc = 'Set mark "y" before yanking' })
-remap('n', 'Y', 'myy$', { desc = 'Set mark "y" before yanking (workaround to keep cursor from moving)' })
-remap('v', 'Y', '<Nop>', { desc = 'Not using visual Y anyway' })
 
 remap('n', 'o', function()
   -- Workaround: By default, when pressing "o" from an area that has comments,
@@ -620,19 +610,33 @@ remap('n', 'o', function()
   end
 end, { expr = true, desc = 'Make new line (after comment) start non-commented.' })
 
+-- hack to prevent the cursor from jumping after a yank, also see below 'TextYankPost'
+remap({ 'n', 'v' }, 'y', 'myy', { desc = 'Set mark "y" before yanking' })
+remap('n', 'Y', 'myy$', { desc = 'Set mark "y" before yanking (workaround to keep cursor from moving)' })
+remap('v', 'Y', '<Nop>', { desc = 'Not using visual Y anyway' })
+-- see my TextYankPost autocmd, this one is to cleanup for yank
+-- was interrupted by <esc> (operator pending mode)
+-- remap('o', '<Esc>', '<Cmd>delmarks y<CR><Esc>') -- also works, but will be applied for all operators
+remap('n', 'y<Esc>', '<Esc><Cmd>delmarks y<CR><Cmd>echom "ok"<CR>', { desc = 'Avoid leaving y mark with y<Esc>' })
+
 --  See `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'My: Highlight when yanking (copying) text',
+  desc = 'My: Highlight when yanking and put cursor back afterwards',
   group = vim.api.nvim_create_augroup('my-highlight-yank', { clear = true }),
   callback = function()
-    -- avoid triggering on delete operator
-    -- no need to check for operator == 'Y', it already triggers
-    if vim.v.operator == 'y' then
-      -- local ymark = vim.api.nvim_buf_get_mark(0, 'y')
-      -- local is_invalid = ymark[1] == 0 and ymark[1] == 0 -- in case we need to check, otherwise error will be printed
-      vim.cmd('norm! `y') -- put the cursor back
-      vim.cmd.delmarks('y') -- cleanup
+    if vim.v.operator ~= 'y' then
+      -- avoid triggering on delete operator
+      -- no need to check for operator == 'Y', it already triggers
+      return
     end
+    local y_mark_pos = vim.api.nvim_buf_get_mark(0, 'y') -- 1,0-based
+    if y_mark_pos[1] == 0 and y_mark_pos[2] == 0 then
+      -- defensive, non-existent mark
+      return
+    end
+    -- vim.cmd('norm! `y') -- <-- do not use, messes up our visual repeat, does not fire ModeChanged
+    vim.api.nvim_win_set_cursor(0, y_mark_pos)
+    vim.cmd.delmarks('y') -- cleanup, unnecessary since we dont use 'y mark
     vim.highlight.on_yank({ timeout = 300 })
   end,
 })
@@ -804,6 +808,7 @@ require('lazy').setup({
 require('my-statusline')
 require('my-tabline')
 require('my-hop3')
+require('my-visual-repeat')
 ----------------  NOT USED ----------------------------------------------------------------
 -- autoclose parens, quotes etc - does not expose its <CR> function that we need in our custom completion mapping, disabling
 -- { 'm4xshen/autoclose.nvim', enabled = false, lazy = false, opts = { options = { disable_command_mode = true } } },

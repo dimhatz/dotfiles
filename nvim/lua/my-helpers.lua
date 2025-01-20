@@ -97,7 +97,7 @@ end
 --- pressing the actual <Esc>, <CR>, <C-c>. No remapping is
 --- performed during execution. WARNING: do not use this in functions
 --- that will be called in recorded macros - the keys will be ignored there.
---- Do not use this unless absolutely needed.
+--- Do not use this unless absolutely necessary.
 function M.simulate_keys(keys)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), 'n', false)
   -- Notes from previous experiments
@@ -184,5 +184,21 @@ function M.slice_array(arr, first_incl, last_excl)
   end
   return new_arr
 end
+
+---@param id string
+---Returns a conditional logger that will only print when
+---global _G[id] is truthy. Helpful when debugging our custom plugin code.
+function M.create_cond_logger(id)
+  local function my_log(...)
+    if not _G[id] then
+      return
+    end
+    local args = { ... }
+    vim.print(unpack(args))
+  end
+  return my_log
+end
+
+M.minimap_refresh_cmd = '<Cmd>lua MiniMap.refresh({}, {lines = false, scrollbar = false})<CR>'
 
 return M
