@@ -59,6 +59,7 @@ return {
         suffix_next = 'n', -- Suffix to search with "next" method
       },
       n_lines = 100,
+      silent = true,
     })
 
     remap('n', 'sw', 'siw', { remap = true }) -- be consistent with cw -> ciw

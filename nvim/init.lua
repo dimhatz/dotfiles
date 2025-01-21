@@ -103,10 +103,17 @@ vim.opt.signcolumn = 'yes'
 -- How often swap is written to disk (ms after nothing is typed),
 -- also affects CursorHold, CursorHoldI, which we have mapped to
 -- lsp-highlight word under cursor.
-vim.opt.updatetime = 2000
+vim.opt.updatetime = 1000
 
--- Decrease mapped sequence wait time
-vim.opt.timeoutlen = 1000
+-- Having timeout=false (:set notimeout) will result in always waiting for mapped sequence to complete.
+-- E.g. when we have `:nnore k gk` and `:nnore kk gkgk`, vim will always wait for the second char.
+-- However if a non-matching char is pressed, like <Esc>, vim will do gk and then <Esc>, even though
+-- no k<Esc> mapping exists. Vim just interprets this as 2 distict successful mapping, instead of
+-- a single failed, non-matched mapping. Workaround in this case is to :nnore k <Nop>
+-- NOTE: when timeout=false and timeoutlen=0, it's impossible to use visual gc, gcc etc
+-- (the existing default mapping of `gg` prevents `gcc` from triggering)
+vim.opt.timeout = false
+vim.opt.timeoutlen = 0 -- does not matter since timeout = false
 
 -- Configure how new splits should be opened
 vim.opt.splitright = true
@@ -287,36 +294,6 @@ end
 
 remap('o', 'w', my_operator_w, { expr = true, desc = 'My special operator w' })
 remap('o', 'z', my_operator_z, { expr = true, desc = 'My special operator z' })
-
-_G.My_noop = function()
-  -- Usage:
-  -- vim.go.operatorfunc = 'v:lua.My_noop'
-  -- vim.cmd('normal! g@l')
-  -- vim.go.operatorfunc = 'v:lua.My_original_op' -- <-- now ready to be repeated, instead of
-  -- repeating any 'normal! xyz' commands that may have been called in My_original_op
-end
-
-_G.My_dd = function()
-  -- vim.v.operator here will always be g@, due to the way we call this
-  local _, cursor_line = unpack(vim.fn.getcurpos())
-  local line_text = vim.fn.getline(cursor_line)
-  if line_text:match('^%s*$') then
-    vim.cmd('normal! "_dd')
-  else
-    vim.cmd('normal! dd')
-  end
-  vim.go.operatorfunc = 'v:lua.My_noop'
-  vim.cmd('normal! g@l')
-  vim.go.operatorfunc = 'v:lua.My_dd'
-  -- vim.cmd.normal({ args = { 'dd' }, bang = true })
-end
-
-remap('n', 'dd', function()
-  -- not mapping operator pending mode (omap), it messes up our special visual repeat
-  -- (e.g. on `ved`). Also using operatorfunc to make it repeatable
-  vim.go.operatorfunc = 'v:lua.My_dd'
-  return 'g@l'
-end, { expr = true, desc = 'When dd-ing blank lines, do not overwrite the registers' })
 
 ---@param vim_move string
 local function move_skipping_non_alphanum_chars(vim_move)
@@ -528,7 +505,7 @@ remap('n', 'r', function()
 end, { expr = true, desc = 'replace single char, supports our special insert keymaps (<C-d> etc)' })
 
 local function my_set_search()
-  -- no type = 'v', since it will stop at the cursor
+  -- no type = 'v', since it will return text till the cursor
   local selected_strings = vim.fn.getregion(vim.fn.getpos('v'), vim.fn.getpos('.'), { type = vim.fn.mode() })
   if #selected_strings == 0 then
     -- invalid selection
@@ -614,21 +591,37 @@ end, { expr = true, desc = 'Make new line (after comment) start non-commented.' 
 remap({ 'n', 'v' }, 'y', 'myy', { desc = 'Set mark "y" before yanking' })
 remap('n', 'Y', 'myy$', { desc = 'Set mark "y" before yanking (workaround to keep cursor from moving)' })
 remap('v', 'Y', '<Nop>', { desc = 'Not using visual Y anyway' })
+-- always delete into "d register, if the deleted text was non-whitespace, then
+-- our TextYankPost (see below) will set it to unnamed register.
+remap({ 'n', 'v' }, 'd', '"dd', { desc = 'delete into "d, will be restored by TextYankPost if deleted text is non-whitespace' })
 -- see my TextYankPost autocmd, this one is to cleanup for yank
 -- was interrupted by <esc> (operator pending mode)
--- remap('o', '<Esc>', '<Cmd>delmarks y<CR><Esc>') -- also works, but will be applied for all operators
-remap('n', 'y<Esc>', '<Esc><Cmd>delmarks y<CR><Cmd>echom "ok"<CR>', { desc = 'Avoid leaving y mark with y<Esc>' })
+-- The below <Esc> remap should not be needed. With our setup there should
+-- be no unexpected jumps from plugins, none should perform :normal yiw or other yanks.
+-- remap('o', '<Esc>', '<Esc><Cmd>delmarks y<CR>') -- force cleanup of y mark (will trigger on every verb, not just y)
 
 --  See `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'My: Highlight when yanking and put cursor back afterwards',
   group = vim.api.nvim_create_augroup('my-highlight-yank', { clear = true }),
   callback = function()
+    if vim.v.operator == 'd' then
+      -- This is better handled here (with a properly mapped d -> "dd), instead of setting operatorfunc
+      -- to be able to dot-repeat. When using operatorfunc, it should be n-mapped with dd (omap d has
+      -- weird behavior, is not made for this), which results in cursor not switching to operator-pending mode.
+      -- If deleted text is non-whitespace-only, copy it to unnamed register.
+      local reg_text = vim.fn.getreg('d')
+      if not reg_text:match('^%s*$') then
+        vim.fn.setreg('+', reg_text, vim.fn.getregtype('d'))
+      end
+      return
+    end
+
     if vim.v.operator ~= 'y' then
-      -- avoid triggering on delete operator
       -- no need to check for operator == 'Y', it already triggers
       return
     end
+    -- operator is y
     local y_mark_pos = vim.api.nvim_buf_get_mark(0, 'y') -- 1,0-based
     if y_mark_pos[1] == 0 and y_mark_pos[2] == 0 then
       -- defensive, non-existent mark

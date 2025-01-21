@@ -4,9 +4,7 @@ return {
   event = 'VimEnter', -- Sets the loading event to 'VimEnter'
   opts = {
     preset = 'modern',
-    delay = function(ctx)
-      return ctx.plugin and 0 or 1000
-    end,
+    delay = 3000,
     plugins = {
       marks = true, -- shows a list of your marks on ' and `
       registers = true, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
@@ -22,7 +20,7 @@ return {
         windows = true, -- default bindings on <c-w>
         nav = true, -- misc bindings to work with windows
         z = false, -- we use z as "_d (bindings for folds, spelling and others prefixed with z)
-        g = true, -- bindings for prefixed with g
+        g = true, -- bindings for prefixed with g, false does not disable it, TODO: investigate
       },
     },
     icons = {
