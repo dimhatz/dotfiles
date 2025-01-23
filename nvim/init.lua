@@ -322,28 +322,28 @@ local function move_skipping_non_alphanum_chars(vim_move)
   end
 end
 
-remap({ 'n', 'v' }, 'w', function()
+remap({ 'n', 'x' }, 'w', function()
   -- Benchmarked: 0ms most of the time, some occasional 1ms time.
   -- local t_begin = os.clock()
   move_skipping_non_alphanum_chars('w')
   -- vim.print((os.clock() - t_begin) * 1000) -- ms
 end, { desc = 'My w skips non-alphanum chars, when they are not surrounded by whitespace' })
 
-remap({ 'n', 'v' }, 'e', function()
+remap({ 'n', 'x' }, 'e', function()
   move_skipping_non_alphanum_chars('e')
 end, { desc = 'My e skips non-alphanum chars, when they are not surrounded by whitespace' })
 
-remap({ 'n', 'v' }, 'b', function()
+remap({ 'n', 'x' }, 'b', function()
   move_skipping_non_alphanum_chars('b')
 end, { desc = 'My b skips non-alphanum chars, when they are not surrounded by whitespace' })
 
-remap({ 'n', 'v' }, 'c', '"_c')
+remap({ 'n', 'x' }, 'c', '"_c')
 remap('n', 'C', '"_C')
 remap('n', 'x', '"_x', { desc = 'delete char into black hole' })
 remap({ 'n', 'x' }, 'm', '"_d', { desc = 'Move into black hole' })
 remap('n', 'Z', '"_D', { desc = 'delete into black hole' })
 remap('n', 'X', '<cmd>echo "use Z to delete into black hole till end of line"<CR>')
-remap('v', 'x', '"_d')
+remap('x', 'x', '"_d')
 
 remap('n', 'j', 'gj') -- navigate wrapped lines
 remap('n', 'k', 'gk')
@@ -381,12 +381,12 @@ remap('n', 'zz', function()
   return 'zO'
 end, { expr = true, desc = 'toggle fold recursively' })
 
-remap('v', 'p', 'p<Cmd>let @p=@+<Bar>let @+=@0<CR>', { desc = 'Pasting in visual stores the overwritten text in "p register', silent = true })
+remap('x', 'p', 'p<Cmd>let @p=@+<Bar>let @+=@0<CR>', { desc = 'Pasting in visual stores the overwritten text in "p register', silent = true })
 
 remap('n', '<C-h>', '<C-e>', { desc = 'Scroll down 1 line' })
 remap('n', '<C-l>', '<C-y>', { desc = 'Scroll up 1 line' })
-remap('v', '<C-h>', '<C-e>', { desc = 'Scroll down 1 line' })
-remap('v', '<C-l>', '<C-y>', { desc = 'Scroll up 1 line' })
+remap('x', '<C-h>', '<C-e>', { desc = 'Scroll down 1 line' })
+remap('x', '<C-l>', '<C-y>', { desc = 'Scroll up 1 line' })
 -- skipping insert, since we are using c-j / c-k to autocomplete in insert
 -- remap('i', '<C-j>', '<C-o><C-e>', { desc = 'Scroll down 1 line' })
 -- remap('i', '<C-k>', '<C-o><C-y>', { desc = 'Scroll up 1 line' })
@@ -397,8 +397,8 @@ remap('v', '<C-l>', '<C-y>', { desc = 'Scroll up 1 line' })
 
 remap('n', '<C-j>', 'gj<C-e>', { desc = 'Scroll down 1 line with cursor steady' })
 remap('n', '<C-k>', 'gk<C-y>', { desc = 'Scroll up 1 line with cursor steady' })
-remap('v', '<C-j>', 'gj<C-e>', { desc = 'Scroll down 1 line with cursor steady' })
-remap('v', '<C-k>', 'gk<C-y>', { desc = 'Scroll up 1 line with cursor steady' })
+remap('x', '<C-j>', 'gj<C-e>', { desc = 'Scroll down 1 line with cursor steady' })
+remap('x', '<C-k>', 'gk<C-y>', { desc = 'Scroll up 1 line with cursor steady' })
 
 -- remap('n', '<A-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' }) -- same as above, but with Alt, alacritty re-exposes (in flashes) the mouse if its inside terminal
 -- remap('n', '<A-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
@@ -432,7 +432,7 @@ remap('c', '<C-j>', '<Down>', { desc = 'Autocomplete in command mode' })
 -- <C-o>$, <End>,  also work, requires 2 undos
 -- Dot (.) does not repeat both edits in all cases, not sure whether triggers mode change
 remap('i', '<C-e>', '<Esc>A', { desc = 'Jump to EOL' })
-remap({ 'n', 'v' }, '<C-e>', '$', { desc = 'Jump to EOL' })
+remap({ 'n', 'x' }, '<C-e>', '$', { desc = 'Jump to EOL' })
 
 -- Stop reaching too far with fingers for =, +, -, _
 remap({ 'i', 'c' }, '<C-f>', '=', { desc = '<C-f> is = in insert' })
@@ -483,7 +483,7 @@ local function my_set_search()
   vim.fn.setreg('/', '\\V' .. search_string)
 end
 
-remap('v', '<C-f>', function()
+remap('x', '<C-f>', function()
   my_set_search()
   return '<Esc><Cmd>set hlsearch<CR>'
 end, { expr = true, desc = 'Search for selection' })
@@ -495,7 +495,7 @@ remap('n', '<C-f>', function()
   vim.cmd.execute([["normal! \<Esc>\<Cmd>set hlsearch\<CR>`v"]])
 end, { desc = 'Search for word under cursor' })
 
-remap({ 'n', 'v' }, '<Leader>f', '<Cmd>echo "use <C-f> (or * to search+jump)"<CR>', { desc = 'Use <C-f> (or * to search+jump)' })
+remap({ 'n', 'x' }, '<Leader>f', '<Cmd>echo "use <C-f> (or * to search+jump)"<CR>', { desc = 'Use <C-f> (or * to search+jump)' })
 
 -- TODO: check these out, adjust setup
 -- -- Diagnostic keymaps
@@ -552,13 +552,13 @@ remap('n', 'o', function()
 end, { expr = true, desc = 'Make new line (after comment) start non-commented.' })
 
 -- hack to prevent the cursor from jumping after a yank, also see below 'TextYankPost'
-remap({ 'n', 'v' }, 'y', 'myy', { desc = 'Set mark "y" before yanking' })
+remap({ 'n', 'x' }, 'y', 'myy', { desc = 'Set mark "y" before yanking' })
 remap('n', 'Y', 'myy$', { desc = 'Set mark "y" before yanking (workaround to keep cursor from moving)' })
-remap('v', 'Y', '<Nop>', { desc = 'Not using visual Y anyway' })
+remap('x', 'Y', '<Nop>', { desc = 'Not using visual Y anyway' })
 -- always delete into "d register, if the deleted text was non-whitespace, then
 -- our TextYankPost (see below) will set it to unnamed register.
-remap({ 'n', 'v' }, 'd', '"dd', { desc = 'delete into "d, will be restored by TextYankPost if deleted text is non-whitespace' })
-remap({ 'n', 'v' }, 'D', '"dD', { desc = 'delete into "d, will be restored by TextYankPost if deleted text is non-whitespace' })
+remap({ 'n', 'x' }, 'd', '"dd', { desc = 'delete into "d, will be restored by TextYankPost if deleted text is non-whitespace' })
+remap({ 'n', 'x' }, 'D', '"dD', { desc = 'delete into "d, will be restored by TextYankPost if deleted text is non-whitespace' })
 -- see my TextYankPost autocmd, this one is to cleanup for yank
 -- was interrupted by <esc> (operator pending mode)
 -- The below <Esc> remap should not be needed. With our setup there should

@@ -67,8 +67,8 @@ remap('n', '<C-v>', function()
   My_visual_repeat()
 end, { desc = 'Start linewise visual with repeat' })
 
-remap({ 'n', 'v' }, 'V', '<C-v>', { desc = 'V is the new visual block' })
-remap('v', '<C-v>', 'V', { desc = '<C-v> is the new linewise visual' })
+remap({ 'n', 'x' }, 'V', '<C-v>', { desc = 'V is the new visual block' })
+remap('x', '<C-v>', 'V', { desc = '<C-v> is the new linewise visual' })
 -- NOTE: there is no sense in recording gv, since reselection does not
 -- store the original selection movements. This makes it impossible to
 -- replay the actions following gv on the next lines.

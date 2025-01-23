@@ -441,22 +441,22 @@ remap('n', '<Leader>x', function()
   remove_extmarks(ns_spots)
 end, { desc = 'New' })
 
-remap({ 'n', 'v' }, 'f', function()
+remap({ 'n', 'x' }, 'f', function()
   jump(Direction.forward, Granularity.word, MatchSide.word_start)
 end, { desc = 'Jump forward' })
 
-remap({ 'n', 'v' }, 't', function()
+remap({ 'n', 'x' }, 't', function()
   jump(Direction.back, Granularity.word, MatchSide.word_start)
 end, { desc = 'Jump back (towards top)' })
 
-remap({ 'n', 'v' }, '<Leader>k', function()
+remap({ 'n', 'x' }, '<Leader>k', function()
   jump(Direction.back, Granularity.line, MatchSide.word_start)
 end, { desc = 'Jump back linewise' })
 
-remap({ 'n', 'v' }, '<Leader>j', function()
+remap({ 'n', 'x' }, '<Leader>j', function()
   jump(Direction.forward, Granularity.line, MatchSide.word_start)
 end, { desc = 'Jump forward linewise' })
 
-remap({ 'n', 'v' }, '<Leader>e', function()
+remap({ 'n', 'x' }, '<Leader>e', function()
   jump(Direction.forward, Granularity.word, MatchSide.word_end)
 end, { desc = 'Jump forward to the end of a word' })
