@@ -284,7 +284,7 @@ local function my_operator_w()
   return '<Esc>'
 end
 
-local function my_operator_z()
+local function my_operator_m()
   -- dz -> dd, to make zz -> "_dd
   if vim.v.operator == 'd' then
     return 'd'
@@ -293,7 +293,7 @@ local function my_operator_z()
 end
 
 remap('o', 'w', my_operator_w, { expr = true, desc = 'My special operator w' })
-remap('o', 'z', my_operator_z, { expr = true, desc = 'My special operator z' })
+remap('o', 'm', my_operator_m, { expr = true, desc = 'My special operator m' })
 
 ---@param vim_move string
 local function move_skipping_non_alphanum_chars(vim_move)
@@ -373,11 +373,10 @@ end, { desc = 'My b skips non-alphanum chars, when they are not surrounded by wh
 remap({ 'n', 'v' }, 'c', '"_c')
 remap('n', 'C', '"_C')
 remap('n', 'x', '"_x', { desc = 'delete char into black hole' })
-remap('n', 'z', '"_d', { desc = 'delete into black hole' })
+remap({ 'n', 'x' }, 'm', '"_d', { desc = 'Move into black hole' })
 remap('n', 'Z', '"_D', { desc = 'delete into black hole' })
 remap('n', 'X', '<cmd>echo "use Z to delete into black hole till end of line"<CR>')
 remap('v', 'x', '"_d')
-remap('v', 'z', '"_d')
 
 remap('n', 'j', 'gj') -- navigate wrapped lines
 remap('n', 'k', 'gk')
@@ -404,11 +403,9 @@ remap('c', '<C-v>', '<C-r>+', { desc = '<C-v> pastes in command' })
 -- " Reselect pasted text linewise, ( `[ is jump to beginning of changed/yanked )
 remap('n', '<Leader>v', '`[V`]', { desc = 'Reselect pasted text linewise' })
 
-remap('n', 'm', 'z', { desc = 'm is the new z (folds)' })
-
 -- Just mapping to za is not enough, since the inner folds remain closed when toggling to open.
 -- This happens because we use indent folding and when forcing foldlevel, the inner folds become closed too.
-remap('n', 'mm', function()
+remap('n', 'zz', function()
   local line_nr = vim.fn.line('.')
   local is_fold_open = vim.fn.foldclosed(line_nr) == -1
   if is_fold_open then
@@ -607,10 +604,12 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('my-highlight-yank', { clear = true }),
   callback = function()
     if vim.v.operator == 'd' then
+      -- If deleted text is non-whitespace-only, copy it to unnamed register.
       -- This is better handled here (with a properly mapped d -> "dd), instead of setting operatorfunc
       -- to be able to dot-repeat. When using operatorfunc, it should be n-mapped with dd (omap d has
       -- weird behavior, is not made for this), which results in cursor not switching to operator-pending mode.
-      -- If deleted text is non-whitespace-only, copy it to unnamed register.
+      -- Also, using an intermediate register ("d) is needed because there is no consistent way to restore
+      -- deleted words/lines, since vim uses small delete register "- for deletes <1 line.
       local reg_text = vim.fn.getreg('d')
       if not reg_text:match('^%s*$') then
         vim.fn.setreg('+', reg_text, vim.fn.getregtype('d'))
