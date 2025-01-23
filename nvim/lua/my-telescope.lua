@@ -79,6 +79,7 @@ return {
             ['<c-k>'] = { my_move_selection_previous, type = 'action', opts = my_opts },
             ['<c-h>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
             ['<c-l>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
+            ['<c-v>'] = { '<C-r>+', type = 'command', opts = my_opts },
             ['<c-n>'] = false, -- disable to get used to c-j / c-k everywhere
             ['<c-p>'] = false,
             ['<c-u>'] = false, -- <c-u> / <c-d> are mapped to scroll preview up / down
@@ -126,12 +127,12 @@ return {
     -- do not use these, they checkout the selected commit when pressing <CR>, putting git in detached head mode
     -- remap('n', '<leader>gl', builtin.git_commits, { desc = 'Git Log (Tele)' })
     -- remap('n', '<leader>gf', builtin.git_bcommits, { desc = 'Git Log of File (Tele)' })
-    remap('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-    remap('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-    remap('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect choose Telescope builtin' })
-    remap('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep in cwd' })
-    remap('n', '<leader>sa', builtin.autocommands, { desc = '[S]earch [A]utocmds' })
-    remap('n', '<leader>sc', builtin.highlights, { desc = '[S]earch [C]olors' })
+    remap('n', '<leader>sh', builtin.help_tags, { desc = 'Search [H]elp' })
+    remap('n', '<leader>sk', builtin.keymaps, { desc = 'Search [K]eymaps' })
+    remap('n', '<leader>ss', builtin.builtin, { desc = '[S]elect Telescope builtin and search' })
+    remap('n', '<leader>sg', builtin.live_grep, { desc = 'Search by [G]rep in cwd' })
+    remap('n', '<leader>sa', builtin.autocommands, { desc = 'Search [A]utocmds' })
+    remap('n', '<leader>sc', builtin.highlights, { desc = 'Search [C]olors' })
     remap('n', '<leader>sr', make_wrapper_fn(builtin.resume, { initial_mode = 'normal' }), { desc = 'Search [R]esume previous' })
 
     local find_command = { 'rg', '--files', '--hidden', '--glob=!.git/*', '--color=never' }
@@ -144,7 +145,7 @@ return {
       -- file_ignore_patterns = { '.git' .. require('my-helpers').path_delimiter },
       -- this will perform secondary filtering in lua after rg returns results
       builtin.find_files({ find_command = find_command })
-    end, { desc = '[S]earch [F]iles (respecting .gitignore, shows hidden)' })
+    end, { desc = 'Search [F]iles (respecting .gitignore, shows hidden)' })
 
     remap('n', '<C-p>', function()
       builtin.find_files(require('telescope.themes').get_dropdown({
@@ -198,15 +199,7 @@ return {
         grep_open_files = true,
         prompt_title = 'Live Grep in Open Files',
       })
-    end, { desc = '[S]earch [/] in Open Files' })
-
-    -- Shortcut for searching your Neovim configuration files
-    remap('n', '<leader>sn', function()
-      -- do not use vim.fn.stdpath('config'), since luals will be
-      -- buggy when opening files from ~AppData/local/nvim (links to dotfiles/nvim):
-      -- when saving a file, diagnostics disappear
-      builtin.find_files({ cwd = vim.fn.expand('~/dotfiles/nvim') })
-    end, { desc = '[S]earch [N]eovim files' })
+    end, { desc = 'Search [/] in Open Files' })
 
     local function search_open_buffers()
       builtin.buffers({
@@ -225,6 +218,7 @@ return {
             -- Workaround (re-opens telescope window)
             require('telescope.actions').close(prompt_bufnr)
             require('mini.bufremove').delete(entry.bufnr)
+            -- TODO: make it resume at the same position too
             vim.schedule(search_open_buffers) -- search_open_buffers() is current, remap()'ed function
 
             -- Another solution, without flickering, but results in broken highlight (some word parts have incorrect colors)
@@ -240,8 +234,40 @@ return {
 
     remap('n', '<leader><leader>', search_open_buffers, { desc = 'Find existing buffers, close selected with <C-c>' })
 
-    -- remap('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-    -- remap('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-    -- remap('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+    local search_dirs_cache = nil
+    remap('n', '<leader>sd', function()
+      local search_dirs = {}
+      if search_dirs_cache then
+        search_dirs = search_dirs_cache
+      else
+        local runtime_paths = vim.opt.runtimepath:get()
+        for _, path in ipairs(runtime_paths) do
+          local help_path = path .. '/doc'
+          help_path = normalize_filename(help_path)
+          if vim.fn.isdirectory(help_path) == 1 then
+            table.insert(search_dirs, help_path)
+          end
+        end
+        search_dirs_cache = search_dirs
+      end
+      -- builtin.grep_string
+      builtin.live_grep({ search_dirs = search_dirs })
+    end, { desc = 'Live grep vim and plugins [D]ocumentation' })
+
+    remap('n', '<leader>f', function()
+      builtin.grep_string({ initial_mode = 'normal' })
+    end, { desc = 'Find word under cursor in working dir' })
+
+    remap('x', '<leader>f', function()
+      local selected_strings = vim.fn.getregion(vim.fn.getpos('v'), vim.fn.getpos('.'), { type = vim.fn.mode() })
+      if #selected_strings == 0 then
+        vim.notify('My telescope: invalid visual selection', vim.log.levels.ERROR)
+        return
+      elseif #selected_strings ~= 1 then
+        vim.notify('My telescope: selected too many lines', vim.log.levels.ERROR)
+        return
+      end
+      builtin.grep_string({ search = selected_strings[1], initial_mode = 'normal' })
+    end, { desc = 'Find word under cursor in working dir' })
   end,
 }
