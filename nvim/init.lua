@@ -767,7 +767,7 @@ require('lazy').setup({
 
 require('my-statusline')
 require('my-tabline')
-require('my-hop3')
+require('my-hop')
 require('my-visual-repeat')
 ----------------  NOT USED ----------------------------------------------------------------
 -- autoclose parens, quotes etc - does not expose its <CR> function that we need in our custom completion mapping, disabling
