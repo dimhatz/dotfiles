@@ -341,7 +341,7 @@ remap({ 'n', 'x' }, 'c', '"_c')
 remap('n', 'C', '"_C')
 remap('n', 'x', '"_x', { desc = 'delete char into black hole' })
 remap({ 'n', 'x' }, 'm', '"_d', { desc = 'Move into black hole' })
-remap('n', 'Z', '"_D', { desc = 'delete into black hole' })
+remap('n', 'M', '"_D', { desc = 'delete into black hole' })
 remap('n', 'X', '<cmd>echo "use Z to delete into black hole till end of line"<CR>')
 remap('x', 'x', '"_d')
 

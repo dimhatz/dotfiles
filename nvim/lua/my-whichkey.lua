@@ -32,8 +32,8 @@ return {
       { '<Leader>g', group = 'GitSigns' },
     },
     triggers = {
-      { '<auto>', mode = 'nixsotc' }, -- default
-      -- { 'd', mode = {} }, -- does NOT disable popup on 'd', TODO: figure it out
+      { '<leader>', mode = { 'n', 'v' } },
+      { 'g', mode = { 'n', 'v' } },
     },
     win = {
       padding = { 1, 2 },
