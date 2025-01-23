@@ -188,7 +188,7 @@ return {
           -- until we type smth or move cursor with arrows
           if vim.g.neovide then
             vim.defer_fn(function()
-              simulate_keys('<Left><Right>')
+              simulate_keys('<Left><Right>', 'n')
             end, 200)
           end
         end, 'Rename under cursor')

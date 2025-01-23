@@ -98,8 +98,11 @@ end
 --- performed during execution. WARNING: do not use this in functions
 --- that will be called in recorded macros - the keys will be ignored there.
 --- Do not use this unless absolutely necessary.
-function M.simulate_keys(keys)
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), 'n', false)
+--- NOTE: Also try nvim_input()
+---@param keys string keys like <Esc> will be properly escaped
+---@param feedkeys_mode string see :h feedkeys()
+function M.simulate_keys(keys, feedkeys_mode)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), feedkeys_mode, false)
   -- Notes from previous experiments
   -- vim.fn.feedkeys('\\<Esc>', 'n') -- does not work to send <esc>
   -- vim.cmd([[call feedkeys("\<Esc>", 'n')]]) -- works

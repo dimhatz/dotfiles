@@ -1,4 +1,7 @@
 local remap = require('my-helpers').remap
+local slice_array = require('my-helpers').slice_array
+local reverse_in_place = require('my-helpers').reverse_in_place
+local my_visual_surround = require('my-visual-repeat').my_visual_surround
 
 return {
   'echasnovski/mini.nvim',
@@ -14,6 +17,7 @@ return {
     -- Auto-jumps to next text object: to jump+visual inside next parens: vi)
     -- For larger scope, press i) again
     require('mini.ai').setup({
+      silent = true,
       n_lines = 500, -- 50 default, 500 suggested by kickstart
       custom_textobjects = {
         -- e for entire
@@ -63,6 +67,10 @@ return {
     })
 
     remap('n', 'sw', 'siw', { remap = true }) -- be consistent with cw -> ciw
+    remap('n', 'sc', 'sr', { remap = true }) -- be consistent with cw -> ciw
+
+    vim.api.nvim_del_keymap('x', 's')
+    remap('x', 's', my_visual_surround, { desc = 'My custom surround that works with my visual repeat' })
 
     ---------------------------------------------------------------------------------------
     require('mini.indentscope').setup({
@@ -72,6 +80,12 @@ return {
         animation = require('mini.indentscope').gen_animation.none(),
       },
     })
+    remap(
+      'x',
+      'ii',
+      '<Cmd>lua MyVisualRepeatForceAlive=true MiniIndentscope.textobject(false) MyVisualRepeatForceAlive=false<CR>',
+      { desc = 'Override mini.indentscope ii to work with our visual repeat' }
+    )
 
     ---------------------------------------------------------------------------------------
 

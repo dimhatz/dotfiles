@@ -594,6 +594,7 @@ remap('v', 'Y', '<Nop>', { desc = 'Not using visual Y anyway' })
 -- always delete into "d register, if the deleted text was non-whitespace, then
 -- our TextYankPost (see below) will set it to unnamed register.
 remap({ 'n', 'v' }, 'd', '"dd', { desc = 'delete into "d, will be restored by TextYankPost if deleted text is non-whitespace' })
+remap({ 'n', 'v' }, 'D', '"dD', { desc = 'delete into "d, will be restored by TextYankPost if deleted text is non-whitespace' })
 -- see my TextYankPost autocmd, this one is to cleanup for yank
 -- was interrupted by <esc> (operator pending mode)
 -- The below <Esc> remap should not be needed. With our setup there should

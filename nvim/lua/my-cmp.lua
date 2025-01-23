@@ -1,4 +1,5 @@
 local remap = require('my-helpers').remap
+local simulate_keys = require('my-helpers').simulate_keys
 
 -- TODO: check out https://github.com/saghen/blink.cmp, see if it's mature enough
 -- has borders, disabling menu, fuzzying, documentation preview, snippets etc
@@ -58,7 +59,7 @@ return {
     -- vim.api.<c-j>n.b.u.f.s (without ., written like this to not save full string inside text)
     -- then `n.v.i.m._.l.i.s.t._.b.u.f.s` should be available in the completion list
     -- if it is missing and only shown with forcing completion (<c-n>), then the hack does not work
-    My_cmp_disabled = true
+    My_cmp_disabled = true -- <-- global, used from mappings with <Cmd>lua My_cmp_disabled=true<CR>
 
     -- -- to be triggered by cmp, but cmp almost always fails to trigger it
     -- -- leving it here to document how to detect an active selection
@@ -157,6 +158,16 @@ return {
     })
 
     remap('i', '<C-j>', function()
+      if vim.fn.reg_recording() ~= '' then
+        -- Since cmp is incompatible with macros (see its default enabled() function)
+        -- we simulate manually exiting and re-entering insert, which will also cancel
+        -- our visual repeat. TODO: replace with a plugin that is compatible with macros?
+        -- do not use x flag, messes up vim, using m flag to remap and re-trigger this func
+        -- after exiting to normal.
+        simulate_keys('<Esc>a<C-j>', 'mt')
+        -- vim.api.nvim_input('<Esc>a<C-j>') -- also works
+        return
+      end
       if cmp.visible() then
         cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
       else
@@ -167,6 +178,10 @@ return {
     end, { desc = 'Autocomplete next' })
 
     remap('i', '<C-k>', function()
+      if vim.fn.reg_recording() ~= '' then
+        simulate_keys('<Esc>a<C-k>', 'mt') -- see c-j above
+        return
+      end
       if cmp.visible() then
         cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
       else
@@ -203,7 +218,8 @@ return {
     remap(
       { 'i', 's' },
       '<Esc>',
-      '<Cmd>lua My_cmp_disabled=true<CR><Esc><Cmd>lua require("my-helpers").update_treesitter_tree()<CR>',
+      '<Esc><Cmd>lua My_cmp_disabled=true require("my-helpers").update_treesitter_tree()<CR>',
+      -- '<Cmd>lua My_cmp_disabled=true<CR><Esc><Cmd>lua require("my-helpers").update_treesitter_tree()<CR>',
       { desc = '<Esc> also disables autocompletion, updates rainbow parens (hack)' }
     )
 
