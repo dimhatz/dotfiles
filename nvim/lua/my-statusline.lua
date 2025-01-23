@@ -31,7 +31,7 @@ local function get_search_count()
   return pad_spaces(res, padded_length)
 end
 
-MyStatusLineShowCalled = false
+local debug_show_called = false
 local called = 0
 
 function My_update_statusline_active()
@@ -130,7 +130,7 @@ function My_update_statusline_active()
   -- virtual column (takes tabs as multiple spaces into account)
   s = concat(s, hi1, '%3v ') -- minwid 3 to prevent line shifting during movement
 
-  if MyStatusLineShowCalled then
+  if debug_show_called then
     called = called + 1 -- debugging
     s = concat(s, 'C: ', called)
   end

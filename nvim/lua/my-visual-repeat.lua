@@ -4,9 +4,9 @@ local slice_array = require('my-helpers').slice_array
 local reverse_in_place = require('my-helpers').reverse_in_place
 local simulate_keys = require('my-helpers').simulate_keys
 
-local cl = require('my-helpers').create_cond_logger('LogMyVisualRepeat')
-LogMyVisualRepeat = false -- help autocomplete when manually overriding to true
-MyVisualRepeatForceAlive = false
+local cl = require('my-helpers').create_cond_logger('Log_my_visual_repeat')
+Log_my_visual_repeat = false -- help autocomplete when manually overriding to true
+My_visual_repeat_force_alive = false
 
 local visual_repeat_is_recording = false --- to differentiate from regular macro recording
 local changed_tick_start = 0
@@ -73,8 +73,9 @@ remap('v', '<C-v>', 'V', { desc = '<C-v> is the new linewise visual' })
 -- store the original selection movements. This makes it impossible to
 -- replay the actions following gv on the next lines.
 
-function MyVisualRepeatStop()
-  MyVisualRepeatForceAlive = false
+-- global in case we need to call it from a mapping as a workaround
+function My_visual_repeat_stop()
+  My_visual_repeat_force_alive = false
   visual_repeat_is_recording = false
 
   if vim.fn.reg_recording() == '' then
@@ -199,7 +200,7 @@ vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
     local new_mode = vim.v.event.new_mode
     cl(old_mode .. ' ' .. new_mode .. ' ' .. vim.api.nvim_buf_get_var(0, 'changedtick'))
 
-    if not visual_repeat_is_recording or MyVisualRepeatForceAlive then
+    if not visual_repeat_is_recording or My_visual_repeat_force_alive then
       return
     end
     -- cl('op: ' .. vim.v.operator)
@@ -210,7 +211,7 @@ vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
     end
 
     -- we are out of visual now, so stopping recording
-    MyVisualRepeatStop()
+    My_visual_repeat_stop()
   end,
 })
 

@@ -197,7 +197,7 @@ local closeHoveringWindows = function()
 end
 
 -- global, to be available from vimscript
-MyOnEsc = function()
+My_on_esc = function()
   -- if we are in the middle of exchange, manually trigger
   -- the cancel exchange func, which is temporarily bound to <c-c> by
   -- mini.operators (currently no way to rebind)
@@ -225,13 +225,13 @@ MyOnEsc = function()
   -- to remove the search count from statusline:
   vim.schedule(My_update_statusline_active)
 end
-remap('n', '<Esc>', '<Cmd>noh<CR><Cmd>lua MyOnEsc()<CR>' .. minimap_refresh_cmd, { silent = true })
+remap('n', '<Esc>', '<Cmd>noh<CR><Cmd>lua My_on_esc()<CR>' .. minimap_refresh_cmd, { silent = true })
 
 -- search mode '/' is considered command mode
 remap('c', '<Esc>', function()
   -- to remove the search count from statusline:
   vim.schedule(My_update_statusline_active)
-  -- workaround to remove highlight from scrollbar, on <Esc> when searching with /, see also MyOnEsc()
+  -- workaround to remove highlight from scrollbar, on <Esc> when searching with /, see also My_on_esc()
   local cmd_type = vim.fn.getcmdtype()
   local is_search_mode = cmd_type == '/' or cmd_type == '?'
   -- NOTE: when we are in vim.ui.input(), e.g. in lsp rename, then: cmd_type == '@', in case we need it

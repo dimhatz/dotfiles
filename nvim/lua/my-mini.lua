@@ -83,7 +83,7 @@ return {
     remap(
       'x',
       'ii',
-      '<Cmd>lua MyVisualRepeatForceAlive=true MiniIndentscope.textobject(false) MyVisualRepeatForceAlive=false<CR>',
+      '<Cmd>lua My_visual_repeat_force_alive=true MiniIndentscope.textobject(false) My_visual_repeat_force_alive=false<CR>',
       { desc = 'Override mini.indentscope ii to work with our visual repeat' }
     )
 
