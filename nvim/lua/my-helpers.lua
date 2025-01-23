@@ -112,7 +112,7 @@ end
 --- treesitter highlight disabled. Also called from <Cmd>lua require('my-helpers').update.. etc
 --- so do a global search if refactoring this.
 function M.update_treesitter_tree()
-  -- TODO: remove this if we are using treesitter for highlighting
+  -- TODO: remove this when we will permanently enable treesitter for highlighting
   -- This is a workaround for the rainbow-delimiters, which will only hightlight
   -- the currently parsed tree's parens. When adding new code with parens they will
   -- not be hightlighted.

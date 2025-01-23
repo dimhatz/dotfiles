@@ -621,17 +621,6 @@ vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
   end,
 })
 
--- TODO: delete this when the below lua version is confirmed to work
--- This also prevents scroll-to-center-cursor behavior of default vim, when switching between buffers
--- vim.cmd([[
---      set viewoptions-=options
---      augroup my_remember_folds
---        autocmd!
---        autocmd BufWinLeave *.* if &ft !=# 'help' | mkview | endif
---        autocmd BufWinEnter *.* if &ft !=# 'help' | silent! loadview | endif
---      augroup END
---    ]])
-
 -- This also prevents scroll-to-center-cursor behavior of default vim, when switching between buffers
 local save_load_view_group = vim.api.nvim_create_augroup('my-save-load-view', { clear = true })
 vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {

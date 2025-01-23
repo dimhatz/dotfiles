@@ -180,7 +180,6 @@ function M.my_visual_surround()
     -- no offset to end target's column, we add text after the position
     local insert_col = i == 2 and target[2] or target[2] - 1
     vim.api.nvim_buf_set_text(0, insert_row, insert_col, insert_row, insert_col, { pair_to_insert:sub(i, i) })
-    vim.print(insert_row, insert_col, pair_to_insert[i])
   end
 
   simulate_keys('<Esc>', 'nx') -- nx needed, otherwise gv will not select the desired region
