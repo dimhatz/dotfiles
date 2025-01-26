@@ -1,12 +1,12 @@
+-- Better name: 'repeat last visual edit': here (normal) / on current selection'
 local M = {}
 local remap = require('my-helpers').remap
 local slice_array = require('my-helpers').slice_array
-local reverse_in_place = require('my-helpers').reverse_in_place
 local simulate_keys = require('my-helpers').simulate_keys
 
 local cl = require('my-helpers').create_cond_logger('Log_my_visual_repeat')
 Log_my_visual_repeat = false -- help autocomplete when manually overriding to true
-My_visual_repeat_force_alive = false
+My_visual_repeat_force_alive = My_visual_repeat_force_alive or false
 
 local visual_repeat_is_recording = false --- to differentiate from regular macro recording
 local changed_tick_start = 0
@@ -14,7 +14,9 @@ local changed_tick_start = 0
 -- since there could be a visual block with no change, before our (valid) repeat is called.
 local visual_mode = 'v'
 local last_valid_macro = ''
-local MY_MACRO_REGISTER = 'v'
+local MY_MACRO_REGISTER = 'v' -- used to record the macro
+local MY_MACRO_REGISTER2 = 'z' -- used to replay the macro with an existing selection (while in visual)
+local mappings_that_edit_in_visual = { 'x', 'X', 'm', 'd', 'D', 'c', 'p', 'r', 'gc', 's' }
 
 _G.My_visual_noop = function() end
 
@@ -66,6 +68,49 @@ remap('n', '<C-v>', function()
   visual_mode = 'V'
   My_visual_repeat()
 end, { desc = 'Start linewise visual with repeat' })
+
+-- TODO: handle escape sequences too? E.g. <C-c>, nvim_replace_termcodes will be needed.
+-- ----- handle mappings that edit, but start with " , e.g. "_d
+-- ----- check how timeout-based mappings are recorded -> answer without any special
+-- <timeout> thing. When replayed, these act as super-quickly typed keys by user.
+remap('x', '.', function()
+  if last_valid_macro == '' or (vim.fn.reg_recording() ~= '' and not visual_repeat_is_recording) then
+    return
+  end
+  local mode = vim.fn.mode(1)
+  if mode ~= 'v' and mode ~= 'V' then
+    return
+  end
+
+  My_visual_repeat_stop()
+
+  -- find whichever of input_chars_that_edit_in_visual is first, note that some of them might
+  -- be >1 chars
+  local edit_char_idx = 0 -- zero for 'not found'
+
+  for i = 1, #last_valid_macro do
+    local macro_substring = last_valid_macro:sub(i)
+    for _, mapping in ipairs(mappings_that_edit_in_visual) do
+      if vim.startswith(macro_substring, mapping) then
+        edit_char_idx = i
+        break
+      end
+    end
+    if edit_char_idx ~= 0 then
+      break
+    end
+  end
+
+  if edit_char_idx == 0 then
+    vim.notify('Visual repeat: could not find the mapping that edits in the recorded macro: ' .. last_valid_macro, vim.log.levels.ERROR)
+    return
+  end
+
+  local edit_part_of_macro = last_valid_macro:sub(edit_char_idx)
+  vim.fn.setreg(MY_MACRO_REGISTER2, edit_part_of_macro)
+
+  vim.cmd('normal! @' .. MY_MACRO_REGISTER2)
+end, { desc = 'Repeat last visual edit on current selection' })
 
 remap({ 'n', 'x' }, 'V', '<C-v>', { desc = 'V is the new visual block' })
 remap('x', '<C-v>', 'V', { desc = '<C-v> is the new linewise visual' })
@@ -123,41 +168,49 @@ function M.my_visual_surround()
     return
   end
   local is_visual_line_mode = mode == 'V'
-  local cur_pos = slice_array(vim.fn.getpos('.'), 2, 4) -- 1-based
-  local other_side_pos = slice_array(vim.fn.getpos('v'), 2, 4)
+  local cursor_pos = slice_array(vim.fn.getpos('.'), 2, 4) ---@type [integer, integer] -- 1-based
+  local other_side_pos = slice_array(vim.fn.getpos('v'), 2, 4) ---@type [integer, integer]
   local is_direction_forward = true -- cursor is before (<) than end of selection (top < bottom, left < right)
-  local targets = { cur_pos, other_side_pos } ---@type [integer, integer][] cursor is at beginning of selection
-  if cur_pos[1] == other_side_pos[1] and cur_pos[2] > other_side_pos[2] then
+  local start_pos, end_pos = cursor_pos, other_side_pos -- cursor is at beginning of selection
+  if cursor_pos[1] == other_side_pos[1] and cursor_pos[2] > other_side_pos[2] then
     is_direction_forward = false
   end
-  if cur_pos[1] > other_side_pos[1] then
+  if cursor_pos[1] > other_side_pos[1] then
     is_direction_forward = false
   end
   if not is_direction_forward then
-    reverse_in_place(targets)
+    local temp = start_pos
+    start_pos = end_pos
+    end_pos = temp
   end
 
-  cl('targets before adjusting for beyond eol: ', targets)
-  for i, target in ipairs(targets) do
-    local line_text = vim.fn.getline(target[1])
-    -- if col is greater than line + 1, set it to line + 1
-    -- insertion happens to the left of the col
-    local max_col = #line_text
-    if target[2] > max_col then
-      target[2] = max_col
+  cl('targets before adjusting for beyond eol: ', { start_pos, end_pos })
+  -- NOTE: actual text insertion happens right _before_ the target column.
+  local start_row_text = vim.fn.getline(start_pos[1])
+  local end_row_text = vim.fn.getline(end_pos[1])
+  if is_visual_line_mode then
+    start_pos[2] = 1
+    end_pos[2] = #end_row_text + 1
+  else
+    -- regular visual mode
+    -- We need to account for the possibility that any or both positions' columns
+    -- can be beyond eol.
+    if start_pos[2] > #start_row_text + 1 then
+      -- the start column gets capped at max_col + 1, since the
+      -- actual insertion will happen before it
+      start_pos[2] = #start_row_text + 1
     end
-    if is_visual_line_mode then
-      -- place chars at the very beginning of the start target line,
-      -- and at eol at the end of end target line
-      if i == 1 then
-        target[2] = 1
-      else
-        target[2] = #line_text
-      end
+
+    if end_pos[2] > #end_row_text then
+      -- the end column gets capped at max_col, this is like keeping
+      -- cursor from going beyond eol.
+      end_pos[2] = #end_row_text
     end
-    -- vim.print(line_text)
+    -- additional offset for end_pos in all cases, since the actual insertion
+    -- will happen before it, but we want the surrounding character to appear after it.
+    end_pos[2] = end_pos[2] + 1
   end
-  cl('targets after: ', targets)
+  cl('targets after: ', { start_pos, end_pos })
 
   local pairs = { '()', '{}', '[]', '<>' }
   local char = vim.fn.getcharstr()
@@ -172,13 +225,15 @@ function M.my_visual_surround()
       break
     end
   end
+
+  local targets = { start_pos, end_pos } -- just to match with pairs
   for i = #targets, 1, -1 do
-    -- reverse loop, since forward would shift text, altering positions
+    -- reverse loop, since forward loop would shift text, altering positions
     local target = targets[i]
     -- 0-based
     local insert_row = target[1] - 1
-    -- no offset to end target's column, we add text after the position
-    local insert_col = i == 2 and target[2] or target[2] - 1
+    local insert_col = target[2] - 1
+    cl('setting text to 0-based: ' .. insert_row .. ' ' .. insert_col)
     vim.api.nvim_buf_set_text(0, insert_row, insert_col, insert_row, insert_col, { pair_to_insert:sub(i, i) })
   end
 
@@ -211,6 +266,20 @@ vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
 
     -- we are out of visual now, so stopping recording
     My_visual_repeat_stop()
+  end,
+})
+
+vim.api.nvim_create_autocmd({ 'RecordingLeave' }, {
+  desc = 'My: visual repeat update',
+  group = vim.api.nvim_create_augroup('my-visual-repeat-recording-leave', { clear = true }),
+  callback = function()
+    -- Edge case: the user presses q when we are recording
+    -- at this point vim.fn.reg_recording() is not '', so our stopping function
+    -- will not throw error
+    if visual_repeat_is_recording then
+      cl('Stopping due to user pressing q')
+      My_visual_repeat_stop()
+    end
   end,
 })
 

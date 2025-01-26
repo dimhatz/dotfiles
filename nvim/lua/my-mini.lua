@@ -19,11 +19,27 @@ return {
     require('mini.ai').setup({
       silent = true,
       n_lines = 500, -- 50 default, 500 suggested by kickstart
+      search_method = 'cover',
+      mappings = {
+        around_next = '',
+        inside_next = '',
+        around_last = '',
+        inside_last = '',
+      },
       custom_textobjects = {
         -- e for entire
         e = MiniExtra.gen_ai_spec.buffer(),
       },
     })
+    -- vim.api.nvim_del_keymap('x', 'i')
+    local mini_ai_i_mapargs = vim.fn.maparg('i', 'v', false, true)
+    remap('x', 'i', function()
+      My_visual_repeat_force_alive = true
+      vim.schedule(function()
+        My_visual_repeat_force_alive = false
+      end)
+      return mini_ai_i_mapargs.callback()
+    end, { expr = true, desc = 'Workaround for moves like i) to be repeatable with our visual repeat' })
 
     ---------------------------------------------------------------------------------------
     require('mini.operators').setup({

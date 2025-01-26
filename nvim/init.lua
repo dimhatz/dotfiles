@@ -127,32 +127,6 @@ vim.o.background = 'dark'
 
 vim.o.sessionoptions = 'buffers,folds,tabpages,winpos,winsize,help,sesdir'
 
--- -- another snippet (not tested)
--- local function close_floating()
---   for _, win in ipairs(vim.api.nvim_list_wins()) do
---     local config = vim.api.nvim_win_get_config(win)
---     if config.relative ~= '' then
---       vim.api.nvim_win_close(win, false)
---     end
---   end
--- end
---
---
--- -- works, but lengthy
--- local closeHoveringWindows = function()
---   local base_win_id = vim.api.nvim_get_current_win()
---   local windows = vim.api.nvim_tabpage_list_wins(0)
---   for _, win_id in ipairs(windows) do
---     if win_id ~= base_win_id then
---       local win_cfg = vim.api.nvim_win_get_config(win_id)
---       if win_cfg.relative == 'win' and win_cfg.win == base_win_id then
---         vim.api.nvim_win_close(win_id, false)
---         return
---       end
---     end
---   end
--- end
---
 --------------------------------------------- KEYBINDINGS ----------------------------------------------------------------------
 
 local closeHoveringWindows = function()
@@ -403,7 +377,6 @@ remap('x', '<C-k>', 'gk<C-y>', { desc = 'Scroll up 1 line with cursor steady' })
 -- remap('n', '<A-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' }) -- same as above, but with Alt, alacritty re-exposes (in flashes) the mouse if its inside terminal
 -- remap('n', '<A-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
 remap('n', '<C-m>', 'M', { desc = 'Put cursor in the center of the screen, <CR> triggers <C-m> it too' })
-remap('n', 'M', 'zz', { desc = 'Center the screen on the cursor' })
 
 remap('n', '<C-z>', function()
   -- WORKAROUND: if we don't save and restore window the cursor jumps to the location
