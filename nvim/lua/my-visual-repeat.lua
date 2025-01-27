@@ -16,7 +16,7 @@ local visual_mode = 'v'
 local last_valid_macro = ''
 local MY_MACRO_REGISTER = 'v' -- used to record the macro
 local MY_MACRO_REGISTER2 = 'z' -- used to replay the macro with an existing selection (while in visual)
-local mappings_that_edit_in_visual = { 'x', 'X', 'm', 'd', 'D', 'c', 'p', 'r', 'gc', 's' }
+local mappings_that_edit_in_visual = { 'm', 'x', 'X', 'd', 'D', 'c', 'p', 'r', 'gc', 's', '>', '<', 'U' }
 
 _G.My_visual_noop = function() end
 
