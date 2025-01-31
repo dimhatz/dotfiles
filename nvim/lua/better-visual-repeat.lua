@@ -1,6 +1,13 @@
+-- NOTE: which-key maps, then replays keys, causing us to capture 2 times
+-- the same keystroke sequences, e.g. vgJ should result in just 2 lines joined, not 3.
+-- There seems to be no way to detect inside on_key() whether the keys are from
+-- which-key or not.
 -- TODO: maybe not even map v,V but use mode changes to start recording?
 -- TODO: expose a function is_active -> `not tracking == nothing` to be used in statusline
 -- TODO: maybe just diff 20 above/below lines to get inserted text? Problematic when pasting in visual.
+-- TODO: edge case ggc<text..> will be repeated as gc<text..> which is bad, since text is not
+-- a repeatable sequence, but text. Maybe perform change seq with `mx!` flag,
+-- double check we are still in insert, then replay the saved ". register.
 local M = {}
 local opt = {
   ---We need to be able to tell whether it was e.g. 'c' or 'gc' (or some user mapping) that
@@ -9,7 +16,12 @@ local opt = {
   -- mappings_that_edit_in_visual = { 'm', 'x', 'X', 'd', 'D', 'c', 'p', 'r', 'gc', 's', '>', '<', 'U' },
   -- TODO: support non-same-string sequences, to be able to say: {'a', 'b'} triggers change, but the rest
   -- of mappings beginning with 'a' do not.
-  mappings_that_edit_in_visual = { 's' }, -- TODO: check 'r'
+  -- TODO: check <Ignore> for further workaround mappings
+
+  -- There seems to be no way to tell wheter a key sequence e.g. "..ggggggg<C-a>" ends with
+  -- gg to go to top, then <C-a> or g<C-a> which is add an increasing count (:h v_g_CTRL-A)
+  -- on_key() does not inform the attached listener when a mapping counts as complete.
+  mappings_that_edit_in_visual = { 's', 'r', 'gc', 'c', '<lt>', '>', '<C-a>' }, -- TODO: check 'r'
   ---This would be likely due to user incorrectly applying workaround with force_alive
   warn_on_keystrokes_recorded = 500,
 }
@@ -17,31 +29,48 @@ local opt = {
 local enable_logging = true -- for debugging
 
 local force_alive = false
--- local REG1 = 'z'
--- local REG2 = 'x'
 local changed_tick_at_start = -1
+-- TODO: rename to is_disabled, update checks
 local is_active = false
----do not reset in reset_state(), used only in Better_visual_repeat() and mappings to
----avoid triggering recording when replaying with non-! ":normal "
 -- must store visual_mode, we cannot rely on vim.fn.visualmode()
 -- since there could be a visual block with no change, before our (valid) repeat is called.
 local visual_mode_at_start = 'v' ---@type 'v' | 'V'
 local keys_recorded = {} ---@type string[]
 local insert_was_entered = false
-local keys_len_at_first_change = -1 --- -1 for "there was no change yet"
----@type { keys: string[], keys_len_at_first_change: integer, mode: 'v' | 'V', dot_register_info: table?  }
+---@type { keys: string[], mode: 'v' | 'V', dot_register_text: string?  }
 local last_valid_edit = {
   keys = {}, --- will be used as part of a macro string
-  keys_len_at_first_change = -1, --- index of last element of keys, after the first text change
   mode = 'v',
   ---nil means non-insert-change (like, gc or surround), in this case
   ---we will not need to append <Esc> to macro string before replaying.
-  dot_register_info = nil,
+  dot_register_text = nil,
 }
+
+local log = function(...)
+  if not enable_logging then
+    return
+  end
+  vim.cmd.redraw() -- to avoid 'press enter' in :messages
+  vim.print(...)
+end
 
 function M.setup(user_options)
   -- vim.tbl_deep_extend
+  -- we intend to try to match shorter strings first <-- no need
+  -- table.sort(opt.mappings_that_edit_in_visual, function(a, b)
+  --   if #a == #b then
+  --     return a < b
+  --   end
+  --   return #a < #b
+  -- end)
+  -- log(opt.mappings_that_edit_in_visual)
+  opt.mappings_that_edit_in_visual = vim.tbl_map(function(v)
+    return vim.api.nvim_replace_termcodes(v, true, true, true)
+  end, opt.mappings_that_edit_in_visual)
+  log(opt.mappings_that_edit_in_visual)
 end
+
+-- M.setup()
 
 ---@param must_be_true boolean
 ---@param message string
@@ -50,14 +79,6 @@ local function assert(must_be_true, message)
     message = message .. 'Better visual repeat: '
     vim.notify(message, vim.log.levels.ERROR)
   end
-end
-
-local log = function(...)
-  if not enable_logging then
-    return
-  end
-  vim.cmd.redraw() -- to avoid 'press enter' in :messages
-  vim.print(...)
 end
 
 function M.toggle_logging()
@@ -111,14 +132,17 @@ function Better_visual_repeat(motion)
   local movement_keys_with_edit = table.concat(last_valid_edit.keys)
   vim.api.nvim_feedkeys(movement_keys_with_edit, 'm', false)
 
-  if last_valid_edit.dot_register_info then
+  if last_valid_edit.dot_register_text then
     -- TODO: just save the register as single string with getreg(). Are there cases
     -- dot register may be linewise?
     -- escape_ks = true does not seem to affect arrow movement
     -- adding 'x' flag will make it exit insert, not adding <Esc> for this reason
-    vim.api.nvim_feedkeys(table.concat(last_valid_edit.dot_register_info.regcontents, '\n'), 'nx', false)
+    vim.api.nvim_feedkeys(last_valid_edit.dot_register_text, 'n', false)
   end
-  -- vim.api.nvim_feedkeys('', 'nx', false) -- executes typeahead, will exit insert
+
+  -- executes typeahead, will exit insert, will ensure our operatorfunc is set after
+  -- the regular repeat action is stored by vim, overriding the stored repeat action.
+  vim.api.nvim_feedkeys('', 'nx', false)
 
   log((os.clock() - t_begin) * 1000 .. ' ms') -- ms, measured 0ms - 2ms
 
@@ -137,10 +161,16 @@ end
 ---If abort_with_reason is provided, we will abort and discard / invalidate anything that was recorded.
 ---Otherwise we will follow the usual steps to determine whether the recorded edit is valid.
 function M.stop(abort_with_reason)
+  if not is_active then
+    -- if already inactive, do nothing. May occur if >1 stop() are scheduled.
+    log('Already inactive')
+    return
+  end
+
   log('Stopping rec')
 
   local changed_tick_current = vim.api.nvim_buf_get_var(0, 'changedtick')
-  if changed_tick_current == changed_tick_at_start then
+  if abort_with_reason == nil and changed_tick_current == changed_tick_at_start then
     -- no changes were made
     abort_with_reason = 'No changes detected'
   end
@@ -154,13 +184,13 @@ function M.stop(abort_with_reason)
   -- at this point the recorded edit is valid and can be repeated.
   -- If an edit was made in insert the text will be in ". register. If 'c' was pressed and
   -- nothing was entered (text was deleted), ". register will be empty string ("")
-  log('Updating captured command')
+  log('Updating last valid edit')
   last_valid_edit = {
     keys = keys_recorded,
     mode = visual_mode_at_start,
-    dot_register_info = insert_was_entered and vim.fn.getreginfo('.') or nil,
-    keys_len_at_first_change = keys_len_at_first_change,
+    dot_register_text = insert_was_entered and vim.fn.getreg('.') or nil,
   }
+  log(last_valid_edit)
   reset_state()
 
   vim.schedule(function()
@@ -180,16 +210,21 @@ local on_key_logging = false -- for debugging
 local ns = vim.api.nvim_create_namespace('BetterVisualRepeat')
 vim.on_key(function(mapped, typed)
   -- This callback is triggered before ModeChanged's callback
-  if not is_active then
-    return
-  end
 
   if on_key_logging then
     -- TODO: for better logging see what which-key uses to print register content
     -- it shows the "decoded" chars instead of byte-like sequences
+    log('--------------------------')
     log('mapped: ' .. mapped .. ' typed: ' .. typed .. ' ')
+    local mode_dict = vim.api.nvim_get_mode()
+    log('mode: ' .. mode_dict.mode .. ' ' .. (mode_dict.blocking and 'block!' or '') .. ' state: ' .. vim.fn.state())
+  end
+
+  if not is_active then
+    return
   end
   if insert_was_entered then
+    -- stop recording when in insert
     return
   end
   if typed ~= '' then
@@ -232,6 +267,8 @@ vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
     end
 
     -- mode 'no' stands for normal operator pending, see :h mode()
+    -- having also old_mode == 'no' helps with some plugins that go:
+    -- `v -> no -> n -> v -> n` . so far no adverse effects.
     if new_mode == 'v' or new_mode == 'V' or new_mode == 'no' or old_mode == 'no' then
       -- do not cancel recording when switching between regular / line visual, or making changes
       return
@@ -242,20 +279,20 @@ vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ 'TextChanged' }, {
-  desc = 'Better visual repeat text change',
-  group = vim.api.nvim_create_augroup('better-visual-repeat-text-change', { clear = true }),
-  callback = function()
-    if not is_active then
-      return
-    end
-    log('Text changed')
-    if keys_len_at_first_change ~= -1 then
-      log('Updating keys_len_at_first_change')
-      keys_len_at_first_change = #keys_recorded
-    end
-  end,
-})
+-- vim.api.nvim_create_autocmd({ 'TextChanged' }, {
+--   desc = 'Better visual repeat text change',
+--   group = vim.api.nvim_create_augroup('better-visual-repeat-text-change', { clear = true }),
+--   callback = function()
+--     if not is_active then
+--       return
+--     end
+--     log('Text changed2')
+--     if keys_len_at_first_change == -1 then
+--       log('Updating keys_len_at_first_change')
+--       keys_len_at_first_change = #keys_recorded
+--     end
+--   end,
+-- })
 
 ------------------- Mapping functions ---------------------------------------------
 
@@ -287,16 +324,14 @@ end
 
 function M.dot_on_visual_selection()
   if is_vim_macro_active() then
-    log('Regular recording / replaying ongoing. Will not continue.')
-    M.stop('Vim recording ongoing')
+    M.stop('Vim recording detected (dot on visual selection)')
     return
   end
 
   assert(is_active, 'Dot on visual selection: expected is_active=true')
 
   if #last_valid_edit.keys == 0 or not is_active then
-    log('No keys recorded yet') -- the is_active case is handled above
-    -- no need to M.stop() here, recording can continue
+    M.stop('No keys recorded yet or plugin disabled')
     return
   end
 
@@ -307,32 +342,68 @@ function M.dot_on_visual_selection()
     return
   end
 
+  -- Discard recording, since we will replay
   M.stop('Will do . on visual selection') -- not defensive, on every visual we always start recording
 
   log(last_valid_edit)
-  local idx_recorded = last_valid_edit.keys_len_at_first_change
-  local idx_custom = -1
-  for i, key_str in ipairs(last_valid_edit.keys) do
-    if vim.tbl_contains(opt.mappings_that_edit_in_visual, key_str) then
-      idx_custom = i
-      break
+
+  -- Determine when the editing sequence begins, then replay only it, skipping the
+  -- preceding motions part.
+
+  -- NOTE: we could also use TextChanged autocmd to determine on which keystroke the change
+  -- occurs. It would be triggered after ModeChanged, so we would need to schedule-wrap
+  -- M.stop() from ModeChanged, to avoid disabling the plugin before this could trigger.
+  -- Even then, (from testing) the editing keystroke is always the last one of keys_recorded.
+
+  local smallest_idx_found = nil -- nil for not found
+  local keys_str = table.concat(last_valid_edit.keys)
+  for _, edit_key in ipairs(opt.mappings_that_edit_in_visual) do
+    local idx = keys_str:find(edit_key, 1, true)
+    if smallest_idx_found == nil or (idx ~= nil and idx < smallest_idx_found) then
+      smallest_idx_found = idx
     end
   end
-  local idx_final = -1
-  if idx_recorded == -1 then
-    idx_final = idx_custom
-  elseif idx_custom ~= -1 and idx_custom < idx_recorded then
-    idx_final = idx_custom
-  else
-    idx_final = idx_recorded
+
+  if smallest_idx_found == nil then
+    log('No dot_on_visual_selection edit keys in recording')
+    return
   end
 
-  local edit_macro = ''
-  if idx_final == -1 then
-    edit_macro = table.concat(last_valid_edit.keys)
-  else
-    edit_macro = table.concat(last_valid_edit.keys, '', idx_final)
+  local edit_keys_str = keys_str:sub(smallest_idx_found)
+  log('Dot on selection (visual): ' .. edit_keys_str)
+  -- for flag explanation see Better_visual_repeat()
+  vim.api.nvim_feedkeys(edit_keys_str, 'm', false)
+  if last_valid_edit.dot_register_text then
+    log('Dot on selection (insert): ' .. last_valid_edit.dot_register_text)
+    vim.api.nvim_feedkeys(last_valid_edit.dot_register_text, 'n', false)
   end
+  vim.api.nvim_feedkeys('', 'nx', false)
+  ---------------------------------------------------------------------------------
+  -- local idx_recorded = last_valid_edit.keys_len_at_first_change
+  -- local idx_custom = -1
+  -- for i, key_str in ipairs(last_valid_edit.keys) do
+  --   if vim.tbl_contains(opt.mappings_that_edit_in_visual, key_str) then
+  --     idx_custom = i
+  --     break
+  --   end
+  -- end
+  -- local idx_final = -1
+  -- if idx_recorded == -1 then
+  --   idx_final = idx_custom
+  -- elseif idx_custom ~= -1 and idx_custom < idx_recorded then
+  --   idx_final = idx_custom
+  -- else
+  --   idx_final = idx_recorded
+  -- end
+  --
+  -- local edit_macro = ''
+  -- if idx_final == -1 then
+  --   edit_macro = table.concat(last_valid_edit.keys)
+  -- else
+  --   edit_macro = table.concat(last_valid_edit.keys, '', idx_final)
+  -- end
+
+  ---------------------------------------------------------------------------------
 
   -- vim.fn.setreg(REG1, edit_macro)
   --
@@ -375,3 +446,5 @@ end, { desc = 'Better visual repeat debug: Toggle on_key() logging' })
 vim.keymap.set('n', 'v', M.better_v, { desc = 'Better v' })
 vim.keymap.set('n', '<C-v>', M.better_V, { desc = 'Better V' })
 vim.keymap.set('v', '.', M.dot_on_visual_selection, { desc = 'Better . on visual selection' })
+
+return M
