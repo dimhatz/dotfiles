@@ -37,9 +37,9 @@ local is_active = false
 local visual_mode_at_start = 'v' ---@type 'v' | 'V'
 local keys_recorded = {} ---@type string[]
 local insert_was_entered = false
----@type { keys: string[], keys_translated: string[], mode: 'v' | 'V', dot_register_text: string?  }
+---@type { keys_raw: string[], keys_translated: string[], mode: 'v' | 'V', dot_register_text: string?  }
 local last_valid_edit = {
-  keys = {}, --- will be used as part of a macro string
+  keys_raw = {}, --- will be used as part of a macro string
   --- keys, mapped with keytrans(), needed to be able to match raw keys when determining the
   --- editing sequence during dot_on_visual_selection
   keys_translated = {},
@@ -126,7 +126,7 @@ function Better_visual_repeat(motion)
 
   -- 'n' to avoid triggering our mapping that will start recording again
   vim.api.nvim_feedkeys(last_valid_edit.mode, 'n', false)
-  local movement_keys_with_edit = table.concat(last_valid_edit.keys)
+  local movement_keys_with_edit = table.concat(last_valid_edit.keys_raw)
   vim.api.nvim_feedkeys(movement_keys_with_edit, 'm', false)
 
   if last_valid_edit.dot_register_text then
@@ -183,7 +183,7 @@ function M.stop(abort_with_reason)
   -- nothing was entered (text was deleted), ". register will be empty string ("")
   log('Updating last valid edit')
   last_valid_edit = {
-    keys = keys_recorded,
+    keys_raw = keys_recorded,
     keys_translated = vim.tbl_map(function(k)
       return vim.fn.keytrans(k)
     end, keys_recorded),
@@ -195,7 +195,7 @@ function M.stop(abort_with_reason)
 
   vim.schedule(function()
     -- schedule is needed, otherwise just the last action is repeated, not our g@l
-    log('setting last cmd to our g@l')
+    log('scheduled: setting last cmd to our g@l')
     -- vim keeps the individual edit as last, force it to be our g@l
     vim.go.operatorfunc = 'v:lua.Better_visual_noop'
     vim.cmd('normal! g@l')
@@ -211,7 +211,7 @@ function M.dot_on_visual_selection()
 
   assert(is_active, 'Dot on visual selection: expected is_active=true')
 
-  if #last_valid_edit.keys == 0 or not is_active then
+  if #last_valid_edit.keys_raw == 0 or not is_active then
     M.stop('No keys recorded yet or plugin disabled')
     return
   end
@@ -225,8 +225,6 @@ function M.dot_on_visual_selection()
 
   -- Discard recording, since we will replay
   M.stop('Will do . on visual selection') -- not defensive, on every visual we always start recording
-
-  log(last_valid_edit)
 
   -- Determine when the editing sequence begins, then replay only it, skipping the
   -- preceding motions part.
@@ -256,7 +254,7 @@ function M.dot_on_visual_selection()
     return
   end
 
-  local edit_keys_str = table.concat(last_valid_edit.keys, '', smallest_idx_found)
+  local edit_keys_str = table.concat(last_valid_edit.keys_raw, '', smallest_idx_found)
 
   log('Dot on selection (visual): ' .. edit_keys_str)
   -- for flag explanation see Better_visual_repeat()
@@ -274,6 +272,102 @@ function M.dot_on_visual_selection()
   vim.go.operatorfunc = 'v:lua.Better_visual_repeat'
 end
 
+function M.force_alive(value)
+  force_alive = value
+end
+
+function M.visual_surround()
+  local mode = vim.fn.mode(1)
+  -- vim.print('mode: ' .. mode)
+  if mode ~= 'v' and mode ~= 'V' then
+    return
+  end
+  local is_visual_line_mode = mode == 'V'
+  local cursor_pos = vim.fn.getpos('.') ---@type [integer, integer] -- 1-based
+  cursor_pos = { cursor_pos[2], cursor_pos[3] }
+  local other_side_pos = vim.fn.getpos('v') ---@type [integer, integer]
+  other_side_pos = { other_side_pos[2], other_side_pos[3] }
+  local is_direction_forward = true -- cursor is before (<) than end of selection (top < bottom, left < right)
+  local start_pos, end_pos = cursor_pos, other_side_pos -- cursor is at beginning of selection
+  if cursor_pos[1] == other_side_pos[1] and cursor_pos[2] > other_side_pos[2] then
+    is_direction_forward = false
+  end
+  if cursor_pos[1] > other_side_pos[1] then
+    is_direction_forward = false
+  end
+  if not is_direction_forward then
+    local temp = start_pos
+    start_pos = end_pos
+    end_pos = temp
+  end
+
+  log('targets before adjusting for beyond eol: ', { start_pos, end_pos })
+  -- NOTE: actual text insertion happens right _before_ the target column.
+  local start_row_text = vim.fn.getline(start_pos[1])
+  local end_row_text = vim.fn.getline(end_pos[1])
+  if is_visual_line_mode then
+    -- start_pos[2] = 1
+    start_pos[2] = start_row_text:find('%S')
+    end_pos[2] = #end_row_text + 1
+  else
+    -- regular visual mode
+    -- We need to account for the possibility that any or both positions' columns
+    -- can be beyond eol.
+    if start_pos[2] > #start_row_text + 1 then
+      -- the start column gets capped at max_col + 1, since the
+      -- actual insertion will happen before it
+      start_pos[2] = #start_row_text + 1
+    end
+
+    if end_pos[2] > #end_row_text then
+      -- the end column gets capped at max_col, this is like keeping
+      -- cursor from going beyond eol.
+      end_pos[2] = #end_row_text
+    end
+    -- additional offset for end_pos in all cases, since the actual insertion
+    -- will happen before it, but we want the surrounding character to appear after it.
+    end_pos[2] = end_pos[2] + 1
+  end
+  log('targets after: ', { start_pos, end_pos })
+
+  local pairs = { '()', '{}', '[]', '<>' }
+  local char = vim.fn.getcharstr()
+  if #char ~= 1 then
+    vim.notify('My surround: length of char not 1', vim.log.levels.ERROR)
+    return
+  end
+  local pair_to_insert = char .. char
+  for _, pair_str in ipairs(pairs) do
+    if pair_str:find(char, 1, true) then
+      pair_to_insert = pair_str
+      break
+    end
+  end
+
+  -- TODO: if left matching char, like (, { etc was provided, leave additional space
+  -- after first char, before second.
+
+  local targets = { start_pos, end_pos } -- just to match with pairs
+  for i = #targets, 1, -1 do
+    -- reverse loop, since forward loop would shift text, altering positions
+    local target = targets[i]
+    -- 0-based
+    local insert_row = target[1] - 1
+    local insert_col = target[2] - 1
+    log('setting text to 0-based: ' .. insert_row .. ' ' .. insert_col)
+    vim.api.nvim_buf_set_text(0, insert_row, insert_col, insert_row, insert_col, { pair_to_insert:sub(i, i) })
+  end
+
+  -- nx needed, otherwise gv will not select the desired region
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'nx', false)
+
+  -- make gv select around the added symbol, so that another s + symbol can follow.
+  -- When on the same line, 2 chars have been added to the line, so the offset is 2
+  local col_offset = targets[1][1] == targets[2][1] and 2 or 1
+  vim.fn.setpos("'<", { 0, targets[1][1], targets[1][2], 0 })
+  vim.fn.setpos("'>", { 0, targets[2][1], targets[2][2] + col_offset, 0 })
+end
+
 -------------------- On key / autocmds -----------------------------------------------
 
 local on_key_logging = false -- for debugging
@@ -283,8 +377,6 @@ vim.on_key(function(mapped, typed)
   -- This callback is triggered before ModeChanged's callback
 
   if on_key_logging then
-    -- TODO: for better logging see what which-key uses to print register content
-    -- it shows the "decoded" chars instead of byte-like sequences
     log('--------------------------')
     log('mapped: ' .. mapped .. ' | ' .. vim.fn.keytrans(mapped) .. ' typed: ' .. typed .. ' | ' .. vim.fn.keytrans(typed) .. ' ')
     local mode_dict = vim.api.nvim_get_mode()
@@ -350,21 +442,6 @@ vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
     M.stop()
   end,
 })
-
--- vim.api.nvim_create_autocmd({ 'TextChanged' }, {
---   desc = 'Better visual repeat text change',
---   group = vim.api.nvim_create_augroup('better-visual-repeat-text-change', { clear = true }),
---   callback = function()
---     if not is_active then
---       return
---     end
---     log('Text changed2')
---     if keys_len_at_first_change == -1 then
---       log('Updating keys_len_at_first_change')
---       keys_len_at_first_change = #keys_recorded
---     end
---   end,
--- })
 
 ------------------- Mapping functions ---------------------------------------------
 
