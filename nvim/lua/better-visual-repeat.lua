@@ -336,12 +336,20 @@ function M.visual_surround()
     vim.notify('My surround: length of char not 1', vim.log.levels.ERROR)
     return
   end
-  local pair_to_insert = char .. char
+  local pair_to_insert = { char, char } ---@type [string, string]
   for _, pair_str in ipairs(pairs) do
-    if pair_str:find(char, 1, true) then
-      pair_to_insert = pair_str
+    local idx = pair_str:find(char, 1, true)
+    if not idx then
+      goto continue
+    end
+    if idx == 1 then
+      pair_to_insert = { pair_str:sub(1, 1) .. ' ', ' ' .. pair_str:sub(2, 2) }
+      break
+    else
+      pair_to_insert = { pair_str:sub(1, 1), pair_str:sub(2, 2) }
       break
     end
+    ::continue::
   end
 
   -- TODO: if left matching char, like (, { etc was provided, leave additional space
@@ -355,15 +363,15 @@ function M.visual_surround()
     local insert_row = target[1] - 1
     local insert_col = target[2] - 1
     log('setting text to 0-based: ' .. insert_row .. ' ' .. insert_col)
-    vim.api.nvim_buf_set_text(0, insert_row, insert_col, insert_row, insert_col, { pair_to_insert:sub(i, i) })
+    vim.api.nvim_buf_set_text(0, insert_row, insert_col, insert_row, insert_col, { pair_to_insert[i] })
   end
 
   -- nx needed, otherwise gv will not select the desired region
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'nx', false)
 
   -- make gv select around the added symbol, so that another s + symbol can follow.
-  -- When on the same line, 2 chars have been added to the line, so the offset is 2
-  local col_offset = targets[1][1] == targets[2][1] and 2 or 1
+  -- When on the same line, 2 or 4 chars have been added to the line, otherwise 1 or 2
+  local col_offset = targets[1][1] == targets[2][1] and (2 * #pair_to_insert[1] - 1) or #pair_to_insert[1] - 1
   vim.fn.setpos("'<", { 0, targets[1][1], targets[1][2], 0 })
   vim.fn.setpos("'>", { 0, targets[2][1], targets[2][2] + col_offset, 0 })
 end
