@@ -95,7 +95,7 @@ local function apply_colors()
   hi('Visual', { bg = c.base02, fg = c.blackest, bold = true })
   hi('Search', { bg = c.peach_dark, fg = c.whitest })
   hi('IncSearch', { bg = c.peach_dark, fg = c.whitest })
-  hi('CurSearch', { bg = c.yellow, fg = c.blackest, bold = true })
+  hi('CurSearch', { bg = c.yellow_saturated, fg = c.blackest, bold = true })
   hi('CursorLine', { bg = c.blackest })
   hi('CursorLineNr', { bg = c.blackest, fg = c.base03 })
   hi('nCursor', { bg = c.base05fg, fg = c.blackest }) -- make the letters darker
