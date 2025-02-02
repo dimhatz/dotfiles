@@ -2,6 +2,8 @@ local remap = require('my-helpers').remap
 local update_treesitter_tree = require('my-helpers').update_treesitter_tree
 local minimap_refresh_cmd = require('my-helpers').minimap_refresh_cmd
 
+---To be used with operatorfunc
+My_noop = function() end
 -- for binaries on windows:
 -- choco install -y ripgrep wget fd unzip gzip mingw make
 -- NOTE: use :lua vim.diagnostic.setqflist() to all diagnostics into a quickfix list
@@ -316,7 +318,7 @@ remap('n', 'C', '"_C')
 remap('n', 'x', '"_x', { desc = 'delete char into black hole' })
 remap({ 'n', 'x' }, 'm', '"_d', { desc = 'Move into black hole' })
 remap('n', 'M', '"_D', { desc = 'delete into black hole' })
-remap('n', 'X', '<cmd>echo "use Z to delete into black hole till end of line"<CR>')
+remap('n', 'X', '<cmd>echo "use M to delete into black hole till end of line"<CR>')
 remap('x', 'x', '"_d')
 
 remap('n', 'j', 'gj') -- navigate wrapped lines
@@ -468,7 +470,62 @@ remap('n', '<C-f>', function()
   vim.cmd.execute([["normal! \<Esc>\<Cmd>set hlsearch\<CR>`v"]])
 end, { desc = 'Search for word under cursor' })
 
-remap({ 'n', 'x' }, '<Leader>f', '<Cmd>echo "use <C-f> (or * to search+jump)"<CR>', { desc = 'Use <C-f> (or * to search+jump)' })
+-- make gcc non-jumpy
+local gcc_maparg = vim.fn.maparg('gcc', 'n', false, true)
+function My_gcc()
+  if not gcc_maparg.expr or not gcc_maparg.noremap or not gcc_maparg.replace_keycodes then
+    vim.notify('My gcc: unexpected original gcc mapping', vim.log.levels.ERROR)
+    vim.print(gcc_maparg)
+    return
+  end
+
+  local cursor_pos_before_gc = vim.api.nvim_win_get_cursor(0)
+  local keys = vim.api.nvim_replace_termcodes(gcc_maparg.callback(), true, true, true)
+  vim.api.nvim_feedkeys(keys, 'nx', false)
+  vim.api.nvim_win_set_cursor(0, cursor_pos_before_gc)
+
+  -- this way dot repeat is not jumpy too
+  vim.go.operatorfunc = 'v:lua.My_noop'
+  vim.cmd('normal! g@l')
+  vim.go.operatorfunc = 'v:lua.My_gcc'
+end
+remap('n', 'gcc', My_gcc, { desc = 'gcc now does not jump' })
+
+local visual_gc_maparg = vim.fn.maparg('gc', 'x', false, true)
+remap('x', 'gc', function()
+  if not visual_gc_maparg.expr or not visual_gc_maparg.noremap or not visual_gc_maparg.replace_keycodes then
+    vim.notify('My gc: unexpected original gc mapping', vim.log.levels.ERROR)
+    vim.print(visual_gc_maparg)
+    return
+  end
+
+  local cursor_pos_before_gc = vim.api.nvim_win_get_cursor(0)
+  local keys = vim.api.nvim_replace_termcodes(visual_gc_maparg.callback(), true, true, true)
+  vim.api.nvim_feedkeys(keys, 'nx', false)
+  vim.api.nvim_win_set_cursor(0, cursor_pos_before_gc)
+end, { desc = 'gc in visual now is not jumpy' })
+
+-- make u non-jumpy
+remap('n', 'u', function()
+  local cursor_pos_before_u = vim.api.nvim_win_get_cursor(0)
+  vim.cmd('normal! u')
+  local cursor_pos_after_u = vim.api.nvim_win_get_cursor(0)
+  if cursor_pos_after_u[1] ~= cursor_pos_before_u[1] then
+    return
+  end
+  vim.api.nvim_win_set_cursor(0, cursor_pos_before_u)
+end, { desc = 'u does not jump if edit was on the same line' })
+
+-- make <c-r> non-jumpy
+remap('n', '<C-r>', function()
+  local cursor_pos_before_cr = vim.api.nvim_win_get_cursor(0)
+  vim.cmd([[execute "normal! \<C-r>"]])
+  local cursor_pos_after_cr = vim.api.nvim_win_get_cursor(0)
+  if cursor_pos_after_cr[1] ~= cursor_pos_before_cr[1] then
+    return
+  end
+  vim.api.nvim_win_set_cursor(0, cursor_pos_before_cr)
+end, { desc = '<C-r> does not jump if edit was on the same line' })
 
 -- TODO: check these out, adjust setup
 -- -- Diagnostic keymaps
@@ -523,6 +580,9 @@ remap('n', 'o', function()
     return 'o'
   end
 end, { expr = true, desc = 'Make new line (after comment) start non-commented.' })
+
+-- TODO: make a shortcut in insert that will comment the line. Not sure whether repeatability
+-- will be broken and whether this is an issue.
 
 -- hack to prevent the cursor from jumping after a yank, also see below 'TextYankPost'
 remap({ 'n', 'x' }, 'y', 'myy', { desc = 'Set mark "y" before yanking' })
@@ -730,7 +790,8 @@ require('lazy').setup({
 require('my-statusline')
 require('my-tabline')
 require('my-hop')
-require('my-visual-repeat')
+-- require('my-visual-repeat')
+require('better-visual-repeat')
 ----------------  NOT USED ----------------------------------------------------------------
 -- autoclose parens, quotes etc - does not expose its <CR> function that we need in our custom completion mapping, disabling
 -- { 'm4xshen/autoclose.nvim', enabled = false, lazy = false, opts = { options = { disable_command_mode = true } } },

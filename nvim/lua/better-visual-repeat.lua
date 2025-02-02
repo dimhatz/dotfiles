@@ -8,6 +8,9 @@
 -- TODO: edge case ggc<text..> will be repeated as gc<text..> which is bad, since text is not
 -- a repeatable sequence, but text. Maybe perform change seq with `mx!` flag,
 -- double check we are still in insert, then replay the saved ". register.
+-- TODO: (doc) our visual line functionality differs from original vim visual repeat (linewise):
+-- vii indentation select is linewise. We will select a different amount based on the new repeat spot.
+-- TODO: investigate: pressing : in visual exits to normal
 local M = {}
 local opt = {
   ---We need to be able to tell whether it was e.g. 'c' or 'gc' (or some user mapping) that
@@ -23,7 +26,7 @@ local opt = {
   -- on_key() does not inform the attached listener when a mapping counts as complete.
   mappings_that_edit_in_visual = { 's', 'r', 'gc', 'c', '<lt>', '>', '<C-a>', 'g<C-a>' }, -- TODO: check 'r'
   ---This would be likely due to user incorrectly applying workaround with force_alive
-  warn_on_keystrokes_recorded = 500,
+  max_keystrokes_recorded = 100,
 }
 
 local enable_logging = true -- for debugging
@@ -103,7 +106,7 @@ Better_visual_noop = function() end
 -- @param motion: when called the first time by us, will be nil.
 -- When called as a repeat (g@l) by nvim, it will be set to 'char' (see :h g@)
 -- must be global in order to be able to use operatorfunc
-function Better_visual_repeat(motion)
+function Better_visual_repeat_op(motion)
   if motion == nil then
     log('First call')
     changed_tick_at_start = vim.api.nvim_buf_get_var(0, 'changedtick')
@@ -149,7 +152,7 @@ function Better_visual_repeat(motion)
   -- is not our function, but the previous (unrecorded non-visual) edit, wrapping may be needed.
   vim.go.operatorfunc = 'v:lua.Better_visual_noop'
   vim.cmd('normal! g@l')
-  vim.go.operatorfunc = 'v:lua.Better_visual_repeat'
+  vim.go.operatorfunc = 'v:lua.Better_visual_repeat_op'
 end
 
 ---Can be called from a mapping as a workaround for another plugin.
@@ -199,7 +202,7 @@ function M.stop(abort_with_reason)
     -- vim keeps the individual edit as last, force it to be our g@l
     vim.go.operatorfunc = 'v:lua.Better_visual_noop'
     vim.cmd('normal! g@l')
-    vim.go.operatorfunc = 'v:lua.Better_visual_repeat'
+    vim.go.operatorfunc = 'v:lua.Better_visual_repeat_op'
   end)
 end
 
@@ -257,7 +260,7 @@ function M.dot_on_visual_selection()
   local edit_keys_str = table.concat(last_valid_edit.keys_raw, '', smallest_idx_found)
 
   log('Dot on selection (visual): ' .. edit_keys_str)
-  -- for flag explanation see Better_visual_repeat()
+  -- for flag explanation see Better_visual_repeat_op()
   vim.api.nvim_feedkeys(edit_keys_str, 'm', false)
   if last_valid_edit.dot_register_text then
     log('Dot on selection (insert): ' .. last_valid_edit.dot_register_text)
@@ -269,7 +272,7 @@ function M.dot_on_visual_selection()
 
   vim.go.operatorfunc = 'v:lua.Better_visual_noop'
   vim.cmd('normal! g@l')
-  vim.go.operatorfunc = 'v:lua.Better_visual_repeat'
+  vim.go.operatorfunc = 'v:lua.Better_visual_repeat_op'
 end
 
 function M.force_alive(value)
@@ -301,7 +304,7 @@ function M.visual_surround()
     end_pos = temp
   end
 
-  log('targets before adjusting for beyond eol: ', { start_pos, end_pos })
+  log('Better visual surround: targets before adjusting for beyond eol: ', { start_pos, end_pos })
   -- NOTE: actual text insertion happens right _before_ the target column.
   local start_row_text = vim.fn.getline(start_pos[1])
   local end_row_text = vim.fn.getline(end_pos[1])
@@ -328,12 +331,13 @@ function M.visual_surround()
     -- will happen before it, but we want the surrounding character to appear after it.
     end_pos[2] = end_pos[2] + 1
   end
-  log('targets after: ', { start_pos, end_pos })
+  log('Better visual surround: targets after: ', { start_pos, end_pos })
 
   local pairs = { '()', '{}', '[]', '<>' }
   local char = vim.fn.getcharstr()
-  if #char ~= 1 then
-    vim.notify('My surround: length of char not 1', vim.log.levels.ERROR)
+  if char:find('^[%w%p%s]$') == nil then
+    -- not checking #char ~= 1 since a multibyte char may be entered
+    vim.notify('Better visual surround: invalid char entered: ' .. char, vim.log.levels.ERROR)
     return
   end
   local pair_to_insert = { char, char } ---@type [string, string]
@@ -352,9 +356,6 @@ function M.visual_surround()
     ::continue::
   end
 
-  -- TODO: if left matching char, like (, { etc was provided, leave additional space
-  -- after first char, before second.
-
   local targets = { start_pos, end_pos } -- just to match with pairs
   for i = #targets, 1, -1 do
     -- reverse loop, since forward loop would shift text, altering positions
@@ -362,7 +363,7 @@ function M.visual_surround()
     -- 0-based
     local insert_row = target[1] - 1
     local insert_col = target[2] - 1
-    log('setting text to 0-based: ' .. insert_row .. ' ' .. insert_col)
+    log('Better visual surround: setting text to 0-based: ' .. insert_row .. ' ' .. insert_col)
     vim.api.nvim_buf_set_text(0, insert_row, insert_col, insert_row, insert_col, { pair_to_insert[i] })
   end
 
@@ -401,6 +402,9 @@ vim.on_key(function(mapped, typed)
   end
   if typed ~= '' then
     table.insert(keys_recorded, typed)
+    if #keys_recorded > opt.max_keystrokes_recorded then
+      M.stop('Maximum recorded keystrokes limit reached')
+    end
   end
 end, ns)
 
@@ -421,15 +425,17 @@ vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
   callback = function()
     -- This callback is triggered after on_key's callback
     -- Determines whether it's time to stop or should we go on.
-    if not is_active then
-      return
-    end
 
     local old_mode = vim.v.event.old_mode
     local new_mode = vim.v.event.new_mode
     log(old_mode .. ' -> ' .. new_mode .. ' ' .. vim.api.nvim_buf_get_var(0, 'changedtick'))
 
+    if not is_active then
+      return
+    end
+
     if force_alive then
+      log('Forced alive')
       return
     end
 
@@ -447,6 +453,7 @@ vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
     end
 
     -- we are out of visual now, so stopping recording
+    log('Out of visual detected. Stopping.')
     M.stop()
   end,
 })
@@ -463,7 +470,7 @@ function M.better_v()
   log('start v ' .. vim.api.nvim_buf_get_var(0, 'changedtick'))
   is_active = true
   visual_mode_at_start = 'v'
-  Better_visual_repeat()
+  Better_visual_repeat_op()
 end
 
 function M.better_V()
@@ -476,7 +483,7 @@ function M.better_V()
   log('start V ' .. vim.api.nvim_buf_get_var(0, 'changedtick'))
   is_active = true
   visual_mode_at_start = 'V'
-  Better_visual_repeat()
+  Better_visual_repeat_op()
 end
 
 ------------------- Test mappings ---------------------------------------------
@@ -488,5 +495,7 @@ end, { desc = 'Better visual repeat debug: Toggle on_key() logging' })
 vim.keymap.set('n', 'v', M.better_v, { desc = 'Better v' })
 vim.keymap.set('n', '<C-v>', M.better_V, { desc = 'Better V' })
 vim.keymap.set('v', '.', M.dot_on_visual_selection, { desc = 'Better . on visual selection' })
+vim.keymap.set('v', '<C-v>', 'V', { desc = '<c-v> is new V in visual' })
 
+Better_visual_repeat = M
 return M

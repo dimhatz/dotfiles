@@ -32,8 +32,8 @@ return {
       { '<Leader>g', group = 'GitSigns' },
     },
     triggers = {
-      { '<leader>', mode = { 'n', 'v' } },
-      { 'g', mode = { 'n', 'v' } },
+      { '<leader>', mode = { 'n' } },
+      { 'g', mode = { 'n' } },
     },
     win = {
       padding = { 1, 2 },

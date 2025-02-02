@@ -1,7 +1,8 @@
 local remap = require('my-helpers').remap
+local better_visual_repeat = require('better-visual-repeat')
 local slice_array = require('my-helpers').slice_array
 local reverse_in_place = require('my-helpers').reverse_in_place
-local my_visual_surround = require('my-visual-repeat').my_visual_surround
+-- local my_visual_surround = require('my-visual-repeat').my_visual_surround
 
 return {
   'echasnovski/mini.nvim',
@@ -31,15 +32,15 @@ return {
         e = MiniExtra.gen_ai_spec.buffer(),
       },
     })
-    -- vim.api.nvim_del_keymap('x', 'i')
+
     local mini_ai_i_mapargs = vim.fn.maparg('i', 'v', false, true)
     remap('x', 'i', function()
-      My_visual_repeat_force_alive = true
+      better_visual_repeat.force_alive(true)
       vim.schedule(function()
-        My_visual_repeat_force_alive = false
+        better_visual_repeat.force_alive(false)
       end)
       return mini_ai_i_mapargs.callback()
-    end, { expr = true, desc = 'Workaround for moves like i) to be repeatable with our visual repeat' })
+    end, { expr = true, desc = 'Make moves like i) repeatable with better-visual-repeat' })
 
     ---------------------------------------------------------------------------------------
     require('mini.operators').setup({
@@ -85,8 +86,8 @@ return {
     remap('n', 'sw', 'siw', { remap = true }) -- be consistent with cw -> ciw
     remap('n', 'sc', 'sr', { remap = true }) -- be consistent with cw -> ciw
 
-    vim.api.nvim_del_keymap('x', 's')
-    remap('x', 's', my_visual_surround, { desc = 'My custom surround that works with my visual repeat' })
+    -- vim.api.nvim_del_keymap('x', 's')
+    remap('x', 's', better_visual_repeat.visual_surround, { desc = 'My custom surround that works with my visual repeat' })
 
     ---------------------------------------------------------------------------------------
     require('mini.indentscope').setup({
@@ -99,8 +100,15 @@ return {
     remap(
       'x',
       'ii',
-      '<Cmd>lua My_visual_repeat_force_alive=true MiniIndentscope.textobject(false) My_visual_repeat_force_alive=false<CR>',
+      '<Cmd>lua Better_visual_repeat.force_alive(true); MiniIndentscope.textobject(false); Better_visual_repeat.force_alive(false)<CR>',
       { desc = 'Override mini.indentscope ii to work with our visual repeat' }
+    )
+
+    remap(
+      'x',
+      'ai',
+      '<Cmd>lua Better_visual_repeat.force_alive(true); MiniIndentscope.textobject(true); Better_visual_repeat.force_alive(false)<CR>',
+      { desc = 'Override mini.indentscope ai to work with our visual repeat' }
     )
 
     ---------------------------------------------------------------------------------------

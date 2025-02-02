@@ -102,7 +102,7 @@ end
 ---@param keys string keys like <Esc> will be properly escaped
 ---@param feedkeys_mode string see :h feedkeys()
 function M.simulate_keys(keys, feedkeys_mode)
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), feedkeys_mode, false)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, true, true), feedkeys_mode, false)
   -- Notes from previous experiments
   -- vim.fn.feedkeys('\\<Esc>', 'n') -- does not work to send <esc>
   -- vim.cmd([[call feedkeys("\<Esc>", 'n')]]) -- works
