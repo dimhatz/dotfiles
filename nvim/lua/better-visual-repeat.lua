@@ -10,7 +10,8 @@
 -- double check we are still in insert, then replay the saved ". register.
 -- TODO: (doc) our visual line functionality differs from original vim visual repeat (linewise):
 -- vii indentation select is linewise. We will select a different amount based on the new repeat spot.
--- TODO: investigate: pressing : in visual exits to normal
+-- TODO: (doc) which key workaround :xnore " " etc
+-- TODO: dot on current selection: grab the "x prefix before the editiong action, if exists
 local M = {}
 local opt = {
   ---We need to be able to tell whether it was e.g. 'c' or 'gc' (or some user mapping) that
@@ -24,7 +25,7 @@ local opt = {
   -- There seems to be no way to tell wheter a key sequence e.g. "..ggggggg<C-a>" ends with
   -- gg to go to top, then <C-a> or g<C-a> which is add an increasing count (:h v_g_CTRL-A)
   -- on_key() does not inform the attached listener when a mapping counts as complete.
-  mappings_that_edit_in_visual = { 's', 'r', 'gc', 'c', '<lt>', '>', '<C-a>', 'g<C-a>' }, -- TODO: check 'r'
+  mappings_that_edit_in_visual = { 's', 'r', 'gc', 'c', '<lt>', '>', '<C-a>', 'g<C-a>', 'X' }, -- TODO: check 'r'
   ---This would be likely due to user incorrectly applying workaround with force_alive
   max_keystrokes_recorded = 100,
 }
@@ -255,6 +256,13 @@ function M.dot_on_visual_selection()
   if smallest_idx_found == nil then
     log('No dot_on_visual_selection edit keys in recording')
     return
+  end
+
+  -- detect "x prefix of an editing key (where x is any register) and replay
+  if smallest_idx_found >= 3 then
+    if last_valid_edit.keys_raw[smallest_idx_found - 2] == '"' then
+      smallest_idx_found = smallest_idx_found - 2
+    end
   end
 
   local edit_keys_str = table.concat(last_valid_edit.keys_raw, '', smallest_idx_found)
