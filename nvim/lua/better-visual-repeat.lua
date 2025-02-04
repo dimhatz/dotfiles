@@ -3,11 +3,7 @@
 -- There seems to be no way to detect inside on_key() whether the keys are from
 -- which-key or not.
 -- TODO: maybe not even map v,V but use mode changes to start recording?
--- TODO: expose a function is_active -> `not tracking == nothing` to be used in statusline
--- TODO: maybe just diff 20 above/below lines to get inserted text? Problematic when pasting in visual.
--- TODO: edge case ggc<text..> will be repeated as gc<text..> which is bad, since text is not
--- a repeatable sequence, but text. Maybe perform change seq with `mx!` flag,
--- double check we are still in insert, then replay the saved ". register.
+-- TODO: double check we are still in insert, then replay the saved ". register.
 -- TODO: (doc) our visual line functionality differs from original vim visual repeat (linewise):
 -- vii indentation select is linewise. We will select a different amount based on the new repeat spot.
 -- TODO: (doc) which key workaround :xnore " " etc
@@ -34,8 +30,7 @@ local enable_logging = true -- for debugging
 
 local force_alive = false
 local changed_tick_at_start = -1
--- TODO: rename to is_disabled, update checks
-local is_active = false
+local is_disabled = true
 -- must store visual_mode, we cannot rely on vim.fn.visualmode()
 -- since there could be a visual block with no change, before our (valid) repeat is called.
 local visual_mode_at_start = 'v' ---@type 'v' | 'V'
@@ -96,7 +91,7 @@ local function reset_state()
   log('Resetting state') -- but not overwriting last valid edit
   force_alive = false
   changed_tick_at_start = -1
-  is_active = false
+  is_disabled = true
   visual_mode_at_start = 'v'
   keys_recorded = {}
   insert_was_entered = false
@@ -162,7 +157,7 @@ end
 ---If abort_with_reason is provided, we will abort and discard / invalidate anything that was recorded.
 ---Otherwise we will follow the usual steps to determine whether the recorded edit is valid.
 function M.stop(abort_with_reason)
-  if not is_active then
+  if is_disabled then
     -- if already inactive, do nothing. May occur if >1 stop() are scheduled.
     log('Already inactive')
     return
@@ -213,9 +208,9 @@ function M.dot_on_visual_selection()
     return
   end
 
-  assert(is_active, 'Dot on visual selection: expected is_active=true')
+  assert(not is_disabled, 'Dot on visual selection: expected is_disabled=false')
 
-  if #last_valid_edit.keys_raw == 0 or not is_active then
+  if #last_valid_edit.keys_raw == 0 or is_disabled then
     M.stop('No keys recorded yet or plugin disabled')
     return
   end
@@ -401,7 +396,7 @@ vim.on_key(function(mapped, typed)
     log('--------------------------')
   end
 
-  if not is_active then
+  if is_disabled then
     return
   end
   if insert_was_entered then
@@ -420,7 +415,7 @@ vim.api.nvim_create_autocmd({ 'RecordingEnter' }, {
   desc = "Better visual repeat - disable on vim's recording",
   group = vim.api.nvim_create_augroup('better-visual-recording-disable', { clear = true }),
   callback = function()
-    if not is_active then
+    if is_disabled then
       return
     end
     M.stop('Vim recording started')
@@ -438,7 +433,7 @@ vim.api.nvim_create_autocmd({ 'ModeChanged' }, {
     local new_mode = vim.v.event.new_mode
     log(old_mode .. ' -> ' .. new_mode .. ' ' .. vim.api.nvim_buf_get_var(0, 'changedtick'))
 
-    if not is_active then
+    if is_disabled then
       return
     end
 
@@ -476,7 +471,7 @@ function M.better_v()
   end
   reset_state()
   log('start v ' .. vim.api.nvim_buf_get_var(0, 'changedtick'))
-  is_active = true
+  is_disabled = false
   visual_mode_at_start = 'v'
   Better_visual_repeat_op()
 end
@@ -489,7 +484,7 @@ function M.better_V()
   end
   reset_state()
   log('start V ' .. vim.api.nvim_buf_get_var(0, 'changedtick'))
-  is_active = true
+  is_disabled = false
   visual_mode_at_start = 'V'
   Better_visual_repeat_op()
 end
