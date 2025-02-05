@@ -3,7 +3,6 @@
 -- There seems to be no way to detect inside on_key() whether the keys are from
 -- which-key or not.
 -- TODO: maybe not even map v,V but use mode changes to start recording?
--- TODO: double check we are still in insert, then replay the saved ". register.
 -- TODO: (doc) our visual line functionality differs from original vim visual repeat (linewise):
 -- vii indentation select is linewise. We will select a different amount based on the new repeat spot.
 -- TODO: (doc) which key workaround :xnore " " etc
@@ -112,7 +111,6 @@ function Better_visual_repeat_op(motion)
   -- this is repeat by .
   local t_begin = os.clock()
   log('Repeat call')
-  log(last_valid_edit)
 
   M.stop('Repeat call')
 
