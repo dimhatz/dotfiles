@@ -470,6 +470,8 @@ remap('n', '<C-f>', function()
   vim.cmd.execute([["normal! \<Esc>\<Cmd>set hlsearch\<CR>`v"]])
 end, { desc = 'Search for word under cursor' })
 
+remap('x', '"', '"', { desc = 'Workaround to prevent which-key triggering in visual' })
+
 -- make gcc non-jumpy
 local gcc_maparg = vim.fn.maparg('gcc', 'n', false, true)
 function My_gcc()
