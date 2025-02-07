@@ -130,6 +130,10 @@ return {
     remap('n', '<leader>sh', builtin.help_tags, { desc = 'Search [H]elp' })
     remap('n', '<leader>sk', builtin.keymaps, { desc = 'Search [K]eymaps' })
     remap('n', '<leader>ss', builtin.builtin, { desc = '[S]elect Telescope builtin and search' })
+    -- TODO: support extra feature: when searching for: sometext  *.txt <-- note 2 spaces, the *.txt is sent to rg with -g param for globbing
+    -- example from tj devries https://www.youtube.com/watch?v=xdXE1tOT-qg,
+    -- https://github.com/tjdevries/advent-of-nvim/blob/13d4ec68a2a81f27264f3cc73dd7cd8c047aab87/nvim/lua/config/telescope/multigrep.lua
+    -- maybe there is an option that will search in filenames instead of globbing, if so, how to search for 2 different patterns? e.g. .txt + .ts
     remap('n', '<leader>sg', builtin.live_grep, { desc = 'Search by [G]rep in cwd' })
     remap('n', '<leader>sa', builtin.autocommands, { desc = 'Search [A]utocmds' })
     remap('n', '<leader>sc', builtin.highlights, { desc = 'Search [C]olors' })

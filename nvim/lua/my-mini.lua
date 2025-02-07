@@ -1,14 +1,11 @@
 local remap = require('my-helpers').remap
-local better_visual_repeat = require('better-visual-repeat')
-local slice_array = require('my-helpers').slice_array
-local reverse_in_place = require('my-helpers').reverse_in_place
--- local my_visual_surround = require('my-visual-repeat').my_visual_surround
 
 return {
   'echasnovski/mini.nvim',
   lazy = false,
   priority = 1000,
   config = function()
+    local better_visual_repeat = require('better-visual-repeat')
     ---------------------------------------------------------------------------------------
     -- sessions plugin first, so that its autocmds have priority over the next mini.* plugins, like minimap
     require('my-mini-sessions')

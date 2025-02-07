@@ -159,13 +159,8 @@ return {
 
     remap('i', '<C-j>', function()
       if vim.fn.reg_recording() ~= '' then
-        -- Since cmp is incompatible with macros (see its default enabled() function)
-        -- we simulate manually exiting and re-entering insert, which will also cancel
-        -- our visual repeat. TODO: replace with a plugin that is compatible with macros?
-        -- do not use x flag, messes up vim, using m flag to remap and re-trigger this func
-        -- after exiting to normal.
-        simulate_keys('<Esc>a<C-j>', 'mt')
-        -- vim.api.nvim_input('<Esc>a<C-j>') -- also works
+        -- Cmp is incompatible with macros, ensure it never triggers. The cmp's
+        -- default enabled() should  prevent this, but it does not always work.
         return
       end
       if cmp.visible() then
@@ -179,7 +174,6 @@ return {
 
     remap('i', '<C-k>', function()
       if vim.fn.reg_recording() ~= '' then
-        simulate_keys('<Esc>a<C-k>', 'mt') -- see c-j above
         return
       end
       if cmp.visible() then
@@ -212,7 +206,7 @@ return {
       end
       vim.print('Forcing completion')
       cmp.complete()
-    end, { desc = 'Cmp manually mapped' })
+    end, { desc = 'Cmp force complete' })
 
     -- also in select mode, when choosing snippet-like entries
     remap(

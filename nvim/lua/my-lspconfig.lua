@@ -9,7 +9,7 @@ return {
     -- 'hrsh7th/nvim-cmp',
     -- 'hrsh7th/cmp-nvim-lsp',
     -- versioning of lsp servers here: run once
-    -- MasonInstall lua-language-server@3.10.1 stylua@v2.0.2 eslint_d@14.0.3
+    -- MasonInstall lua-language-server@3.13.6 stylua@v2.0.2 eslint_d@14.0.3
     -- NOTE: when upgrading either run an empty nvim or stop all running lsp clients:
     -- vim.lsp.stop_client(vim.lsp.get_clients())
     -- NOTE: versions can be found here: https://github.com/mason-org/mason-registry/blob/main/packages/
@@ -36,9 +36,7 @@ return {
   config = function()
     -- WARN: make sure to setup neodev BEFORE lspconfig
     -- TODO: remove when switching to lazydev
-    require('neodev').setup({
-      -- add any options here, or leave empty to use the default settings
-    })
+    require('neodev').setup()
 
     local lspconfig = require('lspconfig')
 
@@ -58,6 +56,7 @@ return {
     function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
       opts = opts or {}
       -- for options see :h nvim_open_win()
+      ---@diagnostic disable-next-line: inject-field
       opts.border = opts.border or 'rounded'
       return orig_util_open_floating_preview(contents, syntax, opts, ...)
     end

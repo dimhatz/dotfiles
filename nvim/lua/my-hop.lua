@@ -433,14 +433,6 @@ local function jump(direction, granularity, side)
   remove_extmarks(ns_dimming)
 end
 
--- remap('n', '<Leader>z', function()
---   jump(Direction.forward, Granularity.line, MatchSide.word_start)
--- end, { desc = 'New' })
-remap('n', '<Leader>x', function()
-  remove_extmarks(ns_dimming)
-  remove_extmarks(ns_spots)
-end, { desc = 'New' })
-
 remap({ 'n', 'x' }, 'f', function()
   jump(Direction.forward, Granularity.word, MatchSide.word_start)
 end, { desc = 'Jump forward' })
