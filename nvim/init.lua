@@ -507,7 +507,7 @@ remap('x', 'gc', function()
   vim.api.nvim_win_set_cursor(0, cursor_pos_before_gc)
 end, { desc = 'gc in visual now is not jumpy' })
 
--- make u non-jumpy
+-- make u non-jumpy, TODO: maybe revert this to default, to have jumpy behavior?
 remap('n', 'u', function()
   local cursor_pos_before_u = vim.api.nvim_win_get_cursor(0)
   vim.cmd('normal! u')
@@ -532,6 +532,12 @@ end, { desc = '<C-r> does not jump if edit was on the same line' })
 -- TODO: check these out, adjust setup
 -- -- Diagnostic keymaps
 remap('n', 'ge', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror popup' })
+remap('n', '<leader>n', function()
+  vim.diagnostic.goto_next({ float = false })
+end, { desc = 'Go to next diagnostic' })
+remap('n', '<leader>p', function()
+  vim.diagnostic.goto_prev({ float = false })
+end, { desc = 'Go to previous diagnostic' })
 -- remap('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 -- remap('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 -- remap('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -691,6 +697,38 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+local no_nerd_font_defaults = vim.deepcopy(require('lazy.core.config').defaults)
+no_nerd_font_defaults.ui = {
+  ui = {
+    -- If you are using a Nerd Font: set icons to an empty table which will use the
+    -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
+    icons = vim.g.have_nerd_font and {} or {
+      cmd = '[cmd]',
+      config = '[conf]',
+      event = '[ev]',
+      ft = '[ft]',
+      init = '[init]',
+      import = '[import]',
+      keys = '[keys]',
+      lazy = '[lazy]',
+      loaded = '[loaded]',
+      not_loaded = '[not_loaded]',
+      plugin = '[plugin]',
+      runtime = '[runtime]',
+      require = '[require]',
+      source = '[source]',
+      start = '[start]',
+      task = '[task]',
+      list = {
+        '-',
+        '->',
+        '-->',
+        '--->',
+      },
+    },
+  },
+}
+
 -- NOTE: lazy runs init() during startup, before loading the plugin itself (after which config() runs).
 require('lazy').setup({
   --------------------------------------------- COLORS -------------------------------------------------------------------------------------
@@ -744,6 +782,8 @@ require('lazy').setup({
 
   require('my-cmp'),
 
+  require('my-better-visual-repeat'),
+
   -- it is loaded, but earlier than the bundled syntax file
   -- :filter syntax scriptnames
   -- :scriptnames
@@ -758,42 +798,11 @@ require('lazy').setup({
   --   -- shows the surrounding function's signature (line) at the top line (if it was scrolled above), disabled for now until treesitter becomes fast
   --   'nvim-treesitter/nvim-treesitter-context',
   -- },
-}, {
-  ui = {
-    -- If you are using a Nerd Font: set icons to an empty table which will use the
-    -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
-    icons = vim.g.have_nerd_font and {} or {
-      cmd = '[cmd]',
-      config = '[conf]',
-      event = '[ev]',
-      ft = '[ft]',
-      init = '[init]',
-      import = '[import]',
-      keys = '[keys]',
-      lazy = '[lazy]',
-      loaded = '[loaded]',
-      not_loaded = '[not_loaded]',
-      plugin = '[plugin]',
-      runtime = '[runtime]',
-      require = '[require]',
-      source = '[source]',
-      start = '[start]',
-      task = '[task]',
-      list = {
-        '-',
-        '->',
-        '-->',
-        '--->',
-      },
-    },
-  },
-})
+}, vim.g.have_nerd_font and {} or no_nerd_font_defaults)
 
 require('my-statusline')
 require('my-tabline')
 require('my-hop')
--- require('my-visual-repeat')
-require('better-visual-repeat')
 ----------------  NOT USED ----------------------------------------------------------------
 -- autoclose parens, quotes etc - does not expose its <CR> function that we need in our custom completion mapping, disabling
 -- { 'm4xshen/autoclose.nvim', enabled = false, lazy = false, opts = { options = { disable_command_mode = true } } },
