@@ -15,28 +15,30 @@ return {
     -- NOTE: versions can be found here: https://github.com/mason-org/mason-registry/blob/main/packages/
     { 'williamboman/mason.nvim', opts = {} }, -- just for installation and adding to nvim path, all the config of language servers is manual
     -- TODO: replace neodev with lazydev, since its deprecated,
-    -- WARN: as of 2024-08-04, with lazydev's default setup, when switching to another buffer for the first time,
-    -- e.g. going to init.lua from another file, there are a lot of warnings, which disapprear after 2sec
-    -- Also, it did not recognize vim.loop.fs_stat in our init.lua, showed it as undefined
-    { 'folke/neodev.nvim' }, -- this should take care of the lua paths, nvim libraries to be present in completions etc, do not use opts here, since we will call its setup() manually
-    -- {
-    --   'folke/lazydev.nvim',
-    --   opts = {
-    --     library = {
-    --       -- See the configuration section for more details
-    --       -- Load luvit types when the `vim.uv` word is found
-    --       { path = '~/dotfiles/nvim' }, -- <-- without this, globals like vim are not recognized
-    --       { path = 'luvit-meta/library', words = { 'vim%.uv' } },
-    --     },
-    --   },
-    -- }, -- this should take care of the lua paths, nvim libraries to be present in completions etc, do not use opts here, since we will call its setup() manually
-    -- { 'j-hui/fidget.nvim', opts = {} }, -- shows lsp messages, not sure how useful this is --> lags when only lspconfig is used (no treesitter for better speed)
+    { 'folke/neodev.nvim' }, -- do not use opts here, since we will call its setup() manually
   },
 
   config = function()
     -- WARN: make sure to setup neodev BEFORE lspconfig
     -- TODO: remove when switching to lazydev
     require('neodev').setup()
+
+    -- -- NOTE: as of 2025-02-12 with lazydev, as of 2024-08-04, when switching to another buffer for the first time,
+    -- e.g. going to init.lua from another file, there are a lot of warnings (e.g. undefined global vim), which disapprear after 2sec
+    -- they seem to reappear and stay with :LspRestart
+    -- -- pull in the whole runtime
+    -- -- local library = vim.api.nvim_get_runtime_file('', true) -- pull in all the runtime dirs
+    -- local library = {}
+    -- -- table.insert(library, '${3rd}/luv/library')
+    -- -- table.insert(library, '~/dotfiles/nvim')
+    -- ---@diagnostic disable-next-line: missing-fields
+    -- require('lazydev').setup({
+    --   -- { path = '~/dotfiles/nvim' }, -- <-- without this, globals like vim are not recognized
+    --   -- { path = 'luvit-meta/library' },
+    --   library = library,
+    -- })
+
+    -- vim.loop.fs_stat
 
     local lspconfig = require('lspconfig')
 
@@ -79,8 +81,8 @@ return {
     local ok_cmp_nvim_lsp, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
     if not ok_cmp_nvim_lsp then
       -- for debugging, if we disable cmp, this module should not crash
-      vim.notify('My: cmp_nvim_lsp not found. Setting up LuaLS with defaults.', vim.log.levels.WARN)
-      lspconfig.lua_ls.setup({})
+      vim.notify('My: cmp_nvim_lsp not found. Not setting lsp.', vim.log.levels.ERROR)
+      return
     else
       -- Lua
       lspconfig.lua_ls.setup({
