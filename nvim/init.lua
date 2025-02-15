@@ -94,6 +94,7 @@ vim.opt.splitbelow = true
 vim.opt.list = true
 -- tab:│\ ,trail:•,extends:»,precedes:«,nbsp:■
 -- trail = '·', trail = '•',
+---@diagnostic disable-next-line: missing-fields
 vim.opt.listchars = { tab = '│ ', trail = '•', nbsp = '■', extends = '»', precedes = '«' }
 vim.opt.showbreak = '↪  ' -- can also use '▶ ', if not rendered
 
@@ -481,10 +482,10 @@ function My_gcc()
     return
   end
 
-  local cursor_pos_before_gc = vim.api.nvim_win_get_cursor(0)
+  local cursor_pos_before_gc = vim.fn.getpos('.')
   local keys = vim.api.nvim_replace_termcodes(gcc_maparg.callback(), true, true, true)
   vim.api.nvim_feedkeys(keys, 'nx', false)
-  vim.api.nvim_win_set_cursor(0, cursor_pos_before_gc)
+  vim.fn.setpos('.', cursor_pos_before_gc)
 
   -- this way dot repeat is not jumpy too
   vim.go.operatorfunc = 'v:lua.My_noop'
@@ -501,33 +502,11 @@ remap('x', 'gc', function()
     return
   end
 
-  local cursor_pos_before_gc = vim.api.nvim_win_get_cursor(0)
+  local cursor_pos_before_gc = vim.fn.getpos('.')
   local keys = vim.api.nvim_replace_termcodes(visual_gc_maparg.callback(), true, true, true)
   vim.api.nvim_feedkeys(keys, 'nx', false)
-  vim.api.nvim_win_set_cursor(0, cursor_pos_before_gc)
+  vim.fn.setpos('.', cursor_pos_before_gc)
 end, { desc = 'gc in visual now is not jumpy' })
-
--- make u non-jumpy, TODO: maybe revert this to default, to have jumpy behavior?
-remap('n', 'u', function()
-  local cursor_pos_before_u = vim.api.nvim_win_get_cursor(0)
-  vim.cmd('normal! u')
-  local cursor_pos_after_u = vim.api.nvim_win_get_cursor(0)
-  if cursor_pos_after_u[1] ~= cursor_pos_before_u[1] then
-    return
-  end
-  vim.api.nvim_win_set_cursor(0, cursor_pos_before_u)
-end, { desc = 'u does not jump if edit was on the same line' })
-
--- make <c-r> non-jumpy
-remap('n', '<C-r>', function()
-  local cursor_pos_before_cr = vim.api.nvim_win_get_cursor(0)
-  vim.cmd([[execute "normal! \<C-r>"]])
-  local cursor_pos_after_cr = vim.api.nvim_win_get_cursor(0)
-  if cursor_pos_after_cr[1] ~= cursor_pos_before_cr[1] then
-    return
-  end
-  vim.api.nvim_win_set_cursor(0, cursor_pos_before_cr)
-end, { desc = '<C-r> does not jump if edit was on the same line' })
 
 -- TODO: check these out, adjust setup
 -- -- Diagnostic keymaps

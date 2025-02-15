@@ -84,7 +84,8 @@ return {
     remap('n', 'sc', 'sr', { remap = true }) -- be consistent with cw -> ciw
 
     -- vim.api.nvim_del_keymap('x', 's')
-    remap('x', 's', better_visual_repeat.visual_surround, { desc = 'My custom surround that works with my visual repeat' })
+    -- local visual_surround = require('my-visual-surround').visual_surround
+    -- remap('x', 's', visual_surround, { desc = 'My custom surround that works with my visual repeat' })
 
     ---------------------------------------------------------------------------------------
     require('mini.indentscope').setup({

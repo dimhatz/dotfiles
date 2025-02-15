@@ -1,5 +1,4 @@
 local remap = require('my-helpers').remap
-local simulate_keys = require('my-helpers').simulate_keys
 
 -- TODO: check out https://github.com/saghen/blink.cmp, see if it's mature enough
 -- has borders, disabling menu, fuzzying, documentation preview, snippets etc
