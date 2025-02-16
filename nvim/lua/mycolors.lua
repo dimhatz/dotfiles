@@ -331,6 +331,69 @@ local function apply_colors_minimap()
   hi('MyMiniMapChanged', { fg = c.blue_dark, bg = c.base00light })
 end
 
+-- ------------------- Animated fading when search wraps
+-- #transitions = X intermediate shades (downwards) -> blackest -> X intermediate shades (upwards) -> default
+-- base00bg is 0x1d, blackest is 0x00.
+local default_shade = 0x1d
+local blackest_shade = 0x0
+local shades_num = 20
+-- / (shades_num + 1) --> +1 is needed since to get 1 intermediate shade, we need 2 steps (up + down) and so on.
+local step = (default_shade - blackest_shade) / (shades_num + 1)
+local colors = {} ---@type {fg:string, bg:string}[]
+for i = 0, shades_num do
+  local current_shade = math.floor(step * i)
+  local shade_str = string.format('%02x', current_shade)
+  shade_str = '#' .. shade_str .. shade_str .. shade_str
+  table.insert(colors, { fg = c.base05fg, bg = shade_str })
+end
+table.insert(colors, { fg = c.base05fg, bg = c.base00bg })
+
+---@enum Direction2
+local DIRECTION = {
+  down = -1,
+  up = 1,
+}
+
+local animation_in_progress = false
+local cur_direction = DIRECTION.down ---@type Direction2
+local cur_index = #colors - 1
+
+local function animate()
+  hi('Normal', colors[cur_index])
+
+  if cur_index == #colors then
+    animation_in_progress = false
+    return
+  end
+
+  if cur_index == 1 then
+    cur_direction = DIRECTION.up
+  end
+
+  cur_index = cur_index + cur_direction
+
+  -- 16ms per animation frame
+  vim.defer_fn(animate, 16)
+end
+
+local search_wrapped_group = vim.api.nvim_create_augroup('my-search-wrapped', { clear = true })
+-- local original_hl = vim.api.nvim_get_hl(0, { name = 'Normal' })
+vim.api.nvim_create_autocmd({ 'SearchWrapped' }, {
+  desc = 'My: blacken screen background for 200ms when wrapping search',
+  group = search_wrapped_group,
+  callback = function()
+    if animation_in_progress then
+      return
+    end
+    animation_in_progress = true
+    cur_direction = DIRECTION.down
+    cur_index = #colors - 1 -- not starting at #colors, since we are already there, this is our default color
+    animate()
+  end,
+})
+
+-- ----------------------------------------------------------
+
 local M = {}
 M.hi = hi
 M.colors = c
