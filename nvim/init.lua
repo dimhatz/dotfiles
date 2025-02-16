@@ -268,7 +268,7 @@ local function move_skipping_non_alphanum_chars(vim_move)
     -- always wrap it in a set [] or complement of set [^], see also :h lua-patterns.
     -- Not using %p for punctuation since we cannot exclude chars like _,&,!,$ from it (we
     -- need to able to jump to word that/begins ends with _,&,! etc)
-    local punctuation_char_pattern = '%,%.%:%;%(%)%[%]%{%}%<%>%`%\'%"%|'
+    local punctuation_char_pattern = '%,%.%:%;%(%)%[%]%{%}%<%>%`%\'%"%|%-'
 
     if #char_under_cursor ~= 1 or char_under_cursor:match('[^' .. punctuation_char_pattern .. ']') then
       -- the cursor is beyond eol or on a non-punctuation char,
