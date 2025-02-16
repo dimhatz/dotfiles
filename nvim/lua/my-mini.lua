@@ -98,14 +98,14 @@ return {
     remap(
       'x',
       'ii',
-      '<Cmd>lua Better_visual_repeat.force_alive(true); MiniIndentscope.textobject(false); Better_visual_repeat.force_alive(false)<CR>',
+      '<Cmd>lua BetterVisualRepeat.force_alive(true); MiniIndentscope.textobject(false); BetterVisualRepeat.force_alive(false)<CR>',
       { desc = 'Override mini.indentscope ii to work with our visual repeat' }
     )
 
     remap(
       'x',
       'ai',
-      '<Cmd>lua Better_visual_repeat.force_alive(true); MiniIndentscope.textobject(true); Better_visual_repeat.force_alive(false)<CR>',
+      '<Cmd>lua BetterVisualRepeat.force_alive(true); MiniIndentscope.textobject(true); BetterVisualRepeat.force_alive(false)<CR>',
       { desc = 'Override mini.indentscope ai to work with our visual repeat' }
     )
 
