@@ -92,7 +92,7 @@ local function apply_colors()
   hi('MyYellowFg', { fg = c.yellow })
 
   -- bg=base2 to be able to tell where the cursor is in visual inside comments
-  hi('Visual', { bg = c.base02, fg = c.blackest, bold = true })
+  hi('Visual', { bg = c.base03, fg = c.blackest, bold = true })
   hi('Search', { bg = c.peach_dark, fg = c.whitest })
   hi('IncSearch', { bg = c.peach_dark, fg = c.whitest })
   hi('CurSearch', { bg = c.yellow_saturated, fg = c.blackest, bold = true })
@@ -100,6 +100,7 @@ local function apply_colors()
   hi('CursorLineNr', { bg = c.blackest, fg = c.base03 })
   hi('nCursor', { bg = c.base05fg, fg = c.blackest }) -- make the letters darker
   hi('iCursor', { bg = c.whitest, fg = c.base00bg }) -- make the bar brighter
+  hi('vCursor', { bg = c.whitest, fg = c.blackest, bold = true }) -- bold does not work in neovide
   hi('LineNr', { fg = c.base02 })
   hi('Comment', { fg = c.base03 })
 
@@ -253,7 +254,8 @@ local function apply_colors()
   hi('TelescopeMatching', { fg = c.yellow_brightest })
   hi('TelescopeSelection', { bg = c.base02, fg = c.blackest, bold = true })
   -- hi('TelescopePreviewLine', { bg = c.base02, bold = true })
-  hi('TelescopePreviewLine', { reverse = true })
+  -- TODO: make like visual select
+  hi('TelescopePreviewLine', { link = 'Visual' })
   -- hi('TelescopePreviewLine', { standout = true })
 
   -- gitsigns

@@ -32,7 +32,8 @@ else
 end
 
 -- default values for cursor plus highlight group (neovide does not use)
-vim.o.guicursor = 'n-v-c-sm:block-nCursor/nCursor,i-ci-ve:ver25-iCursor/iCursor,r-cr-o:hor20-iCursor/iCursor'
+vim.o.guicursor = 'v:block-vCursor/vCursor,n-c-sm:block-nCursor/nCursor,i-ci-ve:ver25-iCursor/iCursor,r-cr-o:hor20-iCursor/iCursor'
+vim.o.fileformats = 'unix,dos'
 
 -- disable netrw, as required by nvim-tree
 vim.g.loaded_netrw = 1
