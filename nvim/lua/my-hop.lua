@@ -303,8 +303,13 @@ end
 ---@return [integer,integer][]
 ---Returns an array of spots: [row, col], 1-based?, ordered always left-to-right, for a line
 local function get_spots_per_line(line_nr, granularity, direction, match_side, cursor_line, cursor_col)
-  if vim.fn.foldclosed(line_nr) ~= -1 then
-    -- skip lines in fold
+  local fold_first_line = vim.fn.foldclosed(line_nr)
+  if fold_first_line ~= -1 then
+    -- we are inside fold
+    if granularity == Granularity.line and line_nr == fold_first_line then
+      -- only set spots on the first line of fold when in linewise mode
+      return { { line_nr, 1 } }
+    end
     return {}
   end
 
