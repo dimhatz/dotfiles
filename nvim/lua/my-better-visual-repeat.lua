@@ -5,7 +5,7 @@ return {
     bvr.setup({
       apply_mappings = false,
       -- logging = { enabled = true },
-      editing_keys = { 'm', 'x', 'X', 'd', 'D', 'c', 'p', 'r', 'gc', 's', '>', '<', 'U' },
+      editing_keys = { 'x', 'X', 'd', 'D', 'c', 'p', 'r', 'gc', '>', '<', 'U', 'u', 'm', 's' },
     })
 
     -- TODO: create mappings I and A in visual line to add text to beginning / end of each line

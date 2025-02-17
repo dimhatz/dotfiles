@@ -35,7 +35,7 @@ return {
       javascriptreact = { 'prettierd', 'prettier' },
       typescriptreact = { 'prettierd', 'prettier' },
       sass = { 'prettierd', 'prettier' },
-      yaml = { 'prettierd', 'prettier' },
+      yaml = { 'prettierd', 'prettier', 'yamlfmt' },
       markdown = { 'prettierd', 'prettier' },
       -- do NOT set rust formatting here, see vim.g.rustfmt_autosave = 1 at the top of this file
       -- TODO: check whether saving this way overwrites undo history, test same behavior with conform

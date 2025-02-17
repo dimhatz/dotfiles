@@ -230,7 +230,7 @@ local function my_operator_w()
 end
 
 local function my_operator_m()
-  -- dz -> dd, to make zz -> "_dd
+  -- md -> dd, to make mm -> "_dd
   if vim.v.operator == 'd' then
     return 'd'
   end
@@ -337,8 +337,21 @@ remap('n', '*', '*<Cmd>set hlsearch<CR>', { desc = 'vanilla *, with workaround f
 remap('n', '#', '#<Cmd>set hlsearch<CR>', { desc = 'vanilla #, with workaround for highlighting' })
 remap('n', '/', '<Cmd>set hlsearch<CR>/')
 remap('n', '?', '<Cmd>set hlsearch<CR>?')
-remap('n', 'n', '<Cmd>set hlsearch<CR>n')
-remap('n', 'N', '<Cmd>set hlsearch<CR>N')
+
+local function create_nN_fn(key)
+  local cmd = 'normal! ' .. key
+  return function()
+    vim.o.hlsearch = true -- for mini.map scrollbar
+    vim.cmd(cmd)
+    ---@diagnostic disable-next-line: param-type-mismatch
+    if vim.fn.foldclosed('.') == -1 then
+      return
+    end
+    vim.cmd('normal! zO')
+  end
+end
+remap('n', 'n', create_nN_fn('n'), { desc = 'n also sets hlsearch and unfolds if needed' })
+remap('n', 'N', create_nN_fn('N'), { desc = 'N also sets hlsearch and unfolds if needed' })
 
 remap('n', '<C-q>', '<Cmd>qa<CR>', { desc = 'Quit vim' })
 
