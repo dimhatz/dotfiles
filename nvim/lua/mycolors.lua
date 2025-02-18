@@ -252,7 +252,7 @@ local function apply_colors()
 
   -- telescope
   hi('TelescopeMatching', { fg = c.yellow_brightest })
-  hi('TelescopeSelection', { bg = c.base02, fg = c.blackest, bold = true })
+  hi('TelescopeSelection', { link = 'Visual' })
   -- hi('TelescopePreviewLine', { bg = c.base02, bold = true })
   -- TODO: make like visual select
   hi('TelescopePreviewLine', { link = 'Visual' })

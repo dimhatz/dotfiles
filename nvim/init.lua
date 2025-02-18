@@ -342,7 +342,12 @@ local function create_nN_fn(key)
   local cmd = 'normal! ' .. key
   return function()
     vim.o.hlsearch = true -- for mini.map scrollbar
-    vim.cmd(cmd)
+    ---@diagnostic disable-next-line: param-type-mismatch
+    local ok = pcall(vim.cmd, cmd)
+    if not ok then
+      vim.notify('(My): Pattern not found: ' .. vim.fn.getreg('/'), vim.log.levels.ERROR)
+      return
+    end
     ---@diagnostic disable-next-line: param-type-mismatch
     if vim.fn.foldclosed('.') == -1 then
       return

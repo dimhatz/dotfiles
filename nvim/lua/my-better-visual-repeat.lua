@@ -8,8 +8,6 @@ return {
       editing_keys = { 'x', 'X', 'd', 'D', 'c', 'p', 'r', 'gc', '>', '<', 'U', 'u', 'm', 's' },
     })
 
-    -- TODO: create mappings I and A in visual line to add text to beginning / end of each line
-
     bvr.patch_MatchitVisualForward()
     vim.keymap.set('n', 'v', bvr.better_v, { desc = 'Better v' })
     vim.keymap.set('n', '<C-v>', bvr.better_V, { desc = 'Better V' })
