@@ -4,6 +4,7 @@ local simulate_keys = require('my-helpers').simulate_keys
 
 return {
   'neovim/nvim-lspconfig',
+  lazy = false,
   enabled = true,
   dependencies = {
     -- 'hrsh7th/nvim-cmp',
@@ -14,32 +15,9 @@ return {
     -- vim.lsp.stop_client(vim.lsp.get_clients())
     -- NOTE: versions can be found here: https://github.com/mason-org/mason-registry/blob/main/packages/
     { 'williamboman/mason.nvim', opts = {} }, -- just for installation and adding to nvim path, all the config of language servers is manual
-    -- TODO: replace neodev with lazydev, since its deprecated,
-    { 'folke/neodev.nvim' }, -- do not use opts here, since we will call its setup() manually
   },
 
   config = function()
-    -- WARN: make sure to setup neodev BEFORE lspconfig
-    -- TODO: remove when switching to lazydev
-    require('neodev').setup()
-
-    -- -- NOTE: as of 2025-02-12 with lazydev, as of 2024-08-04, when switching to another buffer for the first time,
-    -- e.g. going to init.lua from another file, there are a lot of warnings (e.g. undefined global vim), which disapprear after 2sec
-    -- they seem to reappear and stay with :LspRestart
-    -- -- pull in the whole runtime
-    -- -- local library = vim.api.nvim_get_runtime_file('', true) -- pull in all the runtime dirs
-    -- local library = {}
-    -- -- table.insert(library, '${3rd}/luv/library')
-    -- -- table.insert(library, '~/dotfiles/nvim')
-    -- ---@diagnostic disable-next-line: missing-fields
-    -- require('lazydev').setup({
-    --   -- { path = '~/dotfiles/nvim' }, -- <-- without this, globals like vim are not recognized
-    --   -- { path = 'luvit-meta/library' },
-    --   library = library,
-    -- })
-
-    -- vim.loop.fs_stat
-
     local lspconfig = require('lspconfig')
 
     -- taken from here: https://github.com/neovim/nvim-lspconfig/wiki/UI-Customization#borders
@@ -86,10 +64,38 @@ return {
     else
       -- Lua
       lspconfig.lua_ls.setup({
-        -- snippets seem to be sent to lsp client even without passing capabilities
-        -- NOTE: with luals there is the following bug: when editing a file from dotfiles, using a
-        -- softlinked path (e.g. ~/AppData/Local/nvim...), then highlighting of diagnostics is removed
-        -- when the file is saved (with or without neodev).
+        on_init = function(client)
+          if client.workspace_folders then
+            -- NOTE: when starting vim from our dotfiles/nvim dir, but the first lua file opened is
+            -- outside (e.g. some plugin's lua file), then this file's dir will become the workspace.
+            -- To check: :lua =vim.lsp.get_active_clients() and check the 'workspace_folders' nested field.
+            local path = client.workspace_folders[1].name
+            if vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc') then
+              vim.print('My lspconfig: Found .luarc')
+              return
+            end
+          end
+
+          vim.print('My lspconfig: .luarc not found')
+
+          -- taken from :LspInfo text when run on lua files
+          client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+            runtime = {
+              version = 'LuaJIT',
+            },
+            -- Make the server aware of Neovim runtime files
+            workspace = {
+              checkThirdParty = false,
+              library = {
+                vim.env.VIMRUNTIME,
+                '${3rd}/luv/library',
+              },
+              -- we can also pull in all of 'runtimepath'. NOTE: this is a lot slower
+              -- library = vim.api.nvim_get_runtime_file("", true)
+            },
+          })
+        end,
+
         capabilities = cmp_nvim_lsp.default_capabilities(),
         settings = {
           Lua = {

@@ -801,6 +801,7 @@ require('lazy').setup({
 require('my-statusline')
 require('my-tabline')
 require('my-hop')
+require('my-generate-luarc')
 ----------------  NOT USED ----------------------------------------------------------------
 -- autoclose parens, quotes etc - does not expose its <CR> function that we need in our custom completion mapping, disabling
 -- { 'm4xshen/autoclose.nvim', enabled = false, lazy = false, opts = { options = { disable_command_mode = true } } },
