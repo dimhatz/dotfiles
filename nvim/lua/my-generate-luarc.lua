@@ -2,7 +2,8 @@
 local normalize_filename = require('my-helpers').normalize_filename
 local PATHSTRICT = true
 
-local function get_libs()
+---@param additional_libs? string[]
+local function get_libs(additional_libs)
   local paths = {}
 
   local function add(lib)
@@ -20,6 +21,12 @@ local function get_libs()
   end
 
   add('$VIMRUNTIME')
+
+  additional_libs = additional_libs or {}
+
+  for _, additional_lib in ipairs(additional_libs) do
+    add(additional_lib)
+  end
 
   ---@type table<string, boolean>
   for _, site in pairs(vim.split(vim.o.packpath, ',')) do
@@ -70,22 +77,31 @@ vim.api.nvim_create_autocmd('User', {
   group = vim.api.nvim_create_augroup('my-gen-luarc-after-lazy', { clear = true }),
   pattern = 'LazyVimStarted',
   callback = function()
-    local normalized_cwd = vim.fn.getcwd() -- will also be added to libs (and normalized)
-    if not vim.uv.fs_stat(normalize_filename(normalized_cwd) .. '/generate_luarc_here') then
+    local generate_here_path = normalize_filename(vim.fn.getcwd()) .. '/generate_luarc_here'
+    if not vim.uv.fs_stat(generate_here_path) then
       return
     end
 
-    local json = {
-      runtime = {
-        path = get_path(),
-        pathStrict = PATHSTRICT,
-        version = 'LuaJIT',
-      },
-      workspace = {
-        library = get_libs(),
-      },
+    local contents = vim.fn.readfile(generate_here_path)[1] or ''
+    local additional_libs = {} ---@type string[]
+    local decode_ok, decode_res = pcall(vim.json.decode, contents)
+    if not decode_ok then
+      vim.notify('My generate .luarc.json: could not decode json from generate_luarc_here', vim.log.levels.ERROR)
+    else
+      additional_libs = decode_res.additional_libs or {}
+      vim.print('My generate .luarc.json: additional libs: ' .. vim.inspect(decode_res.additional_libs))
+    end
+
+    local final_json = {
+      -- To confirm correctness: open with vscode, it will check against this schema and underline bad fields
+      ['$schema'] = 'https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json',
+      ['runtime.path'] = get_path(),
+      ['runtime.pathStrict'] = PATHSTRICT,
+      ['runtime.version'] = 'LuaJIT',
+      ['workspace.library'] = get_libs(additional_libs),
     }
 
-    vim.fn.writefile({ vim.json.encode(json) }, '.luarc.json', 's')
+    vim.fn.writefile({ vim.json.encode(final_json) }, '.luarc.json', 's')
+    vim.print('My generate .luarc.json: Written .luarc.json')
   end,
 })

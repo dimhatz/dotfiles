@@ -7,6 +7,7 @@ return {
   lazy = false, -- otherwise remaps are not registered / helpfile not available until command is called
   config = function()
     local trouble = require('trouble')
+    ---@diagnostic disable-next-line: missing-fields
     trouble.setup({
       focus = true, -- Focus the window when opened
       auto_refresh = true, -- TextChanged/TextChangedI will be added anyway on opening window
