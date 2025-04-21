@@ -1,7 +1,12 @@
 ;; My: use kanata_winIOv2, not the regular one! This has lower latency, can be checked when scrolling in nvim.
+;; kprt (keypad return) is numpad Enter, is mapped to kanata-live-reload
+;; f21 key is the "search" key on top of the keyboard -> using this to switch to custom layout
+
+(defcfg process-unmapped-keys yes)
+
 (defsrc
   esc
-  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc  del  ins  f21  kprt
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
   caps a    s    d    f    g    h    j    k    l    ;    '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
@@ -10,12 +15,14 @@
 
 (deflayer my-qwerty
   caps
-  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
-  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
-  esc  a    s    d    f    g    h    j    k    l    ;    '    ret
+  grv   1    2    3    4    5    6    7    8    9    0    -    =    bspc  del  ins  @swcu  lrld
+  tab   q    w    e    r    t    y    u    i    o    p    [    ]    \
+  esc   a    s    d    f    g    h    j    k    l    ;    '    ret
   @lsbr z    x    c    v    b    n    m    ,    .    /    @rsbr
-  lalt lmet @lcbr           spc            @rcbr rmet ralt
+  lalt  lmet @lcbr           spc            @rcbr rmet ralt
 )
+
+;; NOTE: using tap-hold-press instead of tap-hold to be able to ctrl + ... even if the timeout has not passed yet.
 
 (defalias
   ;; tap for curly brace, hold for left shift
@@ -35,4 +42,49 @@
 (defalias
   ;; tap for round brace, hold for right control
   rcbr (tap-hold-press 300 300 S-0 rctl)
+)
+
+(defalias
+  ;; switch to my-custom-apha layer
+  swcu (layer-switch my-custom-alpha)
+)
+
+;; ------------------------ Custom layout -------------------------------------------------------------------------
+(deflayer my-custom-alpha
+  caps
+  grv   1    2    3    4    5     6     7    8    9    0    -      =    XX  del  ins  @swqw  lrld
+  tab   k    .    ,    -    '     j     m    b    g    x    XX     XX   XX
+  @syms h    i    a    e    =     v     t    n    s    c    @symq  ret
+  @lsbr f    y    o    u    esc   bspc   w    d    p    l    @rsbr
+  lalt  lmet @lcbr          spc         @rcr rmet ralt
+)
+
+(deflayer my-custom-symbols
+  caps
+  XX    XX   XX   XX   XX   XX    XX    XX   XX   XX   XX   XX   XX   XX  del  ins  @swqw  lrld
+  XX    XX   XX   XX   XX   XX    XX    XX   XX   XX   XX   XX   XX   XX
+  XX    XX   XX   XX   [    XX    XX    XX   XX   XX   XX   XX   XX
+  @lsbr XX   XX   XX   XX   XX    XX    XX   XX   XX   XX   @rsbr
+  lalt  lmet @lcbr          spc         @rcr rmet ralt
+)
+
+(defalias
+  ;; switch to my-custom-apha layer
+  swqw (layer-switch my-qwerty)
+)
+
+(defalias
+  ;; Custom layout: tap for round brace, hold for right control
+  rcr (tap-hold-press 300 300 r rctl)
+)
+
+
+(defalias
+  ;; q or symbol layer while held
+  symq (tap-hold-press 300 300 q (layer-while-held my-custom-symbols))
+)
+
+(defalias
+  ;; semicolon ; or symbol layer while held
+  syms (tap-hold-press 300 300 ; (layer-while-held my-custom-symbols))
 )
