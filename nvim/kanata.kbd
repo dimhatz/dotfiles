@@ -1,0 +1,38 @@
+;; My: use kanata_winIOv2, not the regular one! This has lower latency, can be checked when scrolling in nvim.
+(defsrc
+  esc
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet lalt           spc            ralt rmet rctl
+)
+
+(deflayer my-qwerty
+  caps
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  esc  a    s    d    f    g    h    j    k    l    ;    '    ret
+  @lsbr z    x    c    v    b    n    m    ,    .    /    @rsbr
+  lalt lmet @lcbr           spc            @rcbr rmet ralt
+)
+
+(defalias
+  ;; tap for curly brace, hold for left shift
+  lsbr (tap-hold-press 300 300 S-[ lsft)
+)
+
+(defalias
+  ;; tap for curly brace, hold for right shift
+  rsbr (tap-hold-press 300 300 S-] rsft)
+)
+
+(defalias
+  ;; tap for round brace, hold for left control
+  lcbr (tap-hold-press 300 300 S-9 lctl)
+)
+
+(defalias
+  ;; tap for round brace, hold for right control
+  rcbr (tap-hold-press 300 300 S-0 rctl)
+)
