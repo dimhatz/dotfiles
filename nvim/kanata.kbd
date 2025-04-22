@@ -1,4 +1,6 @@
 ;; My: use kanata_winIOv2, not the regular one! This has lower latency, can be checked when scrolling in nvim.
+;; In scheduler, on user logon, use command: C:\Windows\System32\conhost.exe
+;; with arguments: --headless C:\kanata\kanata_winIOv2.exe --cfg C:\kanata\kanata.kbd
 ;; kprt (keypad return) is numpad Enter, is mapped to kanata-live-reload
 ;; f21 key is the "search" key on top of the keyboard -> using this to switch to custom layout
 
