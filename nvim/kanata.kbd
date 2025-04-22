@@ -56,16 +56,16 @@
   caps
   grv   1    2    3    4    5     6     7    8    9    0    -      =    XX  del  ins  @swqw  lrld
   tab   k    .    ,    -    '     j     m    b    g    x    XX     XX   XX
-  @syms h    i    a    e    =     v     t    n    s    c    @symq  ret
-  @lsbr f    y    o    u    esc   bspc   w    d    p    l    @rsbr
-  lalt  lmet @lcbr          spc         @rcr rmet ralt
+  @sfts h    i    a    e    =     v     t    n    s    c    @sftq  ret
+  @lsbr f    y    o    u    esc   bspc  w    d    p    l    @rsbr
+  lalt  lmet @lcbr          @symspc      @rcr rmet ralt
 )
 
 (deflayer my-custom-symbols
   caps
-  XX    XX   XX   XX   XX   XX    XX    XX   XX   XX   XX   XX   XX   XX  del  ins  @swqw  lrld
-  XX    XX   XX   XX   XX   XX    XX    XX   XX   XX   XX   XX   XX   XX
-  XX    XX   XX   XX   [    XX    XX    XX   XX   XX   XX   XX   XX
+  XX    XX   XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld
+  XX    XX   XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX
+  @sfts XX   XX   XX   [    XX    XX    XX   XX   XX   XX   @sftq XX
   @lsbr XX   XX   XX   XX   XX    XX    XX   XX   XX   XX   @rsbr
   lalt  lmet @lcbr          spc         @rcr rmet ralt
 )
@@ -82,11 +82,16 @@
 
 
 (defalias
-  ;; q or symbol layer while held
-  symq (tap-hold-press 300 300 q (layer-while-held my-custom-symbols))
+  ;; semicolon ; or lshift while held
+  sfts (tap-hold-press 300 300 ; lsft)
 )
 
 (defalias
-  ;; semicolon ; or symbol layer while held
-  syms (tap-hold-press 300 300 ; (layer-while-held my-custom-symbols))
+  ;; q or rshift while held
+  sftq (tap-hold-press 300 300 q rsft)
+)
+
+(defalias
+  ;; space or symbol layer while held
+  symspc (tap-hold-press 300 300 spc (layer-while-held my-custom-symbols))
 )
