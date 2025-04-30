@@ -3,6 +3,7 @@
 ;; with arguments: --headless C:\kanata\kanata_winIOv2.exe --cfg C:\kanata\kanata.kbd
 ;; kprt (keypad return) is numpad Enter, is mapped to kanata-live-reload
 ;; f21 key is the "search" key on top of the keyboard -> using this to switch to custom layout
+;; TIP: start kanata with --debug and search for keys here: https://github.com/jtroo/kanata/blob/main/parser/src/keys/mod.rs
 
 (defcfg process-unmapped-keys yes)
 
@@ -17,11 +18,11 @@
 
 (deflayer my-qwerty
   caps
-  grv   1    2    3    4    5    6    7    8    9    0    -    =    bspc  del  ins  @swcu  lrld
-  tab   q    w    e    r    t    y    u    i    o    p    [    ]    \
-  esc   a    s    d    f    g    h    j    k    l    ;    '    ret
-  @lsbr z    x    c    v    b    n    m    ,    .    /    @rsbr
-  lalt  lmet @lcbr           spc            @rcbr rmet ralt
+  grv   1     2    3    4    5    6    7    8    9    0    -    =    bspc  del  ins  @swcu  lrld
+  tab   q     w    e    r    t    y    u    i    o    p    [    ]    \
+  esc   a     s    d    f    g    h    j    k    l    ;    '    ret
+  @lsbr z     x    c    v    b    n    m    ,    .    /    @rsbr
+  lalt  @omet @lcbr           spc            @rcbr rmet ralt
 )
 
 ;; NOTE: using tap-hold-press instead of tap-hold to be able to ctrl + ... even if the timeout has not passed yet.
@@ -54,30 +55,25 @@
 ;; ------------------------ Custom layout -------------------------------------------------------------------------
 (deflayer my-custom-alpha
   caps
-  grv   1    2    3    4    5     6     7    8    9    0    -      =    XX  del  ins  @swqw  lrld
-  tab   k    .    ,    -    '     j     m    b    g    x    XX     XX   XX
-  @sfts h    i    a    e    =     v     t    n    s    c    @sftq  ret
-  @lsbr f    y    o    u    esc   bspc  w    d    p    l    @rsbr
-  lalt  lmet @lcbr          @symspc      @rcr rmet ralt
+  grv   1     2    3    4    5     6     7    8    9    0    -      =    XX  del  ins  @swqw  lrld
+  tab   k     .    ,    -    '     j     m    b    g    x    XX     XX   XX
+  @sfts h     a    i    e    =     v     t    n    s    c    @sftq  ret
+  @lsbr f     y    o    u    esc   bspc  w    d    p    l    @rsbr
+  lalt  @omet  @lcbr          @symspc     r    rmet ralt
 )
 
 (deflayer my-custom-symbols
   caps
-  XX    XX   XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld
-  XX    XX   XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX
-  @sfts XX   XX   XX   [    XX    XX    XX   XX   XX   XX   @sftq XX
-  @lsbr XX   XX   XX   XX   XX    XX    XX   XX   XX   XX   @rsbr
-  lalt  lmet @lcbr          spc         @rcr rmet ralt
+  XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld
+  XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX
+  @sfts XX    XX   XX   [    XX    XX    XX   XX   XX   XX   @sftq XX
+  @lsbr XX    XX   /    z    XX    XX    XX   XX   XX   XX   @rsbr
+  lalt  @omet @lcbr          spc         XX   rmet ralt
 )
 
 (defalias
   ;; switch to my-custom-apha layer
   swqw (layer-switch my-qwerty)
-)
-
-(defalias
-  ;; Custom layout: tap for round brace, hold for right control
-  rcr (tap-hold-press 300 300 r rctl)
 )
 
 
@@ -94,4 +90,17 @@
 (defalias
   ;; space or symbol layer while held
   symspc (tap-hold-press 300 300 spc (layer-while-held my-custom-symbols))
+)
+
+(defalias
+  ;; release lsft lalt lmet, needed for below "office key" fork. Not releasing lmet, it does not seem to do anything.
+  release-all-except-ctl (multi (release-key lsft) (release-key lalt))
+)
+
+(defalias
+  ;; the "office key" sends lctl + lsft + lalt + lmet presses (key down) upon pressing, then sends releases in the same order.
+  ;; we want to make this into the lctl button, so we need to release lsft + lalt + lmeta.
+  ;; NOTE: releasing lmet is not actually sent by kanata output, but it's ok since lmet press is not sent either
+  ;; the actual order of kanata output when pressing "office key" is lalt down -> lsft down -> lctl down -> lalt up -> lsft up
+  omet (fork lmet @release-all-except-ctl (lctl lsft lalt))
 )
