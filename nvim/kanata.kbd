@@ -62,10 +62,10 @@
 (deflayer my-custom-alpha
   caps
   grv   1     2    3    4    5     6     7    8    9    0    -      =    XX  del  ins  @swqw  lrld
-  tab   k     .    ,    bspc S--   j     m    b    g    x    XX     XX   XX
+  tab   k     .    ,    bspc @umin j     m    b    g    x    XX     XX   XX
   @sfts h     a    i    e    =     v     t    n    s    c    @sftq  ret
   XX    f     y    o    u    esc   @rcbr w    d    p    l    XX
-  lalt  @omet @lcbr          @symspc     r    rmet ralt
+  XX    @omet @lcbr          @symspc     r    rmet XX
 )
 
 ;; each hand: 15 finger keys - 1 for shifts = 14, + 2 for thumbs, excluding layer key.
@@ -85,9 +85,9 @@
 (deflayer symbols
   caps
   XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld
-  XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX
-  lsft  z     XX   XX   XX   XX    XX    XX   XX   XX   XX   rsft  XX
-  @lsbr \     XX   /    XX   XX    XX    XX   XX   XX   XX   @rsbr
+  XX    tab   [    ]    S-]  S-3   S-6   S-4  S-5  S-7  S-8  XX    XX   XX
+  @sft@ z     S-1  '    S-'  `     0     1    2    3    4    @sft5 XX
+  XX    /     S-\  \    S-/  XX    @rcbr 6    7    8    9    XX
   lalt  @omet @lcbr          spc         XX   rmet ralt
 )
 
@@ -98,6 +98,16 @@
   lsft  z     XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    lsft
   XX    S-/   XX   /    XX   XX    XX    XX   XX   XX   XX   XX
   lalt  @omet @lcbr          spc         XX   rmet ralt
+)
+
+(defalias
+  ;; semicolon ; or lshift while held
+  sft@ (tap-hold-press 300 300 S-2 lsft)
+)
+
+(defalias
+  ;; semicolon ; or lshift while held
+  sft5 (tap-hold-press 300 300 5 lsft)
 )
 
 (defalias
@@ -114,6 +124,11 @@
 (defalias
   ;; q or lshift while held
   sftq (tap-hold-press 300 300 q lsft)
+)
+
+(defalias
+  ;; underscore, or minus when shift is held
+  umin (fork S-- (unmod (lsft) -) (lsft))
 )
 
 (defalias
