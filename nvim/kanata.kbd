@@ -38,13 +38,19 @@
 )
 
 (defalias
-  ;; tap for round brace, hold for left control
-  lcbr (tap-hold-press 300 300 S-9 lctl)
+  ;; when ctl is held mapped key is alt, otherwise ctl
+  clt-or-alt (fork lctl alt (lctl))
 )
 
 (defalias
-  ;; tap for round brace, hold for left control (left to be able to match @symspc)
-  rcbr (tap-hold-press 300 300 S-0 lctl)
+  ;; tap for round brace, hold for left ctl, press the other ctl then hold this ctl for alt
+  lcbr (tap-hold-press 300 300 S-9 @clt-or-alt)
+)
+
+(defalias
+  ;; tap for round brace, hold for left ctl (left ctl to be able to match @symspc and others)
+  ;; press the other ctl then hold this ctl for alt
+  rcbr (tap-hold-press 300 300 S-0 @clt-or-alt)
 )
 
 (defalias
@@ -66,7 +72,7 @@
 ;; total 16 keys per hand -> 32 keys
 ;; 10 nums
 ;; 12 F-keys
-;; 8 num symbols, excluding ( )
+;; 8 num symbols, excluding ( ): !@#$%^&*
 ;; 11 symbols: [ ] \ | / ? } ' " ` Tab
 ;; 4 arrows
 ;; 6 symbols: del home end ins pgup pgdown
