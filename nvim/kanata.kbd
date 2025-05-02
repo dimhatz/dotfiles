@@ -73,22 +73,22 @@
 ;; 10 nums
 ;; 12 F-keys
 ;; 8 num symbols, excluding ( ): !@#$%^&*
-;; 11 symbols: [ ] \ | / ? } ' " ` Tab
+;; 11 symbols: [ ] \ | / ? ' " ` Tab Return (not adding }, its already on "office key" tap, see omet)
 ;; 4 arrows
 ;; 6 symbols: del home end ins pgup pgdown
 ;; letter z
-;; total 52 symbols
+;; total 53 symbols
 
-;;   F layer (22 keys): 12 F-keys + 6 del symbols + 4 arrows
-;; sym layer (30 keys): 8 num symb ! + 11 symb [] + z + 10 nums
+;; symb layer (30 keys): 8 num symb ! + 11 symb [] + z + 10 nums
+;; fkey layer (22 keys): 12 F-keys + 6 del symbols + 4 arrows
 
 (deflayer symbols
   caps
   XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld
-  XX    tab   [    ]    S-]  S-3   S-6   S-4  S-5  S-7  S-8  XX    XX   XX
+  XX    tab   [    ]    ret  S-3   S-6   S-4  S-5  S-7  S-8  XX    XX   XX
   @sft@ z     S-1  '    S-'  `     0     1    2    3    4    @sft5 XX
   XX    /     S-\  \    S-/  XX    @rcbr 6    7    8    9    XX
-  lalt  @omet @lcbr          spc         XX   rmet ralt
+  lalt  @omet @lcbr          XX          XX   rmet ralt
 )
 
 (deflayer fkeys
@@ -137,8 +137,18 @@
 )
 
 (defalias
+  ;; when lctl is held, switch to f-keys layer, when shift is held press meta (win), otherwise to symbols layer
+  ;; NOTE: meta+r and meta+l do not work on windows with my microsoft keyboard (meta+r can work if r is mapped e.g. to [ location)
+  meta-or-symbols-or-fkeys (switch
+    (lctl) (layer-while-held fkeys) break
+    (lsft) lmet break
+    () (layer-while-held symbols) break
+  )
+)
+
+(defalias
   ;; space when tapped, symbol layer when held, fkeys layer when held while pressing ctl (no need to hold ctl continuously to keep fkey layer active)
-  symspc (tap-hold-press 300 300 spc @sym-or-f-layer)
+  symspc (tap-hold-press 300 300 spc @meta-or-symbols-or-fkeys)
 )
 
 ;; (defalias
@@ -152,9 +162,16 @@
 )
 
 (defalias
-  ;; the "office key" sends lctl + lsft + lalt + lmet presses (key down) upon pressing, then sends releases in the same order.
-  ;; we want to make this into the lctl button, so we need to release lsft + lalt + lmeta.
-  ;; NOTE: releasing lmet is not actually sent by kanata output, but it's ok since lmet press is not sent either
-  ;; the actual order of kanata output when pressing "office key" is lalt down -> lsft down -> lctl down -> lalt up -> lsft up
-  omet (fork lmet @release-all-except-ctl (lctl lsft lalt))
+  ;; make "office key" send } on tap, also see release-all-except-ctl above
+  ;; even though we only release ctl and alt, sft is released too, hence S-] instead of just ].
+  release-and-press-} (multi (release-key lctl) (release-key lalt) S-])
+)
+
+(defalias
+  ;; The "office key" sends lctl + lsft + lalt + lmet presses (key down) upon pressing, then sends releases in the same order.
+  ;; We want to make this into the lctl button, so we need to release lsft + lalt + lmeta.
+  ;; We also want when tapping the "office key", to send }.
+  ;; NOTE: releasing lmet is not actually sent by kanata output, but it's ok since lmet press is not sent either.
+  ;; The actual order of kanata output when pressing "office key" is lalt down -> lsft down -> lctl down -> lalt up -> lsft up
+  omet (fork lmet (tap-hold-press 300 300 @release-and-press-} @release-all-except-ctl) (lctl lsft lalt))
 )
