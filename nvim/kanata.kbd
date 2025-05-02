@@ -65,7 +65,7 @@
   tab   k     .    ,    bspc @umin j     m    b    g    x    XX     XX   XX
   @sfts h     a    i    e    =     v     t    n    s    c    @sftq  ret
   XX    f     y    o    u    esc   @rcbr w    d    p    l    XX
-  XX    @omet @lcbr          @symspc     r    rmet XX
+  lalt  @omet @lcbr          @symspc     r    rmet XX
 )
 
 ;; each hand: 15 finger keys - 1 for shifts = 14, + 2 for thumbs, excluding layer key.
