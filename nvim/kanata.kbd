@@ -9,8 +9,8 @@
 
 (defsrc
   esc
-  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc  del  ins  kp+  kprt
-  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc  del  ins  kp+  kprt  up  down  lft  rght
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \     home end  pgup pgdn
   caps a    s    d    f    g    h    j    k    l    ;    '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
   lctl lmet lalt           spc            ralt rmet rctl
@@ -18,8 +18,8 @@
 
 (deflayer my-qwerty
   caps
-  grv   1     2    3    4    5    6    7    8    9    0    -    =    bspc  del  ins  @swcu  lrld
-  tab   q     w    e    r    t    y    u    i    o    p    [    ]    \
+  grv   1     2    3    4    5    6    7    8    9    0    -    =    bspc  del  ins  @swcu  lrld  up  down  lft  rght
+  tab   q     w    e    r    t    y    u    i    o    p    [    ]    \     home end  pgup   pgdn
   esc   a     s    d    f    g    h    j    k    l    ;    '    ret
   @lsbr z     x    c    v    b    n    m    ,    .    /    @rsbr
   lalt  @omet @lcbr           spc            @rcbr rmet ralt
@@ -61,8 +61,8 @@
 ;; ------------------------ Custom layout -------------------------------------------------------------------------
 (deflayer my-custom-alpha
   caps
-  grv   1     2    3    4    5     6     7    8    9    0    -      =    XX  del  ins  @swqw  lrld
-  tab   k     .    ,    bspc @umin j     m    b    g    x    XX     XX   XX
+  grv   1     2    3    4    5     6     7    8    9    0    -      =    XX  del  ins  @swqw  lrld  up  down  lft  rght
+  tab   k     .    ,    bspc @umin j     m    b    g    x    XX     XX   XX  home end  pgup   pgdn
   @sfts h     a    i    e    =     v     t    n    s    c    @sftq  ret
   XX    f     y    o    u    esc   @rcbr w    d    p    l    XX
   lalt  @omet @lcbr          @symspc     r    rmet XX
@@ -84,8 +84,8 @@
 
 (deflayer symbols
   caps
-  XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld
-  XX    tab   [    ]    ret  S-3   S-6   S-4  S-5  S-7  S-8  XX    XX   XX
+  XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld  up  down  lft  rght
+  XX    tab   [    ]    ret  S-3   S-6   S-4  S-5  S-7  S-8  XX    XX   XX  home end  pgup   pgdn
   @sft@ z     S-1  '    S-'  `     0     1    2    3    4    @sft5 XX
   XX    /     S-\  \    S-/  XX    @rcbr 6    7    8    9    XX
   lalt  @omet @lcbr          XX          XX   rmet ralt
@@ -93,10 +93,10 @@
 
 (deflayer fkeys
   caps
-  XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld
-  XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX
-  lsft  z     XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    lsft
-  XX    S-/   XX   /    XX   XX    XX    XX   XX   XX   XX   XX
+  XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld  XX  XX    XX   XX
+  XX    ins   del  up   XX   XX    XX    f11  f12  XX   XX   XX    XX   XX  XX   XX   XX     XX
+  lsft  XX    lft  down rght XX    f10   f1   f2   f3   f4   f5    lsft
+  XX    home  end  pgup pgdn XX    XX    f6   f7   f8   f9   XX
   lalt  @omet @lcbr          spc         XX   rmet ralt
 )
 
