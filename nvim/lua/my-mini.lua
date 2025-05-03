@@ -113,6 +113,7 @@ return {
 
     -- autoclose brackets
     require('mini.pairs').setup({})
+    remap('i', '<CR>', '<Nop>', { desc = 'use <C-e>, since vim sees Enter as <C-m> and we have <C-m> mapped' })
 
     ---------------------------------------------------------------------------------------
 

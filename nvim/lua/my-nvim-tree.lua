@@ -47,6 +47,6 @@ return {
       -- },
     })
 
-    remap('n', '<C-b>', '<Cmd>NvimTreeToggle<CR>')
+    remap('n', 'F', '<Cmd>NvimTreeToggle<CR>')
   end,
 }

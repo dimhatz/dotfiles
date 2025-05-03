@@ -20,6 +20,6 @@ return {
         preview = { ms = 100, debounce = true }, -- (100) shows the preview for the current item
       },
     })
-    remap('n', '<C-t>', '<cmd>Trouble diagnostics open_no_results=true<CR>', { desc = 'Open Trouble diagnostics' })
+    remap('n', 'T', '<cmd>Trouble diagnostics open_no_results=true<CR>', { desc = 'Open Trouble diagnostics' })
   end,
 }

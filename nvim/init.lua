@@ -229,8 +229,8 @@ local function my_operator_w()
   return '<Esc>'
 end
 
-local function my_operator_m()
-  -- md -> dd, to make mm -> "_dd
+local function my_operator_l()
+  -- ld -> "_dd, ll -> "_dd, also keep the cursor shape changes (like with regular d)
   if vim.v.operator == 'd' then
     return 'd'
   end
@@ -238,10 +238,11 @@ local function my_operator_m()
 end
 
 remap('o', 'w', my_operator_w, { expr = true, desc = 'My special operator w' })
-remap('o', 'm', my_operator_m, { expr = true, desc = 'My special operator m' })
+remap('o', 'l', my_operator_l, { expr = true, desc = 'My special operator l' })
 
 ---@param vim_move string
 local function move_skipping_non_alphanum_chars(vim_move)
+  -- TODO: fix skipping entirely through slash/backslash: '/' zzz '\' zzz '' zzz / zzz "/" zzz ./. zzz '\' zzz
   -- we use this hack instead of modifying iskeyword option, because we want
   -- the original moves to be used with delete/yank/etc
   -- We send more of the provided vim moves until we either reach eol or there is a
@@ -277,7 +278,7 @@ local function move_skipping_non_alphanum_chars(vim_move)
     end
 
     -- at this point our char is definitely a punctuation char
-    -- test (e) 'e' "z" |z| .z. ('z') '"(x)"' (((x))) ''x'' .. text
+    -- test (e) 'e' "z" |z| .z. ('z') '"(x)"' (((x))) ''x'' .. .text '/' zzz '\' zzz
 
     -- stop when encountering a cluster of punctuations, surrounded by whitespace
     if (vim_move == 'w' or vim_move == 'b') and line_text:sub(new_cursor_col - 1):match('^%s[' .. punctuation_char_pattern .. ']*%s') then
@@ -300,31 +301,31 @@ local function move_skipping_non_alphanum_chars(vim_move)
   end
 end
 
-remap({ 'n', 'x' }, 'w', function()
+remap({ 'n', 'x' }, 'e', function()
   -- Benchmarked: 0ms most of the time, some occasional 1ms time.
   -- local t_begin = os.clock()
   move_skipping_non_alphanum_chars('w')
   -- vim.print((os.clock() - t_begin) * 1000) -- ms
-end, { desc = 'My w skips non-alphanum chars, when they are not surrounded by whitespace' })
+end, { desc = 'e is new w, skips non-alphanum chars, when they are not surrounded by whitespace' })
 
-remap({ 'n', 'x' }, 'e', function()
+remap({ 'n', 'x' }, 'i', function()
   move_skipping_non_alphanum_chars('e')
-end, { desc = 'My e skips non-alphanum chars, when they are not surrounded by whitespace' })
+end, { desc = 'i is new e, skips non-alphanum chars, when they are not surrounded by whitespace' })
 
-remap({ 'n', 'x' }, 'b', function()
+remap({ 'n', 'x' }, 'a', function()
   move_skipping_non_alphanum_chars('b')
-end, { desc = 'My b skips non-alphanum chars, when they are not surrounded by whitespace' })
+end, { desc = 'a is new b, skips non-alphanum chars, when they are not surrounded by whitespace' })
 
 remap({ 'n', 'x' }, 'c', '"_c')
 remap('n', 'C', '"_C')
 remap('n', 'x', '"_x', { desc = 'delete char into black hole' })
-remap({ 'n', 'x' }, 'm', '"_d', { desc = 'Move into black hole' })
-remap('n', 'M', '"_D', { desc = 'delete into black hole' })
-remap('n', 'X', '<cmd>echo "use M to delete into black hole till end of line"<CR>')
+remap({ 'n', 'x' }, 'l', '"_d', { desc = 'Liquidate into black hole' })
+remap('n', 'L', '"_D', { desc = 'delete into black hole' })
+remap('n', 'X', '<cmd>echo "use L to delete into black hole till end of line"<CR>')
 remap('x', 'x', '"_d')
 
-remap('n', 'j', 'gj') -- navigate wrapped lines
-remap('n', 'k', 'gk')
+remap('n', 't', 'gj') -- navigate wrapped lines
+remap('n', 'n', 'gk')
 
 remap('n', '<C-d>', '<C-w>c', { desc = 'Close (Delete) window' })
 remap('n', '<C-c>', '<Cmd>bdelete<CR>', { desc = 'Fallback bdel (mini-bufremove should override)' }) -- will be overridden by mini-bufremove
@@ -335,8 +336,8 @@ remap('i', '<C-u>', '<Esc>gUiwea', { desc = 'Uppercase word under cursor' }) -- 
 -- adjust hlsearch to work correctly with mini.nvim's scrollbar highlight
 remap('n', '*', '*<Cmd>set hlsearch<CR>', { desc = 'vanilla *, with workaround for highlighting' })
 remap('n', '#', '#<Cmd>set hlsearch<CR>', { desc = 'vanilla #, with workaround for highlighting' })
-remap('n', '/', '<Cmd>set hlsearch<CR>/')
-remap('n', '?', '<Cmd>set hlsearch<CR>?')
+remap('n', '=', '<Cmd>set hlsearch<CR>/')
+remap('n', '+', '<Cmd>set hlsearch<CR>?')
 
 local function create_nN_fn(key)
   local cmd = 'normal! ' .. key
@@ -355,8 +356,8 @@ local function create_nN_fn(key)
     vim.cmd('normal! zO')
   end
 end
-remap('n', 'n', create_nN_fn('n'), { desc = 'n also sets hlsearch and unfolds if needed' })
-remap('n', 'N', create_nN_fn('N'), { desc = 'N also sets hlsearch and unfolds if needed' })
+remap('n', 'w', create_nN_fn('n'), { desc = 'w is the new n (where to next?), also sets hlsearch and unfolds' })
+remap('n', 'W', create_nN_fn('N'), { desc = 'W is the new N (where to next?), also sets hlsearch and unfolds' })
 
 remap('n', '<C-q>', '<Cmd>qa<CR>', { desc = 'Quit vim' })
 
@@ -379,10 +380,9 @@ end, { expr = true, desc = 'toggle fold recursively' })
 
 remap('x', 'p', 'p<Cmd>let @p=@+<Bar>let @+=@0<CR>', { desc = 'Pasting in visual stores the overwritten text in "p register', silent = true })
 
-remap('n', '<C-h>', '<C-e>', { desc = 'Scroll down 1 line' })
-remap('n', '<C-l>', '<C-y>', { desc = 'Scroll up 1 line' })
-remap('x', '<C-h>', '<C-e>', { desc = 'Scroll down 1 line' })
-remap('x', '<C-l>', '<C-y>', { desc = 'Scroll up 1 line' })
+remap({ 'n', 'x' }, '<C-m>', '<C-e>', { desc = 'Scroll down 1 line' })
+remap({ 'n', 'x' }, '<C-b>', '<C-y>', { desc = 'Scroll up 1 line' })
+
 -- skipping insert, since we are using c-j / c-k to autocomplete in insert
 -- remap('i', '<C-j>', '<C-o><C-e>', { desc = 'Scroll down 1 line' })
 -- remap('i', '<C-k>', '<C-o><C-y>', { desc = 'Scroll up 1 line' })
@@ -391,14 +391,8 @@ remap('x', '<C-l>', '<C-y>', { desc = 'Scroll up 1 line' })
 -- remap('n', '<C-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' })
 -- remap('n', '<C-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
 
-remap('n', '<C-j>', 'gj<C-e>', { desc = 'Scroll down 1 line with cursor steady' })
-remap('n', '<C-k>', 'gk<C-y>', { desc = 'Scroll up 1 line with cursor steady' })
-remap('x', '<C-j>', 'gj<C-e>', { desc = 'Scroll down 1 line with cursor steady' })
-remap('x', '<C-k>', 'gk<C-y>', { desc = 'Scroll up 1 line with cursor steady' })
-
--- remap('n', '<A-j>', '1<C-d>', { desc = 'Scroll down 1 line with cursor steady' }) -- same as above, but with Alt, alacritty re-exposes (in flashes) the mouse if its inside terminal
--- remap('n', '<A-k>', '1<C-u>', { desc = 'Scroll up 1 line with cursor steady' })
-remap('n', '<C-m>', 'M', { desc = 'Put cursor in the center of the screen, <CR> triggers <C-m> it too' })
+remap({ 'n', 'x' }, '<C-t>', 'gj<C-e>', { desc = 'Scroll down 1 line with cursor steady' })
+remap({ 'n', 'x' }, '<C-n>', 'gk<C-y>', { desc = 'Scroll up 1 line with cursor steady' })
 
 remap('n', '<C-z>', function()
   -- WORKAROUND: if we don't save and restore window the cursor jumps to the location
@@ -420,20 +414,17 @@ remap('n', '<F11>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Unfold all' })
 remap('n', '<F12>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Unfold all' })
 
 -- now C-p and C-n autocomplete the beginning of the command and search.
-remap('c', '<C-k>', '<Up>', { desc = 'Autocomplete in command mode' })
-remap('c', '<C-j>', '<Down>', { desc = 'Autocomplete in command mode' })
+remap('c', '<C-n>', '<Up>', { desc = 'Autocomplete in command mode' })
+remap('c', '<C-t>', '<Down>', { desc = 'Autocomplete in command mode' })
 
 -- <Esc>A, <C-o>A -> required 1 undo
 -- <C-o>$, <End>,  also work, requires 2 undos
 -- Dot (.) does not repeat both edits in all cases, not sure whether triggers mode change
-remap('i', '<C-e>', '<Esc>A', { desc = 'Jump to EOL' })
-remap({ 'n', 'x' }, '<C-e>', '$', { desc = 'Jump to EOL' })
-
--- Stop reaching too far with fingers for =, +, -, _
-remap({ 'i', 'c' }, '<C-f>', '=', { desc = '<C-f> is = in insert' })
-remap({ 'i', 'c' }, '<C-g>', '+', { desc = '<C-g> is + in insert' })
-remap({ 'i', 'c' }, '<C-d>', '_', { desc = '<C-d> is _ in insert' })
-remap({ 'i', 'c' }, '<C-a>', '-', { desc = '<C-a> is - in insert' })
+remap('i', '<C-i>', '<Esc>A', { desc = 'Jump to EOL' })
+remap('i', '<C-a>', '<Esc>I', { desc = 'Jump to line start' })
+remap({ 'n', 'x' }, '<C-i>', '$', { desc = 'Jump to EOL' })
+remap({ 'n', 'x' }, '<C-a>', '^', { desc = 'Jump to line start' })
+remap('i', '<C-x>', '<C-i>', { desc = 'Tab (workaround since vim sees tab as <c-i> and we have <c-i> mapped)' })
 
 -- avoid conflict with our <c-f> which is = in insert and cmd modes
 remap('c', '<C-z>', '<C-f>', { desc = 'Open window with all previous commands' })
@@ -441,27 +432,13 @@ remap('c', '<C-z>', '<C-f>', { desc = 'Open window with all previous commands' }
 -- see https://stackoverflow.com/questions/24983372/what-does-ctrlspace-do-in-vim
 remap({ 'i' }, '<C-Space>', '<Space>', { desc = 'Workaround, <C-space> can be ambiguously interpreted as <C-@>' })
 
--- When doing :nnore r<C-f> r=
--- and the timeout passes, the mapping will not activate. Workaround:
-remap('n', 'r', function()
-  -- change and restore cursor, otherwise it stays the same
-  local orig_cursor = vim.o.guicursor
-  vim.o.guicursor = 'a:hor20-iCursor/iCursor'
-  local c = vim.fn.getcharstr()
-  vim.o.guicursor = orig_cursor
-  -- NOTE: the below string literals need to be entered with <c-v> in insert (after :iunmap <c-v>)
-  -- since these are special vim's internal escape codes.
-  if c == '' then
-    return 'r='
-  elseif c == '' then
-    return 'r+'
-  elseif c == '' then
-    return 'r_'
-  elseif c == '' then
-    return 'r-'
-  end
-  return 'r' .. c
-end, { expr = true, desc = 'replace single char, supports our special insert keymaps (<C-d> etc)' })
+-- new keyboard layout, special remaps
+remap('n', 'm', 'i', { desc = 'm is the new i, insert to the left' })
+remap({ 'n', 'x' }, 'M', 'I', { desc = 'M is the new I, insert to the left of the whole line' })
+remap('n', 'b', 'a', { desc = 'b is the new a, insert behind' })
+remap({ 'n', 'x' }, 'B', 'A', { desc = 'B is the new A, insert Behind the whole line' })
+remap({ 'n', 'x' }, 'j', 'l', { desc = 'j is new l, top row right hand, Just right' })
+remap({ 'n', 'x' }, 'k', 'h', { desc = 'k is new h, top row left hand' })
 
 local function my_set_search()
   -- no type = 'v', since it will return text till the cursor

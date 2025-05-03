@@ -75,25 +75,25 @@ return {
         -- file_ignore_patterns = { '.git' .. require('my-helpers').path_delimiter },
         mappings = {
           i = {
-            ['<c-j>'] = { my_move_selection_next, type = 'action', opts = my_opts },
-            ['<c-k>'] = { my_move_selection_previous, type = 'action', opts = my_opts },
-            ['<c-h>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
-            ['<c-l>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
+            ['<c-t>'] = { my_move_selection_next, type = 'action', opts = my_opts },
+            ['<c-n>'] = { my_move_selection_previous, type = 'action', opts = my_opts },
+            ['<c-m>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
+            ['<c-b>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
             ['<c-v>'] = { '<C-r>+', type = 'command', opts = my_opts },
-            ['<c-n>'] = false, -- disable to get used to c-j / c-k everywhere
+            ['<c-e>'] = { actions.select_default, type = 'action', opts = my_opts },
             ['<c-p>'] = false,
             ['<c-u>'] = false, -- <c-u> / <c-d> are mapped to scroll preview up / down
             ['<c-d>'] = false, -- dont mess with our insert mode <c-d> which is _
-            -- ['<c-n>'] = { actions.cycle_history_next, type = 'action', opts = my_opts },
-            -- ['<c-p>'] = { actions.cycle_history_prev, type = 'action', opts = my_opts },
           },
           n = {
-            ['j'] = { my_move_selection_next, type = 'action', opts = my_opts },
-            ['k'] = { my_move_selection_previous, type = 'action', opts = my_opts },
-            ['<c-j>'] = { my_move_selection_next, type = 'action', opts = my_opts },
-            ['<c-k>'] = { my_move_selection_previous, type = 'action', opts = my_opts },
-            ['<c-h>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
-            ['<c-l>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
+            ['t'] = { my_move_selection_next, type = 'action', opts = my_opts },
+            ['n'] = { my_move_selection_previous, type = 'action', opts = my_opts },
+            ['<c-t>'] = { my_move_selection_next, type = 'action', opts = my_opts },
+            ['<c-n>'] = { my_move_selection_previous, type = 'action', opts = my_opts },
+            ['<c-m>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
+            ['<c-b>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
+            ['<c-e>'] = { actions.select_default, type = 'action', opts = my_opts },
+            ['<c-p>'] = false,
             ['<c-u>'] = false, -- <c-u> / <c-d> are mapped to scroll preview up / down
             ['<c-d>'] = false, -- dont mess with our insert mode <c-d> which is _
           },
@@ -222,6 +222,7 @@ return {
             -- Workaround (re-opens telescope window)
             require('telescope.actions').close(prompt_bufnr)
             require('mini.bufremove').delete(entry.bufnr)
+            -- TODO: try actions.delete_buffer
             -- TODO: make it resume at the same position too
             vim.schedule(search_open_buffers) -- search_open_buffers() is current, remap()'ed function
 

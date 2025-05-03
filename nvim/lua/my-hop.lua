@@ -442,18 +442,18 @@ remap({ 'n', 'x' }, 'f', function()
   jump(Direction.forward, Granularity.word, MatchSide.word_start)
 end, { desc = 'Jump forward' })
 
-remap({ 'n', 'x' }, 't', function()
+remap({ 'n', 'x' }, 'h', function()
   jump(Direction.back, Granularity.word, MatchSide.word_start)
-end, { desc = 'Jump back (towards top)' })
+end, { desc = 'Hop back (h is on top of f)' })
 
-remap({ 'n', 'x' }, '<Leader>k', function()
+remap({ 'n', 'x' }, '<Leader>n', function()
   jump(Direction.back, Granularity.line, MatchSide.word_start)
 end, { desc = 'Jump back linewise' })
 
-remap({ 'n', 'x' }, '<Leader>j', function()
+remap({ 'n', 'x' }, '<Leader>t', function()
   jump(Direction.forward, Granularity.line, MatchSide.word_start)
 end, { desc = 'Jump forward linewise' })
 
-remap({ 'n', 'x' }, '<Leader>e', function()
+remap({ 'n', 'x' }, '<Leader>i', function()
   jump(Direction.forward, Granularity.word, MatchSide.word_end)
 end, { desc = 'Jump forward to the end of a word' })

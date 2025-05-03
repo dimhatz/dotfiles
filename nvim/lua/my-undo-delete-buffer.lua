@@ -41,7 +41,7 @@ vim.api.nvim_create_autocmd('BufReadPost', {
   end,
 })
 
-remap('n', '<C-Del>', function()
+remap('n', '<C-BS>', function()
   -- vim.print('restoring')
   -- vim.print(del_stack)
   if #del_stack < 1 then

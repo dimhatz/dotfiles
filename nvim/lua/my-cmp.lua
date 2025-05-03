@@ -6,7 +6,7 @@ local remap = require('my-helpers').remap
 return {
   'hrsh7th/nvim-cmp',
   -- problem: when completion is non-automatic, type:
-  -- vim.api<c-j>.nbufs --> there will be no nvim_list_bufs() result
+  -- vim.api<c-t>.nbufs --> there will be no nvim_list_bufs() result
   -- press <c-n> again to re-trigger completion -> now there is!
   -- even more strange: when usng autocompletion, and doing the above sequence,
   -- when typing <c-n> the results are less than before!
@@ -55,9 +55,9 @@ return {
     }
 
     -- NOTE: to be able to test that our hack is working, type:
-    -- vim.api.<c-j>n.b.u.f.s (without ., written like this to not save full string inside text)
+    -- vim.api.<c-t>n.b.u.f.s (without ., written like this to not save full string inside text)
     -- then `n.v.i.m._.l.i.s.t._.b.u.f.s` should be available in the completion list
-    -- if it is missing and only shown with forcing completion (<c-n>), then the hack does not work
+    -- if it is missing and only shown with forcing completion (<c-f>), then the hack does not work
     My_cmp_disabled = true -- <-- global, used from mappings with <Cmd>lua My_cmp_disabled=true<CR>
 
     -- -- to be triggered by cmp, but cmp almost always fails to trigger it
@@ -81,10 +81,10 @@ return {
     end
 
     cmp.setup({
-      -- even when lsp suggests to preselect an item, do not do it (results in needing <c-j><c-k> to
+      -- even when lsp suggests to preselect an item, do not do it (results in needing <c-t><c-n> to
       -- insert selected text)
       preselect = cmp.PreselectMode.None,
-      -- weird setting: more useful presentation when cursor is near bottom, but c-j now selects upwards!
+      -- weird setting: more useful presentation when cursor is near bottom, but c-t now selects upwards!
       -- view = {
       --   entries = { name = 'custom', selection_order = 'near_cursor' },
       -- },
@@ -156,7 +156,7 @@ return {
       -- },
     })
 
-    remap('i', '<C-j>', function()
+    remap('i', '<C-t>', function()
       if vim.fn.reg_recording() ~= '' then
         -- Cmp is incompatible with macros, ensure it never triggers. The cmp's
         -- default enabled() should  prevent this, but it does not always work.
@@ -171,7 +171,7 @@ return {
       end
     end, { desc = 'Autocomplete next' })
 
-    remap('i', '<C-k>', function()
+    remap('i', '<C-n>', function()
       if vim.fn.reg_recording() ~= '' then
         return
       end
@@ -184,13 +184,14 @@ return {
       end
     end, { desc = 'Autocomplete prev' })
 
-    remap('i', '<C-l>', function()
+    remap('i', '<C-b>', function()
       if cmp.visible_docs() then
         cmp.scroll_docs(-4)
       end
     end, { desc = 'Autocomplete scroll docs up' })
 
-    remap('i', '<C-h>', function()
+    -- NOTE: <c-m> is the same as <cr> for vim
+    remap('i', '<C-m>', function()
       if cmp.visible_docs() then
         cmp.scroll_docs(4)
       else
@@ -198,9 +199,9 @@ return {
       end
     end, { desc = 'Autocomplete scroll docs down / Lsp signature help (when no popup)' })
 
-    remap('i', '<C-n>', function()
+    remap('i', '<C-f>', function()
       if not cmp.visible() then
-        vim.print('Popup not visible, type <C-j> to complete')
+        vim.print('Popup not visible, type <C-t> to complete')
         return
       end
       vim.print('Forcing completion')
@@ -221,7 +222,8 @@ return {
       local cr_termcodes = require('mini.pairs').cr()
       vim.api.nvim_feedkeys(cr_termcodes, 'n', false)
     end
-    remap('i', '<CR>', function()
+    -- NOTE: this is our actual mapping for <c-e> as <cr> in insert!
+    remap('i', '<C-e>', function()
       -- vim.fn.pumvisible() ~= 0, also vim.fn.complete_info() fails here, (maybe cmp uses custom
       -- window?) -> using cmp's visible()
       if cmp.visible() then

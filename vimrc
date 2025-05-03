@@ -360,8 +360,8 @@ nnoremap \ ,
 xnoremap \ ,
 
 " now "C-p" and "C-n" autocomplete the beginning of the command and search.
-cnoremap <C-k> <Up>
-cnoremap <C-j> <Down>
+cnoremap <C-n> <Up>
+cnoremap <C-t> <Down>
 
 " Space is the new leader
 nnoremap <Space> <Nop>
@@ -374,8 +374,9 @@ let mapleader = "\<Space>"
 " inoremap <c-c> <nop>
 
 " for navigation of wrapped lines --> investigate side effects
-nnoremap j gj
-nnoremap k gk
+nnoremap t gj
+nnoremap n gk
+nnoremap j l
 
 " map } and { to :bnext and :bprev
 nnoremap <silent> } :bnext<CR>
@@ -426,9 +427,9 @@ nnoremap    V   v
 xnoremap    V   v
 
 " move to beginning/end of line (also consider B and E as alternative)
-" <C-H> by default in terminal is produced by backspace, using <C-J>
-noremap <C-J> ^
-noremap <C-K> $
+" <C-H> by default in terminal is produced by backspace, using <C-t>
+noremap <C-a> ^
+noremap <C-i> $
 " <C-K> appends to end of line, useful to escape auto-closing parens
 inoremap <silent><C-J> <ESC><ESC>I
 inoremap <silent><C-K> <ESC><ESC>A
