@@ -5,7 +5,10 @@
 ;; kp+ (keypad plus) -> using this to switch to custom layout
 ;; TIP: start kanata with --debug and search for keys here: https://github.com/jtroo/kanata/blob/main/parser/src/keys/mod.rs
 
-(defcfg process-unmapped-keys yes)
+(defcfg
+  process-unmapped-keys yes
+  allow-hardware-repeat false
+)
 
 (defsrc
   esc
