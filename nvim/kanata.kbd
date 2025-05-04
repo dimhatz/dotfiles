@@ -98,9 +98,14 @@
   caps
   XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld  XX  XX    XX   XX
   XX    ins   del  up   XX   XX    XX    f11  f12  XX   XX   XX    XX   XX  XX   XX   XX     XX
-  lsft  XX    lft  down rght XX    f10   f1   f2   f3   f4   f5    lsft
+  lsft  XX    lft  down rght XX    f10   f1   f2   f3   f4   @sff5 lsft
   XX    home  end  pgup pgdn XX    XX    f6   f7   f8   f9   XX
   lalt  @omet @lcbr          spc         XX   rmet ralt
+)
+
+(defalias
+  ;; semicolon ; or lshift while held
+  sff5 (tap-hold-press 300 300 f5 lsft)
 )
 
 (defalias
