@@ -301,28 +301,25 @@ local function move_skipping_non_alphanum_chars(vim_move)
   end
 end
 
-remap({ 'n', 'x' }, 'e', function()
+remap({ 'n', 'x' }, 'i', function()
   -- Benchmarked: 0ms most of the time, some occasional 1ms time.
   -- local t_begin = os.clock()
   move_skipping_non_alphanum_chars('w')
   -- vim.print((os.clock() - t_begin) * 1000) -- ms
 end, { desc = 'e is new w, skips non-alphanum chars, when they are not surrounded by whitespace' })
 
-remap({ 'n', 'x' }, 'i', function()
+remap({ 'n', 'x' }, 'e', function()
   move_skipping_non_alphanum_chars('e')
-end, { desc = 'i is new e, skips non-alphanum chars, when they are not surrounded by whitespace' })
+end, { desc = 'e skips non-alphanum chars, when they are not surrounded by whitespace' })
 
 remap({ 'n', 'x' }, 'a', function()
   move_skipping_non_alphanum_chars('b')
 end, { desc = 'a is new b, skips non-alphanum chars, when they are not surrounded by whitespace' })
 
-remap({ 'n', 'x' }, 'c', '"_c')
-remap('n', 'C', '"_C')
-remap('n', 'x', '"_x', { desc = 'delete char into black hole' })
+remap({ 'n', 'x' }, 'x', '<Nop>', { desc = 'in normal use <bs> instead, in visual -> l' })
 remap({ 'n', 'x' }, 'l', '"_d', { desc = 'Liquidate into black hole' })
 remap('n', 'L', '"_D', { desc = 'delete into black hole' })
 remap('n', 'X', '<cmd>echo "use L to delete into black hole till end of line"<CR>')
-remap('x', 'x', '"_d')
 
 remap({ 'n', 'x' }, 't', 'gj') -- navigate wrapped lines
 remap({ 'n', 'x' }, 'n', 'gk')
@@ -330,7 +327,7 @@ remap({ 'n', 'x' }, 'n', 'gk')
 remap('n', '<C-d>', '<C-w>c', { desc = 'Close (Delete) window' })
 remap('n', '<C-c>', '<Cmd>bdelete<CR>', { desc = 'Fallback bdel (mini-bufremove should override)' }) -- will be overridden by mini-bufremove
 
-remap('n', '<C-u>', 'gUiw', { desc = 'Uppercase word under cursor' }) -- Uppercase word in norm/insert
+remap('n', 'U', 'gUiw', { desc = 'Uppercase word under cursor' }) -- Uppercase word in norm/insert
 remap('i', '<C-u>', '<Esc>gUiwea', { desc = 'Uppercase word under cursor' }) -- FIXME: does not repeat
 
 -- adjust hlsearch to work correctly with mini.nvim's scrollbar highlight
@@ -420,11 +417,10 @@ remap('c', '<C-t>', '<Down>', { desc = 'Autocomplete in command mode' })
 -- <Esc>A, <C-o>A -> required 1 undo
 -- <C-o>$, <End>,  also work, requires 2 undos
 -- Dot (.) does not repeat both edits in all cases, not sure whether triggers mode change
-remap('i', '<C-i>', '<Esc>A', { desc = 'Jump to EOL' })
+remap('i', '<C-e>', '<Esc>A', { desc = 'Jump to EOL' })
 remap('i', '<C-a>', '<Esc>I', { desc = 'Jump to line start' })
-remap({ 'n', 'x' }, '<C-i>', '$', { desc = 'Jump to EOL' })
+remap({ 'n', 'x' }, '<C-e>', '$', { desc = 'Jump to EOL' })
 remap({ 'n', 'x' }, '<C-a>', '^', { desc = 'Jump to line start' })
-remap('i', '<C-x>', '<C-i>', { desc = 'Tab (workaround since vim sees tab as <c-i> and we have <c-i> mapped)' })
 
 -- avoid conflict with our <c-f> which is = in insert and cmd modes
 remap('c', '<C-z>', '<C-f>', { desc = 'Open window with all previous commands' })
@@ -438,9 +434,17 @@ remap({ 'n', 'x', 'o' }, ',', 'i', { desc = ', is the new i, insert to the left,
 remap({ 'n', 'x', 'o' }, '<', 'I', { desc = '< is the new I, insert to the left of the whole line' })
 remap({ 'n', 'x', 'o' }, '.', 'a', { desc = '. is the new a, insert behind' })
 remap({ 'n', 'x', 'o' }, '>', 'A', { desc = '> is the new A, insert Behind the whole line' })
-remap({ 'n', 'x', 'o' }, 'm', 'l', { desc = 'm is new l, bottom row right hand' })
-remap({ 'n', 'x', 'o' }, 'k', 'h', { desc = 'k is new h, top row left hand' })
-remap('n', '<c-u>', '<c-i>', { desc = '<c-u> is the new <c-i>' })
+remap({ 'n', 'x', 'o' }, 'm', 'l', { desc = 'm is new l, bottom row right hand (cursor right)' })
+remap({ 'n', 'x', 'o' }, 'k', 'h', { desc = 'k is new h, top row left hand (cursor left)' })
+remap('n', '<c-u>', '<c-i>', { desc = '<c-u> is the new <c-i> (go back)' })
+remap('n', '_', '.', { desc = '_ is the new . (repeat)' })
+remap('n', '<BS>', '"_x', { desc = '<bs> is the new x (delete char under cursor)' })
+-- remap({ 'x', 'o' }, 'w', '<Nop>', { desc = 'use e instead' })
+-- remap({ 'x', 'o', 'n' }, 'b', '<Nop>', { desc = 'use a instead' })
+--
+-- using f24 instead of <nop> to terminate the "delete sequence", otherwise it will be in operator pending.
+-- remap({ 'o' }, 'i', '<F24>', { desc = 'use , instead' })
+-- remap({ 'o' }, 'a', '<F24>', { desc = 'use . instead' })
 vim.defer_fn(function()
   -- unmap matchit's visual a% as it messes up our new move a: (go to beginning of word)
   -- we have to defer, otherwise we are mapped first (and not matchit).

@@ -68,13 +68,13 @@ return {
 
     require('mini.surround').setup({
       mappings = {
-        add = 's', -- Add surrounding in Normal and Visual modes
-        delete = 'sd', -- Delete surrounding
-        find = 'sf', -- Find surrounding (to the right)
-        find_left = 'sF', -- Find surrounding (to the left)
-        highlight = 'sh', -- Highlight surrounding
-        replace = 'sr', -- Replace surrounding
-        update_n_lines = 'su', -- Update `n_lines` (how many lines are searched to perform surround actions)
+        add = 'c', -- Add surrounding in Normal and Visual modes
+        delete = 'cd', -- Delete surrounding
+        find = 'cf', -- Find surrounding (to the right)
+        find_left = 'cF', -- Find surrounding (to the left)
+        highlight = 'ch', -- Highlight surrounding
+        replace = 'cr', -- Replace surrounding
+        update_n_lines = 'cu', -- Update `n_lines` (how many lines are searched to perform surround actions)
         suffix_last = 'l', -- Suffix to search with "prev" method
         suffix_next = 'n', -- Suffix to search with "next" method
       },
@@ -82,8 +82,9 @@ return {
       silent = true,
     })
 
-    remap('n', 'sw', 'siw', { remap = true }) -- be consistent with cw -> ciw
-    remap('n', 'sc', 'sr', { remap = true }) -- be consistent with cw -> ciw
+    remap('n', 'cw', 'ciw', { remap = true, desc = 'contour, cloak, circumscribe (surround) inside word' }) -- be consistent with dw -> diw
+    remap({ 'n', 'x' }, 's', '"_c', { desc = 'substitute, supersede, supplant (change)' })
+    remap('n', 'S', '"_C')
 
     -- vim.api.nvim_del_keymap('x', 's')
     -- local visual_surround = require('my-visual-surround').visual_surround

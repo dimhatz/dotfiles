@@ -147,7 +147,7 @@ return {
       builtin.find_files({ find_command = find_command })
     end, { desc = 'Search [F]iles (respecting .gitignore, shows hidden)' })
 
-    remap('n', '<Leader-h>', function()
+    remap('n', '<Leader>h', function()
       builtin.find_files(require('telescope.themes').get_dropdown({
         previewer = false,
         find_command = find_command,
