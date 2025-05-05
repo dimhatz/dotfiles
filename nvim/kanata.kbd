@@ -65,9 +65,9 @@
 (deflayer my-custom-alpha
   caps
   grv   1     2    3    4    5     6     7    8    9    0    -      =    XX  del  ins  @swqw  lrld  up  down  lft  rght
-  tab   k     .    ,    bspc @umin j     m    b    g    x    XX     XX   XX  home end  pgup   pgdn
-  @sfts h     a    i    e    =     v     t    n    s    c    @sftq  ret
-  XX    f     y    o    u    esc   @rcbr w    d    p    l    XX
+  tab   k     ,    .    bspc @umin v     p    b    g    x    XX     XX   XX  home end  pgup   pgdn
+  @sfts h     a    i    e    =     ret   t    n    s    l    @sftq  ret
+  XX    f     y    o    u    esc   @rcbr w    d    c    m    XX
   lalt  @omet @lcbr          @symspc     r    rmet XX
 )
 
@@ -89,7 +89,7 @@
   caps
   XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld  up  down  lft  rght
   XX    tab   [    ]    '    S-3   S-6   S-4  S-5  S-7  S-8  XX    XX   XX  home end  pgup   pgdn
-  @sft@ z     S-1  S-'  ret  `     0     1    2    3    4    @sft5 XX
+  @sft@ z     j    S-1  S-'  `     0     1    2    3    4    @sft5 XX
   XX    /     S-\  \    S-/  XX    @rcbr 6    7    8    9    XX
   lalt  @omet @lcbr          XX          XX   rmet ralt
 )
