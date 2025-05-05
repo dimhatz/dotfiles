@@ -19,6 +19,8 @@ return {
       n_lines = 500, -- 50 default, 500 suggested by kickstart
       search_method = 'cover',
       mappings = {
+        around = '.',
+        inside = ',',
         around_next = '',
         inside_next = '',
         around_last = '',
@@ -30,8 +32,8 @@ return {
       },
     })
 
-    local mini_ai_i_mapargs = vim.fn.maparg('i', 'v', false, true)
-    remap('x', 'i', function()
+    local mini_ai_i_mapargs = vim.fn.maparg(',', 'v', false, true)
+    remap('x', ',', function()
       better_visual_repeat.force_alive(true)
       vim.schedule(function()
         better_visual_repeat.force_alive(false)
@@ -91,20 +93,30 @@ return {
     require('mini.indentscope').setup({
       symbol = '│', -- center(│), left (▏)
       draw = {
-        delay = 20,
+        delay = 64,
         animation = require('mini.indentscope').gen_animation.none(),
       },
+      mappings = {
+        -- Textobjects
+        object_scope = ',i', -- inside indent
+        object_scope_with_border = '.i', -- around indent
+
+        -- Motions (jump to respective border line; if not present - body line)
+        goto_top = 'ga',
+        goto_bottom = 'gi',
+      },
     })
+    -- TODO: do not allow indentscope to overwrite visual mappings i, a
     remap(
       'x',
-      'ii',
+      ',i',
       '<Cmd>lua BetterVisualRepeat.force_alive(true); MiniIndentscope.textobject(false); BetterVisualRepeat.force_alive(false)<CR>',
       { desc = 'Override mini.indentscope ii to work with our visual repeat' }
     )
 
     remap(
       'x',
-      'ai',
+      '.i',
       '<Cmd>lua BetterVisualRepeat.force_alive(true); MiniIndentscope.textobject(true); BetterVisualRepeat.force_alive(false)<CR>',
       { desc = 'Override mini.indentscope ai to work with our visual repeat' }
     )
@@ -113,7 +125,6 @@ return {
 
     -- autoclose brackets
     require('mini.pairs').setup({})
-    remap('i', '<CR>', '<Nop>', { desc = 'use <C-e>, since vim sees Enter as <C-m> and we have <C-m> mapped' })
 
     ---------------------------------------------------------------------------------------
 

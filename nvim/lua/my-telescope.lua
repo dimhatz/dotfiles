@@ -77,11 +77,9 @@ return {
           i = {
             ['<c-t>'] = { my_move_selection_next, type = 'action', opts = my_opts },
             ['<c-n>'] = { my_move_selection_previous, type = 'action', opts = my_opts },
-            ['<c-m>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
+            ['<c-p>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
             ['<c-b>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
             ['<c-v>'] = { '<C-r>+', type = 'command', opts = my_opts },
-            ['<c-e>'] = { actions.select_default, type = 'action', opts = my_opts },
-            ['<c-p>'] = false,
             ['<c-u>'] = false, -- <c-u> / <c-d> are mapped to scroll preview up / down
             ['<c-d>'] = false, -- dont mess with our insert mode <c-d> which is _
           },
@@ -90,10 +88,8 @@ return {
             ['n'] = { my_move_selection_previous, type = 'action', opts = my_opts },
             ['<c-t>'] = { my_move_selection_next, type = 'action', opts = my_opts },
             ['<c-n>'] = { my_move_selection_previous, type = 'action', opts = my_opts },
-            ['<c-m>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
+            ['<c-p>'] = { actions.preview_scrolling_down, type = 'action', opts = my_opts },
             ['<c-b>'] = { actions.preview_scrolling_up, type = 'action', opts = my_opts },
-            ['<c-e>'] = { actions.select_default, type = 'action', opts = my_opts },
-            ['<c-p>'] = false,
             ['<c-u>'] = false, -- <c-u> / <c-d> are mapped to scroll preview up / down
             ['<c-d>'] = false, -- dont mess with our insert mode <c-d> which is _
           },
@@ -151,7 +147,7 @@ return {
       builtin.find_files({ find_command = find_command })
     end, { desc = 'Search [F]iles (respecting .gitignore, shows hidden)' })
 
-    remap('n', '<C-p>', function()
+    remap('n', '<Leader-h>', function()
       builtin.find_files(require('telescope.themes').get_dropdown({
         previewer = false,
         find_command = find_command,

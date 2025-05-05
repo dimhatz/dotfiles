@@ -191,7 +191,7 @@ return {
     end, { desc = 'Autocomplete scroll docs up' })
 
     -- NOTE: <c-m> is the same as <cr> for vim
-    remap('i', '<C-m>', function()
+    remap('i', '<C-p>', function()
       if cmp.visible_docs() then
         cmp.scroll_docs(4)
       else
@@ -222,8 +222,7 @@ return {
       local cr_termcodes = require('mini.pairs').cr()
       vim.api.nvim_feedkeys(cr_termcodes, 'n', false)
     end
-    -- NOTE: this is our actual mapping for <c-e> as <cr> in insert!
-    remap('i', '<C-e>', function()
+    remap('i', '<CR>', function()
       -- vim.fn.pumvisible() ~= 0, also vim.fn.complete_info() fails here, (maybe cmp uses custom
       -- window?) -> using cmp's visible()
       if cmp.visible() then

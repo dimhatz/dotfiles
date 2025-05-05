@@ -324,8 +324,8 @@ remap('n', 'L', '"_D', { desc = 'delete into black hole' })
 remap('n', 'X', '<cmd>echo "use L to delete into black hole till end of line"<CR>')
 remap('x', 'x', '"_d')
 
-remap('n', 't', 'gj') -- navigate wrapped lines
-remap('n', 'n', 'gk')
+remap({ 'n', 'x' }, 't', 'gj') -- navigate wrapped lines
+remap({ 'n', 'x' }, 'n', 'gk')
 
 remap('n', '<C-d>', '<C-w>c', { desc = 'Close (Delete) window' })
 remap('n', '<C-c>', '<Cmd>bdelete<CR>', { desc = 'Fallback bdel (mini-bufremove should override)' }) -- will be overridden by mini-bufremove
@@ -380,7 +380,7 @@ end, { expr = true, desc = 'toggle fold recursively' })
 
 remap('x', 'p', 'p<Cmd>let @p=@+<Bar>let @+=@0<CR>', { desc = 'Pasting in visual stores the overwritten text in "p register', silent = true })
 
-remap({ 'n', 'x' }, '<C-m>', '<C-e>', { desc = 'Scroll down 1 line' })
+remap({ 'n', 'x' }, '<C-p>', '<C-e>', { desc = 'Scroll down 1 line' })
 remap({ 'n', 'x' }, '<C-b>', '<C-y>', { desc = 'Scroll up 1 line' })
 
 -- skipping insert, since we are using c-j / c-k to autocomplete in insert
@@ -413,7 +413,7 @@ remap('n', '<F10>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Fold all text a
 remap('n', '<F11>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Unfold all' })
 remap('n', '<F12>', '<Cmd>setlocal foldlevel=999<CR>', { desc = 'Unfold all' })
 
--- now C-p and C-n autocomplete the beginning of the command and search.
+-- now C-t and C-n autocomplete the beginning of the command and search.
 remap('c', '<C-n>', '<Up>', { desc = 'Autocomplete in command mode' })
 remap('c', '<C-t>', '<Down>', { desc = 'Autocomplete in command mode' })
 
@@ -433,12 +433,22 @@ remap('c', '<C-z>', '<C-f>', { desc = 'Open window with all previous commands' }
 remap({ 'i' }, '<C-Space>', '<Space>', { desc = 'Workaround, <C-space> can be ambiguously interpreted as <C-@>' })
 
 -- new keyboard layout, special remaps
-remap('n', 'm', 'i', { desc = 'm is the new i, insert to the left' })
-remap({ 'n', 'x' }, 'M', 'I', { desc = 'M is the new I, insert to the left of the whole line' })
-remap('n', 'b', 'a', { desc = 'b is the new a, insert behind' })
-remap({ 'n', 'x' }, 'B', 'A', { desc = 'B is the new A, insert Behind the whole line' })
-remap({ 'n', 'x' }, 'j', 'l', { desc = 'j is new l, top row right hand, Just right' })
-remap({ 'n', 'x' }, 'k', 'h', { desc = 'k is new h, top row left hand' })
+-- for visual , and . are mapped in mini.ai config
+remap({ 'n', 'x', 'o' }, ',', 'i', { desc = ', is the new i, insert to the left, inside' })
+remap({ 'n', 'x', 'o' }, '<', 'I', { desc = '< is the new I, insert to the left of the whole line' })
+remap({ 'n', 'x', 'o' }, '.', 'a', { desc = '. is the new a, insert behind' })
+remap({ 'n', 'x', 'o' }, '>', 'A', { desc = '> is the new A, insert Behind the whole line' })
+remap({ 'n', 'x', 'o' }, 'm', 'l', { desc = 'm is new l, bottom row right hand' })
+remap({ 'n', 'x', 'o' }, 'k', 'h', { desc = 'k is new h, top row left hand' })
+remap('n', '<c-u>', '<c-i>', { desc = '<c-u> is the new <c-i>' })
+vim.defer_fn(function()
+  -- unmap matchit's visual a% as it messes up our new move a: (go to beginning of word)
+  -- we have to defer, otherwise we are mapped first (and not matchit).
+  -- vim.schedule() also works, but in better-visual-repeat it would make tests slower.
+  vim.keymap.del('x', 'a%')
+  -- remap it to .%
+  remap('x', '.%', '<Plug>(MatchitVisualTextObject)', { desc = 'Matchit around visual text object (:h a%)' })
+end, 0)
 
 local function my_set_search()
   -- no type = 'v', since it will return text till the cursor
