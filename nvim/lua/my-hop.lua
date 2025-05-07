@@ -25,10 +25,13 @@ local MatchSide = {
 }
 
 -- ------------------------------- Targets / labels / permutations
--- Most difficult (ordered left to right): QPZXBNTYWO
--- Least difficult (right-to-left, IEURMCVHALSKDJFG
--- G above is special, will be used with 3-letter labels
-local LETTERS_STR = 'QPZXBNTYWOIEURMCVHALSKDJFG'
+-- First 10 most difficult (ordered left to right in the list, will be used to select L1 labels):
+-- KXFM_V,GYC
+-- The rest: BODPUWHLASINETR=
+-- The last char (=) is special, will be used to start 3-letter labels
+-- The most difficult chars are used first (they are more likely to be single letters).
+-- TODO: optimization: for 2/3-letter labels (l2/l3) use the easiest chars first
+local LETTERS_STR = 'KXFM_V,GYCBODPUWHLASINETR='
 local LETTERS = vim.split(LETTERS_STR, '')
 local LETTERS_NUM = #LETTERS
 local MIN_L1_LABELS = 10
