@@ -270,7 +270,7 @@ local function move_skipping_non_alphanum_chars(vim_move)
     -- always wrap it in a set [] or complement of set [^], see also :h lua-patterns.
     -- Not using %p for punctuation since we cannot exclude chars like _,&,!,$ from it (we
     -- need to able to jump to word that/begins ends with _,&,! etc)
-    local punctuation_char_pattern = '%,%.%:%;%(%)%[%]%{%}%<%>%`%\'%"%|%-'
+    local punctuation_char_pattern = '%,%.%:%;%(%)%[%]%{%}%<%>%`%\'%"%|%-%/%\\'
 
     if #char_under_cursor ~= 1 or char_under_cursor:match('[^' .. punctuation_char_pattern .. ']') then
       -- the cursor is beyond eol or on a non-punctuation char,
@@ -279,6 +279,7 @@ local function move_skipping_non_alphanum_chars(vim_move)
 
     -- at this point our char is definitely a punctuation char
     -- test (e) 'e' "z" |z| .z. ('z') '"(x)"' (((x))) ''x'' .. .text '/' zzz '\' zzz
+    -- '/' zzz '\' zzz '_' zzz '$' zz '!' zz
 
     -- stop when encountering a cluster of punctuations, surrounded by whitespace
     if (vim_move == 'w' or vim_move == 'b') and line_text:sub(new_cursor_col - 1):match('^%s[' .. punctuation_char_pattern .. ']*%s') then
@@ -362,7 +363,7 @@ remap('i', '<C-v>', '<C-r>+', { desc = '<C-v> pastes in insert' })
 remap('c', '<C-v>', '<C-r>+', { desc = '<C-v> pastes in command' })
 
 -- " Reselect pasted text linewise, ( `[ is jump to beginning of changed/yanked )
-remap('n', '<Leader>v', '`[V`]', { desc = 'Reselect pasted text linewise' })
+remap('n', '<Leader>r', '`[V`]', { desc = 'Reselect pasted text linewise' })
 
 -- Just mapping to za is not enough, since the inner folds remain closed when toggling to open.
 -- This happens because we use indent folding and when forcing foldlevel, the inner folds become closed too.

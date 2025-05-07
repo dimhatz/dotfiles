@@ -39,7 +39,16 @@ return {
         better_visual_repeat.force_alive(false)
       end)
       return mini_ai_i_mapargs.callback()
-    end, { expr = true, desc = 'Make moves like i) repeatable with better-visual-repeat' })
+    end, { expr = true, desc = 'Make moves like ,) repeatable with better-visual-repeat' })
+
+    local mini_ai_a_mapargs = vim.fn.maparg('.', 'v', false, true)
+    remap('x', '.', function()
+      better_visual_repeat.force_alive(true)
+      vim.schedule(function()
+        better_visual_repeat.force_alive(false)
+      end)
+      return mini_ai_a_mapargs.callback()
+    end, { expr = true, desc = 'Make moves like .) repeatable with better-visual-repeat' })
 
     ---------------------------------------------------------------------------------------
     require('mini.operators').setup({

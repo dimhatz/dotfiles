@@ -190,7 +190,7 @@ return {
         -- -- Rename the variable under your cursor.
         -- --  Most Language Servers support renaming across files, etc.
         -- map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-        map('<leader>r', function()
+        map('<leader>m', function()
           vim.lsp.buf.rename()
           -- WORKAROUND: in neovide, when triggering rename(), the cursor in the prompt is not showing
           -- until we type smth or move cursor with arrows
@@ -199,7 +199,7 @@ return {
               simulate_keys('<Left><Right>', 'n')
             end, 200)
           end
-        end, 'Rename under cursor')
+        end, 'renaMe under cursor (metonomase)')
 
         -- Execute a code action, usually your cursor needs to be on top of an error
         -- or a suggestion from your LSP for this to activate.
