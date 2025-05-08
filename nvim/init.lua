@@ -334,8 +334,8 @@ remap('i', '<C-u>', '<Esc>gUiwea', { desc = 'Uppercase word under cursor' }) -- 
 -- adjust hlsearch to work correctly with mini.nvim's scrollbar highlight
 remap('n', '*', '*<Cmd>set hlsearch<CR>', { desc = 'vanilla *, with workaround for highlighting' })
 remap('n', '#', '#<Cmd>set hlsearch<CR>', { desc = 'vanilla #, with workaround for highlighting' })
-remap('n', '_', '<Cmd>set hlsearch<CR>/')
-remap('n', '-', '<Cmd>set hlsearch<CR>?')
+remap('n', 'f', '<Cmd>set hlsearch<CR>/')
+remap('n', 'F', '<Cmd>set hlsearch<CR>?')
 
 local function create_nN_fn(key)
   local cmd = 'normal! ' .. key
@@ -435,10 +435,9 @@ remap({ 'n', 'x', 'o' }, ',', 'i', { desc = ', is the new i, insert to the left,
 remap({ 'n', 'x', 'o' }, '<', 'I', { desc = '< is the new I, insert to the left of the whole line' })
 remap({ 'n', 'x', 'o' }, '.', 'a', { desc = '. is the new a, insert behind' })
 remap({ 'n', 'x', 'o' }, '>', 'A', { desc = '> is the new A, insert Behind the whole line' })
-remap({ 'n', 'x', 'o' }, 'm', 'l', { desc = 'm is new l, bottom row right hand (cursor right)' })
-remap({ 'n', 'x', 'o' }, 'k', 'h', { desc = 'k is new h, top row left hand (cursor left)' })
+remap({ 'n', 'x', 'o' }, 'b', 'l', { desc = 'b is new l, bottom row right hand (cursor right)' })
 remap('n', '<c-u>', '<c-i>', { desc = '<c-u> is the new <c-i> (go back)' })
-remap('n', '=', '.', { desc = '= is the new . (repeat)' })
+remap('n', '<CR>', '.', { desc = '<CR> is the new . (repeat)' })
 remap('n', '<BS>', '"_x', { desc = '<bs> is the new x (delete char under cursor)' })
 -- remap({ 'x', 'o' }, 'w', '<Nop>', { desc = 'use e instead' })
 -- remap({ 'x', 'o', 'n' }, 'b', '<Nop>', { desc = 'use a instead' })

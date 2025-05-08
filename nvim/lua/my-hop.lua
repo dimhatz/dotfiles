@@ -441,13 +441,13 @@ local function jump(direction, granularity, side)
   remove_extmarks(ns_dimming)
 end
 
-remap({ 'n', 'x' }, 'f', function()
+remap({ 'n', 'x' }, '=', function()
   jump(Direction.forward, Granularity.word, MatchSide.word_start)
 end, { desc = 'Jump forward' })
 
-remap({ 'n', 'x' }, 'h', function()
+remap({ 'n', 'x' }, '_', function()
   jump(Direction.back, Granularity.word, MatchSide.word_start)
-end, { desc = 'Hop back (h is on top of f)' })
+end, { desc = 'Hop back' })
 
 remap({ 'n', 'x' }, '<Leader>n', function()
   jump(Direction.back, Granularity.line, MatchSide.word_start)

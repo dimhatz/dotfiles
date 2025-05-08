@@ -12,7 +12,7 @@ return {
     vim.keymap.set('n', 'r', bvr.better_v, { desc = 'Better v (remark visually)' })
     vim.keymap.set('x', 'r', 'v', { desc = 'r is new v (remark visually)' })
     vim.keymap.set('n', '<C-r>', bvr.better_V, { desc = 'Better V (remark visually)' })
-    vim.keymap.set('x', '=', bvr.dot_on_visual_selection, { desc = 'Better . on visual selection' })
+    vim.keymap.set('x', '<CR>', bvr.dot_on_visual_selection, { desc = 'Better . on visual selection' })
     vim.keymap.set('x', '<C-r>', 'V', { desc = '<c-r> is new V in visual (remark visually)' })
     vim.keymap.set('n', 'R', '<C-v>', { desc = 'R is new <C-v> (remark visually)' })
     vim.keymap.set('x', 'R', '<C-v>', { desc = 'R is new <C-v> in visual (remark visually)' })
