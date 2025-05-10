@@ -237,8 +237,17 @@ local function my_operator_l()
   return '<Esc>'
 end
 
+local function my_operator_s()
+  -- ss -> "_cc, also keep the cursor shape changes (like with regular c)
+  if vim.v.operator == 'c' then
+    return 'c'
+  end
+  return '<Esc>'
+end
+
 remap('o', 'w', my_operator_w, { expr = true, desc = 'My special operator w' })
 remap('o', 'l', my_operator_l, { expr = true, desc = 'My special operator l' })
+remap('o', 's', my_operator_s, { expr = true, desc = 'My special operator s' })
 
 ---@param vim_move string
 local function move_skipping_non_alphanum_chars(vim_move)
@@ -317,7 +326,7 @@ remap({ 'n', 'x' }, 'a', function()
   move_skipping_non_alphanum_chars('b')
 end, { desc = 'a is new b, skips non-alphanum chars, when they are not surrounded by whitespace' })
 
-remap({ 'n', 'x' }, 'x', '<Nop>', { desc = 'in normal use <bs> instead, in visual -> l' })
+remap('x', 'x', '<Nop>', { desc = 'use <bs> to delete' })
 remap({ 'n', 'x' }, 'l', '"_d', { desc = 'Liquidate into black hole' })
 remap('n', 'L', '"_D', { desc = 'delete into black hole' })
 remap('n', 'X', '<cmd>echo "use L to delete into black hole till end of line"<CR>')
@@ -361,13 +370,14 @@ remap('n', '<C-q>', '<Cmd>qa<CR>', { desc = 'Quit vim' })
 
 remap('i', '<C-v>', '<C-r>+', { desc = '<C-v> pastes in insert' })
 remap('c', '<C-v>', '<C-r>+', { desc = '<C-v> pastes in command' })
+remap('c', '<C-k>', '<C-v>', { desc = '<C-k> is the new <C-v> (print the next key pressed the way vim sees it)' })
 
 -- " Reselect pasted text linewise, ( `[ is jump to beginning of changed/yanked )
 remap('n', '<Leader>r', '`[V`]', { desc = 'Reselect pasted text linewise' })
 
 -- Just mapping to za is not enough, since the inner folds remain closed when toggling to open.
 -- This happens because we use indent folding and when forcing foldlevel, the inner folds become closed too.
-remap('n', 'zz', function()
+remap('n', 'x', function()
   local line_nr = vim.fn.line('.')
   local is_fold_open = vim.fn.foldclosed(line_nr) == -1
   if is_fold_open then
@@ -423,9 +433,6 @@ remap('i', '<C-a>', '<Esc>I', { desc = 'Jump to line start' })
 remap({ 'n', 'x' }, '<C-e>', '$', { desc = 'Jump to EOL' })
 remap({ 'n', 'x' }, '<C-a>', '^', { desc = 'Jump to line start' })
 
--- avoid conflict with our <c-f> which is = in insert and cmd modes
-remap('c', '<C-z>', '<C-f>', { desc = 'Open window with all previous commands' })
-
 -- see https://stackoverflow.com/questions/24983372/what-does-ctrlspace-do-in-vim
 remap({ 'i' }, '<C-Space>', '<Space>', { desc = 'Workaround, <C-space> can be ambiguously interpreted as <C-@>' })
 
@@ -438,7 +445,8 @@ remap({ 'n', 'x', 'o' }, '>', 'A', { desc = '> is the new A, insert Behind the w
 remap({ 'n', 'x', 'o' }, 'b', 'l', { desc = 'b is new l, bottom row right hand (cursor right)' })
 remap('n', '<c-u>', '<c-i>', { desc = '<c-u> is the new <c-i> (go back)' })
 remap('n', '<CR>', '.', { desc = '<CR> is the new . (repeat)' })
-remap('n', '<BS>', '"_x', { desc = '<bs> is the new x (delete char under cursor)' })
+remap({ 'n', 'x' }, '<BS>', '"_x', { desc = '<bs> is the new x (delete char under cursor)' })
+remap('n', 'm', 'J', { desc = 'm is the new J (merge lines)' })
 -- remap({ 'x', 'o' }, 'w', '<Nop>', { desc = 'use e instead' })
 -- remap({ 'x', 'o', 'n' }, 'b', '<Nop>', { desc = 'use a instead' })
 --
@@ -502,10 +510,10 @@ function My_gcc()
   vim.cmd('normal! g@l')
   vim.go.operatorfunc = 'v:lua.My_gcc'
 end
-remap('n', 'gcc', My_gcc, { desc = 'gcc now does not jump' })
+remap('n', 'gtt', My_gcc, { desc = 'gtt is the gcc that does not jump' })
 
 local visual_gc_maparg = vim.fn.maparg('gc', 'x', false, true)
-remap('x', 'gc', function()
+remap('x', 'gt', function()
   if not visual_gc_maparg.expr or not visual_gc_maparg.noremap or not visual_gc_maparg.replace_keycodes then
     vim.notify('My gc: unexpected original gc mapping', vim.log.levels.ERROR)
     vim.print(visual_gc_maparg)
@@ -516,7 +524,9 @@ remap('x', 'gc', function()
   local keys = vim.api.nvim_replace_termcodes(visual_gc_maparg.callback(), true, true, true)
   vim.api.nvim_feedkeys(keys, 'nx', false)
   vim.fn.setpos('.', cursor_pos_before_gc)
-end, { desc = 'gc in visual now is not jumpy' })
+end, { desc = 'gt in visual is gc, but not jumpy' })
+
+remap('n', 'gt', 'gc', { remap = true, desc = 'gt is the new gc (toggle comment)' })
 
 -- TODO: check these out, adjust setup
 -- -- Diagnostic keymaps

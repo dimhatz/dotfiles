@@ -32,23 +32,23 @@ return {
       },
     })
 
-    local mini_ai_i_mapargs = vim.fn.maparg(',', 'v', false, true)
-    remap('x', ',', function()
-      better_visual_repeat.force_alive(true)
-      vim.schedule(function()
-        better_visual_repeat.force_alive(false)
-      end)
-      return mini_ai_i_mapargs.callback()
-    end, { expr = true, desc = 'Make moves like ,) repeatable with better-visual-repeat' })
-
-    local mini_ai_a_mapargs = vim.fn.maparg('.', 'v', false, true)
-    remap('x', '.', function()
-      better_visual_repeat.force_alive(true)
-      vim.schedule(function()
-        better_visual_repeat.force_alive(false)
-      end)
-      return mini_ai_a_mapargs.callback()
-    end, { expr = true, desc = 'Make moves like .) repeatable with better-visual-repeat' })
+    -- local mini_ai_i_mapargs = vim.fn.maparg(',', 'v', false, true)
+    -- remap('x', ',', function()
+    --   better_visual_repeat.force_alive(true)
+    --   vim.schedule(function()
+    --     better_visual_repeat.force_alive(false)
+    --   end)
+    --   return mini_ai_i_mapargs.callback()
+    -- end, { expr = true, desc = 'Make moves like ,) repeatable with better-visual-repeat' })
+    --
+    -- local mini_ai_a_mapargs = vim.fn.maparg('.', 'v', false, true)
+    -- remap('x', '.', function()
+    --   better_visual_repeat.force_alive(true)
+    --   vim.schedule(function()
+    --     better_visual_repeat.force_alive(false)
+    --   end)
+    --   return mini_ai_a_mapargs.callback()
+    -- end, { expr = true, desc = 'Make moves like .) repeatable with better-visual-repeat' })
 
     ---------------------------------------------------------------------------------------
     require('mini.operators').setup({
@@ -116,20 +116,20 @@ return {
         goto_bottom = 'gi',
       },
     })
-    -- TODO: do not allow indentscope to overwrite visual mappings i, a
-    remap(
-      'x',
-      ',i',
-      '<Cmd>lua BetterVisualRepeat.force_alive(true); MiniIndentscope.textobject(false); BetterVisualRepeat.force_alive(false)<CR>',
-      { desc = 'Override mini.indentscope ii to work with our visual repeat' }
-    )
-
-    remap(
-      'x',
-      '.i',
-      '<Cmd>lua BetterVisualRepeat.force_alive(true); MiniIndentscope.textobject(true); BetterVisualRepeat.force_alive(false)<CR>',
-      { desc = 'Override mini.indentscope ai to work with our visual repeat' }
-    )
+    -- -- TODO: do not allow indentscope to overwrite visual mappings i, a
+    -- remap(
+    --   'x',
+    --   ',i',
+    --   '<Cmd>lua BetterVisualRepeat.force_alive(true); MiniIndentscope.textobject(false); BetterVisualRepeat.force_alive(false)<CR>',
+    --   { desc = 'Override mini.indentscope ii to work with our visual repeat' }
+    -- )
+    --
+    -- remap(
+    --   'x',
+    --   '.i',
+    --   '<Cmd>lua BetterVisualRepeat.force_alive(true); MiniIndentscope.textobject(true); BetterVisualRepeat.force_alive(false)<CR>',
+    --   { desc = 'Override mini.indentscope ai to work with our visual repeat' }
+    -- )
 
     ---------------------------------------------------------------------------------------
 

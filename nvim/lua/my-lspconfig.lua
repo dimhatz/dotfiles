@@ -177,7 +177,7 @@ return {
         map('gd', make_wrapper_fn(t_builtin.lsp_definitions, { initial_mode = 'normal' }), '[G]oto [D]efinition')
         map('gr', make_wrapper_fn(t_builtin.lsp_references, { initial_mode = 'normal', show_line = false }), '[G]oto [R]eferences')
         map('gD', make_wrapper_fn(vim.lsp.buf.declaration, { initial_mode = 'normal' }), '[G]oto [D]eclaration')
-        map('gt', make_wrapper_fn(t_builtin.lsp_type_definitions, { initial_mode = 'normal' }), '[G]oto [T]ype Definition')
+        map('gT', make_wrapper_fn(t_builtin.lsp_type_definitions, { initial_mode = 'normal' }), '[G]oto [T]ype Definition')
         --
         -- -- Fuzzy find all the symbols in your current document.
         -- --  Symbols are things like variables, functions, types, etc.
@@ -207,7 +207,7 @@ return {
 
         -- Opens a popup that displays documentation about the word under your cursor
         --  See `:help K` for why this keymap.
-        map('K', vim.lsp.buf.hover, 'Hover Documentation')
+        map('k', vim.lsp.buf.hover, 'Hover Documentation')
 
         -- The following two autocommands are used to highlight references of the
         -- word under your cursor when your cursor rests there for a little while.

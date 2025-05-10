@@ -457,6 +457,6 @@ remap({ 'n', 'x' }, '<Leader>t', function()
   jump(Direction.forward, Granularity.line, MatchSide.word_start)
 end, { desc = 'Jump forward linewise' })
 
-remap({ 'n', 'x' }, '<Leader>i', function()
+remap({ 'n', 'x' }, '<Leader>e', function()
   jump(Direction.forward, Granularity.word, MatchSide.word_end)
 end, { desc = 'Jump forward to the end of a word' })
