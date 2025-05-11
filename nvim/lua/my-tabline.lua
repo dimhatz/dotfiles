@@ -425,7 +425,7 @@ remap('n', '}', function()
   move_buffer('right')
 end, { desc = 'Go to next buffer' })
 
-remap('n', '<Leader>b', jump, { desc = 'Jump to a buffer label' })
+remap('n', '<Leader>l', jump, { desc = 'Jump to a buffer Label' })
 
 function M.save_order_to_session()
   local file_paths = vim.tbl_map(function(bufnr)

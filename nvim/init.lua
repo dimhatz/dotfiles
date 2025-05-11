@@ -531,10 +531,10 @@ remap('n', 'gt', 'gc', { remap = true, desc = 'gt is the new gc (toggle comment)
 -- TODO: check these out, adjust setup
 -- -- Diagnostic keymaps
 remap('n', 'ge', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror popup' })
-remap('n', '<leader>n', function()
+remap('n', '<leader>p', function()
   vim.diagnostic.goto_next({ float = false })
 end, { desc = 'Go to next diagnostic' })
-remap('n', '<leader>p', function()
+remap('n', '<leader>b', function()
   vim.diagnostic.goto_prev({ float = false })
 end, { desc = 'Go to previous diagnostic' })
 -- remap('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
