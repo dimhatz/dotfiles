@@ -207,7 +207,7 @@ end, { desc = 'Save file, update rainbow parens' })
 remap(
   'i',
   '<C-s>',
-  '<Esc><Cmd>write<CR><Cmd>lua require("my-helpers").update_treesitter_tree()<CR>',
+  '<Esc><Cmd>write<CR><Cmd>lua My_cmp_disabled=true; require("my-helpers").update_treesitter_tree()<CR>',
   { desc = 'Esc to normal, save file, update rainbow parens' }
 )
 

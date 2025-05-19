@@ -384,7 +384,8 @@ vim.api.nvim_create_autocmd({ 'SearchWrapped' }, {
   desc = 'My: blacken screen background for 200ms when wrapping search',
   group = search_wrapped_group,
   callback = function()
-    if animation_in_progress then
+    if animation_in_progress or vim.fn.mode() == 'c' then
+      -- mode checking to avoid triggering animation when still writing after /
       return
     end
     animation_in_progress = true
