@@ -1,3 +1,4 @@
+-- TODO: find a way to go back/forward inside the file, also between files, instead of c-i/c-o?
 local remap = require('my-helpers').remap
 local update_treesitter_tree = require('my-helpers').update_treesitter_tree
 local minimap_refresh_cmd = require('my-helpers').minimap_refresh_cmd
