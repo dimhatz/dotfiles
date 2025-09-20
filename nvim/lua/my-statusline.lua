@@ -80,11 +80,15 @@ function My_update_statusline_active()
   -- separator, resetting color needed?
   s = concat(s, '%=')
 
+  -- lang keymap in insert mode, '' means default
+  local lang_keymap = vim.bo.keymap
+  s = concat(s, lang_keymap, #lang_keymap == 0 and '' or ' ')
+
   -- file warnings, only displayed when when needed
   s = concat(s, '%#MyStatusLineFileWarning#')
   local fenc = vim.bo.fileencoding
   if fenc ~= 'utf-8' and fenc ~= '' then
-    -- empty fench will be saved as utf-8 by default, see :h :fenc
+    -- empty fenc will be saved as utf-8 by default, see :h fenc
     s = concat(s, '[', fenc, '] ')
   end
 
@@ -199,7 +203,7 @@ vim.api.nvim_create_autocmd({
 }, {
   desc = 'My: manually update active statusline on some options set',
   group = vim.api.nvim_create_augroup('my-update-active-statusline-opt', {}),
-  pattern = { 'hlsearch', 'readonly', 'modifiable', 'fileencoding', 'fileformat', 'filetype' },
+  pattern = { 'hlsearch', 'readonly', 'modifiable', 'fileencoding', 'fileformat', 'filetype', 'keymap' },
   callback = vim.schedule_wrap(My_update_statusline_active),
   -- callback = My_update_statusline_active,
 })
@@ -225,6 +229,18 @@ remap('c', '<CR>', function()
   end
   return '<CR>'
 end, { expr = true, desc = 'Statusline: Workaround to update search count after pressing <CR> in search mode (/)' })
+
+remap('i', '<C-l>', function()
+  -- NOTE: doing <c-o> since just setting vim.bo.keymap requires exiting/reentering insert mode (vim bug?)
+  local keymap = vim.bo.keymap
+  if keymap == '' then
+    return '<C-o>:set keymap=russian-yawerty<CR>'
+  elseif keymap == 'russian-yawerty' then
+    return '<C-o>:set keymap=greek_my<CR>'
+  else
+    return '<C-o>:set keymap=""<CR>'
+  end
+end, { expr = true, desc = 'Change language in insert' })
 
 -- -- benchmarks:
 -- -- 0.02ms per active statusline render in an empty / plain text buffer
