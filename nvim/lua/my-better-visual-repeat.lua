@@ -5,10 +5,16 @@ return {
     bvr.setup({
       apply_mappings = false,
       -- logging = { enabled = true, on_key = true },
-      editing_keys = { 'x', 'X', 'd', 'D', 'c', 'p', 'r', 'gc', '>', '<', 'U', 'u', 'm', 's' },
+      -- editing_keys = { 'x', 'X', 'd', 'D', 'c', 'p', 'r', 'gc', '>', '<', 'U', 'u', 'm', 's', 'g<c-a>' },
     })
 
-    bvr.patch_MatchitVisualForward()
+    _ = bvr.toggle_logging_without_on_key
+      and vim.keymap.set('n', '<c-f11>', bvr.toggle_logging_without_on_key, { desc = 'Better visual repeat: toggle logging' })
+    _ = bvr.toggle_logging_incl_on_key
+      and vim.keymap.set('n', '<c-f12>', bvr.toggle_logging_incl_on_key, { desc = 'Better visual repeat: toggle logging (on key)' })
+    vim.keymap.set('n', 'r', bvr.better_v, { desc = 'Better v (remark visually)' })
+
+    -- bvr.patch_MatchitVisualForward()
     vim.keymap.set('n', 'r', bvr.better_v, { desc = 'Better v (remark visually)' })
     vim.keymap.set('x', 'r', 'v', { desc = 'r is new v (remark visually)' })
     vim.keymap.set('n', '<C-r>', bvr.better_V, { desc = 'Better V (remark visually)' })
