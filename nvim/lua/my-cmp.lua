@@ -197,7 +197,7 @@ return {
       else
         vim.lsp.buf.signature_help()
       end
-    end, { desc = 'Autocomplete scroll docs down / Lsp signature help (when no popup)' })
+    end, { desc = 'Autocomplete scroll docs down / Lsp function param signature help / hint (when no popup)' })
 
     remap('i', '<C-f>', function()
       if not cmp.visible() then

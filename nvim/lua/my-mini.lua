@@ -5,7 +5,6 @@ return {
   lazy = false,
   priority = 1000,
   config = function()
-    local better_visual_repeat = require('better-visual-repeat')
     ---------------------------------------------------------------------------------------
     -- sessions plugin first, so that its autocmds have priority over the next mini.* plugins, like minimap
     require('my-mini-sessions')
@@ -32,6 +31,7 @@ return {
       },
     })
 
+    -- local better_visual_repeat = require('better-visual-repeat')
     -- local mini_ai_i_mapargs = vim.fn.maparg(',', 'v', false, true)
     -- remap('x', ',', function()
     --   better_visual_repeat.force_alive(true)

@@ -150,6 +150,7 @@ local function apply_colors()
   hi('Identifier', { fg = c.violet }) -- in ts: const, let <- typescriptVariable
   hi('Macro', { link = 'Function' })
   hi('TSFuncMacro', { link = 'Function' })
+  hi('Exception', { fg = c.violet })
 
   -- Rust
   hi('rustSigil', { fg = c.base05fg })

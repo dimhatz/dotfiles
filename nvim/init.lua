@@ -1,4 +1,5 @@
 -- TODO: find a way to go back/forward inside the file, also between files, instead of c-i/c-o?
+-- TODO: fix r,w (visual around word)
 local remap = require('my-helpers').remap
 local update_treesitter_tree = require('my-helpers').update_treesitter_tree
 local minimap_refresh_cmd = require('my-helpers').minimap_refresh_cmd
@@ -611,6 +612,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'My: Highlight when yanking and put cursor back afterwards',
   group = vim.api.nvim_create_augroup('my-highlight-yank', { clear = true }),
   callback = function()
+    -- vim.print(vim.v.operator)
     if vim.v.operator == 'd' then
       -- If deleted text is non-whitespace-only, copy it to unnamed register.
       -- This is better handled here (with a properly mapped d -> "dd), instead of setting operatorfunc
@@ -800,6 +802,7 @@ require('lazy').setup({
   -- },
 }, vim.g.have_nerd_font and {} or no_nerd_font_defaults)
 
+require('my-zip-test')
 require('my-statusline')
 require('my-tabline')
 require('my-hop')
