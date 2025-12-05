@@ -1,7 +1,7 @@
 -- TODO: when opening, set noundo, restore view if possible, disable autoformatting
--- TODO: make sure we dont save plain text
+-- TODO: make sure we dont save plain text, throw error if there is only one line before saving.
 -- TODO: after saving file, re-read it from disk and verify it was successfully written and no formatting
--- occured
+-- occured, compare with orig_text_backup
 
 local logging_enabled = true --- logging
 --- wrapper around vim.print()
@@ -71,8 +71,11 @@ end
 
 --- Throws on failure (use pcall)
 local function encrypt(compressed_str, pw, verification_str)
-  -- local encrypt_cmd = { 'openssl', 'enc', '-aes-256-cbc', '-salt', '-pbkdf2', '-base64', '-pass' }
-  local encrypt_cmd = { 'openssl', 'enc', '-aes-256-cbc', '-pbkdf2', '-nosalt', '-A', '-base64', '-pass' }
+  -- NOTE: when using salt (default openssl behavior), encrypting the same string results in a different
+  -- encrypted string every time. This matters when verifying the correctness of the encryption.
+
+  local encrypt_cmd = { 'openssl', 'enc', '-aes-256-cbc', '-salt', '-pbkdf2', '-A', '-base64', '-pass' }
+  -- local encrypt_cmd = { 'openssl', 'enc', '-aes-256-cbc', '-nosalt', '-pbkdf2', '-A', '-base64', '-pass' }
   table.insert(encrypt_cmd, 'pass:' .. pw)
   local encrypted_str = exec(encrypt_cmd, compressed_str, verification_str)
   -- vim.print(encrypted_string)
@@ -83,8 +86,8 @@ end
 local function decrypt(encrypted_str, pw, verification_str)
   -- openssl enc -d -aes-256-cbc -salt -pbkdf2 -pass pass:MyPassword
   -- local decrypt_cmd = { 'openssl', 'enc', '-d', '-aes-256-cbc', '-salt', '-pbkdf2', '-pass' }
-  -- local decrypt_cmd = { 'openssl', 'enc', '-d', '-aes-256-cbc', '-salt', '-pbkdf2', '-base64', '-pass' }
-  local decrypt_cmd = { 'openssl', 'enc', '-d', '-aes-256-cbc', '-pbkdf2', '-nosalt', '-A', '-base64', '-pass' }
+  local decrypt_cmd = { 'openssl', 'enc', '-d', '-aes-256-cbc', '-salt', '-pbkdf2', '-A', '-base64', '-pass' }
+  -- local decrypt_cmd = { 'openssl', 'enc', '-d', '-aes-256-cbc', '-nosalt', '-pbkdf2', '-A', '-base64', '-pass' }
   table.insert(decrypt_cmd, 'pass:' .. pw)
 
   local decrypted_str = exec(decrypt_cmd, encrypted_str, verification_str)
@@ -202,9 +205,9 @@ local function my_zip_read_post()
   local plain_decompressed = decompress(decrypted_compressed)
   -- vim.print(plain)
 
-  -- verification, will throw on error
-  compress(plain_decompressed, decrypted_compressed)
-  encrypt(decrypted_compressed, pass, encrypted_orig)
+  -- -- verification, will throw on error, only works when encrypting without salt
+  -- compress(plain_decompressed, decrypted_compressed)
+  -- encrypt(decrypted_compressed, pass, encrypted_orig)
 
   files[file_path] = { pw = pass, orig_text_backup = plain_decompressed, error = false }
 
@@ -264,24 +267,6 @@ local function my_zip_write_pre()
     vim.print('encrypted:', vim.inspect(encrypted))
     error('Pasted does not match encrypted')
   end
-
-  -- vim.api.nvim_buf_set_lines(0, 0, -1, false, { encrypted })
-
-  -- TODO: account for empty file
-  -- local last_line_nr = vim.api.nvim_buf_line_count(0) - 1 -- zero-based
-  -- local last_line_text = vim.api.nvim_buf_get_lines(0, last_line_nr, last_line_nr + 1, false)
-  -- vim.api.nvim_buf_set_text(0, 0, 0, vim.api.nvim_buf_line_count(0) - 1, #last_line_text, { encrypted })
-
-  -- nvim_buf_set_text() and nvim_buf_set_lines() dont like the line break chars that openssl produces
-  -- and will error out. WORKAROUND:
-  -- put encrypted text in z register
-  -- :normal! ggVGp
-  -- let @+ = @0 (see my paste p)
-  --
-  -- later in post write:
-  -- undo
-  -- delete forwaro redo
-  -- restore view
 end
 
 local function my_zip_write_post()
@@ -359,13 +344,17 @@ function My_zip_test_commands_correctness()
   local test_pass = 'test_pass'
   local encrypted = encrypt(compressed, test_pass)
   vim.print('encrypted: ', encrypted)
-  -- again
-  encrypt(compressed, test_pass, encrypted)
+
+  -- -- encrypting the same string will only have the same result when encrypting without salt
+  -- encrypt(compressed, test_pass, encrypted)
+
+  local decrypted = decrypt(encrypted, test_pass, compressed)
+  decompress(decrypted, orig)
+  vim.print('all checks OK')
 end
 
 local augroup = vim.api.nvim_create_augroup('my-zip', {})
 
--- TODO: on last buffer close, remove file info entry from 'files'
 vim.api.nvim_create_autocmd({
   'BufReadPre',
 }, {
@@ -419,175 +408,3 @@ vim.api.nvim_create_autocmd({
   group = augroup,
   callback = my_zip_buf_delete,
 })
-
--- " vim -b : edit binary using xxd-format!
--- augroup Binary
---   autocmd!
---   autocmd BufReadPre  *.bin set binary
---   autocmd BufReadPost *.bin
---     \ if &binary
---     \ |   execute "silent %!xxd -c 32"
---     \ |   set filetype=xxd
---     \ |   redraw
---     \ | endif
---   autocmd BufWritePre *.bin
---     \ if &binary
---     \ |   let s:view = winsaveview()
---     \ |   execute "silent %!xxd -r -c 32"
---     \ | endif
---   autocmd BufWritePost *.bin
---     \ if &binary
---     \ |   execute "silent %!xxd -c 32"
---     \ |   set nomodified
---     \ |   call winrestview(s:view)
---     \ |   redraw
---     \ | endif
--- augroup END
---
--- function My_final()
---   local orig_text = 'test123\ntest456'
---   local pw = 'pw123'
---   local compressed = compress(orig_text)
---   vim.print(compressed)
---   local encrypted = encrypt(compressed, pw)
---   vim.print(encrypted)
---   local decr = decrypt(encrypted, pw, compressed)
---   vim.print(decr)
---   local plain = decompress(decr, orig_text)
---   vim.print(plain)
--- end
-
--- local function pack(plaintext, pw)
---   local compress_cmd = { 'gzip', '--stdout', '--best' }
---   local compressed_string = exec(compress_cmd, plaintext)
---   -- vim.print(compressed_string)
---
---   -- openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:MyPassword
---   -- local encrypt_cmd = { 'openssl', 'enc', '-aes-256-cbc', '-salt', '-pbkdf2', '-pass' }
---   local encrypt_cmd = { 'openssl', 'enc', '-aes-256-cbc', '-salt', '-pbkdf2', '-base64', '-pass' }
---   table.insert(encrypt_cmd, pw)
---   local encrypted_string = exec(encrypt_cmd, compressed_string)
---   -- vim.print(encrypted_string)
---   return encrypted_string
--- end
---
--- local function unpack(base64text, pw)
---   -- openssl enc -d -aes-256-cbc -salt -pbkdf2 -pass pass:MyPassword
---   -- local decrypt_cmd = { 'openssl', 'enc', '-d', '-aes-256-cbc', '-salt', '-pbkdf2', '-pass' }
---   local decrypt_cmd = { 'openssl', 'enc', '-d', '-aes-256-cbc', '-salt', '-pbkdf2', '-base64', '-pass' }
---   local decompress_cmd = { 'gzip', '--stdout', '--decompress' }
---   table.insert(decrypt_cmd, 'pass:MyPassword')
---
---   local decrypted_string = exec(decrypt_cmd, encrypted_string, compressed_string)
---   vim.print(decrypted_string)
---
---   -- decompress
---   local decompressed_string = exec(decompress_cmd, decrypted_string, orig_buffer_text)
---   vim.print(decompressed_string)
---   return decompressed_string
--- end
-
--- function My_write_pre()
---   local compress_cmd = { 'gzip', '--stdout', '--best' }
---   -- openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:MyPassword
---   -- local encrypt_cmd = { 'openssl', 'enc', '-aes-256-cbc', '-salt', '-pbkdf2', '-pass' }
---   local encrypt_cmd = { 'openssl', 'enc', '-aes-256-cbc', '-salt', '-pbkdf2', '-base64', '-pass' }
---
---   -- openssl enc -d -aes-256-cbc -salt -pbkdf2 -pass pass:MyPassword
---   -- local decrypt_cmd = { 'openssl', 'enc', '-d', '-aes-256-cbc', '-salt', '-pbkdf2', '-pass' }
---   local decrypt_cmd = { 'openssl', 'enc', '-d', '-aes-256-cbc', '-salt', '-pbkdf2', '-base64', '-pass' }
---   local decompress_cmd = { 'gzip', '--stdout', '--decompress' }
---
---   -- local orig_buffer_text = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), '\n')
---   local orig_buffer_text = 'test123'
---
---   -- compress
---   local compressed_string = exec(compress_cmd, orig_buffer_text)
---   vim.print(compressed_string)
---
---   -- encrypt
---   table.insert(encrypt_cmd, 'pass:MyPassword')
---
---   local encrypted_string = exec(encrypt_cmd, compressed_string)
---   vim.print(encrypted_string)
---
---   -- decrypt
---   -- TODO: ask user for pass
---   table.insert(decrypt_cmd, 'pass:MyPassword')
---
---   local decrypted_string = exec(decrypt_cmd, encrypted_string, compressed_string)
---   vim.print(decrypted_string)
---
---   -- decompress
---   local decompressed_string = exec(decompress_cmd, decrypted_string, orig_buffer_text)
---   vim.print(decompressed_string)
--- end
-
--- function My_write_pre_old()
--- -- local orig_buffer_text = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), '\n')
--- local orig_buffer_text = 'test123'
---
--- -- compress
--- -- local compress_cmd = { 'gzip', '--stdout', '--best' }
--- local result_after_compression = vim.system(compress_cmd, { stdin = orig_buffer_text }):wait(300)
--- if result_after_compression.code ~= 0 then
---   vim.print('My zip: when compressing, gzip returned ' .. result_after_compression.code)
---   vim.print(result_after_compression)
---   return
--- end
---
--- local compressed_string = result_after_compression.stdout
--- vim.print(compressed_string)
---
--- -- encrypt
--- -- openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:MyPassword
--- -- local encrypt_cmd = { 'openssl', 'enc', '-aes-256-cbc', '-salt', '-pbkdf2', '-pass' }
--- -- local encrypt_cmd = { 'openssl', 'enc', '-aes-256-cbc', '-salt', '-pbkdf2', '-a', '-pass' }
--- table.insert(encrypt_cmd, 'pass:MyPassword')
--- vim.print(encrypt_cmd)
--- local result_after_encryption = vim.system(encrypt_cmd, { stdin = compressed_string }):wait(300)
--- if result_after_encryption.code ~= 0 then
---   vim.print('My zip: when encrypting, openssl returned ' .. result_after_encryption.code)
---   vim.print(result_after_encryption)
---   return
--- end
---
--- local encrypted_string = result_after_encryption.stdout
--- vim.print(encrypted_string)
---
--- -- decrypt
--- -- openssl enc -d -aes-256-cbc -salt -pbkdf2 -pass pass:MyPassword
--- -- local decrypt_cmd = { 'openssl', 'enc', '-d', '-aes-256-cbc', '-salt', '-pbkdf2', '-pass' }
--- -- local decrypt_cmd = { 'openssl', 'enc', '-d', '-aes-256-cbc', '-salt', '-pbkdf2', '-a', '-pass' }
--- table.insert(decrypt_cmd, 'pass:MyPassword')
--- local result_after_decryption = vim.system(decrypt_cmd, { stdin = encrypted_string }):wait(300)
--- if result_after_decryption.code ~= 0 then
---   vim.print('My zip: when decrypting, openssl returned ' .. result_after_decryption.code)
---   vim.print(result_after_decryption)
---   return
--- end
---
--- local decrypted_string = result_after_decryption.stdout
--- vim.print(decrypted_string)
---
--- if decrypted_string ~= compressed_string then
---   vim.notify('My zip: decrypted string is not the same as the compressed', vim.log.levels.ERROR)
---   return
--- end
---
--- -- decompress
--- -- local decompress_cmd = { 'gzip', '--stdout', '--decompress' }
--- local result_after_decompression = vim.system(decompress_cmd, { stdin = decrypted_string }):wait(300)
--- if result_after_decompression.code ~= 0 then
---   vim.notify('My zip: when decompressing, gzip returned ' .. result_after_compression.code, vim.log.levels.ERROR)
---   vim.print(result_after_decompression)
---   return
--- end
--- local decompressed_string = result_after_decompression.stdout
--- vim.print(decompressed_string)
---
--- if orig_buffer_text ~= decompressed_string then
---   vim.notify('My zip: decompressed string is not the same as the original', vim.log.levels.ERROR)
---   return
--- end
--- end
