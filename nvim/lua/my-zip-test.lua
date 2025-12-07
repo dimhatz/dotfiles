@@ -158,7 +158,16 @@ end
 --- Will move cursor to topmost line, leftmost col (col 1)
 --- Param text must end with "\n" that will be removed before pasting. "zyG"
 local function set_current_buffer_text(text)
-  log('set_current_buffer_text(): setting to: ', vim.inspect(text))
+  -- show only the beginning / end, avoid causing large messages that will cause "Press enter" prompts
+  local print_chars_offset = math.floor((#text - 5) / 2) -- how many chars will be printed from start / end
+  print_chars_offset = math.max(print_chars_offset, 0)
+  print_chars_offset = math.min(print_chars_offset, 30)
+  local text_to_print = text:sub(1, print_chars_offset) .. ' ... ' .. text:sub(-print_chars_offset)
+  if #text < 66 then
+    text_to_print = text
+  end
+  log('set_current_buffer_text(): setting to: ', vim.inspect(text_to_print))
+
   local reg_z_backup = vim.fn.getreg('z')
   vim.fn.setreg('z', text, 'c')
 
