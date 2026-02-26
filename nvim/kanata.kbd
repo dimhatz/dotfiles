@@ -66,8 +66,8 @@
   caps
   grv   1     2    3    4    5     6     7    8    9    0    -      =    XX  del  ins  @swqw  lrld  up  down  lft  rght
   tab   k     ,    .    bspc @umin v     p    b    g    x    XX     XX   XX  home end  pgup   pgdn
-  @sfts h     a    i    e    =     ret   t    n    s    l    @sftq  XX
-  XX    f     y    o    u    esc   @rcbr w    d    c    m    XX
+  @sfts h     a    i    e    @sfes @sfre t    n    s    l    @sftq  XX
+  XX    f     y    o    u    =     @rcbr w    d    c    m    XX
   lalt  @omet @lcbr          @symspc     r    rmet XX
 )
 
@@ -132,6 +132,16 @@
 (defalias
   ;; q or lshift while held
   sftq (tap-hold-press 300 300 q lsft)
+)
+
+(defalias
+  ;; esc or lshift while held
+  sfes (tap-hold-press 300 300 esc lsft)
+)
+
+(defalias
+  ;; enter / return (ret) or lshift while held
+  sfre (tap-hold-press 300 300 ret lsft)
 )
 
 (defalias
