@@ -66,7 +66,7 @@
   caps
   grv   1     2    3    4    5     6     7    8    9    0    -      =    XX  del  ins  @swqw  lrld  up  down  lft  rght
   tab   k     ,    .    bspc @umin v     p    b    g    x    XX     XX   XX  home end  pgup   pgdn
-  @sfts h     a    i    e    @sfes @sfre t    n    s    l    @sftq  XX
+  ;     h     a    i    e    @sfes @sfre t    n    s    l    q      XX
   XX    f     y    o    u    =     @rcbr w    d    c    m    XX
   lalt  @omet @lcbr          @symspc     r    rmet XX
 )
@@ -121,17 +121,6 @@
 (defalias
   ;; switch to my-custom-apha layer
   swqw (layer-switch my-qwerty)
-)
-
-
-(defalias
-  ;; semicolon ; or lshift while held
-  sfts (tap-hold-press 300 300 ; lsft)
-)
-
-(defalias
-  ;; q or lshift while held
-  sftq (tap-hold-press 300 300 q lsft)
 )
 
 (defalias
