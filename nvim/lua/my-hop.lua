@@ -337,10 +337,10 @@ local function get_spots_per_line(line_nr, granularity, direction, match_side, c
     -- true in case of weird pattern, like when using frontier `%f[%W]`)
     index = math.min(math.max(index, 0), line_text:len())
 
-    -- Unify how spot is chosen in case of multibyte characters
+    -- From mini.jump2d: Unify how spot is chosen in case of multibyte characters
     -- Use `+-1` to make sure that result it at start of multibyte character
-    local utf_index = vim.str_utfindex(line_text, index) - 1
-    index = vim.str_byteindex(line_text, utf_index) + 1
+    local utf_index = vim.str_utfindex(line_text, 'utf-32', index) - 1
+    index = vim.str_byteindex(line_text, 'utf-32', utf_index) + 1
 
     -- skip those spots that are on the same line as the cursor but on the opposite side
     -- to the direction

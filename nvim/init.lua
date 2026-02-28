@@ -534,13 +534,11 @@ remap('n', 'gt', 'gc', { remap = true, desc = 'gt is the new gc (toggle comment)
 -- -- Diagnostic keymaps
 remap('n', 'ge', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror popup' })
 remap('n', '<leader>p', function()
-  vim.diagnostic.goto_next({ float = false })
+  vim.diagnostic.jump({ count = 1, float = false })
 end, { desc = 'Go to next diagnostic' })
 remap('n', '<leader>b', function()
-  vim.diagnostic.goto_prev({ float = false })
+  vim.diagnostic.jump({ count = -1, float = false })
 end, { desc = 'Go to previous diagnostic' })
--- remap('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
--- remap('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 -- remap('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 ------------------------------------------------------- AUTOCOMMANDS --------------------------------------------------------------------------
