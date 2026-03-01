@@ -222,7 +222,7 @@ return {
             -- TODO: make it resume at the same position too
             -- TODO: alternative: maybe just manually delete the target buffer from this picker's result
             -- but this requires check that the buffer was closed successfully.
-            -- To test, try to close an unsaved buffer.
+            -- To test, try to close an unsaved buffer (pcall).
             vim.schedule(search_open_buffers) -- search_open_buffers() is current, remap()'ed function
 
             -- Another solution, without flickering, but results in broken highlight (some word parts have incorrect colors)
