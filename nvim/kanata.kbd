@@ -89,33 +89,37 @@
   caps
   XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld  up  down  lft  rght
   XX    tab   [    ]    '    S-3   S-6   S-4  S-5  S-7  S-8  XX    XX   XX  home end  pgup   pgdn
-  @sft@ z     j    S-1  S-'  `     0     1    2    3    4    @sft5 XX
+  S-2   z     j    S-1  S-'  @sft` @sft0 1    2    3    4    5     XX
   XX    \     S-\  /    S-/  XX    @rcbr 6    7    8    9    XX
   lalt  @omet @lcbr          XX          XX   rmet ralt
 )
 
 (deflayer fkeys
   caps
-  XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld  XX  XX    XX   XX
-  XX    ins   del  up   XX   XX    XX    f11  f12  XX   XX   XX    XX   XX  XX   XX   XX     XX
-  lsft  XX    lft  down rght XX    f10   f1   f2   f3   f4   @sff5 lsft
-  XX    home  end  pgup pgdn XX    XX    f6   f7   f8   f9   XX
-  lalt  @omet @lcbr          spc         XX   rmet ralt
+  XX    XX    XX   XX   XX   XX    XX     XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld  XX  XX    XX   XX
+  XX    ins   del  up   XX   XX    XX     f11  f12  XX   XX   XX    XX   XX  XX   XX   XX     XX
+  XX    XX    lft  down rght lsft  @sff10 f1   f2   f3   f4   f5    lsft
+  XX    home  end  pgup pgdn XX    XX     f6   f7   f8   f9   XX
+  lalt  @omet @lcbr          spc          XX   rmet ralt
 )
 
 (defalias
-  ;; semicolon ; or lshift while held
-  sff5 (tap-hold-press 300 300 f5 lsft)
+  ;; F10 or lshift while held
+  ;; NOTE: microsoft ergo keyboard does not register space + H + S combination (as per qwerty)
+  ;; if shift + j (to produce capital J) is needed, it must be performed all on left hand
+  sff10 (tap-hold-press 300 300 f10 lsft)
 )
 
 (defalias
-  ;; semicolon ; or lshift while held
-  sft@ (tap-hold-press 300 300 S-2 lsft)
+  ;; backtick ` or lshift while held
+  sft` (tap-hold-press 300 300 ` lsft)
 )
 
 (defalias
-  ;; semicolon ; or lshift while held
-  sft5 (tap-hold-press 300 300 5 lsft)
+  ;; 0 or lshift while held
+  ;; NOTE: microsoft ergo keyboard does not register space + H + S combination (as per qwerty)
+  ;; if shift + lft (left arrow) is needed, it must be performed all on left hand
+  sft0 (tap-hold-press 300 300 0 lsft)
 )
 
 (defalias
