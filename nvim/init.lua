@@ -3,6 +3,7 @@
 local remap = require('my-helpers').remap
 local update_treesitter_tree = require('my-helpers').update_treesitter_tree
 local minimap_refresh_cmd = require('my-helpers').minimap_refresh_cmd
+local create_defer_fn_exclusive = require('my-helpers').create_defer_fn_exclusive
 
 ---To be used with operatorfunc
 My_noop = function() end
@@ -687,6 +688,29 @@ vim.api.nvim_create_autocmd({ 'BufWinLeave' }, {
     vim.cmd.mkview({ mods = { emsg_silent = true } }) -- do now show error messages
   end,
 })
+
+if vim.g.neovide then
+  -- needs to be outside autocmd, since this is a closure (with state)
+  -- holding down `(` should only result in one run
+  local defer_enable_animation_after_switching_buffer = create_defer_fn_exclusive(function()
+    vim.g.neovide_scroll_animation_length = 0.1
+  end, 100)
+
+  local gr = vim.api.nvim_create_augroup('my-disable-neovide-scroll-animation', { clear = true })
+
+  vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+    desc = 'My: restore neovide scroll animation when switching buffers',
+    group = gr,
+    callback = defer_enable_animation_after_switching_buffer,
+  })
+  vim.api.nvim_create_autocmd({ 'BufLeave' }, {
+    desc = 'My: disable neovide scroll animation when switching buffers',
+    group = gr,
+    callback = function()
+      vim.g.neovide_scroll_animation_length = 0.00
+    end,
+  })
+end
 
 ------------------------------------------------------- PLUGINS --------------------------------------------------------------------------------
 

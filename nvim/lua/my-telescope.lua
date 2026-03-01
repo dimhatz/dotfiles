@@ -42,6 +42,8 @@ return {
     local actions = require('telescope.actions')
     local my_opts = { nowait = true, silent = false }
 
+    -- It seems that telescope previewer does not trigger autocmds like BufEnter, BufLeave, BufWinEnter,
+    -- BufWinLeave, so the workaround that we use in our init.lua does not work here. Duplicating:
     local defer_enable_animation_after_moving_selection = create_defer_fn_exclusive(function()
       -- not using just vim.schedule, since sometimes (rarely) the animation would be observed
       vim.g.neovide_scroll_animation_length = 0.1
@@ -72,6 +74,7 @@ return {
 
     require('telescope').setup({
       defaults = {
+        dynamic_preview_title = true, -- show filename at top of preview window (e.g. in "find files")
         -- file_ignore_patterns = { '.git' .. require('my-helpers').path_delimiter },
         mappings = {
           i = {

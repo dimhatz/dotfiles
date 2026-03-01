@@ -136,7 +136,8 @@ end
 ---@param fn fun()
 ---@param timeout_ms integer
 ---Returns a runner (function) that schedules the provided @param fn using vim.defer_fn().
----The runner cancels any of its previous schedules.
+---The runner cancels any of its previous schedules and re-schedules anew. Practically, every subsequent call
+---to the runner (when we still wait for the execution) further delays the execution.
 function M.create_defer_fn_exclusive(fn, timeout_ms)
   -- Returning a closure so that this can be used with multiple contexts, otherwise
   -- scheduling a different function will kill the execution of the original function.
