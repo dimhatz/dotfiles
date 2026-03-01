@@ -14,7 +14,7 @@ vim.api.nvim_create_autocmd('User', {
 return {
   'nvim-telescope/telescope.nvim',
   event = 'VimEnter',
-  branch = '0.1.x',
+  version = '*',
   dependencies = {
     'nvim-lua/plenary.nvim',
     { -- If encountering errors, see telescope-fzf-native README for installation instructions
@@ -220,6 +220,9 @@ return {
             require('mini.bufremove').delete(entry.bufnr)
             -- TODO: try actions.delete_buffer
             -- TODO: make it resume at the same position too
+            -- TODO: alternative: maybe just manually delete the target buffer from this picker's result
+            -- but this requires check that the buffer was closed successfully.
+            -- To test, try to close an unsaved buffer.
             vim.schedule(search_open_buffers) -- search_open_buffers() is current, remap()'ed function
 
             -- Another solution, without flickering, but results in broken highlight (some word parts have incorrect colors)
