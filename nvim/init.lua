@@ -130,6 +130,7 @@ vim.opt.shortmess:append('SI')
 
 vim.o.termguicolors = true
 vim.o.background = 'dark'
+vim.o.winborder = 'rounded'
 
 vim.o.sessionoptions = 'buffers,folds,tabpages,winpos,winsize,help,sesdir'
 

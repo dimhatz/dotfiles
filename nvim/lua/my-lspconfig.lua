@@ -18,27 +18,11 @@ return {
   },
 
   config = function()
-    local lspconfig = require('lspconfig')
-
-    -- taken from here: https://github.com/neovim/nvim-lspconfig/wiki/UI-Customization#borders
-    require('lspconfig.ui.windows').default_options.border = 'single' -- border around LspInfo window
-    -- local border = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' } -- from telescope help
-
-    -- this is 'rounded'
-    -- local border = { { '╭', 'FloatBorder' }, { '─', 'FloatBorder' }, { '╮', 'FloatBorder' }, { '│', 'FloatBorder' }, { '╯', 'FloatBorder' }, { '─', 'FloatBorder' }, { '╰', 'FloatBorder' }, { '│', 'FloatBorder' },
-    -- }
-
-    -- taken from here: https://github.com/neovim/nvim-lspconfig/wiki/UI-Customization#borders
-    -- override floating preview popup's borders, if not provided
-    -- tested to work with open diagnosic popup, likely to affect
-    local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
-    ---@diagnostic disable-next-line: duplicate-set-field
-    function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-      opts = opts or {}
-      -- for options see :h nvim_open_win()
-      ---@diagnostic disable-next-line: inject-field
-      opts.border = opts.border or 'rounded'
-      return orig_util_open_floating_preview(contents, syntax, opts, ...)
+    -- remove all the default mappings that start with 'gr', we will do our own mappings
+    for _, map in ipairs(vim.api.nvim_get_keymap('n')) do
+      if vim.startswith(map.lhs, 'gr') then
+        pcall(vim.keymap.del, 'n', map.lhs)
+      end
     end
 
     -------------------------- diagnostics config ---------------------
@@ -62,101 +46,103 @@ return {
       -- for debugging, if we disable cmp, this module should not crash
       vim.notify('My: cmp_nvim_lsp not found. Not setting lsp.', vim.log.levels.ERROR)
       return
-    else
-      -- Lua
-      lspconfig.lua_ls.setup({
-        on_init = function(client)
-          if client.workspace_folders then
-            -- NOTE: when starting vim from our dotfiles/nvim dir, but the first lua file opened is
-            -- outside (e.g. some plugin's lua file), then this file's dir will become the workspace.
-            -- To check: :lua =vim.lsp.get_active_clients() and check the 'workspace_folders' nested field.
-            local path = client.workspace_folders[1].name
-            if vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc') then
-              vim.print('My lspconfig: Found .luarc')
-              return
-            end
+    end
+
+    -- Lua
+    vim.lsp.config('lua_ls', {
+      on_init = function(client)
+        if client.workspace_folders then
+          -- NOTE: when starting vim from our dotfiles/nvim dir, but the first lua file opened is
+          -- outside (e.g. some plugin's lua file), then this file's dir will become the workspace.
+          -- To check: :lua =vim.lsp.get_active_clients() and check the 'workspace_folders' nested field.
+          local path = client.workspace_folders[1].name
+          if vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc') then
+            vim.print('My lspconfig: Found .luarc')
+            return
           end
+        end
 
-          vim.print('My lspconfig: .luarc not found')
+        vim.print('My lspconfig: .luarc not found')
 
-          -- taken from :LspInfo text when run on lua files
-          client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-            runtime = {
-              version = 'LuaJIT',
+        -- taken from :LspInfo text when run on lua files
+        client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+          runtime = {
+            version = 'LuaJIT',
+          },
+          -- Make the server aware of Neovim runtime files
+          workspace = {
+            checkThirdParty = false,
+            library = {
+              vim.env.VIMRUNTIME,
+              '${3rd}/luv/library',
             },
-            -- Make the server aware of Neovim runtime files
-            workspace = {
-              checkThirdParty = false,
-              library = {
-                vim.env.VIMRUNTIME,
-                '${3rd}/luv/library',
-              },
-              -- we can also pull in all of 'runtimepath'. NOTE: this is a lot slower
-              -- library = vim.api.nvim_get_runtime_file("", true)
-            },
-          })
-        end,
+            -- we can also pull in all of 'runtimepath'. NOTE: this is a lot slower
+            -- library = vim.api.nvim_get_runtime_file("", true)
+          },
+        })
+      end,
 
-        capabilities = cmp_nvim_lsp.default_capabilities(),
-        settings = {
-          Lua = {
-            completion = {
-              callSnippet = 'Replace',
-            },
+      capabilities = cmp_nvim_lsp.default_capabilities(),
+      settings = {
+        Lua = {
+          completion = {
+            callSnippet = 'Replace',
           },
         },
-      })
+      },
+    })
+    vim.lsp.enable('lua_ls')
 
-      -- Rust, from https://rust-analyzer.github.io/manual.html
-      lspconfig.rust_analyzer.setup({
-        settings = {
-          ['rust-analyzer'] = {
-            imports = {
-              granularity = {
-                group = 'module',
-              },
-              prefix = 'self',
+    -- Rust, from https://rust-analyzer.github.io/manual.html
+    vim.lsp.config('rust_analyzer', {
+      settings = {
+        ['rust-analyzer'] = {
+          imports = {
+            granularity = {
+              group = 'module',
             },
-            cargo = {
-              features = 'all', -- from reddit: to avoid error: file not included in crate hierarchy
-              buildScripts = {
-                enable = true,
-              },
-            },
-            procMacro = {
+            prefix = 'self',
+          },
+          cargo = {
+            features = 'all', -- from reddit: to avoid error: file not included in crate hierarchy
+            buildScripts = {
               enable = true,
             },
-            -- diagnostics = {
-            --   enable = true, -- true is default
-            -- -- additional diagnostics, source shown as rust-analyzer, not sure if all are the same
-            -- -- as those from rustc
-            --   enableExperimental = true, -- <-- causes additional diagnostics
-            -- },
-            checkOnSave = true,
-            check = {
-              command = 'clippy',
-              features = 'all',
-              extraArgs = {
-                -- from reddit. TODO: configure clippy in its file (or in cargo.toml?), remove the below args
-                -- To test if clippy is enabled, add the following func signature: fn add_by_ref(v: &i32) {...}
-                -- This results in a warning:
-                -- │ │   └╴ this argument (4 byte) is passed by reference, but would be more efficient if passed by value (limit: 8 byte)
-                -- │ │       for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#trivially_copy_pass_by_ref
-                -- │ │       `-W clippy::trivially-copy-pass-by-ref` implied by `-W clippy::pedantic`
-                -- │ │       to override `-W clippy::pedantic` add `#[allow(clippy::trivially_copy_pass_by_ref)]` clippy (trivially_copy_pass_by_ref) [53, 18]
-                '--',
-                '--no-deps',
-                '-Dclippy::all',
-                -- '-Dclippy::correctness', -- already 'deny'
-                -- '-Dclippy::complexity', -- already 'warn'
-                -- '-Wclippy::perf', -- already 'warn'
-                '-Wclippy::pedantic',
-              },
+          },
+          procMacro = {
+            enable = true,
+          },
+          -- diagnostics = {
+          --   enable = true, -- true is default
+          -- -- additional diagnostics, source shown as rust-analyzer, not sure if all are the same
+          -- -- as those from rustc
+          --   enableExperimental = true, -- <-- causes additional diagnostics
+          -- },
+          checkOnSave = true,
+          check = {
+            command = 'clippy',
+            features = 'all',
+            extraArgs = {
+              -- from reddit. TODO: configure clippy in its file (or in cargo.toml?), remove the below args
+              -- To test if clippy is enabled, add the following func signature: fn add_by_ref(v: &i32) {...}
+              -- This results in a warning:
+              -- │ │   └╴ this argument (4 byte) is passed by reference, but would be more efficient if passed by value (limit: 8 byte)
+              -- │ │       for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#trivially_copy_pass_by_ref
+              -- │ │       `-W clippy::trivially-copy-pass-by-ref` implied by `-W clippy::pedantic`
+              -- │ │       to override `-W clippy::pedantic` add `#[allow(clippy::trivially_copy_pass_by_ref)]` clippy (trivially_copy_pass_by_ref) [53, 18]
+              '--',
+              '--no-deps',
+              '-Dclippy::all',
+              -- '-Dclippy::correctness', -- already 'deny'
+              -- '-Dclippy::complexity', -- already 'warn'
+              -- '-Wclippy::perf', -- already 'warn'
+              '-Wclippy::pedantic',
             },
           },
         },
-      })
-    end
+      },
+    })
+    vim.lsp.enable('rust_analyzer')
 
     -------------------------- autocmds ---------------------------------
     vim.api.nvim_create_autocmd('LspAttach', {
