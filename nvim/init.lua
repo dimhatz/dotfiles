@@ -233,7 +233,7 @@ local function my_operator_w()
   return '<Esc>'
 end
 
-local function my_operator_l()
+local function my_operator_bs()
   -- ld -> "_dd, ll -> "_dd, also keep the cursor shape changes (like with regular d)
   if vim.v.operator == 'd' then
     return 'd'
@@ -249,8 +249,12 @@ local function my_operator_s()
   return '<Esc>'
 end
 
+-- The below are triggered only in operator-pending mode: when e.g. d was pressed (or "_d), vim enters
+-- "operator pending" mode and the "current" operator is d.
+-- We need the following mappings to make <bs><bs> -> "_dd, dw -> daw, cw -> ciw etc, all while keeping
+-- the cursor shape changes.
 remap('o', 'w', my_operator_w, { expr = true, desc = 'My special operator w' })
-remap('o', 'l', my_operator_l, { expr = true, desc = 'My special operator l' })
+remap('o', '<BS>', my_operator_bs, { expr = true, desc = 'My special operator <bs>' })
 remap('o', 's', my_operator_s, { expr = true, desc = 'My special operator s' })
 
 ---@param vim_move string
@@ -331,9 +335,9 @@ remap({ 'n', 'x' }, 'a', function()
 end, { desc = 'a is new b, skips non-alphanum chars, when they are not surrounded by whitespace' })
 
 remap('x', 'x', '<Nop>', { desc = 'use <bs> to delete' })
-remap({ 'n', 'x' }, 'l', '"_d', { desc = 'Liquidate into black hole' })
-remap('n', 'L', '"_D', { desc = 'delete into black hole' })
-remap('n', 'X', '<cmd>echo "use L to delete into black hole till end of line"<CR>')
+remap({ 'n', 'x' }, '<BS>', '"_d', { desc = 'delete into black hole' })
+remap('n', '<S-BS>', '"_D', { desc = 'delete into black hole till eol' })
+remap('n', 'X', '<cmd>echo "use S-BS to delete into black hole till end of line"<CR>')
 
 remap({ 'n', 'x' }, 't', 'gj') -- navigate wrapped lines
 remap({ 'n', 'x' }, 'n', 'gk')
@@ -449,7 +453,7 @@ remap({ 'n', 'x', 'o' }, '>', 'A', { desc = '> is the new A, insert Behind the w
 remap({ 'n', 'x', 'o' }, 'b', 'l', { desc = 'b is new l, bottom row right hand (cursor right)' })
 remap('n', '<c-u>', '<c-i>', { desc = '<c-u> is the new <c-i> (go back)' })
 remap('n', '<CR>', '.', { desc = '<CR> is the new . (repeat)' })
-remap({ 'n', 'x' }, '<BS>', '"_x', { desc = '<bs> is the new x (delete char under cursor)' })
+remap({ 'n', 'x' }, 'l', '"_x', { desc = 'l is the new x (liquidate char under cursor)' })
 remap('n', 'm', 'J', { desc = 'm is the new J (merge lines)' })
 -- remap({ 'x', 'o' }, 'w', '<Nop>', { desc = 'use e instead' })
 -- remap({ 'x', 'o', 'n' }, 'b', '<Nop>', { desc = 'use a instead' })
@@ -547,11 +551,14 @@ end, { desc = 'Go to previous diagnostic' })
 
 --  See `:help lua-guide-autocommands`
 vim.api.nvim_create_autocmd({ 'FileType' }, {
-  desc = 'My: gd inside helpfiles jumps to links',
+  desc = 'My: inside helpfiles: gs jumps to links(go source), also no concealing of chars',
   group = vim.api.nvim_create_augroup('my-helpfile-jump', { clear = true }),
   pattern = { 'help' },
   callback = function(opts)
-    remap('n', 'gd', '<C-]>', { silent = true, buffer = opts.buf, desc = 'Go to link inside helpfile' })
+    remap('n', 'gs', '<C-]>', { silent = true, buffer = opts.buf, desc = 'Go to link inside helpfile' })
+    remap('n', 'gd', '<cmd>echo "use gs to go to definition (go to source)"<CR>')
+    vim.o.conceallevel = 0
+    vim.o.concealcursor = ''
   end,
 })
 

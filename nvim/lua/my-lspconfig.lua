@@ -160,10 +160,12 @@ return {
           vim.notify('My: Telescope builtin not found. Mappings like gd will not be set.', vim.log.levels.WARN)
           return
         end
-        map('gd', make_wrapper_fn(t_builtin.lsp_definitions, { initial_mode = 'normal' }), '[G]oto [D]efinition')
+        map('gs', make_wrapper_fn(t_builtin.lsp_definitions, { initial_mode = 'normal' }), '[G]oto [S]ource (definition)')
         map('gr', make_wrapper_fn(t_builtin.lsp_references, { initial_mode = 'normal', show_line = false }), '[G]oto [R]eferences')
-        map('gD', make_wrapper_fn(vim.lsp.buf.declaration, { initial_mode = 'normal' }), '[G]oto [D]eclaration')
+        map('gS', make_wrapper_fn(vim.lsp.buf.declaration, { initial_mode = 'normal' }), '[G]oto [S]ource (declaration)')
         map('gT', make_wrapper_fn(t_builtin.lsp_type_definitions, { initial_mode = 'normal' }), '[G]oto [T]ype Definition')
+        map('gd', '<cmd>echo "use gs to go to definition (go to source)"<CR>', 'gs is the new gd')
+        map('gD', '<cmd>echo "use gS to go to declaration (go to Source)"<CR>', 'gS is the new gD')
         --
         -- -- Fuzzy find all the symbols in your current document.
         -- --  Symbols are things like variables, functions, types, etc.

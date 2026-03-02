@@ -4,7 +4,6 @@ local find_key = require('my-helpers').find_key
 local concat = require('my-helpers').safe_concat
 local remap = require('my-helpers').remap
 local log_my_error = require('my-helpers').log_my_error
-local create_defer_fn_exclusive = require('my-helpers').create_defer_fn_exclusive
 
 vim.opt.showtabline = 2
 
