@@ -30,6 +30,11 @@ return {
         e = MiniExtra.gen_ai_spec.buffer(),
       },
     })
+    -- when mini.ai does the mappings, our `d,w`, `s,p`, `r,w` are not mapped anymore, thus the workaround
+    remap({ 'o', 'x' }, ',w', 'iw', { desc = 'Workaround for mini.ai' })
+    remap({ 'o', 'x' }, '.w', 'aw', { desc = 'Workaround for mini.ai' })
+    remap({ 'o', 'x' }, ',p', 'ip', { desc = 'Workaround for mini.ai' })
+    remap({ 'o', 'x' }, '.p', 'ap', { desc = 'Workaround for mini.ai' })
 
     -- local better_visual_repeat = require('better-visual-repeat')
     -- local mini_ai_i_mapargs = vim.fn.maparg(',', 'v', false, true)
@@ -108,8 +113,8 @@ return {
       },
       mappings = {
         -- Textobjects
-        object_scope = ',i', -- inside indent
-        object_scope_with_border = '.i', -- around indent
+        object_scope = ',,', -- inside indent
+        object_scope_with_border = '..', -- around indent
 
         -- Motions (jump to respective border line; if not present - body line)
         goto_top = 'ga',

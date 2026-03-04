@@ -381,7 +381,7 @@ remap('c', '<C-v>', '<C-r>+', { desc = '<C-v> pastes in command' })
 remap('c', '<C-k>', '<C-v>', { desc = '<C-k> is the new <C-v> (print the next key pressed the way vim sees it)' })
 
 -- " Reselect pasted text linewise, ( `[ is jump to beginning of changed/yanked )
-remap('n', '<Leader>r', '`[V`]', { desc = 'Reselect pasted text linewise' })
+remap('x', 'k', '<Esc>`[V`]', { desc = 'Reselect pasted text linewise, [K]sanaepilekse' })
 
 -- Just mapping to za is not enough, since the inner folds remain closed when toggling to open.
 -- This happens because we use indent folding and when forcing foldlevel, the inner folds become closed too.

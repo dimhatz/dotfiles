@@ -178,7 +178,7 @@ return {
         -- -- Rename the variable under your cursor.
         -- --  Most Language Servers support renaming across files, etc.
         -- map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-        map('<leader>m', function()
+        map('<leader>r', function()
           vim.lsp.buf.rename()
           -- WORKAROUND: in neovide, when triggering rename(), the cursor in the prompt is not showing
           -- until we type smth or move cursor with arrows
