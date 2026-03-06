@@ -403,10 +403,10 @@ end, { desc = 'Go to next buffer' })
 
 remap('n', '{', function()
   move_buffer('left')
-end, { desc = 'Go to previous buffer' })
+end, { desc = 'Move buffer to the left' })
 remap('n', '}', function()
   move_buffer('right')
-end, { desc = 'Go to next buffer' })
+end, { desc = 'Move buffer to the right' })
 
 remap('n', '<Leader>l', jump, { desc = 'Jump to a buffer Label' })
 
