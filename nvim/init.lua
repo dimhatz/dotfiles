@@ -1,7 +1,7 @@
 -- TODO: find a way to go back/forward inside the file, also between files, instead of c-i/c-o?
 -- TODO: fix r,w (visual around word)
 local remap = require('my-helpers').remap
-local update_treesitter_tree = require('my-helpers').update_treesitter_tree
+local my_rainbow_parens_refresh = require('my-rainbow-parens').my_rainbow_parens_refresh
 local minimap_refresh_cmd = require('my-helpers').minimap_refresh_cmd
 local create_defer_fn_exclusive = require('my-helpers').create_defer_fn_exclusive
 
@@ -168,8 +168,7 @@ My_on_esc = function()
   -- vim.o.hlsearch = false -- also fails when switching between buffers (see above)
   -- The best way is to use :noh within the <Esc> mapping itself, with { silent = true }
 
-  -- workaround for rainbow-delimiters, see explanation inside definition
-  update_treesitter_tree()
+  my_rainbow_parens_refresh()
 
   -- to remove the search count from statusline:
   vim.schedule(My_update_statusline_active)
@@ -205,13 +204,13 @@ remap({ 'n', 'x' }, ':', ';', { desc = 'Semicolon swapped with colon' })
 
 remap('n', '<C-s>', function()
   vim.cmd.write()
-  update_treesitter_tree()
+  my_rainbow_parens_refresh()
 end, { desc = 'Save file, update rainbow parens' })
 
 remap(
   'i',
   '<C-s>',
-  '<Esc><Cmd>write<CR><Cmd>lua My_cmp_disabled=true; require("my-helpers").update_treesitter_tree()<CR>',
+  '<Esc><Cmd>write<CR><Cmd>lua My_cmp_disabled=true; require("my-rainbow-parens").my_rainbow_parens_refresh()<CR>',
   { desc = 'Esc to normal, save file, update rainbow parens' }
 )
 
@@ -346,7 +345,7 @@ remap('n', '<C-d>', '<C-w>c', { desc = 'Close (Delete) window' })
 remap('n', '<C-c>', '<Cmd>bdelete<CR>', { desc = 'Fallback bdel (mini-bufremove should override)' }) -- will be overridden by mini-bufremove
 
 remap('n', 'U', 'gUiw', { desc = 'Uppercase word under cursor' }) -- Uppercase word in norm/insert
-remap('i', '<C-u>', '<Esc>gUiwea', { desc = 'Uppercase word under cursor' }) -- FIXME: does not repeat
+remap('i', '<C-u>', '<Esc>gUiwea:', { desc = 'Uppercase word under cursor, add : after, for eg TODO:' }) -- FIXME: does not repeat
 
 -- adjust hlsearch to work correctly with mini.nvim's scrollbar highlight
 remap('n', '*', '*<Cmd>set hlsearch<CR>', { desc = 'vanilla *, with workaround for highlighting' })
@@ -647,7 +646,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     -- vim.cmd('norm! `y') -- <-- do not use, messes up our visual repeat, does not fire ModeChanged
     vim.api.nvim_win_set_cursor(0, y_mark_pos)
     vim.cmd.delmarks('y') -- cleanup, unnecessary since we dont use 'y mark
-    vim.highlight.on_yank({ timeout = 300 })
+    vim.hl.on_yank({ timeout = 300 })
   end,
 })
 
@@ -787,7 +786,7 @@ require('lazy').setup({
   -- box with neovim, see their github issue: https://github.com/luochen1990/rainbow/issues/163
   -- NOTE: rainbow-delimiters works without treesitter highlighting (with TS just being enabled)
   -- likely with less lag than with TS highlighting
-  require('my-rainbow-delimiters'),
+  -- require('my-rainbow-delimiters'),
 
   require('my-gitsigns'),
 
