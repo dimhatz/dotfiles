@@ -41,9 +41,18 @@ return {
       desc = 'My: disable treesitter in lua files',
       group = vim.api.nvim_create_augroup('my-disable-treesitter-in-lua', { clear = true }),
       pattern = { 'lua' },
-      callback = function(_)
-        -- local buffer = options.buf -- options -> from this func's the argument
+      callback = function()
         vim.treesitter.stop()
+      end,
+    })
+
+    -- enable treesitter for typescript, javascript
+    vim.api.nvim_create_autocmd({ 'FileType' }, {
+      desc = 'My: enable treesitter',
+      group = vim.api.nvim_create_augroup('my-enable-treesitter', { clear = true }),
+      pattern = { 'typescript', 'javascript' },
+      callback = function()
+        vim.treesitter.start()
       end,
     })
   end,
