@@ -16,8 +16,10 @@
   tab   q     w    e    r    t    y    u    i     o     p    [    ]    \     home end  pgup  pgdn
   caps  a     s    d    f    g    h    j    k     l     ;    '    ret
   lsft  z     x    c    v    b    n    m    ,     .     /    rsft
-  lctl  lmet  lalt           spc            ralt  rmet  rctl
+  lmet  lalt  lctl           spc            rctl  ralt  rmet
 )
+
+;; NOTE: in windows, meta+L (win+L) is always bound to lock screen, kanata seems to be unable to override this, avoid using meta as layer-key.
 
 (deflayer my-qwerty
   caps
@@ -25,7 +27,7 @@
   tab   q     w    e    r    t    y    u    i     o     p    [    ]    \     home end  pgup   pgdn
   esc   a     s    d    f    g    h    j    k     l     ;    '    @rettab
   @lsbr z     x    c    v    b    n    m    ,     .     /    @rsbr
-  lalt  @mell @lcbr           spc           @rcbr @melr ralt
+  lalt  @alll @lcbr           spc           @rcbr @allr ralt
 )
 
 ;; NOTE: using tap-hold-press instead of tap-hold to be able to ctrl + ... even if the timeout has not passed yet.
@@ -73,7 +75,7 @@
   tab   k     ,    .    bspc @umin v     p     b     g    x    XX     XX   XX  home end  pgup   pgdn
   ;     h     a    i    e    @sfes @sfre t     n     s    l    q      @rtab
   XX    f     y    o    u    =     XX    w     d     c    m    XX
-  lalt  @mell @lcbr          spc         @rcbr @melr ralt
+  lalt  @alll @lcbr          spc         @rcbr @allr ralt
 )
 
 ;; symb layer (30 keys): 8 num symb ! + 11 symb [] + z + 10 nums
@@ -81,20 +83,20 @@
 
 (deflayer symbols
   caps
-  XX    XX    XX   XX   XX   XX    XX    XX   XX    XX   XX   XX    XX   XX  del  ins  @swqw  lrld  up  down  lft  rght
-  XX    tab   [    ]    '    S-3   S-6   S-4  S-5   S-7  S-8  XX    XX   XX  home end  pgup   pgdn
-  S-2   z     j    S-1  S-'  @sft` @sft0 1    2     3    4    5     XX
-  XX    \     S-\  /    S-/  XX    @rcbr 6    7     8    9    XX
-  lalt  @mell @lcbr          XX          XX   @melr ralt
+  XX    XX    XX   XX   XX   XX    XX    XX    XX    XX   XX   XX    XX   XX  del  ins  @swqw  lrld  up  down  lft  rght
+  XX    tab   [    ]    '    S-3   S-6   S-4   S-5   S-7  S-8  XX    XX   XX  home end  pgup   pgdn
+  S-2   z     j    S-1  S-'  @sft` @sft0 1     2     3    4    5     XX
+  XX    \     S-\  /    S-/  XX    XX    6     7     8    9    XX
+  lalt  @alll @lcbr          XX          @rcbr @allr ralt
 )
 
 (deflayer fkeys
   caps
-  XX    XX    XX   XX   XX   XX    XX     XX   XX    XX   XX   XX    XX   XX  del  ins  @swqw  lrld  XX  XX    XX   XX
-  XX    ins   del  up   XX   XX    XX     f11  f12   XX   XX   XX    XX   XX  XX   XX   XX     XX
-  XX    XX    lft  down rght lsft  @sff10 f1   f2    f3   f4   f5    lsft
-  XX    home  end  pgup pgdn XX    XX     f6   f7    f8   f9   XX
-  lalt  @mell @lcbr          spc          XX   @melr ralt
+  XX    XX    XX   XX   XX   XX    XX     XX    XX    XX   XX   XX    XX   XX  del  ins  @swqw  lrld  XX  XX    XX   XX
+  XX    ins   del  up   XX   XX    XX     f11   f12   XX   XX   XX    XX   XX  XX   XX   XX     XX
+  XX    XX    lft  down rght lsft  @sff10 f1    f2    f3   f4   f5    lsft
+  XX    home  end  pgup pgdn XX    XX     f6    f7    f8   f9   XX
+  lalt  @alll @lcbr          spc          @rcbr @allr ralt
 )
 
 (defalias
@@ -153,12 +155,12 @@
 
 (defalias
   ;; left curly brace when tapped, symbol layer when held, fkeys layer when held while pressing ctl (no need to hold ctl continuously to keep fkey layer active)
-  mell (tap-hold-press 300 300 S-[ @meta-or-symbols-or-fkeys)
+  alll (tap-hold-press 300 300 S-[ @meta-or-symbols-or-fkeys)
 )
 
 (defalias
   ;; right curly brace when tapped, symbol layer when held, fkeys layer when held while pressing ctl (no need to hold ctl continuously to keep fkey layer active)
-  melr (tap-hold-press 300 300 S-] @meta-or-symbols-or-fkeys)
+  allr (tap-hold-press 300 300 S-] @meta-or-symbols-or-fkeys)
 )
 
 (defalias
