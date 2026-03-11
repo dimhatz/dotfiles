@@ -14,9 +14,9 @@
   esc
   grv   1     2    3    4    5    6    7    8     9     0    -    =    bspc  del  ins  kp+   kprt  up  down  lft  rght
   tab   q     w    e    r    t    y    u    i     o     p    [    ]    \     home end  pgup  pgdn
-  caps  a     s    d    f    g    h    j    k     l     ;    '    ret
+  caps  a     s    d    f    g    h    j    k     l     ;    '
   lsft  z     x    c    v    b    n    m    ,     .     /    rsft
-  lmet  lalt  lctl           spc            rctl  ralt  rmet
+        lalt  lctl  spc           ret  rctl ralt             lmet rmet
 )
 
 ;; NOTE: in windows, meta+L (win+L) is always bound to lock screen, kanata seems to be unable to override this, avoid using meta as layer-key.
@@ -25,9 +25,9 @@
   caps
   grv   1     2    3    4    5    6    7    8     9     0    -    =    bspc  del  ins  @swcu  lrld  up  down  lft  rght
   tab   q     w    e    r    t    y    u    i     o     p    [    ]    \     home end  pgup   pgdn
-  esc   a     s    d    f    g    h    j    k     l     ;    '    @rettab
+  esc   a     s    d    f    g    h    j    k     l     ;    '
   @lsbr z     x    c    v    b    n    m    ,     .     /    @rsbr
-  lalt  @alll @lcbr           spc           @rcbr @allr ralt
+        lmet  @lcbr spc           @rettab @rcbr rmet         lalt ralt
 )
 
 ;; NOTE: using tap-hold-press instead of tap-hold to be able to ctrl + ... even if the timeout has not passed yet.
@@ -73,9 +73,9 @@
   caps
   grv   1     2    3    4    5     6     7     8     9    0    -      =    XX  del  ins  @swqw  lrld  up  down  lft  rght
   tab   k     ,    .    bspc @umin v     p     b     g    x    XX     XX   XX  home end  pgup   pgdn
-  ;     h     a    i    e    @sfes @sfre t     n     s    l    q      @rtab
+  ;     h     a    i    e    @sfes @sfre t     n     s    l    q
   XX    f     y    o    u    =     XX    w     d     c    m    XX
-  lalt  @alll @lcbr          spc         @rcbr @allr ralt
+        @alll @lcbr spc            @rtab @rcbr @allr           lalt ralt
 )
 
 ;; symb layer (30 keys): 8 num symb ! + 11 symb [] + z + 10 nums
@@ -85,18 +85,18 @@
   caps
   XX    XX    XX   XX   XX   XX    XX    XX    XX    XX   XX   XX    XX   XX  del  ins  @swqw  lrld  up  down  lft  rght
   XX    tab   [    ]    '    S-3   S-6   S-4   S-5   S-7  S-8  XX    XX   XX  home end  pgup   pgdn
-  S-2   z     j    S-1  S-'  @sft` @sft0 1     2     3    4    5     XX
+  S-2   z     j    S-1  S-'  @sft` @sft0 1     2     3    4    5
   XX    \     S-\  /    S-/  XX    XX    6     7     8    9    XX
-  lalt  @alll @lcbr          XX          @rcbr @allr ralt
+        @alll @lcbr XX             XX    @rcbr @allr           lalt ralt
 )
 
 (deflayer fkeys
   caps
   XX    XX    XX   XX   XX   XX    XX     XX    XX    XX   XX   XX    XX   XX  del  ins  @swqw  lrld  XX  XX    XX   XX
   XX    ins   del  up   XX   XX    XX     f11   f12   XX   XX   XX    XX   XX  XX   XX   XX     XX
-  XX    XX    lft  down rght lsft  @sff10 f1    f2    f3   f4   f5    lsft
+  XX    XX    lft  down rght lsft  @sff10 f1    f2    f3   f4   f5
   XX    home  end  pgup pgdn XX    XX     f6    f7    f8   f9   XX
-  lalt  @alll @lcbr          spc          @rcbr @allr ralt
+        @alll @lcbr spc            XX     @rcbr @allr           lalt ralt
 )
 
 (defalias
