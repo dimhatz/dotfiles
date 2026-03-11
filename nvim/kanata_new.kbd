@@ -1,0 +1,173 @@
+;; My: use kanata_winIOv2, not the regular one! This has lower latency, can be checked when scrolling in nvim.
+;; In scheduler, on user logon, use command: C:\Windows\System32\conhost.exe
+;; with arguments: --headless C:\kanata\kanata_winIOv2.exe --cfg C:\kanata\kanata.kbd
+;; kprt (keypad return) is numpad Enter, is mapped to kanata-live-reload
+;; kp+ (keypad plus) -> using this to switch to custom layout
+;; TIP: start kanata with --debug and search for keys here: https://github.com/jtroo/kanata/blob/main/parser/src/keys/mod.rs
+
+(defcfg
+  process-unmapped-keys yes
+  allow-hardware-repeat false
+)
+
+(defsrc
+  esc
+  grv   1     2    3    4    5    6    7    8     9     0    -    =    bspc  del  ins  kp+   kprt  up  down  lft  rght
+  tab   q     w    e    r    t    y    u    i     o     p    [    ]    \     home end  pgup  pgdn
+  caps  a     s    d    f    g    h    j    k     l     ;    '    ret
+  lsft  z     x    c    v    b    n    m    ,     .     /    rsft
+  lctl  lmet  lalt           spc            ralt  rmet  rctl
+)
+
+(deflayer my-qwerty
+  caps
+  grv   1     2    3    4    5    6    7    8     9     0    -    =    bspc  del  ins  @swcu  lrld  up  down  lft  rght
+  tab   q     w    e    r    t    y    u    i     o     p    [    ]    \     home end  pgup   pgdn
+  esc   a     s    d    f    g    h    j    k     l     ;    '    ret
+  @lsbr z     x    c    v    b    n    m    ,     .     /    @rsbr
+  lalt  @mell @lcbr           spc           @rcbr @melr ralt
+)
+
+;; NOTE: using tap-hold-press instead of tap-hold to be able to ctrl + ... even if the timeout has not passed yet.
+
+(defalias
+  ;; tap for curly brace, hold for left shift
+  lsbr (tap-hold-press 300 300 S-[ lsft)
+)
+
+(defalias
+  ;; tap for curly brace, hold for right shift
+  rsbr (tap-hold-press 300 300 S-] rsft)
+)
+
+(defalias
+  ;; when ctl is held mapped key is alt, otherwise ctl
+  clt-or-alt (fork lctl alt (lctl))
+)
+
+(defalias
+  ;; tap for round brace, hold for left ctl, press the other ctl then hold this ctl for alt
+  lcbr (tap-hold-press 300 300 S-9 @clt-or-alt)
+)
+
+(defalias
+  ;; tap for round brace, hold for left ctl, press the other ctl then hold this ctl for alt
+  ;; press the other ctl then hold this ctl for alt
+  rcbr (tap-hold-press 300 300 S-0 @clt-or-alt)
+)
+
+(defalias
+  ;; switch to my-custom-apha layer
+  swcu (layer-switch my-custom-alpha)
+)
+
+;; ------------------------ Custom layout -------------------------------------------------------------------------
+(deflayer my-custom-alpha
+  caps
+  grv   1     2    3    4    5     6     7     8    9    0    -      =    XX  del  ins  @swqw  lrld  up  down  lft  rght
+  tab   k     ,    .    bspc @umin v     p     b    g    x    XX     XX   XX  home end  pgup   pgdn
+  ;     h     a    i    e    @sfes @sfre t     n    s    l    q      r
+  XX    f     y    o    u    =     XX    w     d    c    m    XX
+  lalt  @mela @lcbr          spc         @rcbr rmet XX
+)
+
+;; symb layer (30 keys): 8 num symb ! + 11 symb [] + z + 10 nums
+;; fkey layer (22 keys): 12 F-keys + 6 del symbols + 4 arrows
+
+(deflayer symbols
+  caps
+  XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld  up  down  lft  rght
+  XX    tab   [    ]    '    S-3   S-6   S-4  S-5  S-7  S-8  XX    XX   XX  home end  pgup   pgdn
+  S-2   z     j    S-1  S-'  @sft` @sft0 1    2    3    4    5     XX
+  XX    \     S-\  /    S-/  XX    @rcbr 6    7    8    9    XX
+  lalt  @mela @lcbr          XX          XX   rmet ralt
+)
+
+(deflayer fkeys
+  caps
+  XX    XX    XX   XX   XX   XX    XX     XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld  XX  XX    XX   XX
+  XX    ins   del  up   XX   XX    XX     f11  f12  XX   XX   XX    XX   XX  XX   XX   XX     XX
+  XX    XX    lft  down rght lsft  @sff10 f1   f2   f3   f4   f5    lsft
+  XX    home  end  pgup pgdn XX    XX     f6   f7   f8   f9   XX
+  lalt  @mela @lcbr          spc          XX   rmet ralt
+)
+
+(defalias
+  ;; F10 or lshift while held
+  ;; NOTE: microsoft ergo keyboard does not register space + H + S combination (as per qwerty)
+  ;; if shift + j (to produce capital J) is needed, it must be performed all on left hand
+  sff10 (tap-hold-press 300 300 f10 lsft)
+)
+
+(defalias
+  ;; backtick ` or lshift while held
+  sft` (tap-hold-press 300 300 ` lsft)
+)
+
+(defalias
+  ;; 0 or lshift while held
+  ;; NOTE: microsoft ergo keyboard does not register space + H + S combination (as per qwerty)
+  ;; if shift + lft (left arrow) is needed, it must be performed all on left hand
+  sft0 (tap-hold-press 300 300 0 lsft)
+)
+
+(defalias
+  ;; switch to my-custom-apha layer
+  swqw (layer-switch my-qwerty)
+)
+
+(defalias
+  ;; esc or lshift while held
+  sfes (tap-hold-press 300 300 esc lsft)
+)
+
+(defalias
+  ;; enter / return (ret) or lshift while held
+  sfre (tap-hold-press 300 300 ret lsft)
+)
+
+(defalias
+  ;; underscore, or minus when shift is held
+  umin (fork S-- (unmod (lsft) -) (lsft))
+)
+
+(defalias
+  ;; when lctl is held, switch to f-keys layer, otherwise to symbols layer
+  sym-or-f-layer (fork (layer-while-held symbols) (layer-while-held fkeys) (lctl))
+)
+
+(defalias
+  ;; when lctl is held, switch to f-keys layer, when shift is held press meta (win), otherwise to symbols layer
+  ;; NOTE: meta+r and meta+l do not work on windows with my microsoft keyboard (meta+r can work if r is mapped e.g. to [ location)
+  meta-or-symbols-or-fkeys (switch
+    (lctl) (layer-while-held fkeys) break
+    (lsft) lmet break
+    () (layer-while-held symbols) break
+  )
+)
+
+(defalias
+  ;; left curly brace when tapped, symbol layer when held, fkeys layer when held while pressing ctl (no need to hold ctl continuously to keep fkey layer active)
+  mell (tap-hold-press 300 300 S-[ @meta-or-symbols-or-fkeys)
+)
+
+(defalias
+  ;; left curly brace when tapped, symbol layer when held, fkeys layer when held while pressing ctl (no need to hold ctl continuously to keep fkey layer active)
+  melr (tap-hold-press 300 300 S-] @meta-or-symbols-or-fkeys)
+)
+
+(defalias
+  ;; meta (win) when tapped, symbol layer when held, fkeys layer when held while pressing ctl (no need to hold ctl continuously to keep fkey layer active)
+  mela (tap-hold-press 300 300 lmet @meta-or-symbols-or-fkeys)
+)
+
+(defalias
+  ;; release lsft lalt lmet, needed for below "office key" fork. Not releasing lmet, it does not seem to do anything.
+  release-all-except-ctl (multi (release-key lsft) (release-key lalt))
+)
+
+(defalias
+  ;; make "office key" send } on tap, also see release-all-except-ctl above
+  ;; even though we only release ctl and alt, sft is released too, hence S-] instead of just ].
+  release-and-press-} (multi (release-key lctl) (release-key lalt) S-])
+)
