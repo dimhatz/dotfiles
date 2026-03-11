@@ -1,4 +1,4 @@
-;; My: use kanata_winIOv2, not the regular one! This has lower latency, can be checked when scrolling in nvim.
+;; My: use version 1.0.1, specifically kanata_winIOv2, not the regular one! This has lower latency, can be checked when scrolling in nvim.
 ;; In scheduler, on user logon, use command: C:\Windows\System32\conhost.exe
 ;; with arguments: --headless C:\kanata\kanata_winIOv2.exe --cfg C:\kanata\kanata.kbd
 ;; kprt (keypad return) is numpad Enter, is mapped to kanata-live-reload
@@ -12,20 +12,20 @@
 
 (defsrc
   esc
-  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc  del  ins  kp+  kprt  up  down  lft  rght
-  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \     home end  pgup pgdn
-  caps a    s    d    f    g    h    j    k    l    ;    '    ret
-  lsft z    x    c    v    b    n    m    ,    .    /    rsft
-  lctl lmet lalt           spc            ralt rmet rctl
+  grv   1     2    3    4    5    6    7    8     9     0    -    =    bspc  del  ins  kp+   kprt  up  down  lft  rght
+  tab   q     w    e    r    t    y    u    i     o     p    [    ]    \     home end  pgup  pgdn
+  caps  a     s    d    f    g    h    j    k     l     ;    '    ret
+  lsft  z     x    c    v    b    n    m    ,     .     /    rsft
+  lctl  lmet  lalt           spc            ralt  rmet  rctl
 )
 
 (deflayer my-qwerty
   caps
-  grv   1     2    3    4    5    6    7    8    9    0    -    =    bspc  del  ins  @swcu  lrld  up  down  lft  rght
-  tab   q     w    e    r    t    y    u    i    o    p    [    ]    \     home end  pgup   pgdn
-  esc   a     s    d    f    g    h    j    k    l    ;    '    ret
-  @lsbr z     x    c    v    b    n    m    ,    .    /    @rsbr
-  lalt  @omet @lcbr           spc            @rcbr rmet ralt
+  grv   1     2    3    4    5    6    7    8     9     0    -    =    bspc  del  ins  @swcu  lrld  up  down  lft  rght
+  tab   q     w    e    r    t    y    u    i     o     p    [    ]    \     home end  pgup   pgdn
+  esc   a     s    d    f    g    h    j    k     l     ;    '    @rettab
+  @lsbr z     x    c    v    b    n    m    ,     .     /    @rsbr
+  lalt  @mell @lcbr           spc           @rcbr @melr ralt
 )
 
 ;; NOTE: using tap-hold-press instead of tap-hold to be able to ctrl + ... even if the timeout has not passed yet.
@@ -51,7 +51,7 @@
 )
 
 (defalias
-  ;; tap for round brace, hold for left ctl (left ctl to be able to match @symspc and others)
+  ;; tap for round brace, hold for left ctl, press the other ctl then hold this ctl for alt
   ;; press the other ctl then hold this ctl for alt
   rcbr (tap-hold-press 300 300 S-0 @clt-or-alt)
 )
@@ -61,46 +61,40 @@
   swcu (layer-switch my-custom-alpha)
 )
 
+(defalias
+  ;; when alt is held, mapped key is tab, otherwise return
+  rettab (fork ret tab (ralt))
+)
+
 ;; ------------------------ Custom layout -------------------------------------------------------------------------
 (deflayer my-custom-alpha
   caps
-  grv   1     2    3    4    5     6     7    8    9    0    -      =    XX  del  ins  @swqw  lrld  up  down  lft  rght
-  tab   k     ,    .    bspc @umin v     p    b    g    x    XX     XX   XX  home end  pgup   pgdn
-  ;     h     a    i    e    @sfes @sfre t    n    s    l    q      XX
-  XX    f     y    o    u    =     @rcbr w    d    c    m    XX
-  lalt  @omet @lcbr          @symspc     r    rmet XX
+  grv   1     2    3    4    5     6     7     8     9    0    -      =    XX  del  ins  @swqw  lrld  up  down  lft  rght
+  tab   k     ,    .    bspc @umin v     p     b     g    x    XX     XX   XX  home end  pgup   pgdn
+  ;     h     a    i    e    @sfes @sfre t     n     s    l    q      @rtab
+  XX    f     y    o    u    =     XX    w     d     c    m    XX
+  lalt  @mell @lcbr          spc         @rcbr @melr ralt
 )
-
-;; each hand: 15 finger keys - 1 for shifts = 14, + 2 for thumbs, excluding layer key.
-;; total 16 keys per hand -> 32 keys
-;; 10 nums
-;; 12 F-keys
-;; 8 num symbols, excluding ( ): !@#$%^&*
-;; 11 symbols: [ ] \ | / ? ' " ` Tab Return (not adding }, its already on "office key" tap, see omet)
-;; 4 arrows
-;; 6 symbols: del home end ins pgup pgdown
-;; letter z
-;; total 53 symbols
 
 ;; symb layer (30 keys): 8 num symb ! + 11 symb [] + z + 10 nums
 ;; fkey layer (22 keys): 12 F-keys + 6 del symbols + 4 arrows
 
 (deflayer symbols
   caps
-  XX    XX    XX   XX   XX   XX    XX    XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld  up  down  lft  rght
-  XX    tab   [    ]    '    S-3   S-6   S-4  S-5  S-7  S-8  XX    XX   XX  home end  pgup   pgdn
-  S-2   z     j    S-1  S-'  @sft` @sft0 1    2    3    4    5     XX
-  XX    \     S-\  /    S-/  XX    @rcbr 6    7    8    9    XX
-  lalt  @omet @lcbr          XX          XX   rmet ralt
+  XX    XX    XX   XX   XX   XX    XX    XX   XX    XX   XX   XX    XX   XX  del  ins  @swqw  lrld  up  down  lft  rght
+  XX    tab   [    ]    '    S-3   S-6   S-4  S-5   S-7  S-8  XX    XX   XX  home end  pgup   pgdn
+  S-2   z     j    S-1  S-'  @sft` @sft0 1    2     3    4    5     XX
+  XX    \     S-\  /    S-/  XX    @rcbr 6    7     8    9    XX
+  lalt  @mell @lcbr          XX          XX   @melr ralt
 )
 
 (deflayer fkeys
   caps
-  XX    XX    XX   XX   XX   XX    XX     XX   XX   XX   XX   XX    XX   XX  del  ins  @swqw  lrld  XX  XX    XX   XX
-  XX    ins   del  up   XX   XX    XX     f11  f12  XX   XX   XX    XX   XX  XX   XX   XX     XX
-  XX    XX    lft  down rght lsft  @sff10 f1   f2   f3   f4   f5    lsft
-  XX    home  end  pgup pgdn XX    XX     f6   f7   f8   f9   XX
-  lalt  @omet @lcbr          spc          XX   rmet ralt
+  XX    XX    XX   XX   XX   XX    XX     XX   XX    XX   XX   XX    XX   XX  del  ins  @swqw  lrld  XX  XX    XX   XX
+  XX    ins   del  up   XX   XX    XX     f11  f12   XX   XX   XX    XX   XX  XX   XX   XX     XX
+  XX    XX    lft  down rght lsft  @sff10 f1   f2    f3   f4   f5    lsft
+  XX    home  end  pgup pgdn XX    XX     f6   f7    f8   f9   XX
+  lalt  @mell @lcbr          spc          XX   @melr ralt
 )
 
 (defalias
@@ -158,31 +152,17 @@
 )
 
 (defalias
-  ;; space when tapped, symbol layer when held, fkeys layer when held while pressing ctl (no need to hold ctl continuously to keep fkey layer active)
-  symspc (tap-hold-press 300 300 spc @meta-or-symbols-or-fkeys)
-)
-
-;; (defalias
-;;   ;; space or symbol layer while held
-;;   symspc (tap-hold-press 300 300 spc (layer-while-held symbols))
-;; )
-
-(defalias
-  ;; release lsft lalt lmet, needed for below "office key" fork. Not releasing lmet, it does not seem to do anything.
-  release-all-except-ctl (multi (release-key lsft) (release-key lalt))
+  ;; left curly brace when tapped, symbol layer when held, fkeys layer when held while pressing ctl (no need to hold ctl continuously to keep fkey layer active)
+  mell (tap-hold-press 300 300 S-[ @meta-or-symbols-or-fkeys)
 )
 
 (defalias
-  ;; make "office key" send } on tap, also see release-all-except-ctl above
-  ;; even though we only release ctl and alt, sft is released too, hence S-] instead of just ].
-  release-and-press-} (multi (release-key lctl) (release-key lalt) S-])
+  ;; right curly brace when tapped, symbol layer when held, fkeys layer when held while pressing ctl (no need to hold ctl continuously to keep fkey layer active)
+  melr (tap-hold-press 300 300 S-] @meta-or-symbols-or-fkeys)
 )
 
 (defalias
-  ;; The "office key" sends lctl + lsft + lalt + lmet presses (key down) upon pressing, then sends releases in the same order.
-  ;; We want to make this into the lctl button, so we need to release lsft + lalt + lmeta.
-  ;; We also want when tapping the "office key", to send }.
-  ;; NOTE: releasing lmet is not actually sent by kanata output, but it's ok since lmet press is not sent either.
-  ;; The actual order of kanata output when pressing "office key" is lalt down -> lsft down -> lctl down -> lalt up -> lsft up
-  omet (fork lmet (tap-hold-press 300 300 @release-and-press-} @release-all-except-ctl) (lctl lsft lalt))
+  ;; when alt is held, mapped key is tab, otherwise r
+  ;; to perform alt-tab, also works with our special shifts (esc and enter, when held) for alt-shift-tab
+  rtab (fork r tab (ralt))
 )
