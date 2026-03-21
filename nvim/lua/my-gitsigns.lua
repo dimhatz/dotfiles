@@ -13,7 +13,7 @@ return {
     },
     on_attach = function()
       local gitsigns = require('gitsigns')
-      remap('n', '<Leader>gr', gitsigns.reset_hunk, { desc = '[G]itsigns [R]eset hunk' })
+      remap('n', 'g<C-r>', gitsigns.reset_hunk, { desc = '[G]itsigns [R]eset hunk' })
       remap('n', 'gh', gitsigns.preview_hunk, { desc = '[G]itsigns preview [H]unk' })
       -- remap('n', 'gi', gitsigns.preview_hunk_inline, { desc = '[G]itsigns preview hunk [I]nline' })
       remap('n', 'gn', function()
