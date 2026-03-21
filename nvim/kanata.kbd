@@ -1,3 +1,4 @@
+;; TODO: use double taps on layer key (instead of ctrl layer) to go to layer 2
 ;; My: use version 1.0.1, specifically kanata_winIOv2, not the regular one! This has lower latency, can be checked when scrolling in nvim.
 ;; In scheduler, on user logon, use command: C:\Windows\System32\conhost.exe
 ;; with arguments: --headless C:\kanata\kanata_winIOv2.exe --cfg C:\kanata\kanata.kbd
@@ -75,7 +76,7 @@
   tab   k     ,    .    bspc @umin v     p     b     g    x    XX     XX   XX  home end  pgup   pgdn
   ;     h     a    i    e    @sfes @sfre t     n     s    l    q
   XX    f     y    o    u    =     XX    w     d     c    m    XX
-        @alll @lcbr spc            @rtab @rcbr @allr           lalt ralt
+        @alll @lcbr @ltab          @rtab @rcbr @allr           lalt ralt
 )
 
 ;; symb layer (30 keys): 8 num symb ! + 11 symb [] + z + 10 nums
@@ -166,5 +167,13 @@
 (defalias
   ;; when alt is held, mapped key is tab, otherwise r
   ;; to perform alt-tab, also works with our special shifts (esc and enter, when held) for alt-shift-tab
+  ;; alt-r combo becomes inaccessible (tradeoff)
   rtab (fork r tab (ralt))
+)
+
+(defalias
+  ;; when alt is held, mapped key is tab, otherwise spc
+  ;; to perform alt-tab, also works with our special shifts (esc and enter, when held) for alt-shift-tab
+  ;; alt-spc combo becomes inaccessible (tradeoff)
+  ltab (fork spc tab (lalt))
 )
