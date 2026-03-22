@@ -1,6 +1,55 @@
 local update_treesitter_tree = require('my-helpers').update_treesitter_tree
 local M = {}
 local ns = vim.api.nvim_create_namespace('my-rainbow')
+-- TODO: 1. refactor the below to use pairs
+-- 2. use a dict with per-filetype pairs and delimiters for "till-end-of-line" or "start and end delimited (potentially multiline)" comment, also
+-- what kind is it: comment or string, also in case of string, what is the escape sequence like \"
+
+-- local settings = {
+--   typescript = {
+--     skippable_patterns = {
+--       { '//' }, -- 1 element, comment till eol
+--       { '/*', '*/' }, -- 2 elements, comment or string till the ending delimiter
+--       { "'", "'", [[\']] }, -- 3 elements, comment till delimiter end with potential escape sequence
+--       { '"', '"', [[\"]] },
+--       { '`', '`', [[\`]] },
+--     },
+--     pairs = {
+--       { '(', ')' },
+--       { '{', '}' },
+--       { '[', ']' },
+--     },
+--   },
+--   lua = {
+--     skippable_patterns = {
+--       { '--' },
+--       { '[[', ']]' },
+--       { "'", "'", [[\']] },
+--       { '"', '"', [[\"]] },
+--     },
+--     pairs = {
+--       { '(', ')' },
+--       { '{', '}' },
+--       { '[', ']' },
+--     },
+--   },
+--   html = {
+--     -- no need to highlight parens, since they are not part of syntax. Also, no benefit in highlighting <>.
+--     -- { '<!--', '-->' },
+--     -- { "'", "'", [[\']] },
+--     -- { '"', '"', [[\"]] },
+--   },
+-- }
+--
+-- local skippable_pattern_active_index = nil -- if a pattern is active, this is its index, otherwise nil
+-- local skippable_patterns = {
+--   { till_eol = '//', chars_matched_so_far = 0 },
+--   { start_seq = '/*', stop_seq = '*/', chars_matched_so_far = 0 },
+--   { start_seq = "'", stop_seq = "'", escape_seq = [[\']], chars_matched_so_far = 0 },
+--   { start_seq = '"', stop_seq = '"', escape_seq = [[\"]], chars_matched_so_far = 0 },
+--   { start_seq = '`', stop_seq = '`', escape_seq = [[\`]], chars_matched_so_far = 0 },
+-- }
+
 local square_open_byte = ('['):byte()
 local square_close_byte = (']'):byte()
 local round_open_byte = ('('):byte()
@@ -24,20 +73,25 @@ function M.my_rainbow_parens_refresh()
 
   local is_treesitter_hl_enabled = vim.treesitter.highlighter.active[vim.api.nvim_get_current_buf()] and true or false
   local is_syntax_hl_enabled = vim.b.current_syntax and true or false -- is nil when syntax off
+  if is_treesitter_hl_enabled then
+    -- there was a bug with rainbow-delimiters plugin, where we needed to force refresh treesitter tree
+    -- (due to weird nvim behavior)
+    -- TODO: check whether this is also relevant here
+    update_treesitter_tree()
+  end
 
+  local is_comment_or_string_time = 0.00
   ---@param line integer -- 1-based
   ---@param col integer -- 1-based
   ---@return boolean
   local function is_comment_or_string(line, col)
+    local t_beg = os.clock()
     if is_treesitter_hl_enabled then
-      -- there was a bug with rainbow-delimiters plugin, where we needed to force refresh treesitter tree
-      -- (due to weird nvim behavior)
-      -- TODO: check whether this is also relevant here
-      update_treesitter_tree()
       local captures = vim.treesitter.get_captures_at_pos(0, line - 1, col - 1)
       for _, capture in ipairs(captures) do
-        local capture_name = capture.capture
+        local capture_name = capture.capture:lower()
         if capture_name:find('comment') or capture_name:find('string') then
+          is_comment_or_string_time = is_comment_or_string_time + (os.clock() - t_beg)
           return true
         end
       end
@@ -48,10 +102,12 @@ function M.my_rainbow_parens_refresh()
       for _, syn_id in ipairs(syn_ids) do
         local syn_name = vim.fn.synIDattr(syn_id, 'name'):lower()
         if syn_name:find('comment', 1, true) or syn_name:find('string', 1, true) then
+          is_comment_or_string_time = is_comment_or_string_time + (os.clock() - t_beg)
           return true
         end
       end
     end
+    is_comment_or_string_time = is_comment_or_string_time + (os.clock() - t_beg)
     return false
   end
 
@@ -72,7 +128,7 @@ function M.my_rainbow_parens_refresh()
   ---@param pos2 [integer, integer]
   local function highlight_pair(pos1, pos2)
     if not pos1 or not pos2 then
-      vim.print('My rainbow: unbalanced parens')
+      -- vim.print('My rainbow: unbalanced parens')
       return
     end
 
@@ -112,7 +168,7 @@ function M.my_rainbow_parens_refresh()
         byte_idx = byte_idx + 2
         goto continue
       elseif cur_byte >= 0x80 then
-        -- we got a continuation sequence, this should never happen (we jump over all the continuations)
+        -- we got a continuation sequence, this should never happen, since we jump over all the continuations
         vim.print('my rainbow: got continuation sequence. Will not highlight any parens.')
         return
       else
@@ -148,7 +204,8 @@ function M.my_rainbow_parens_refresh()
       ::continue::
     end
   end
-  vim.print('My rainbow parens done in: ' .. (os.clock() - t_begin) * 1000 .. ' ms')
+  -- vim.print('My rainbow parens done in: ' .. (os.clock() - t_begin) * 1000 .. ' ms')
+  -- vim.print('is_comment_or_string_time: ' .. is_comment_or_string_time * 1000 .. ' ms')
   -- in lua, measure how much time (in ms) a function took to execute
 end
 
