@@ -50,12 +50,21 @@ local ns = vim.api.nvim_create_namespace('my-rainbow')
 --   { start_seq = '`', stop_seq = '`', escape_seq = [[\`]], chars_matched_so_far = 0 },
 -- }
 
-local square_open_byte = ('['):byte()
-local square_close_byte = (']'):byte()
-local round_open_byte = ('('):byte()
-local round_close_byte = (')'):byte()
-local curly_open_byte = ('{'):byte()
-local curly_close_byte = ('}'):byte()
+local pairs_as_strings = { ---@type {[string]: string}
+  ['['] = ']',
+  ['('] = ')',
+  ['{'] = '}',
+}
+
+-- dicts that map opening -> closing and the other way around
+local opening_pairs_as_bytes = {} --- @type {[integer]: integer}
+local closing_pairs_as_bytes = {} --- @type {[integer]: integer}
+
+for key, value in pairs(pairs_as_strings) do
+  opening_pairs_as_bytes[key:byte()] = value:byte()
+  closing_pairs_as_bytes[value:byte()] = key:byte()
+end
+
 local hl_groups = {
   'RainbowDelimiterBlue',
   'RainbowDelimiterViolet',
@@ -117,10 +126,12 @@ function M.my_rainbow_parens_refresh()
   -- 4-byte:  11110xxx  10xxxxxx  10xxxxxx  10xxxxxx   <-- 11110000 == 0xF0
   -- the continuation bytes always start with 10       <-- 10000000 == 0x80
 
-  -- actual (not byte) character positions, as displayed in buffer, 1-based
-  local square_open_positions = {} ---@type [integer, integer][]
-  local round_open_positions = {} ---@type [integer, integer][]
-  local curly_open_positions = {} ---@type [integer, integer][]
+  -- key: the opening paren as byte
+  -- value: actual (not byte) character positions, as displayed in buffer, 1-based
+  local positions = {} ---@type {[integer]: [integer, integer][]}
+  for key, _ in pairs(opening_pairs_as_bytes) do
+    positions[key] = {}
+  end
 
   local curr_hl_color_count = 0 -- to be used with modulo 3 to select hl group
 
@@ -174,29 +185,17 @@ function M.my_rainbow_parens_refresh()
       else
         -- ascii, this is what we are interested in
         local col = byte_idx - bytes_skipped -- actual position
+
         -- checking for not being part of comment or string only after we have determined we have a
         -- bracket on current position.
-        if cur_byte == square_open_byte and not is_comment_or_string(line_nr, col) then
-          -- vim.print('sq open at ' .. line_nr .. ' ' .. col)
-          table.insert(square_open_positions, { line_nr, col })
+        if opening_pairs_as_bytes[cur_byte] and not is_comment_or_string(line_nr, col) then
+          -- we got an opening paren
+          table.insert(positions[cur_byte], { line_nr, col })
           curr_hl_color_count = curr_hl_color_count + 1
-        elseif cur_byte == round_open_byte and not is_comment_or_string(line_nr, col) then
-          -- vim.print('ro open at ' .. line_nr .. ' ' .. col)
-          table.insert(round_open_positions, { line_nr, col })
-          curr_hl_color_count = curr_hl_color_count + 1
-        elseif cur_byte == curly_open_byte and not is_comment_or_string(line_nr, col) then
-          -- vim.print('cur open at ' .. line_nr .. ' ' .. col)
-          table.insert(curly_open_positions, { line_nr, col })
-          curr_hl_color_count = curr_hl_color_count + 1
-        elseif cur_byte == square_close_byte and not is_comment_or_string(line_nr, col) then
-          -- vim.print('sq close at ' .. line_nr .. ' ' .. col)
-          highlight_pair(table.remove(square_open_positions), { line_nr, col })
-        elseif cur_byte == round_close_byte and not is_comment_or_string(line_nr, col) then
-          -- vim.print('ro close at ' .. line_nr .. ' ' .. col)
-          highlight_pair(table.remove(round_open_positions), { line_nr, col })
-        elseif cur_byte == curly_close_byte and not is_comment_or_string(line_nr, col) then
-          -- vim.print('cur close at ' .. line_nr .. ' ' .. col)
-          highlight_pair(table.remove(curly_open_positions), { line_nr, col })
+        elseif closing_pairs_as_bytes[cur_byte] and not is_comment_or_string(line_nr, col) then
+          -- we got a closing paren
+          local matching_opening_pair = closing_pairs_as_bytes[cur_byte]
+          highlight_pair(table.remove(positions[matching_opening_pair]), { line_nr, col })
         end
         byte_idx = byte_idx + 1
       end
