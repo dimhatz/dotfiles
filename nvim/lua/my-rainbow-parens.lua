@@ -1,70 +1,51 @@
 local update_treesitter_tree = require('my-helpers').update_treesitter_tree
 local M = {}
 local ns = vim.api.nvim_create_namespace('my-rainbow')
--- TODO: 1. refactor the below to use pairs
--- 2. use a dict with per-filetype pairs and delimiters for "till-end-of-line" or "start and end delimited (potentially multiline)" comment, also
--- what kind is it: comment or string, also in case of string, what is the escape sequence like \"
 
--- local settings = {
---   typescript = {
---     skippable_patterns = {
---       { '//' }, -- 1 element, comment till eol
---       { '/*', '*/' }, -- 2 elements, comment or string till the ending delimiter
---       { "'", "'", [[\']] }, -- 3 elements, comment till delimiter end with potential escape sequence
---       { '"', '"', [[\"]] },
---       { '`', '`', [[\`]] },
---     },
---     pairs = {
---       { '(', ')' },
---       { '{', '}' },
---       { '[', ']' },
---     },
---   },
---   lua = {
---     skippable_patterns = {
---       { '--' },
---       { '[[', ']]' },
---       { "'", "'", [[\']] },
---       { '"', '"', [[\"]] },
---     },
---     pairs = {
---       { '(', ')' },
---       { '{', '}' },
---       { '[', ']' },
---     },
---   },
---   html = {
---     -- no need to highlight parens, since they are not part of syntax. Also, no benefit in highlighting <>.
---     -- { '<!--', '-->' },
---     -- { "'", "'", [[\']] },
---     -- { '"', '"', [[\"]] },
---   },
--- }
---
--- local skippable_pattern_active_index = nil -- if a pattern is active, this is its index, otherwise nil
--- local skippable_patterns = {
---   { till_eol = '//', chars_matched_so_far = 0 },
---   { start_seq = '/*', stop_seq = '*/', chars_matched_so_far = 0 },
---   { start_seq = "'", stop_seq = "'", escape_seq = [[\']], chars_matched_so_far = 0 },
---   { start_seq = '"', stop_seq = '"', escape_seq = [[\"]], chars_matched_so_far = 0 },
---   { start_seq = '`', stop_seq = '`', escape_seq = [[\`]], chars_matched_so_far = 0 },
--- }
+---@class SkippableTillEol
+---@field till_eol string single delimiter, signifying comment till eol
 
-local pairs_as_strings = { ---@type {[string]: string}
-  ['['] = ']',
-  ['('] = ')',
-  ['{'] = '}',
+---@class SkippableDilimitedRange
+---@field delimited_range string[] at least 2 elements (starting and closing delimiter), optionally followed by 1 or more escape sequences
+
+---@alias mySkippablePatterns (SkippableTillEol | SkippableDilimitedRange)[]
+
+---@alias mySettings {[string]: { skippable_patterns: mySkippablePatterns, pairs: [string, string][]}}
+
+-- if a pattern is active, this is its index, otherwise nil, only 1 pattern can be active at a time
+local active_skippable_pattern_index = nil
+
+local settings = { ---@type mySettings
+  typescript = {
+    skippable_patterns = {
+      { till_eol = '//' },
+      { delimited_range = { '/*', '*/' } },
+      { delimited_range = { "'", "'", [[\']] } },
+      { delimited_range = { '"', '"', [[\"]] } },
+      { delimited_range = { '`', '`', [[\`]] } },
+    },
+    pairs = {
+      { '(', ')' },
+      { '{', '}' },
+      { '[', ']' },
+    },
+  },
+  lua = {
+    skippable_patterns = {
+      { till_eol = '--' },
+      { delimited_range = { '[[', ']]' } },
+      { delimited_range = { "'", "'", [[\']] } },
+      { delimited_range = { '"', '"', [[\"]] } },
+    },
+    pairs = {
+      { '(', ')' },
+      { '{', '}' },
+      { '[', ']' },
+    },
+  },
 }
 
--- dicts that map opening -> closing and the other way around
-local opening_pairs_as_bytes = {} --- @type {[integer]: integer}
-local closing_pairs_as_bytes = {} --- @type {[integer]: integer}
-
-for key, value in pairs(pairs_as_strings) do
-  opening_pairs_as_bytes[key:byte()] = value:byte()
-  closing_pairs_as_bytes[value:byte()] = key:byte()
-end
-
+-- we want at top level the blue, next violet, next yellow.
 local hl_groups = {
   'RainbowDelimiterBlue',
   'RainbowDelimiterViolet',
@@ -76,6 +57,23 @@ function M.my_rainbow_parens_refresh()
   if vim.o.fileencoding ~= 'utf-8' then
     -- always assume utf-8
     return
+  end
+
+  local ft = vim.bo.filetype
+
+  if not settings[ft] then
+    return
+  end
+
+  local pairs_as_array_of_strings = settings[ft].pairs
+
+  -- dicts that map opening -> closing and the other way around
+  local opening_pairs_as_bytes = {} --- @type {[integer]: integer}
+  local closing_pairs_as_bytes = {} --- @type {[integer]: integer}
+
+  for _, arr in ipairs(pairs_as_array_of_strings) do
+    opening_pairs_as_bytes[arr[1]:byte()] = arr[2]:byte()
+    closing_pairs_as_bytes[arr[2]:byte()] = arr[1]:byte()
   end
 
   vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
@@ -133,10 +131,15 @@ function M.my_rainbow_parens_refresh()
     positions[key] = {}
   end
 
+  -- highlighting: we want parens on the same level to be the same color eg: ()()()[][][] should have
+  -- the same color, the inner parens must alternate colors, as the level goes deeper.
+  -- To achieve this, we increase the count below when we add an opening paren on the stack, we decrease it when
+  -- we do the highlighting. Taking `count modulo 3` (for our 3 colors) guarantees the correct cycling between the colors.
   local curr_hl_color_count = 0 -- to be used with modulo 3 to select hl group
 
   ---@param pos1 [integer, integer]
   ---@param pos2 [integer, integer]
+  --- positions are 1-based
   local function highlight_pair(pos1, pos2)
     if not pos1 or not pos2 then
       -- vim.print('My rainbow: unbalanced parens')
