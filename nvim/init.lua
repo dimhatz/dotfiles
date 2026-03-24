@@ -363,15 +363,14 @@ local function create_nN_fn(key)
       vim.notify('(My): Pattern not found: ' .. vim.fn.getreg('/'), vim.log.levels.ERROR)
       return
     end
-    ---@diagnostic disable-next-line: param-type-mismatch
     if vim.fn.foldclosed('.') == -1 then
       return
     end
     vim.cmd('normal! zO')
   end
 end
-remap('n', 'w', create_nN_fn('n'), { desc = 'w is the new n (where to next?), also sets hlsearch and unfolds' })
-remap('n', 'W', create_nN_fn('N'), { desc = 'W is the new N (where to next?), also sets hlsearch and unfolds' })
+remap('n', 'l', create_nN_fn('n'), { desc = 'l is the new n (look for next), also sets hlsearch and unfolds' })
+remap('n', 'L', create_nN_fn('N'), { desc = 'L is the new N (look for next), also sets hlsearch and unfolds' })
 
 remap('n', '<C-q>', '<Cmd>qa<CR>', { desc = 'Quit vim' })
 
@@ -452,7 +451,7 @@ remap({ 'n', 'x', 'o' }, '>', 'A', { desc = '> is the new A, insert Behind the w
 remap({ 'n', 'x', 'o' }, 'b', 'l', { desc = 'b is new l, bottom row right hand (cursor right)' })
 remap('n', '<c-u>', '<c-i>', { desc = '<c-u> is the new <c-i> (go back)' })
 remap('n', '<CR>', '.', { desc = '<CR> is the new . (repeat)' })
-remap({ 'n', 'x' }, 'l', '"_x', { desc = 'l is the new x (liquidate char under cursor)' })
+remap({ 'n', 'x' }, 'w', '"_x', { desc = 'w is the new x (wipe out char under cursor into black hole)' })
 remap('n', 'm', 'J', { desc = 'm is the new J (merge lines)' })
 -- remap({ 'x', 'o' }, 'w', '<Nop>', { desc = 'use e instead' })
 -- remap({ 'x', 'o', 'n' }, 'b', '<Nop>', { desc = 'use a instead' })
@@ -660,8 +659,8 @@ vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
   callback = function(arg)
     -- vim.print(arg)
     local buf_num = arg.buf
-    -- local ft = vim.api.nvim_buf_get_option(buf_num, 'filetype') -- before v0.10
-    local ft = vim.api.nvim_get_option_value('filetype', { buf = buf_num }) -- when fully switched to v0.10
+    -- not using vim.bo.filetype since it is not guaranteed vim has finished switching to the new buffer?
+    local ft = vim.api.nvim_get_option_value('filetype', { buf = buf_num })
     -- vim.print(ft)
     if ft == 'help' then
       vim.cmd.wincmd('L')
