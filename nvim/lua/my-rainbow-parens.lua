@@ -1,28 +1,21 @@
-local update_treesitter_tree = require('my-helpers').update_treesitter_tree
 local M = {}
 local ns = vim.api.nvim_create_namespace('my-rainbow')
 
----@class SkippableTillEol
----@field till_eol string single delimiter, signifying comment till eol
+---@class Skippable
+---@field closing_delimiter string? when absent, it's comment till eol
+---@field escape_char string? if exists, assumed to be exactly 1-char long
 
----@class SkippableDilimitedRange
----@field delimited_range string[] at least 2 elements (starting and closing delimiter), optionally followed by 1 or more escape sequences
-
----@alias mySkippablePatterns (SkippableTillEol | SkippableDilimitedRange)[]
-
----@alias mySettings {[string]: { skippable_patterns: mySkippablePatterns, pairs: [string, string][]}}
-
--- if a pattern is active, this is its index, otherwise nil, only 1 pattern can be active at a time
-local active_skippable_pattern_index = nil
+--- the top level key is the language, the key in skippable_patterns is the opening delimiter
+---@alias mySettings {[string]: { skippable_patterns: {[string]:  Skippable }, pairs: [string, string][]}}
 
 local settings = { ---@type mySettings
   typescript = {
     skippable_patterns = {
-      { till_eol = '//' },
-      { delimited_range = { '/*', '*/' } },
-      { delimited_range = { "'", "'", [[\']] } },
-      { delimited_range = { '"', '"', [[\"]] } },
-      { delimited_range = { '`', '`', [[\`]] } },
+      ['//'] = {},
+      ['/*'] = { closing_delimiter = '*/' },
+      ['"'] = { closing_delimiter = '"', escape_char = [[\]] },
+      ["'"] = { closing_delimiter = "'", escape_char = [[\]] },
+      ['`'] = { closing_delimiter = '`', escape_char = [[\]] },
     },
     pairs = {
       { '(', ')' },
@@ -30,12 +23,17 @@ local settings = { ---@type mySettings
       { '[', ']' },
     },
   },
-  lua = {
+  luarrr = {
     skippable_patterns = {
-      { till_eol = '--' },
-      { delimited_range = { '[[', ']]' } },
-      { delimited_range = { "'", "'", [[\']] } },
-      { delimited_range = { '"', '"', [[\"]] } },
+      ['--'] = {},
+      ['[['] = { closing_delimiter = ']]' }, -- no escaping here (multiline string)
+      ['[=['] = { closing_delimiter = ']=]' }, -- no escaping here (multiline string)
+      ['[==['] = { closing_delimiter = ']==]' }, -- no escaping here (multiline string)
+      ['--[['] = { closing_delimiter = ']]' }, -- no escaping here (multiline comment)
+      ['--[=['] = { closing_delimiter = ']=]' }, -- no escaping here (multiline comment)
+      ['--[==['] = { closing_delimiter = ']==]' }, -- no escaping here (multiline comment)
+      ['"'] = { closing_delimiter = '"', escape_char = [[\]] },
+      ["'"] = { closing_delimiter = "'", escape_char = [[\]] },
     },
     pairs = {
       { '(', ')' },
@@ -52,161 +50,197 @@ local hl_groups = {
   'RainbowDelimiterYellow',
 }
 
-function M.my_rainbow_parens_refresh()
-  local t_begin = os.clock()
-  if vim.o.fileencoding ~= 'utf-8' then
-    -- always assume utf-8
-    return
-  end
-
-  local ft = vim.bo.filetype
-
-  if not settings[ft] then
-    return
-  end
-
-  local pairs_as_array_of_strings = settings[ft].pairs
-
-  -- dicts that map opening -> closing and the other way around
-  local opening_pairs_as_bytes = {} --- @type {[integer]: integer}
-  local closing_pairs_as_bytes = {} --- @type {[integer]: integer}
-
-  for _, arr in ipairs(pairs_as_array_of_strings) do
-    opening_pairs_as_bytes[arr[1]:byte()] = arr[2]:byte()
-    closing_pairs_as_bytes[arr[2]:byte()] = arr[1]:byte()
-  end
-
-  vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-
-  local is_treesitter_hl_enabled = vim.treesitter.highlighter.active[vim.api.nvim_get_current_buf()] and true or false
-  local is_syntax_hl_enabled = vim.b.current_syntax and true or false -- is nil when syntax off
-  if is_treesitter_hl_enabled then
-    -- there was a bug with rainbow-delimiters plugin, where we needed to force refresh treesitter tree
-    -- (due to weird nvim behavior)
-    -- TODO: check whether this is also relevant here
-    update_treesitter_tree()
-  end
-
-  local is_comment_or_string_time = 0.00
-  ---@param line integer -- 1-based
-  ---@param col integer -- 1-based
-  ---@return boolean
-  local function is_comment_or_string(line, col)
-    local t_beg = os.clock()
-    if is_treesitter_hl_enabled then
-      local captures = vim.treesitter.get_captures_at_pos(0, line - 1, col - 1)
-      for _, capture in ipairs(captures) do
-        local capture_name = capture.capture:lower()
-        if capture_name:find('comment') or capture_name:find('string') then
-          is_comment_or_string_time = is_comment_or_string_time + (os.clock() - t_beg)
-          return true
-        end
-      end
-    end
-    if is_syntax_hl_enabled then
-      -- use synstack() to examine all the syntax items
-      local syn_ids = vim.fn.synstack(line, col)
-      for _, syn_id in ipairs(syn_ids) do
-        local syn_name = vim.fn.synIDattr(syn_id, 'name'):lower()
-        if syn_name:find('comment', 1, true) or syn_name:find('string', 1, true) then
-          is_comment_or_string_time = is_comment_or_string_time + (os.clock() - t_beg)
-          return true
-        end
-      end
-    end
-    is_comment_or_string_time = is_comment_or_string_time + (os.clock() - t_beg)
-    return false
-  end
-
+local ffi = require('ffi')
+-- fast way to convert column index from byte index of utf-8 string, using ffi
+---@param str string
+---@param pos integer
+---@return integer column
+local function byte_idx_to_col(str, pos)
+  -- utf-8:
   -- 1-byte:  0xxxxxxx                                 <-- ASCII (our case)
   -- 2-byte:  110xxxxx  10xxxxxx                       <-- 11000000 == 0xC0
   -- 3-byte:  1110xxxx  10xxxxxx  10xxxxxx             <-- 11100000 == 0xE0
   -- 4-byte:  11110xxx  10xxxxxx  10xxxxxx  10xxxxxx   <-- 11110000 == 0xF0
   -- the continuation bytes always start with 10       <-- 10000000 == 0x80
 
-  -- key: the opening paren as byte
-  -- value: actual (not byte) character positions, as displayed in buffer, 1-based
-  local positions = {} ---@type {[integer]: [integer, integer][]}
-  for key, _ in pairs(opening_pairs_as_bytes) do
-    positions[key] = {}
+  local ptr = ffi.cast('const uint8_t *', str)
+  local char_pos = 1
+  -- count how many non-continuation bytes there are, up to (but not including) byte_pos.
+  -- zero-based iteration (c ffi), luajit should optimize this to be very fast.
+  -- byte_pos-2 is to avoid counting byte_pos, since our count starts at 1.
+  for i = 0, pos - 2 do
+    local b = ptr[i]
+    if b < 0x80 or b >= 0xC0 then
+      char_pos = char_pos + 1
+    end
+  end
+  return char_pos
+end
+
+function M.my_rainbow_parens_refresh()
+  local t_begin = os.clock()
+  vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+
+  if vim.o.fileencoding ~= 'utf-8' then
+    -- always assume utf-8
+    return
   end
 
-  -- highlighting: we want parens on the same level to be the same color eg: ()()()[][][] should have
-  -- the same color, the inner parens must alternate colors, as the level goes deeper.
-  -- To achieve this, we increase the count below when we add an opening paren on the stack, we decrease it when
-  -- we do the highlighting. Taking `count modulo 3` (for our 3 colors) guarantees the correct cycling between the colors.
-  local curr_hl_color_count = 0 -- to be used with modulo 3 to select hl group
+  local curr_settings = settings[vim.bo.filetype]
+  if not curr_settings then
+    -- unknown filetype
+    return
+  end
 
-  ---@param pos1 [integer, integer]
-  ---@param pos2 [integer, integer]
-  --- positions are 1-based
-  local function highlight_pair(pos1, pos2)
-    if not pos1 or not pos2 then
-      -- vim.print('My rainbow: unbalanced parens')
-      return
+  local pairs_as_array_of_strings = curr_settings.pairs
+
+  -- dicts that map opening -> closing
+  local opening_parens = {} --- @type {[string]: string}
+  -- dicts that map opening -> closing
+  local closing_parens = {} --- @type {[string]: string}
+
+  for _, arr in ipairs(pairs_as_array_of_strings) do
+    opening_parens[arr[1]] = arr[2]
+    closing_parens[arr[2]] = arr[1]
+  end
+
+  local handle_paren ---@type fun(str: string, line: integer, col: integer)
+  do
+    -- use do-block to encapsulate variables enclosed in handle_paren() and initialize it.
+    -- highlighting: we want parens on the same level to be the same color eg: ()()()[][][] should have
+    -- the same color, the inner parens must alternate colors, as the level goes deeper.
+    -- To achieve this, we increase the count below when we add an opening paren on the stack, we decrease it when
+    -- we do the highlighting. Taking `count modulo 3` (for our 3 colors) guarantees the correct cycling between the colors.
+    local curr_hl_color_count = 0 -- to be used with modulo 3 to select hl group
+    -- map paren as string -> array of opening positions, at which this paren was found
+    local positions = {} ---@type {[string]: [integer, integer][]}
+    for _, arr in ipairs(pairs_as_array_of_strings) do
+      positions[arr[1]] = {}
     end
+    local modulo = #hl_groups
 
-    curr_hl_color_count = curr_hl_color_count - 1
-    local hl_group = hl_groups[(curr_hl_color_count % 3) + 1]
+    ---@param str string
+    ---@param line integer
+    ---@param col integer
+    local function handle_paren_impl(str, line, col)
+      if opening_parens[str] then
+        table.insert(positions[str], { line, col })
+        curr_hl_color_count = curr_hl_color_count + 1
+        return
+      end
 
-    -- accepts 0-based ranges, so we decrease all indexes by 1
-    vim.hl.range(0, ns, hl_group, { pos1[1] - 1, pos1[2] - 1 }, { pos1[1] - 1, pos1[2] - 1 + 1 })
-    vim.hl.range(0, ns, hl_group, { pos2[1] - 1, pos2[2] - 1 }, { pos2[1] - 1, pos2[2] - 1 + 1 })
+      -- we got a closing paren, so we highlight the pair and decrease the color count
+      local matching_opening_paren = closing_parens[str]
+      local matching_pos = table.remove(positions[matching_opening_paren])
+      if not matching_pos then
+        -- vim.print('My rainbow: unbalanced parens')
+        return
+      end
+
+      local hl_group = hl_groups[curr_hl_color_count % modulo + 1]
+
+      -- accepts 0-based ranges, so we decrease all indexes by 1
+      vim.hl.range(0, ns, hl_group, { line - 1, col - 1 }, { line - 1, col - 1 + 1 })
+      vim.hl.range(0, ns, hl_group, { matching_pos[1] - 1, matching_pos[2] - 1 }, { matching_pos[1] - 1, matching_pos[2] - 1 + 1 })
+
+      curr_hl_color_count = curr_hl_color_count - 1
+    end
+    handle_paren = handle_paren_impl
   end
 
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-  for line_nr = 1, #lines do
-    local line_text = lines[line_nr] -- #line is the number of bytes
-
-    local line_len = #line_text
-    local byte_idx = 1
-    local bytes_skipped = 0
-
-    -- iterate each byte of the string, skipping any multibyte chars
-    while byte_idx <= line_len do
-      local cur_byte = line_text:byte(byte_idx)
-
-      if cur_byte >= 0xF0 then
-        -- 4-byte sequence
-        bytes_skipped = bytes_skipped + 3
-        byte_idx = byte_idx + 4
-        goto continue
-      elseif cur_byte >= 0xE0 then
-        -- 3-byte sequence
-        bytes_skipped = bytes_skipped + 2
-        byte_idx = byte_idx + 3
-        goto continue
-      elseif cur_byte >= 0xC0 then
-        -- 2-byte sequence
-        bytes_skipped = bytes_skipped + 1
-        byte_idx = byte_idx + 2
-        goto continue
-      elseif cur_byte >= 0x80 then
-        -- we got a continuation sequence, this should never happen, since we jump over all the continuations
-        vim.print('my rainbow: got continuation sequence. Will not highlight any parens.')
-        return
-      else
-        -- ascii, this is what we are interested in
-        local col = byte_idx - bytes_skipped -- actual position
-
-        -- checking for not being part of comment or string only after we have determined we have a
-        -- bracket on current position.
-        if opening_pairs_as_bytes[cur_byte] and not is_comment_or_string(line_nr, col) then
-          -- we got an opening paren
-          table.insert(positions[cur_byte], { line_nr, col })
-          curr_hl_color_count = curr_hl_color_count + 1
-        elseif closing_pairs_as_bytes[cur_byte] and not is_comment_or_string(line_nr, col) then
-          -- we got a closing paren
-          local matching_opening_pair = closing_pairs_as_bytes[cur_byte]
-          highlight_pair(table.remove(positions[matching_opening_pair]), { line_nr, col })
-        end
-        byte_idx = byte_idx + 1
-      end
-
-      ::continue::
-    end
+  local lines_len = #lines
+  if lines_len > 20000 then
+    -- skip large files just in case
+    return
   end
-  -- vim.print('My rainbow parens done in: ' .. (os.clock() - t_begin) * 1000 .. ' ms')
+
+  -- Only 1 pattern can be active at a time.
+  -- we search for these when not inside skippable sequence, so these are opening and closing parens, opening (but not closing) skippable delimiters
+  local delimiters_for_non_skippable = {} ---@type string[]
+  for _, paren_pair in ipairs(curr_settings.pairs) do
+    table.insert(delimiters_for_non_skippable, paren_pair[1])
+    table.insert(delimiters_for_non_skippable, paren_pair[2])
+  end
+  for opening_skippable, _ in pairs(curr_settings.skippable_patterns) do
+    table.insert(delimiters_for_non_skippable, opening_skippable)
+  end
+  local delimiters_for_non_skippable_len = #delimiters_for_non_skippable
+
+  local inside_delimited_skippable = nil ---@type string? nil for "not inside a skippable" has to be outside, since these can be multiline
+  for line_nr = 1, lines_len do
+    local line_text = lines[line_nr]
+    local next_search_start_idx = 1
+
+    repeat -- to run at least once
+      if inside_delimited_skippable then
+        -- we are inside delimited skippable, so we only search for the closing delimiter of the skippable
+        local closing_skippable_delimiter = curr_settings.skippable_patterns[inside_delimited_skippable].closing_delimiter
+        if not closing_skippable_delimiter then
+          vim.print('My rainbow: closing delimiter not found. this should never happen.')
+          return
+        end
+        local start_idx, end_idx = line_text:find(closing_skippable_delimiter, next_search_start_idx, true) -- true for plain text mode, for speed
+        if not start_idx then
+          -- closing delimiter not found, we are still inside skippable, break and continue to the next line
+          break
+        end
+
+        -- check for potential escape char
+        local escape_char = curr_settings.skippable_patterns[inside_delimited_skippable].escape_char
+        if escape_char and start_idx > 1 then
+          -- there is a possibility that there is a preceding escape char
+          local potential_esc_char_idx = start_idx - 1
+          if escape_char:byte(1) == line_text:byte(potential_esc_char_idx) then
+            -- the char on start_idx was negated by escape char, we continue searching starting with the next char
+            next_search_start_idx = start_idx + 1
+          else
+            -- the skippable delimiter was closed, we are no longer inside skippable
+            inside_delimited_skippable = nil
+            next_search_start_idx = end_idx + 1
+          end
+        else
+          -- the skippable delimiter was closed, we are no longer inside skippable
+          inside_delimited_skippable = nil
+          next_search_start_idx = end_idx + 1
+        end
+      else
+        -- we are not inside delimited skippable, find the nearest opening delimiter of any kind
+        local nearest_delimiter = nil ---@type string?
+        local nearest_dilimiter_byte_idx_start = math.huge -- infinity, only valid if nearest_delimiter is not nil
+        local nearest_dilimiter_byte_idx_end = math.huge -- infinity, only valid if nearest_delimiter is not nil
+        for i = 1, delimiters_for_non_skippable_len do
+          local delimiter = delimiters_for_non_skippable[i]
+          local start_idx, end_idx = line_text:find(delimiter, next_search_start_idx, true) -- true for plain text mode, for speed
+          if start_idx and start_idx < nearest_dilimiter_byte_idx_start and end_idx then
+            nearest_delimiter = delimiter
+            nearest_dilimiter_byte_idx_start = start_idx
+            nearest_dilimiter_byte_idx_end = end_idx
+          end
+        end
+        if not nearest_delimiter then
+          -- no relevant delimiters were found
+          break
+        end
+        -- what kind of delimeter was found?
+        local skippable = curr_settings.skippable_patterns[nearest_delimiter]
+        if skippable then
+          -- it's an (opening) skippable pattern, but which one?
+          if not skippable.closing_delimiter then
+            -- it's skippable till eol
+            break
+          end
+          -- it's a delimited skippable
+          inside_delimited_skippable = nearest_delimiter
+        else
+          -- it's a paren
+          handle_paren(nearest_delimiter, line_nr, byte_idx_to_col(line_text, nearest_dilimiter_byte_idx_start))
+        end
+        next_search_start_idx = nearest_dilimiter_byte_idx_end + 1
+      end
+    until false -- forever
+  end
+  vim.print('My rainbow parens done in: ' .. (os.clock() - t_begin) * 1000 .. ' ms')
   -- vim.print('is_comment_or_string_time: ' .. is_comment_or_string_time * 1000 .. ' ms')
   -- in lua, measure how much time (in ms) a function took to execute
 end
