@@ -14,7 +14,7 @@ local ns = vim.api.nvim_create_namespace('my-rainbow')
 ---@field escape_char string? if exists, assumed to be exactly 1-char long
 
 --- the top level key is the language, the key in skippable_patterns is the opening delimiter
----@alias mySettings {[string]: { skippable_patterns: {[string]:  Skippable }, pairs: [string, string][]}}
+---@alias mySettings {[string]: { skippable_patterns: {[string]:  Skippable }, parens: [string, string][]}}
 
 local settings = { ---@type mySettings
   typescript = {
@@ -26,7 +26,7 @@ local settings = { ---@type mySettings
       ["'"] = { closing_delimiter = "'", escape_char = [[\]] },
       ['`'] = { closing_delimiter = '`', escape_char = [[\]] },
     },
-    pairs = {
+    parens = {
       { '(', ')' },
       { '{', '}' },
       { '[', ']' },
@@ -44,7 +44,7 @@ local settings = { ---@type mySettings
       ['"'] = { closing_delimiter = '"', escape_char = [[\]] },
       ["'"] = { closing_delimiter = "'", escape_char = [[\]] },
     },
-    pairs = {
+    parens = {
       { '(', ')' },
       { '{', '}' },
       { '[', ']' },
@@ -102,16 +102,16 @@ function M.my_rainbow_parens_refresh()
     return
   end
 
-  local pairs_as_array_of_strings = curr_settings.pairs
+  local parens_as_tuples = curr_settings.parens
 
   -- dicts that map opening -> closing
-  local opening_parens = {} --- @type {[string]: string}
+  local opening_parens_map = {} --- @type {[string]: string}
   -- dicts that map opening -> closing
-  local closing_parens = {} --- @type {[string]: string}
+  local closing_parens_map = {} --- @type {[string]: string}
 
-  for _, arr in ipairs(pairs_as_array_of_strings) do
-    opening_parens[arr[1]] = arr[2]
-    closing_parens[arr[2]] = arr[1]
+  for _, arr in ipairs(parens_as_tuples) do
+    opening_parens_map[arr[1]] = arr[2]
+    closing_parens_map[arr[2]] = arr[1]
   end
 
   local handle_paren ---@type fun(str: string, line: integer, col: integer)
@@ -124,7 +124,7 @@ function M.my_rainbow_parens_refresh()
     local curr_hl_color_count = 0 -- to be used with modulo 3 to select hl group
     -- map paren as string -> array of opening positions, at which this paren was found
     local positions = {} ---@type {[string]: [integer, integer][]}
-    for _, arr in ipairs(pairs_as_array_of_strings) do
+    for _, arr in ipairs(parens_as_tuples) do
       positions[arr[1]] = {}
     end
     local modulo = #hl_groups
@@ -133,14 +133,14 @@ function M.my_rainbow_parens_refresh()
     ---@param line integer
     ---@param col integer
     local function handle_paren_impl(str, line, col)
-      if opening_parens[str] then
+      if opening_parens_map[str] then
         table.insert(positions[str], { line, col })
         curr_hl_color_count = curr_hl_color_count + 1
         return
       end
 
       -- we got a closing paren, so we highlight the pair and decrease the color count
-      local matching_opening_paren = closing_parens[str]
+      local matching_opening_paren = closing_parens_map[str]
       local matching_pos = table.remove(positions[matching_opening_paren])
       if not matching_pos then
         -- vim.print('My rainbow: unbalanced parens')
@@ -165,12 +165,13 @@ function M.my_rainbow_parens_refresh()
   end
 
   -- Only 1 pattern can be active at a time.
-  -- we search for these when not inside skippable sequence, so these are opening and closing parens, opening (but not closing) skippable delimiters
+
+  -- we search for these when NOT inside skippable sequence, so these are opening and closing parens, opening (but not closing) skippable delimiters
   local delimiters_for_non_skippable = {} ---@type string[]
   for opening_skippable, _ in pairs(curr_settings.skippable_patterns) do
     table.insert(delimiters_for_non_skippable, opening_skippable)
   end
-  for _, paren_pair in ipairs(curr_settings.pairs) do
+  for _, paren_pair in ipairs(curr_settings.parens) do
     table.insert(delimiters_for_non_skippable, paren_pair[1])
     table.insert(delimiters_for_non_skippable, paren_pair[2])
   end
