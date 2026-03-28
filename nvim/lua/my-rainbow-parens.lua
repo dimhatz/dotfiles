@@ -1,6 +1,14 @@
 local M = {}
 local ns = vim.api.nvim_create_namespace('my-rainbow')
 
+-- Definitions:
+-- skippable: a comment (both delimited and till eol) or a string (optionally with escape char <- single byte)
+-- paren: a round paren, a square bracket or a curly brace
+-- idx: byte-index into a string, does not necessarily align with the beginning of a UTF-8 char
+-- col: the position of the UTF-8 char (all the preceding bytes were interpreted as UTF-8) -> not
+-- needed so far, since in vim's apis column is actually the byte index (eg for highlighting).
+-- delimiter: either a closing or opening sequence for either a paren or a skippable
+
 ---@class Skippable
 ---@field closing_delimiter string? when absent, it's comment till eol
 ---@field escape_char string? if exists, assumed to be exactly 1-char long
@@ -10,6 +18,7 @@ local ns = vim.api.nvim_create_namespace('my-rainbow')
 
 local settings = { ---@type mySettings
   typescript = {
+    -- TODO: implement highlighting TODO: annotations inside comments.
     skippable_patterns = {
       ['//'] = {},
       ['/*'] = { closing_delimiter = '*/' },
@@ -23,7 +32,7 @@ local settings = { ---@type mySettings
       { '[', ']' },
     },
   },
-  luarrr = {
+  lua = {
     skippable_patterns = {
       ['--'] = {},
       ['[['] = { closing_delimiter = ']]' }, -- no escaping here (multiline string)
@@ -55,6 +64,7 @@ local ffi = require('ffi')
 ---@param str string
 ---@param pos integer
 ---@return integer column
+---@diagnostic disable-next-line: unused-local, unused-function
 local function byte_idx_to_col(str, pos)
   -- utf-8:
   -- 1-byte:  0xxxxxxx                                 <-- ASCII (our case)
@@ -137,13 +147,12 @@ function M.my_rainbow_parens_refresh()
         return
       end
 
+      curr_hl_color_count = curr_hl_color_count - 1
       local hl_group = hl_groups[curr_hl_color_count % modulo + 1]
 
       -- accepts 0-based ranges, so we decrease all indexes by 1
       vim.hl.range(0, ns, hl_group, { line - 1, col - 1 }, { line - 1, col - 1 + 1 })
       vim.hl.range(0, ns, hl_group, { matching_pos[1] - 1, matching_pos[2] - 1 }, { matching_pos[1] - 1, matching_pos[2] - 1 + 1 })
-
-      curr_hl_color_count = curr_hl_color_count - 1
     end
     handle_paren = handle_paren_impl
   end
@@ -158,13 +167,16 @@ function M.my_rainbow_parens_refresh()
   -- Only 1 pattern can be active at a time.
   -- we search for these when not inside skippable sequence, so these are opening and closing parens, opening (but not closing) skippable delimiters
   local delimiters_for_non_skippable = {} ---@type string[]
+  for opening_skippable, _ in pairs(curr_settings.skippable_patterns) do
+    table.insert(delimiters_for_non_skippable, opening_skippable)
+  end
   for _, paren_pair in ipairs(curr_settings.pairs) do
     table.insert(delimiters_for_non_skippable, paren_pair[1])
     table.insert(delimiters_for_non_skippable, paren_pair[2])
   end
-  for opening_skippable, _ in pairs(curr_settings.skippable_patterns) do
-    table.insert(delimiters_for_non_skippable, opening_skippable)
-  end
+  -- sorting is needed to be able to iterate short sequences first, so that, if there
+  -- are openers that start with the same sequence (like [ and [[ in lua), the longest match will win.
+  table.sort(delimiters_for_non_skippable)
   local delimiters_for_non_skippable_len = #delimiters_for_non_skippable
 
   local inside_delimited_skippable = nil ---@type string? nil for "not inside a skippable" has to be outside, since these can be multiline
@@ -212,7 +224,10 @@ function M.my_rainbow_parens_refresh()
         for i = 1, delimiters_for_non_skippable_len do
           local delimiter = delimiters_for_non_skippable[i]
           local start_idx, end_idx = line_text:find(delimiter, next_search_start_idx, true) -- true for plain text mode, for speed
-          if start_idx and start_idx < nearest_dilimiter_byte_idx_start and end_idx then
+          -- checking with <= in case there are sequences starting with the same chars, like in lua: [ and [[.
+          -- since delimiters_for_non_skippable is sorted (ascending), we are guaranteed to check the smaller
+          -- strings first.
+          if start_idx and start_idx <= nearest_dilimiter_byte_idx_start and end_idx then
             nearest_delimiter = delimiter
             nearest_dilimiter_byte_idx_start = start_idx
             nearest_dilimiter_byte_idx_end = end_idx
@@ -234,7 +249,10 @@ function M.my_rainbow_parens_refresh()
           inside_delimited_skippable = nearest_delimiter
         else
           -- it's a paren
-          handle_paren(nearest_delimiter, line_nr, byte_idx_to_col(line_text, nearest_dilimiter_byte_idx_start))
+          -- normally this is where we would convert from byte idx to col, but it seems that
+          -- highlighting is using byte indexes instead of actual columns.
+          -- handle_paren(nearest_delimiter, line_nr, byte_idx_to_col(line_text, nearest_dilimiter_byte_idx_start))
+          handle_paren(nearest_delimiter, line_nr, nearest_dilimiter_byte_idx_start)
         end
         next_search_start_idx = nearest_dilimiter_byte_idx_end + 1
       end
@@ -242,7 +260,9 @@ function M.my_rainbow_parens_refresh()
   end
   vim.print('My rainbow parens done in: ' .. (os.clock() - t_begin) * 1000 .. ' ms')
   -- vim.print('is_comment_or_string_time: ' .. is_comment_or_string_time * 1000 .. ' ms')
-  -- in lua, measure how much time (in ms) a function took to execute
+  -- Measurements so far:
+  -- just querying vim apis whether the parens are highlighted as comments, in a 800 lines ts tests file: 120ms
+  -- manually configure to detect comments and strings: <20ms
 end
 
 return M
