@@ -1,7 +1,11 @@
 ;; TODO: use double taps on layer key (instead of ctrl layer) to go to layer 2
-;; My: use version 1.0.1, specifically kanata_winIOv2, not the regular one! This has lower latency, can be checked when scrolling in nvim.
-;; In scheduler, on user logon, use command: C:\Windows\System32\conhost.exe
-;; with arguments: --headless C:\kanata\kanata_winIOv2.exe --cfg C:\kanata\kanata.kbd
+;; My: use version 1.11.0, specifically kanata_winIOv2, not the regular one! This has lower latency, can be checked when scrolling in nvim.
+;; In scheduler, to run the tty versnion on user logon, use command: C:\Windows\System32\conhost.exe:
+;; with arguments: --headless C:\kanata\kanata_windows_tty_winIOv2_x64.exe --cfg C:\Users\dim\dotfiles\nvim\kanata.kbd
+;; Full command:
+;; C:\Windows\System32\conhost.exe --headless C:\kanata\kanata_windows_tty_winIOv2_x64.exe --cfg C:\Users\dim\dotfiles\nvim\kanata.kbd
+;; Otherwise, just the gui version, that has a system tray.
+;; Keys:
 ;; kprt (keypad return) is numpad Enter, is mapped to kanata-live-reload
 ;; kp+ (keypad plus) -> using this to switch to custom layout
 ;; TIP: start kanata with --debug and search for keys here: https://github.com/jtroo/kanata/blob/main/parser/src/keys/mod.rs
